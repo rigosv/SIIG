@@ -27,6 +27,8 @@ framework:
 twig:
     debug:            %kernel.debug%
     strict_variables: %kernel.debug%
+    globals:
+        logo: %logo%
 
 # Assetic Configuration
 assetic:
@@ -70,7 +72,7 @@ swiftmailer:
     spool:     { type: memory }
 
 sonata_block:
-    default_contexts: [cms]
+    default_contexts: [cms]    
     blocks:
         sonata.admin.block.admin_list:
             contexts:   [admin]

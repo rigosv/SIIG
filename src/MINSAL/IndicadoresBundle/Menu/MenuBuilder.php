@@ -1,5 +1,4 @@
 <?php
-
 /*
  * This file is part of the Sonata package.
  *
@@ -7,49 +6,66 @@
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
+ *
  */
 
-namespace MINSAL\IndicadoresBundle\Twig\Extension;
+namespace MINSAL\IndicadoresBundle\Menu;
 
-use Knp\Menu\MenuFactory;
+use Knp\Menu\FactoryInterface;
 use Knp\Menu\ItemInterface;
-use Symfony\Component\HttpFoundation\Request;
+use Knp\Menu\Provider\MenuProviderInterface;
 use Sonata\AdminBundle\Admin\Pool;
-use Symfony\Component\Routing\RouterInterface;
-use Psr\Log\LoggerInterface;
-use Sonata\AdminBundle\Twig\Extension\SonataAdminExtension as TwigExtension_;
+use Sonata\AdminBundle\Event\ConfigureMenuEvent;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\Request;
 
-class SonataAdminExtension extends TwigExtension_ {
-
-    /**
-     * @var Pool
-     */
+/**
+ * Sonata menu builder.
+ *
+ * @author Martin Hasoň <martin.hason@gmail.com>
+ */
+class MenuBuilder
+{
+    private $pool;
+    private $factory;
+    private $provider;
+    private $request;
+    private $eventDispatcher;
+    
     protected $context;
 
-    public function __construct(Pool $pool, RouterInterface $router, LoggerInterface $logger = null, $context) {
+    /**
+     * Constructor.
+     *
+     * @param Pool                     $pool
+     * @param FactoryInterface         $factory
+     * @param MenuProviderInterface    $provider
+     * @param EventDispatcherInterface $eventDispatcher
+     */
+    public function __construct(Pool $pool, FactoryInterface $factory, MenuProviderInterface $provider, EventDispatcherInterface $eventDispatcher, $context)
+    {
         $this->pool = $pool;
-        $this->logger = $logger;
-        $this->router = $router;
+        $this->factory = $factory;
+        $this->provider = $provider;
+        $this->eventDispatcher = $eventDispatcher;
         $this->context = $context;
     }
 
     /**
-     * Get KnpMenu
-     *
-     * @param Request $request
+     * Builds sidebar menu.
      *
      * @return ItemInterface
      */
-    public function getKnpMenu(Request $request = null) {
-        $menuFactory = new MenuFactory();
-
+    public function createSidebarMenu()
+    {
+        $menu = $this->factory->createItem('root', array(
+            'extras' => array(
+                'request' => $this->request,
+            ),
+        ));
+        
         $usuario = $this->context->getToken()->getUser();
 
-        $menu = $menuFactory
-                ->createItem('root')
-                ->setExtra('request', $request)
-        ;
-        
         foreach ($this->pool->getAdminGroups() as $name => $group) {            
             $menu
                     ->addChild($name, array('label' => $group['label']))
@@ -60,6 +76,7 @@ class SonataAdminExtension extends TwigExtension_ {
                             )
                     )
                     ->setExtra('roles', $group['roles'])
+                    ->setExtra('translationdomain', 'messages')
             ;           
         }
         foreach ($this->pool->getAdminGroups() as $name => $group) {
@@ -132,9 +149,24 @@ class SonataAdminExtension extends TwigExtension_ {
                         ->setExtra('admin', $admin)
                 ;
             }
+            if (0 === count($menu[$name]->getChildren())) {
+                $menu->removeChild($name);
+            }
         }
 
-        return $menu;
+        $event = new ConfigureMenuEvent($this->factory, $menu);
+        $this->eventDispatcher->dispatch(ConfigureMenuEvent::SIDEBAR, $event);
+
+        return $event->getMenu();
     }
 
+    /**
+     * Sets the request the service
+     *
+     * @param Request $request
+     */
+    public function setRequest(Request $request = null)
+    {
+        $this->request = $request;
+    }
 }
