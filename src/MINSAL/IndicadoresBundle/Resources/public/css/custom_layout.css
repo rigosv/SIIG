@@ -112,3 +112,38 @@
 .select2-container{
     min-width:  180px !important;
 }
+body {
+    background-color: #ecf0f5 !important;
+}
+.main-header {
+    left: 0;
+    right: 0;
+    top: 0;
+    max-height: 100px;
+    position: fixed;
+    z-index: 1030;
+    background-color: white;
+}
+
+.content-header {
+    margin-top: 50px;
+    position: relative;
+}
+.sidebar-toggle{
+    display: none;
+}
+
+.logo img{
+    max-width: 100% !important;
+}
+.login-box{
+    margin: 3% auto !important;
+}
+
+.login-page{
+    background-color: white;
+}
+
+.navbar-static-top{
+    background-color: white;
+}
