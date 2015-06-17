@@ -35,7 +35,6 @@ class PeriodoIngresoAdmin extends Admin
                                 '12' => $this->getTranslator()->trans('_diciembre_'),
                             )
                         ))
-            ->add('formularios', null, array('label'=> $this->getTranslator()->trans('_formularios_')))
         ;
     }
 
