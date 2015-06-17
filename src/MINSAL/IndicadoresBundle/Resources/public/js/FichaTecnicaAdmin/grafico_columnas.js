@@ -75,23 +75,27 @@ graficoColumnas = function(ubicacion, datos, colorChosen, categoryChoosen) {
             var duracion = 0;
             var retraso = 0;
         }
+        
         plot.selectAll("rect")
                 .data(currentDatasetChart)
                 .enter()
                 .append("rect")
-                .attr("stroke", 'black')
-                .attr("stroke-width", '2px')
+                .attr("height",0)
+                .attr("y",height)
                 .attr("x", function(d, i) {
                     return xScale(d.category);
-                })
-                .transition().duration(duracion).delay(retraso)
+                })                
                 .attr("width", xScale.rangeBand())
+                .transition().duration(duracion).delay(retraso)
+                .ease("cubic-in-out")
                 .attr("y", function(d) {
-            return yScale(parseFloat(d.measure));
-        })
+                    return yScale(parseFloat(d.measure));
+                })
                 .attr("height", function(d) {
-            return height - yScale(parseFloat(d.measure));
-        });
+                    return height - yScale(parseFloat(d.measure));
+                })
+        ;
+        
         plot.selectAll("rect").append("title")
                 .text(function(d) {
             return d.category + ": " + d.measure;

@@ -81,7 +81,7 @@ input.valores_filtro{
     margin: 3px 12px 3px 0; 
     float: left;     
     overflow-y: auto;
-    border: 1px green solid; 
+    display: block;
 }
 
 .zona_actual{
@@ -164,7 +164,7 @@ div.popover-content, div.popover-title{
     background-color: #FFFFFF;
     border: 1px solid #DDDDDD;
     border-radius: 4px 4px 4px 4px;
-
+    
     padding: 25px 19px 14px;
     position: relative;
 }
@@ -215,6 +215,7 @@ div.popover-content, div.popover-title{
 
 .content{
     padding: 0px 10px;
+    overflow: auto;
 }
 
 .dropdown-menu > li > a:hover {

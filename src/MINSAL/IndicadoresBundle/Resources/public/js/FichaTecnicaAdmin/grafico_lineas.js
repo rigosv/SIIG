@@ -30,12 +30,20 @@ graficoLineas = function(ubicacion, datos, colorChosen, categoryChoosen) {
     var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
 
     var line = d3.svg.line()
-            .x(function(d, i) {
-        return xScale(d.category);
-    })
-            .y(function(d) {
-        return yScale(parseFloat(d.measure));
-    });
+        .x(function(d, i) {
+            return xScale(d.category);
+        })
+        .y(function(d) {
+            return yScale(parseFloat(d.measure));
+        });
+    
+    var line2 = d3.svg.line()			
+        .x(function(d, i)  {
+            return xScale(d.category);
+        })
+        .y(function(d) {
+            return yScale(0);
+        });
 
     this.dibujar = function() {
         $('#' + ubicacion + ' .grafico').html('');
@@ -67,11 +75,6 @@ graficoLineas = function(ubicacion, datos, colorChosen, categoryChoosen) {
                 .attr("transform", "translate(" + margin.left + "," + (margin.top + height ) + ")")
                 .call(xAxis);
 
-        plot.append("path")
-                .attr("class", "line")
-                .attr("d", line)
-                .attr("stroke", 'blue')
-                ;
         if ($('#sala_default').val()==0){
             var duracion = 1000;
             var retraso = 20;
@@ -79,19 +82,31 @@ graficoLineas = function(ubicacion, datos, colorChosen, categoryChoosen) {
             var duracion = 0;
             var retraso = 0;
         }
+
+        plot.append("path")
+                .attr("class", "line")
+                .attr("d", line2)
+                .transition().duration(duracion).delay(retraso)
+                .ease("cubic")
+                .attr("d", line)
+                .attr("stroke", 'steelblue')                
+                ;
+        
         
         plot.selectAll(".dot")
                 .data(currentDatasetChart)
                 .enter().append("circle")
                 .attr("class", "dot")
                 .transition().duration(duracion).delay(retraso)
-                .attr("fill", function(d, i) {
-            return colores_alertas(ubicacion, d.measure, i)
-        })
-                .attr("cx", line.x())
+                .attr("fill", "white")
+                .attr("stroke", function(d, i) {
+                    return colores_alertas(ubicacion, d.measure, i)
+                })                
+                .attr("cx", line.x())								
                 .attr("cy", line.y())
                 .attr("r", 7.5)
-                .attr("stroke", colorChosen);
+        ;
+        
         plot.selectAll(".dot")
                 .append("title")
                 .text(function(d) {
@@ -101,6 +116,25 @@ graficoLineas = function(ubicacion, datos, colorChosen, categoryChoosen) {
 
         plot.selectAll(".dot").on("click", function(d, i) {
             descenderNivelDimension(ubicacion, d.category);
+        })
+        .on("mouseover", function(d) {
+            d3.select(this)
+                .attr("r",5)
+                .transition().duration(750)
+                .attr("r",10)
+                .attr("fill", function(d, i) 
+                {
+                    return colores_alertas(ubicacion, d.measure, i)
+                })
+            ;
+        })
+        .on("mouseout",function(d){
+            d3.select(this)
+                .transition().duration(750)
+                .attr("r",7.5)
+                .attr("fill", "white") 
+                .style("stroke-width","1.5")                
+            ;    
         });
     };
     this.ordenar = function(modo_orden, ordenar_por) {
