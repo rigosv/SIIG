@@ -1,28 +1,44 @@
 document.addEventListener("mozfullscreenchange", function () {
     if (!document.mozFullScreen) {
-        $('.zona_maximizada').toggleClass('zona_maximizada');
-        $('.zoom').show();
+        restablecer();
+    } else {
+        aplicarZoom();
     }
 }, false);
 document.addEventListener("fullscreenchange", function () {
     fullscreenState.innerHTML = (document.fullscreenElement) ? "" : "not ";
     if (!document.fullscreenElement) {
-        $('.zona_maximizada').toggleClass('zona_maximizada');
-        $('.zoom').show();
+        restablecer();
+    }else {
+        aplicarZoom();
     }
 }, false);
 document.addEventListener("msfullscreenchange", function () {
     if (!document.msFullscreenElement) {
-        $('.zona_maximizada').toggleClass('zona_maximizada');
-        $('.zoom').show();
+        restablecer();
+    }else {
+        aplicarZoom();
     }
 }, false);
 document.addEventListener("webkitfullscreenchange", function () {
     if (!document.webkitIsFullScreen) {
-        $('.zona_maximizada').toggleClass('zona_maximizada');
-        $('.zoom').show();
+        restablecer();
+    }else {
+        aplicarZoom();
     }
 }, false);
+
+function restablecer() {
+    $('.zona_maximizada').toggleClass('zona_maximizada');
+    $('.zoom').show();
+    var zona = $(".zona_actual").attr('id');
+    dibujarGraficoPrincipal(zona, $('#' + zona + ' .tipo_grafico_principal').val());
+}
+
+function aplicarZoom() {    
+    var zona = $(".zona_actual").attr('id');
+    dibujarGraficoPrincipal(zona, $('#' + zona + ' .tipo_grafico_principal').val());
+}
 function goFullscreen(id) {
     var element = document.getElementById(id);
 
@@ -40,5 +56,5 @@ function goFullscreen(id) {
         element.webkitRequestFullScreen();
     } else if (element.msRequestFullscreen) {
         element.msRequestFullscreen();
-    }
+    }    
 }
