@@ -3,10 +3,10 @@ graficoColumnas = function(ubicacion, datos, colorChosen, categoryChoosen) {
     this.tipo = 'columnas';
     var margin = {top: 0, right: 5, bottom: 25, left: 40},
     width = 390 - margin.left - margin.right,
-            height = 250 - margin.top - margin.bottom,
+            height = 240 - margin.top - margin.bottom,
             barPadding = 1
-            ;
-
+            ;        
+    
     var currentDatasetChart = datos;
     var zona = ubicacion;
     var xScale = d3.scale.ordinal()
@@ -42,7 +42,7 @@ graficoColumnas = function(ubicacion, datos, colorChosen, categoryChoosen) {
         $('#' + ubicacion + ' .grafico').html('');
             var svg = d3.select("#" + ubicacion + ' .grafico')
                 .append("svg")
-                .attr("viewBox", '-20 0 440 310')
+                .attr("viewBox", '-20 -20 440 310')
                 .attr("preserveAspectRatio", 'none')
                 .attr("id", "ChartPlot")
                 ;
@@ -100,6 +100,24 @@ graficoColumnas = function(ubicacion, datos, colorChosen, categoryChoosen) {
                 .text(function(d) {
             return d.category + ": " + d.measure;
         });
+        plot.selectAll("text")
+            .data(currentDatasetChart)
+            .enter()
+            .append("text")
+            .attr("class","label_barra")
+            .text(function(d) 
+            {
+                return d.measure;
+            })			
+            .attr('x', function(d,i){return (i)*(width/currentDatasetChart.length)+(width/currentDatasetChart.length)/2;})
+            .attr('y',height)
+            .transition().duration(500).delay(20)
+            .attr('y', function(d){return (height-((height*d.measure)/max_y))-5})
+            .attr('text-anchor', 'middle')
+            .style("font-family", "Arial, Helvetica, sans-serif")			
+            .attr('font-size', 14)
+            .attr('fill', '#000')
+        ;
         
         plot.selectAll("rect").on("click", function(d, i) {
             descenderNivelDimension(ubicacion, d.category);

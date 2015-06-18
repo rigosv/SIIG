@@ -3,7 +3,7 @@ graficoLineas = function(ubicacion, datos, colorChosen, categoryChoosen) {
     this.tipo = 'lineas';
     var margin = {top: 20, right: 5, bottom: 20, left: 70},
     width = 390 - margin.left - margin.right,
-            height = 250 - margin.top - margin.bottom
+            height = 240 - margin.top - margin.bottom
             ;
     var currentDatasetChart = datos;
     var zona = ubicacion;
@@ -50,7 +50,7 @@ graficoLineas = function(ubicacion, datos, colorChosen, categoryChoosen) {
         var svg = d3.select("#" + ubicacion + ' .grafico ')
                 .append("svg")
                 .datum(currentDatasetChart)
-                .attr("viewBox", '-5 0 440 310')
+                .attr("viewBox", '-5 -20 440 310')
                 .attr("preserveAspectRatio", 'none')
                 .attr("id", "ChartPlot");
         // create group and move it so that margins are respected (space for axis and title)
@@ -113,7 +113,25 @@ graficoLineas = function(ubicacion, datos, colorChosen, categoryChoosen) {
             return d.category + ": " + d.measure;
         })
                 ;
+        plot.selectAll("text")
+            .data(currentDatasetChart)
+            .enter()
+            .append("text")
+            .text(function(d) 
+            {
+                return d.measure;
+            })
 
+            .attr('x', function(d,i){return (i)*(width/currentDatasetChart.length)+(width/currentDatasetChart.length)/2;})
+            .attr('y',height)
+            .transition().duration(500).delay(20)
+            .attr('y', function(d){a= yScale(parseFloat(d.measure))+15; if(a<0) a=0; return a;})
+            .attr('text-anchor', 'middle')
+            .style("font-family", "Arial, Helvetica, sans-serif")
+            .attr('font-size', 14)
+            .attr('fill', '#000')
+        ;
+        
         plot.selectAll(".dot").on("click", function(d, i) {
             descenderNivelDimension(ubicacion, d.category);
         })
