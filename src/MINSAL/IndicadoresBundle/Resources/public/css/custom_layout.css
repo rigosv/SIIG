@@ -136,8 +136,40 @@ body {
 .logo img{
     max-width: 100% !important;
 }
-.login-box{
-    margin: 3% auto !important;
+.login-box .panel{
+    margin: 6% auto !important;
+    -webkit-border-top-right-radius: 20px !important;
+    -webkit-border-top-left-radius: 20px !important;
+    -moz-border-radius-topright: 20px !important;
+    -moz-border-radius-topleft: 20px !important;
+    border-top-right-radius: 20px !important;
+    border-top-left-radius: 20px !important;
+    
+    -webkit-border-bottom-right-radius: 20px !important;
+    -webkit-border-bottom-left-radius: 20px !important;
+    -moz-border-radius-bottomright: 20px !important;
+    -moz-border-radius-bottomleft: 20px !important;
+    border-bottom-right-radius: 20px !important;
+    border-bottom-left-radius: 20px !important;
+}
+
+.login-box .panel-heading{
+    -webkit-border-top-right-radius: 20px !important;
+    -webkit-border-top-left-radius: 20px !important;
+    -moz-border-radius-topright: 20px !important;
+    -moz-border-radius-topleft: 20px !important;
+    border-top-right-radius: 20px !important;
+    border-top-left-radius: 20px !important;
+   
+}
+
+.login-box .panel-footer{
+    -webkit-border-bottom-right-radius: 20px !important;
+    -webkit-border-bottom-left-radius: 20px !important;
+    -moz-border-radius-bottomright: 20px !important;
+    -moz-border-radius-bottomleft: 20px !important;
+    border-bottom-right-radius: 20px !important;
+    border-bottom-left-radius: 20px !important;
 }
 
 .login-page{
@@ -146,4 +178,14 @@ body {
 
 .navbar-static-top{
     background-color: white;
+    -webkit-border-bottom-right-radius: 20px !important;
+    -webkit-border-bottom-left-radius: 20px !important;
+    -moz-border-radius-bottomright: 20px !important;
+    -moz-border-radius-bottomleft: 20px !important;
+    border-bottom-right-radius: 20px !important;
+    border-bottom-left-radius: 20px !important;
+   
+    -webkit-box-shadow: -4px 8px 8px -7px rgba(33,24,102,1);
+    -moz-box-shadow: -4px 8px 8px -7px rgba(33,24,102,1);
+    box-shadow: -4px 8px 8px -7px rgba(33,24,102,1);
 }
