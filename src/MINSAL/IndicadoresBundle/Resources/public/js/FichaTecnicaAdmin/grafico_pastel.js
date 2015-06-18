@@ -1,137 +1,99 @@
-graficoPastel = function(ubicacion, datos, color_grafico, categoryChoosen) {
+graficoPastel = function (ubicacion, datos, colorChosen, categoryChoosen)
+{
     this.tipo = 'pastel';
-    
-    var width = 350,
-            height = 250,
-            outerRadius = Math.min(width, height) / 2,
-            innerRadius = outerRadius * .999,
-            // for animation
-            innerRadiusFinal = outerRadius * .5,
-            innerRadiusFinal3 = outerRadius * .45
-            ;
+    this.currentDatasetChart = datos;
+    this.zona = ubicacion;
+    this.color = colorChosen;
+    this.category = categoryChoosen;
 
-    this.dibujar = function() {
+    var contexto = this;
+    this.dibujar = function ()
+    {
+        var margin = {top: 0, right: 0, bottom: 0, left: 0},
+            width = parseInt($(' .area_grafico').first().width(), 10);   
+	width  = width - margin.left - margin.right-50;
+        var height = parseInt($(' .area_grafico').first().height(), 10)-180;
+
         $('#' + ubicacion + ' .grafico').html('');
-        var vis = d3.select('#' + ubicacion + ' .grafico')
-                .append("svg:svg")              //create the SVG element inside the <body>
-                .data([datos])                   //associate our data with the document
-                .attr("viewBox", '-5 0 440 310')
-                .attr("preserveAspectRatio", 'none')
-                .append("svg:g")                //make a group to hold our pie chart
-                .attr("transform", "translate(" + parseFloat(outerRadius + 30) + "," + outerRadius + ")")    //move the center of the pie chart from 0, 0 to radius, radius
-                .attr("id", "ChartPlot")
-                ;
+        $("#" + contexto.zona + ' .grafico').attr("id", contexto.zona + '_grafico')
+        var pie = new d3pie(contexto.zona + '_grafico',
+                {
+                    "size":
+                            {
+                                "canvasWidth": width + margin.left + margin.right,
+                                "canvasHeight": height
+                            },
+                    "data":
+                            {
+                                "sortOrder": "value-desc",
+                                "content":
+                                        this.formatPieData()
+                            },
+                    "labels":
+                            {
+                                "inner":
+                                        {
+                                            "hideWhenLessThanPercentage": 3
+                                        },
+                                "mainLabel":
+                                        {
+                                            "fontSize": 12
+                                        },
+                                "percentage": {
+                                    "color": "#ffffff",
+                                    "decimalPlaces": 0
+                                },
+                                "value": {
+                                    "color": "#adadad",
+                                    "fontSize": 12
+                                },
+                                "lines": {
+                                    "enabled": true
+                                }
+                            },
+                    "effects":
+                            {
+                                "pullOutSegmentOnClick": {
+                                    "effect": "linear",
+                                    "speed": 400,
+                                    "size": 8
+                                }
+                            },
+                    "misc":
+                            {
+                                "gradient": {
+                                    "enabled": true,
+                                    "percentage": 100
+                                }
+                            },
+                    "callbacks": {
+                        onClickSegment: function (info)
+                        {
+                            console.log(info);
+                            descenderNivelDimension(contexto.zona, info.data.label);
+                        }
+                    }
+                });
 
-        var arc = d3.svg.arc()              //this will create <path> elements for us using arc data
-                .outerRadius(outerRadius).innerRadius(innerRadius);
-
-        // for animation
-        var arcFinal = d3.svg.arc().innerRadius(innerRadiusFinal).outerRadius(outerRadius);
-        var arcFinal3 = d3.svg.arc().innerRadius(innerRadiusFinal3).outerRadius(outerRadius);
-
-        var pie = d3.layout.pie()           //this will create arc data for us given a list of values
-                .value(function(d) {
-            return parseFloat(d.measure);
-        });    //we must tell it out to access the value of each element in our data array
-
-        var arcs = vis.selectAll("g.slice")     //this selects all <g> elements with class slice (there aren't any yet)
-                .data(pie)                          //associate the generated pie data (an array of arcs, each having startAngle, endAngle and value properties) 
-                .enter()                            //this will create <g> elements for every "extra" data element that should be associated with a selection. The result is creating a <g> for every object in the data array
-                .append("svg:g")                //create a group to hold each slice (we will have a <path> and a <text> element associated with each slice)
-                .attr("class", "slice")    //allow us to style things in the slices (like text)
-                .on("mouseover", mouseover)
-                .on("mouseout", mouseout)
-                ;
-        arcs.on("click", function(d, i) {
-            descenderNivelDimension(ubicacion, d.data.category);
-        });
-
-        if (color_grafico == null)
-            arcs.append("svg:path")
-                    .attr("fill", function(d, i) {
-                return colores_alertas(ubicacion, d.data.measure, i)
-            });
-        else
-            arcs.append("svg:path")
-                    .attr("fill", function(d, i) {
-                return color_grafico;
-            });
-
-        arcs.attr("d", arc)     //this creates the actual SVG path using the associated data (pie) with the arc drawing function
-                .append("svg:title") //mouseover title showing the figures
-                .text(function(d) {
-            return d.data.category + ": " + d.data.measure;
-        });
-
-        if ($('#sala_default').val()==0){
-            var duracion = 1000;
-            var retraso = 20;
-        }else {
-            var duracion = 0;
-            var retraso = 0;
-        }
-        
-        d3.selectAll("g.slice").selectAll("path")
-                .transition()
-                .duration(duracion)
-                .delay(retraso)
-                .attr("stroke", "white")
-                .attr("stroke-width", 1.5)
-                .attr("d", arcFinal)
-                ;
-
-        // Add a label to the larger arcs, translated to the arc centroid and rotated.
-        // source: http://bl.ocks.org/1305337#index.html
-        arcs.filter(function(d) {
-            return d.endAngle - d.startAngle > .2;
-        })
-                .append("svg:text")
-                .attr("dy", ".35em")
-                .attr("text-anchor", "middle")
-                .attr("transform", function(d) {
-            return "translate(" + arcFinal.centroid(d) + ")rotate(" + angle(d) + ")";
-        })
-                //.text(function(d) { return formatAsPercentage(d.value); })
-                .text(function(d) {
-            return d.data.category;
-        })
-                ;
-
-        // Computes the label angle of an arc, converting from radians to degrees.
-        function angle(d) {
-            var a = (d.startAngle + d.endAngle) * 90 / Math.PI - 90;
-            return a > 90 ? a - 180 : a;
-        }
-
-
-        if (categoryChoosen != null)
-            // Pie chart title			
-            vis.append("svg:text")
-                    .attr("dy", ".35em")
-                    .attr("text-anchor", "middle")
-                    .text("Datos de " + categoryChoosen)
-                    .attr("class", "title")
-                    ;
-
-        function mouseover() {
-            d3.select(this).select("path").transition()
-                    .duration(750)
-                    .attr("stroke", "red")
-                    .attr("stroke-width", 2.5)
-                    .attr("d", arcFinal3)
-                    ;
-        }
-
-        function mouseout() {
-            d3.select(this).select("path").transition()
-                    .duration(750)
-                    .attr("stroke", "white")
-                    .attr("stroke-width", 1.5)
-                    .attr("d", arcFinal)
-                    ;
-        }
     };
-    this.ordenar = function(modo_orden, ordenar_por) { /*No hacer nada, el gráfico circular no se puede ordenar*/
-        return;
+
+    this.formatPieData = function ()
+    {
+        //var data = contexto.currentDatasetChart.map(function(d,i)
+
+        return contexto.currentDatasetChart.map(function (d, i)
+        {
+            return {"label": d.category,
+                "value": parseFloat(d.measure),
+                "color": colores_alertas(contexto.zona, d.measure, i)
+            };
+        });
+    };
+    
+    this.ordenar = function (modo_orden, ordenar_por)
+    { /*No hacer nada, el gráfico circular no se puede ordenar*/
+        this.currentDatasetChart = ordenarArreglo(this.currentDatasetChart, ordenar_por, modo_orden);
+        this.dibujar();
+        $('#' + this.zona).attr('datasetPrincipal', JSON.stringify(this.currentDatasetChart));
     };
 }
