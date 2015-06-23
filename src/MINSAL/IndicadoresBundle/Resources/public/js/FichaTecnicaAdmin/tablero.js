@@ -8,7 +8,14 @@ $(document).ready(function() {
         "sInfoEmpty": trans.mostrando_0,
         "sInfoFiltered": trans.filtrados_dequ
     }; 
+$.fn.modal.Constructor.prototype.enforceFocus = function() {};
 
+    $('body').on('show.bs.modal', function () {
+        //$.fn.modal.Constructor.prototype.enforceFocus = function () {};
+
+    //$('select', this).chosen();
+    //$('.selectpicker').selectpicker('refresh');
+});
     // *****************
     //Con esto se verifica el comportamiento del area de gráfico
     //Si se despliega algún menú dentro del gráfico se modifica un atributo

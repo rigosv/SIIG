@@ -351,14 +351,14 @@ function dibujarControles(zona, datos) {
     });
     combo_dimensiones += "</SELECT>";
 
-    var combo_tipo_grafico = trans.tipo_grafico + ": <SELECT class='tipo_grafico_principal'  ></SELECT>";
+    var combo_tipo_grafico = trans.tipo_grafico + ": <SELECT class='form-control tipo_grafico_principal'  ></SELECT>";
 
-    var combo_ordenar_por_dimension = trans.ordenar_x + ": <SELECT class='ordenar_dimension'>" +
+    var combo_ordenar_por_dimension = trans.ordenar_x + ": <SELECT class='form-control  ordenar_dimension'>" +
             "<OPTION VALUE='-1'></OPTION>" +
             "<OPTION VALUE='desc'>" + trans.descendente + "</OPTION>" +
             "<OPTION VALUE='asc'>" + trans.ascendente + "</OPTION>" +
             "</SELECT>";
-    var combo_ordenar_por_medida = trans.ordenar_y + ": <SELECT class='ordenar_medida'>" +
+    var combo_ordenar_por_medida = trans.ordenar_y + ": <SELECT class='form-control ordenar_medida'>" +
             "<OPTION VALUE='-1'></OPTION>" +
             "<OPTION VALUE='desc'>" + trans.descendente + "</OPTION>" +
             "<OPTION VALUE='asc'>" + trans.ascendente + "</OPTION>" +
@@ -397,17 +397,38 @@ function dibujarControles(zona, datos) {
     opciones += '</ul>' +
             '</div>';
     var opciones_indicador = '<div class="btn-group sobre_div">' +
-            '<button class="btn btn-info dropdown-toggle" data-toggle="dropdown" title="' + trans.opciones_grafico + '">' +
+            '<button class="btn btn-info" data-toggle="modal" data-target="#opciones_'+zona+'" title="' + trans.opciones_grafico + '">' +            
             '<span class="glyphicon glyphicon-stats"></span>' +
-            '</button>' +
-            '<ul class="dropdown-menu" role="menu" >' +
-            '<li><label>&nbsp;</label></li>' +
-            '<li><A class="zoom">Zoom <span class="glyphicon glyphicon-zoom-in"></span></A></li>' +
-            '<li><A >' + combo_ordenar_por_medida + '</A></li>' +
-            '<li><A >' + combo_ordenar_por_dimension + '</A></li>' +
-            '<li><A >' + combo_tipo_grafico + '</A></li>'
-            ;
-
+            '</button>';
+    var opciones_indicador_modal= 
+            '<div class="modal fade" id="opciones_'+zona+'"  role="dialog" aria-labelledby="myModalLabel'+zona+'">'+
+                '<div class="modal-dialog" role="document">'+
+                  '<div class="modal-content" style="overflow: visible;">'+
+                    '<div class="modal-header">'+
+                      '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+
+                      '<h4 class="modal-title" id="myModalLabel'+zona+'">' + trans.opciones_grafico + '</h4>'+
+                    '</div>'+
+                    '<div class="modal-body" style="overflow: visible;">'+
+                      '<li><A class="zoom">Zoom <span class="glyphicon glyphicon-zoom-in"></span></A></li>' +                        
+                        '<div class="container-fluid">'+
+                            '<div class="col-sm-6">'+
+                                '<div class="form-group">' + combo_ordenar_por_medida + '</div>' +
+                            '</div>'+
+                            '<div class="col-sm-6">'+
+                                '<div class="form-group">' + combo_ordenar_por_dimension + '</div>' +
+                            '</div>'+
+                            '<div class="col-sm-4">'+
+                                '<div class="form-group">' + combo_tipo_grafico + '</div>'+
+                            '</div>'+
+                        '</div>'+
+                    '</div>'+
+                    '<div class="modal-footer">'+
+                      '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>'+
+                    '</div>'+
+                  '</div>'+
+                '</div>'+
+            '</div>';
+               
     var rangos_alertas = datos.rangos;
 
     var alertas = '';
@@ -462,9 +483,11 @@ function dibujarControles(zona, datos) {
                 '</ul>' +
                 '</div>');
     } else {
-        opciones_indicador += '</ul></div>';
+        opciones_indicador += '';
         $('#' + zona + ' .controles').append(opciones_indicador);
     }
+    
+    // Los botones 
     $('#' + zona + ' .controles').append(opciones);
     $('#' + zona + ' .controles').append(opciones_dimension);
     $('#' + zona + ' .controles').append('<a id="' + zona + '_ultima_lectura" data-placement="bottom" data-toggle="popover" class="btn-small btn-warning pull-right" href="#" >' + datos.ultima_lectura + '</a>');
@@ -473,15 +496,18 @@ function dibujarControles(zona, datos) {
     $('#' + zona + ' .max_y').change(function() {
         dibujarGraficoPrincipal(zona, $('#' + zona + ' .tipo_grafico_principal').val());
     });
-    $('#' + zona + ' .ordenar_medida').change(function() {
+    
+    
+    
+    $('body').append(opciones_indicador_modal);
+    setTiposGraficos(zona);
+    $('#opciones_' + zona + ' .ordenar_medida').change(function() {
         ordenarDatos(zona, 'medida', $(this).val());
     });
 
-    $('#' + zona + ' .ordenar_dimension').change(function() {
+    $('#opciones_' + zona + ' .ordenar_dimension').change(function() {
         ordenarDatos(zona, 'dimension', $(this).val());
     });
-
-    setTiposGraficos(zona);
 
     $('#' + zona + ' .dimensiones').change(function() {
         setTiposGraficos(zona);
@@ -493,14 +519,14 @@ function dibujarControles(zona, datos) {
         }
     });
 
-    $('#' + zona + ' .tipo_grafico_principal').change(function() {
+    $('#opciones_' + zona + ' .tipo_grafico_principal').change(function() {
         dibujarGraficoPrincipal(zona, $(this).val());
     });
     $('#' + zona + ' .agregar_como_favorito').click(function() {
         alternar_favorito(zona, $(this).attr('data-indicador'));
         cerrarMenus();
     });
-    $('#' + zona + ' .zoom').click(function() {
+    $('#opciones_' + zona + ' .zoom').click(function() {
         $('#' + zona).toggleClass('zona_maximizada');
         $(this).hide();
         goFullscreen('z'+zona);
@@ -627,7 +653,7 @@ function setTiposGraficos(zona) {
     $.each(graficos, function(i, grafico) {
         tipos_graficos += "<OPTION VALUE='" + grafico.codigo + "'>" + grafico.descripcion + "</OPTION>";
     });
-    $('#' + zona + ' .tipo_grafico_principal').html(tipos_graficos);
+    $('#opciones_' + zona + ' .tipo_grafico_principal').html(tipos_graficos);
 }
 
 function alternar_favorito(zona, id_indicador) {
