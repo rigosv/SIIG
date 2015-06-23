@@ -117,6 +117,7 @@ graficoLineas = function(ubicacion, datos, colorChosen, categoryChoosen) {
             .data(currentDatasetChart)
             .enter()
             .append("text")
+            .attr("class","label_punto")
             .text(function(d) 
             {
                 return d.measure;
@@ -124,7 +125,7 @@ graficoLineas = function(ubicacion, datos, colorChosen, categoryChoosen) {
 
             .attr('x', function(d,i){return (i)*(width/currentDatasetChart.length)+(width/currentDatasetChart.length)/2;})
             .attr('y',height)
-            .transition().duration(500).delay(20)
+            .transition().duration(duracion).delay(retraso)
             .attr('y', function(d){a= yScale(parseFloat(d.measure))+15; if(a<0) a=0; return a;})
             .attr('text-anchor', 'middle')
             .style("font-family", "Arial, Helvetica, sans-serif")
@@ -178,6 +179,12 @@ graficoLineas = function(ubicacion, datos, colorChosen, categoryChoosen) {
             return x0(d.category);
         });
         transition.select(".x.axis").call(xAxis).selectAll("g").delay(delay);
+        
+        transition.selectAll(".label_punto")
+            .attr("x", function(d) {
+                return x0(d.category);
+            })
+        ;
         
         // Ordenar la tabla de datos
         $('#' + zona).attr('datasetPrincipal', JSON.stringify(currentDatasetChart));

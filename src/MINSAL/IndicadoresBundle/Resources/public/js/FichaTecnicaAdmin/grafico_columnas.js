@@ -111,7 +111,7 @@ graficoColumnas = function(ubicacion, datos, colorChosen, categoryChoosen) {
             })			
             .attr('x', function(d,i){return (i)*(width/currentDatasetChart.length)+(width/currentDatasetChart.length)/2;})
             .attr('y',height)
-            .transition().duration(500).delay(20)
+            .transition().duration(duracion).delay(retraso)
             .attr('y', function(d){return (height-((height*d.measure)/max_y))-5})
             .attr('text-anchor', 'middle')
             .style("font-family", "Arial, Helvetica, sans-serif")			
@@ -150,14 +150,21 @@ graficoColumnas = function(ubicacion, datos, colorChosen, categoryChoosen) {
         }
         
         transition.selectAll("#"+ubicacion+" rect")
-                .delay(delay)
-                .attr("x", function(d) {
-            return x0(d.category);
-        });
+            .delay(delay)
+            .attr("x", function(d) {
+                return x0(d.category);
+            })
+        ;
         transition.select('#'+ubicacion+' .x.axis')
                 .call(xAxis)
                 .selectAll("g")
                 .delay(delay);
+        
+        transition.selectAll("#"+ubicacion+" .label_barra")
+            .attr("x", function(d) {
+                return x0(d.category)+(width/currentDatasetChart.length)/2;
+            })
+        ;
         // Ordenar la tabla de datos
         $('#' + zona).attr('datasetPrincipal', JSON.stringify(currentDatasetChart));
     };
