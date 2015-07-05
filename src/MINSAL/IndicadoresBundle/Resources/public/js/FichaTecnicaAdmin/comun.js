@@ -255,9 +255,7 @@ function aplicarFiltro(zona) {
 function controles_filtros(zona) {
     var datasetPrincipal = JSON.parse($('#' + zona).attr('datasetPrincipal'));
 
-    var lista_datos_dimension = '<DIV class="filtro_elementos"><input type="button" class="btn btn-info aplicar_filtro" value="' + trans.filtrar + '"/>' +
-            '<input type="button" class="btn btn-danger quitar_filtro" value="' + trans.quitar_filtro + '"/></DIV>';
-    lista_datos_dimension += '<DIV class="capa_dimension_valores col-md-12" >' + trans.filtrar_por_elemento + '<BR>';
+    var lista_datos_dimension = '<DIV class="capa_dimension_valores col-md-12" >' + trans.filtrar_por_elemento + '<BR>';
     $.each(datasetPrincipal, function(i, dato) {
         lista_datos_dimension += '<label class="forcheckbox" for="categorias_a_mostrar' + zona + i + '" ><input type="checkbox" id="categorias_a_mostrar' + zona + i + '" ' +
                 'name="categorias_a_mostrar[]" value="' + dato.category + '" /> ' + dato.category + '</label>';
@@ -395,7 +393,7 @@ function dibujarControles(zona, datos) {
             "<OPTION VALUE='desc'>" + trans.descendente + "</OPTION>" +
             "<OPTION VALUE='asc'>" + trans.ascendente + "</OPTION>" +
             "</SELECT>";
-    var filtro_posicion = trans.filtro_posicion + " " + trans.desde +
+    var filtro_posicion = trans.filtro_posicion + "<BR/> " + trans.desde +
             "<INPUT class='valores_filtro filtro_desde' type='text' length='5' value=''> " + trans.hasta +
             "<INPUT class='valores_filtro filtro_hasta' type='text' length='5' value=''> ";
     
@@ -422,7 +420,7 @@ function dibujarControles(zona, datos) {
                         '</div>'+
                     '</div>'+
                     '<div class="modal-footer">'+
-                      '<button type="button" class="btn btn-warning" data-dismiss="modal">' + trans.cerrar + '</button>'+
+                      '<button type="button" class="btn btn-warning" data-dismiss="modal">' + trans._cerrar_ + '</button>'+
                     '</div>'+
                   '</div>'+
                 '</div>'+
@@ -442,10 +440,14 @@ function dibujarControles(zona, datos) {
                             '</div>'+
                             '<div class="col-sm-6">'+
                                 '<div class="form-group">' + filtro_posicion + '</div>' +
+                            '</div>'+                            
+                            '<div class="col-sm-12">'+
+                                '<div class="form-group lista_datos_dimension"></div>'+
                             '</div>'+
-                            '<div class="col-sm-4">'+
-                                '<div class="form-group"><li class="lista_datos_dimension"></li></div>'+
-                            '</div>'+
+                            '<DIV class="filtro_elementos col-sm-6">'+
+                                '<input type="button" class="btn btn-info aplicar_filtro" value="' + trans.filtrar + '"/>' +
+                                '<input type="button" class="btn btn-danger quitar_filtro" value="' + trans.quitar_filtro + '"/>'+
+                            '</DIV>'+
                         '</div>'+
                     '</div>'+
                     '<div class="modal-footer">'+
