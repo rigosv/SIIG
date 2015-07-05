@@ -529,8 +529,8 @@ function dibujarControles(zona, datos) {
     });
     
     
-    $('body').append(opciones_indicador_modal);
-    $('body').append(opciones_dimension_modal);
+    $('#'+zona).append(opciones_indicador_modal);
+    $('#'+zona).append(opciones_dimension_modal);
     setTiposGraficos(zona);
     $('#opciones_' + zona + ' .ordenar_medida').change(function() {
         ordenarDatos(zona, 'medida', $(this).val());
@@ -558,7 +558,7 @@ function dibujarControles(zona, datos) {
         cerrarMenus();
     });
     $('#' + zona + ' .zoom').click(function() {
-        $('#' + zona).toggleClass('zona_maximizada');
+        $('#' + zona).toggleClass('zona_maximizada');        
         $(this).hide();
         goFullscreen('z'+zona);
         
