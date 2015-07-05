@@ -41,6 +41,10 @@ function dibujarGraficoPrincipal(zona, tipo) {
 
     var datasetPrincipal = JSON.parse($('#' + zona).attr('datasetPrincipal'));
     construir_tabla_datos(zona, datasetPrincipal);
+    //Corrección de error no despliega los controles select en ventana modal en firefox
+    $( "SELECT" ).click(function() {
+        $( this ).focus();
+    });
 }
 function aplicarFormato() {
     d3.selectAll(".axis path, .axis line")

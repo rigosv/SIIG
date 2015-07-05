@@ -93,7 +93,7 @@ $.fn.modal.Constructor.prototype.enforceFocus = function() {};
     });
 
     function dibujarIndicador(id_indicador) {
-        recuperarDimensiones(id_indicador, null);
+        recuperarDimensiones(id_indicador, null);        
     }
 
     $('#agregar_fila').click(function() {
