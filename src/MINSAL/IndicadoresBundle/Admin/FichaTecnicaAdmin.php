@@ -50,6 +50,7 @@ class FichaTecnicaAdmin extends Admin
                         ->add('formula', null, array('label' => $this->getTranslator()->trans('formula'),
                             'help' => $this->getTranslator()->trans('ayuda_ingreso_formula')
                         ))
+                        ->add('meta', null, array('label' => $this->getTranslator()->trans('_meta_')))
                         ->add('periodo', null, array('label' => $this->getTranslator()->trans('periodicidad')))
                         ->add('confiabilidad', null, array('label' => $this->getTranslator()->trans('confiabilidad'), 'required' => false))
                         ->add('reporte', null, array('label' => $this->getTranslator()->trans('_reporte_'), 'required' => false))

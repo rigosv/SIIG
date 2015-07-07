@@ -340,9 +340,13 @@ function dibujarControles(zona, datos) {
     $('#' + zona + ' .titulo_indicador').html(datos.nombre_indicador)
             .attr('data-unidad-medida', datos.unidad_medida)
             .attr('formula', datos.formula)
-            .attr('data-id', datos.id_indicador)
+            .attr('data-id', datos.id_indicador)            
             .attr('filtro-elementos', '')
             .attr('rangos_alertas', JSON.stringify(datos.rangos));
+    
+    var meta = (datos.meta==null) ? 0 : datos.meta;    
+    $('#' + zona ).attr('meta', meta);
+    
     var msj_favoritos = '',
         icon_favoritos = '';
     var combo_dimensiones = trans.cambiar_dimension + ":<SELECT class='dimensiones' name='dimensiones'>";
@@ -777,9 +781,11 @@ function procesarDimensiones(resp, datos, zona_g, desde_sala) {
                         ascenderNivelDimension(zona_g, $(this).attr('data'));
                     });
                 }
-                $('#' + zona_g + ' .titulo_indicador').attr('data-id', datos.idIndicador);
+                $('#' + zona_g + ' .titulo_indicador').attr('data-id', datos.idIndicador);                
                 $('#' + zona_g + ' .titulo_indicador').attr('vista', datos.vista);
                 $('#' + zona_g).attr('orden', datos.orden);
+                var meta = (datos.meta==null) ? 0 : datos.meta;
+                $('#' + zona_g).attr('meta', meta);
                 $('#' + zona_g).attr('orden-aplicado', 'false');
                 $('#opciones_dimension_' + zona_g + ' .dimensiones').val(datos.dimension);
                 $('#opciones_dimension_' + zona_g + ' .filtro_desde').val(datos.filtroPosicionDesde);

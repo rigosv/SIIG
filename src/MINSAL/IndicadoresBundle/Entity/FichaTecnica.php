@@ -116,6 +116,13 @@ class FichaTecnica
      * @ORM\ManyToMany(targetEntity="ClasificacionTecnica", inversedBy="indicadores")
      **/
     private $clasificacionTecnica;
+    
+    /**
+     * @var float $meta
+     *
+     * @ORM\Column(name="meta", type="float", scale=2, nullable=true)
+     */
+    private $meta;
 
     /**
      *
@@ -879,5 +886,28 @@ class FichaTecnica
     public function getReporte()
     {
         return $this->reporte;
+    }
+
+    /**
+     * Set meta
+     *
+     * @param float $meta
+     * @return FichaTecnica
+     */
+    public function setMeta($meta)
+    {
+        $this->meta = $meta;
+
+        return $this;
+    }
+
+    /**
+     * Get meta
+     *
+     * @return float 
+     */
+    public function getMeta()
+    {
+        return $this->meta;
     }
 }

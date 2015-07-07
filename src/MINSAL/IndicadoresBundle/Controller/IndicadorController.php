@@ -36,6 +36,7 @@ class IndicadorController extends Controller {
             $resp['nombre_indicador'] = $fichaTec->getNombre();
             $resp['id_indicador'] = $fichaTec->getId();
             $resp['unidad_medida'] = $fichaTec->getUnidadMedida();
+            $resp['meta'] = $fichaTec->getMeta();
             if ($fichaTec->getCamposIndicador() != '') {
                 $campos = explode(',', str_replace(array("'", ' '), array('', ''), $fichaTec->getCamposIndicador()));
             } else {
