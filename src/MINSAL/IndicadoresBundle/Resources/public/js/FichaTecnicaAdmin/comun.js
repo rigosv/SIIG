@@ -632,14 +632,21 @@ function dibujarControles(zona, datos) {
         var html = '<H5 style="text-align:center;">' + $('#' + zona + ' .titulo_indicador').html() +
                 ' (por ' + $('#' + zona + ' .dimension').html() + ')</H5>' +
                 '<H6 >' + $('#' + zona + ' .filtros_dimensiones').html() + '</H6>' +
-                '<svg id="ChartPlot" width="95%" viewBox="-5 0 450 360" preserveAspectRatio="none">' + d3.select('#' + zona + ' svg').html() + '"</svg>' +
+                '<svg id="ChartPlot" width="95%" viewBox="-20 -20 440 310" preserveAspectRatio="none">' + d3.select('#' + zona + ' svg').html() + '"</svg>' +
                 $('#sql').html('<canvas id="canvasGrp" width="400" height="350"></canvas>');
 
         var canvas = document.getElementById("canvasGrp");
 
-        rasterizeHTML.drawHTML(html, canvas);
-        $('#myModalLabel2').html(trans.guardar_imagen);
-        $('#myModal2').modal('show');
+        rasterizeHTML.drawHTML(html, canvas)
+            .then(function success(renderResult) {
+                var link = document.createElement("a");
+                canvas = document.getElementById("canvasGrp");
+                link.href = canvas.toDataURL("image/png");
+
+                link.download = 'grafico.png';
+                document.body.appendChild(link);
+                link.click();
+            });        
     });
 
     $('#' + zona + ' .ver_ficha_tecnica').click(function() {
