@@ -22,6 +22,10 @@ graficoLineas = function(ubicacion, datos, colorChosen, categoryChoosen) {
     if ($('#' + ubicacion + ' .max_y') != null && $('#' + ubicacion + ' .max_y').val() == 'rango_alertas')
         max_y = $('#' + ubicacion + ' .titulo_indicador').attr('data-max_rango');
 
+    // Tiene meta?
+    var meta = parseFloat($('#' + ubicacion ).attr("meta"));
+    max_y = (meta >0 && max_y < meta) ? meta : max_y;
+    
     var yScale = d3.scale.linear()
             .domain([0, max_y])
             .range([height, 0]);
@@ -132,6 +136,18 @@ graficoLineas = function(ubicacion, datos, colorChosen, categoryChoosen) {
             .attr('font-size', 14)
             .attr('fill', '#000')
         ;
+        
+        if(meta>0)
+        {
+            svg.append("line")
+                .attr("x1", 70)
+                .attr("y1", height-((height*meta)/max_y)+18)
+                .attr("x2", width+80)
+                .attr("y2", height-((height*meta)/max_y)+18)
+                .attr("stroke-width", 1)
+                .style("stroke-dasharray",("5","5"))
+                .attr("stroke", "steelblue");
+        }
         
         plot.selectAll(".dot").on("click", function(d, i) {
             descenderNivelDimension(ubicacion, d.category);

@@ -28,6 +28,10 @@ graficoColumnas = function(ubicacion, datos, colorChosen, categoryChoosen) {
     });
     if ($('#' + ubicacion + ' .max_y') != null && $('#' + ubicacion + ' .max_y').val() == 'rango_alertas')
         max_y = $('#' + zona + ' .titulo_indicador').attr('data-max_rango');
+    
+    // Tiene meta?
+    var meta = parseFloat($('#' + ubicacion ).attr("meta"));
+    max_y = (meta >0 && max_y < meta) ? meta : max_y;
 
     var yScale = d3.scale.linear()
             .domain([0, max_y])
@@ -117,7 +121,19 @@ graficoColumnas = function(ubicacion, datos, colorChosen, categoryChoosen) {
             .style("font-family", "Arial, Helvetica, sans-serif")			
             .attr('font-size', 14)
             .attr('fill', '#000')
-        ;
+        ;                
+        
+        if(meta>0)
+        {
+            svg.append("line")
+                .attr("x1", 40)
+                .attr("y1", height-((height*meta)/max_y)+5)
+                .attr("x2", width+50)
+                .attr("y2", height-((height*meta)/max_y)+5)
+                .attr("stroke-width", 1)
+                .style("stroke-dasharray",("5","5"))
+                .attr("stroke", "steelblue");
+        }
         
         plot.selectAll("rect").on("click", function(d, i) {
             descenderNivelDimension(ubicacion, d.category);
