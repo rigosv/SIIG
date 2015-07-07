@@ -31,7 +31,7 @@ function colores_alertas(zona, indice, i) {
 }
 
 function dibujarGraficoPrincipal(zona, tipo) {
-    $('#opciones_dimension_' + zona + ' .dimension').html($('#opciones_dimension_' + zona + ' .dimensiones option:selected').html());
+    $('#' + zona + ' .dimension').html($('#opciones_dimension_' + zona + ' .dimensiones option:selected').html());
     cerrarMenus();
     var grafico = crearGraficoObj(zona, tipo);
 
