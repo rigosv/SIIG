@@ -604,11 +604,11 @@ class FormularioRepository extends EntityRepository {
         if ($area != 'ga_variables' and $area != 'ga_compromisosFinancieros' and $area != 'ga_distribucion' and $area != 'almacen_datos'){
             $origenes = $this->getOrigenes($Frm->getOrigenDatos());
             $campo = 'id_origen_dato';
+            $tabla = 'costos.fila_origen_dato_'.strtolower($area);
         } else {
             $origenes = array($Frm->getId());
             $campo = 'id_formulario';
-            $area_aux = 'ga';
-            $tabla =  ($area == 'almacen_datos') ? 'almacen_datos.repositorio' : 'costos.fila_origen_dato_'.strtolower($area_aux);
+            $tabla =  ($area == 'almacen_datos') ? 'almacen_datos.repositorio' : 'costos.fila_origen_dato_ga';
         }
 
         $datosObj = json_decode($request->get('fila'));
