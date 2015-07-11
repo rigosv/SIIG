@@ -121,3 +121,8 @@ div.popover-content, div.popover-title{
     overflow-y: auto;
     border: 1px green solid; 
 }
+
+.content {
+    overflow: auto;
+    padding: 0 10px;
+}
