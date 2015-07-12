@@ -349,7 +349,8 @@ function dibujarControles(zona, datos) {
     
     var msj_favoritos = '',
         icon_favoritos = '';
-    var combo_dimensiones = trans.cambiar_dimension + ":<SELECT class='dimensiones' name='dimensiones'>";
+    var combo_dimensiones = trans.cambiar_dimension + ":<SELECT class='dimensiones' id= '"+zona+"_dimensiones' name='dimensiones'>";
+    
     $.each(datos.dimensiones, function(codigo, datosDimension) {
         combo_dimensiones += "<option value='" + codigo + "' data-escala='" + datosDimension.escala +
                 "' data-x='" + datosDimension.origenX +
@@ -389,6 +390,9 @@ function dibujarControles(zona, datos) {
                 '<button class="btn btn-info" data-toggle="modal" data-target="#opciones_dimension_'+zona+'" title="' + trans.dimension_opciones + '">' +            
                     '<span class="glyphicon glyphicon-check"></span>' +
                 '</button>'+
+                '<button class="btn btn-info refrescar"  title="' + trans._recargar_ + '" data-id="'+datos.id_indicador+'">' +
+                    '<i class="glyphicon glyphicon-refresh"></i>' +
+                '</button>';
             '</DIV>';    
                 
     var combo_ordenar_por_dimension = trans.ordenar_x + ": <SELECT class='form-control  ordenar_dimension'>" +
@@ -691,6 +695,12 @@ function dibujarControles(zona, datos) {
                     $('#myModal2').modal('show');
                 }, 'html');
     });
+    
+    $('#' + zona + ' .refrescar').click(function() {
+        $(".zona_actual").removeClass('zona_actual');
+        $("#"+(zona)).addClass('zona_actual');
+        recuperarDimensiones($(this).attr('data-id'), null);
+    });
 }
 
 function setTiposGraficos(zona) {
@@ -737,6 +747,8 @@ function limpiarZona(zona) {
     $('#' + zona + ' .controles').html('');
     $('#' + zona + ' .filtros_dimensiones').attr('data', '');
     $('#' + zona + ' .filtros_dimensiones').html('');
+    $('#opciones_dimension_'+zona).remove();
+    $('#opciones_'+zona).remove();
     $('#' + zona).attr('orden', null);
 }
 
