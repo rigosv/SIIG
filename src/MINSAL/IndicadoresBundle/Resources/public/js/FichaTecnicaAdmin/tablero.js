@@ -59,6 +59,7 @@ $.fn.modal.Constructor.prototype.enforceFocus = function() {};
     } else {
         //Activar los filtros de búsqueda
         $("#FiltroNoClasificados").searchFilter({targetSelector: ".indicador", charCount: 2});
+        $("#FiltroSala").searchFilter({targetSelector: ".salas", charCount: 2});
     }
 
     if ($('#ocultar_menu_principal').val() == 1) {

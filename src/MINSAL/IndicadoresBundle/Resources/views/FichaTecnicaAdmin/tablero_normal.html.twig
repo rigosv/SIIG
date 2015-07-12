@@ -30,25 +30,30 @@
         </div>
         <div class="content tab-pane" id="opciones_sala">
             <div class="panel-group" id="accordion1">
-                <div class="btn-group">
-                    <a class='btn btn-success' role="button" href="#myModal" data-toggle="modal">
-                        <span class="glyphicon glyphicon-save"></span>
-                        {{'_guardar_sala_'|trans}}
-                    </a>
-                    <a class='btn btn-success' role="button" id="aCollapseOne" href="#" >
-                        <span class="glyphicon glyphicon-transfer"></span>
-                        {{'_ocultar/mostrar_menu_principal_'|trans}}
-                    </a>
-                </div><br/><br/>                                
+                <div class="input-group">
+                    <div class="input-group-btn">
+                        <a class='btn btn-success' role="button" href="#myModal" data-toggle="modal">
+                            <span class="glyphicon glyphicon-save"></span>
+                            {{'_guardar_sala_'|trans}}
+                        </a>
+                        <a class='btn btn-success' role="button" id="aCollapseOne" href="#" >
+                            <span class="glyphicon glyphicon-transfer"></span>
+                            {{'_ocultar/mostrar_menu_principal_'|trans}}
+                        </a>
+                    </div>
+                    <input  type="search" class="form-control" id='FiltroSala' placeholder="{{'_buscar_sala_'|trans}}...">
+                    <span class="glyphicon glyphicon-search form-control-feedback" ></span>
+                </div>                
+                <br/><br/>                                
                 <ul class='list-group'>
-                    {% for sala in salas %}                                   
-                        <li class='list-group-item'>
+                    {% for sala in salas %}
+                        <li class='salas list-group-item'>
                             <A href="{{url('tablero_sala', {sala: sala.datos_sala.id, _sonata_admin: 'sonata.admin.ficha'})}}">
                                 <button class="btn btn-info btn-bg " type="button" title='{{'_reporte_sala_'|trans}}'>
                                       <span class="glyphicon glyphicon-file"></span>                                                
                                 </button>
                             </A>
-                            <A class='salas-id ' sala-id='{{sala.datos_sala.id}}' sala-nombre='{{sala.datos_sala.nombre}}'  data="{{sala.indicadores_sala|json_encode()}}">{{sala.datos_sala.nombre}}</A>                            
+                            <A class='salas-id' sala-id='{{sala.datos_sala.id}}' sala-nombre='{{sala.datos_sala.nombre}}'  data="{{sala.indicadores_sala|json_encode()}}">{{sala.datos_sala.nombre}}</A>                            
                         </li>
                     {% endfor %}
                 </ul>
