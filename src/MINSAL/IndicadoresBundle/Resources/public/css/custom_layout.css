@@ -47,11 +47,6 @@
         width: 80%;
     }
 
-}    
-@media (min-width: 979px) {
-    body.sonata-bc {
-        padding-top: 10px;
-    }
 }
 
 .editable{

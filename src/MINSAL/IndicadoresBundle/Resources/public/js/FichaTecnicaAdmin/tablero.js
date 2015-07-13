@@ -63,10 +63,10 @@ $.fn.modal.Constructor.prototype.enforceFocus = function() {};
     }
 
     if ($('#ocultar_menu_principal').val() == 1) {
-        $('#collapseOne').toggle();
+        $('.main-header').toggle();
     }
     $('#aCollapseOne').click(function() {
-        $('#collapseOne').toggle();
+        $('.main-header').toggle();
     });
 
 
