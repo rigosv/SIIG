@@ -1,0 +1,17 @@
+{% extends 'IndicadoresBundle:CRUD:edit.html.twig' %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('bundles/costos/js/jqwidgets/jqxcore.js') }}" type="text/javascript"></script>    
+    <script src="{{ asset('bundles/costos/js/jqwidgets/jqxdata.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('bundles/costos/js/jqwidgets/jqxbuttons.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('bundles/costos/js/jqwidgets/jqxscrollbar.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('bundles/costos/js/jqwidgets/jqxtree.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('bundles/costos/js/Estructura/estructura_edit.js') }}" type="text/javascript"></script>
+{% endblock %}
+
+{% block stylesheets %}    
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('bundles/costos/js/jqwidgets/styles/jqx.base.css') }}" type="text/css" media="all" />
+    <link rel="stylesheet" href="{{ asset('bundles/costos/js/jqwidgets/styles/jqx.energyblue.css') }}" type="text/css" media="all" />
+{% endblock %}

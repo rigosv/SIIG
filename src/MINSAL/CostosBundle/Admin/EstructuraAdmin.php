@@ -23,7 +23,7 @@ class EstructuraAdmin extends Admin
             ->add('parent', null, array('label' => $this->getTranslator()->trans('_unidad_superior_'),
                     'required' => false, 'expanded' => false,
                     'class' => 'CostosBundle:Estructura',
-                    'property' => 'codigoNombre',
+                    'property' => 'nombre',
                     'query_builder' => function ($repository) {                        
                         return $repository->createQueryBuilder('e')
                                 ->add('orderBy','e.codigo');
@@ -90,4 +90,15 @@ class EstructuraAdmin extends Admin
         }
     }
     
+    public function getTemplate($name)
+    {
+        switch ($name) {
+            case 'edit':
+                return 'CostosBundle:CRUD:estructura-edit.html.twig';
+                break;
+            default:
+                return parent::getTemplate($name);
+                break;
+        }
+    }
 }
