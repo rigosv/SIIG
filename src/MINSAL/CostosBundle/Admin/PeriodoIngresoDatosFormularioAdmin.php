@@ -15,8 +15,8 @@ class PeriodoIngresoDatosFormularioAdmin extends Admin
         $formMapper
             ->add('usuario', null, array('label'=> $this->getTranslator()->trans('_usuario_')))
             ->add('formulario', null, array('label'=> $this->getTranslator()->trans('_formulario_')))
-            ->add('unidad', null, array('label'=> $this->getTranslator()->trans('_unidad_')))
             ->add('periodo', null, array('label'=> $this->getTranslator()->trans('_periodo_ingreso_')))
+            ->add('unidad', null, array('label'=> $this->getTranslator()->trans('_unidad_')))            
         ;
     }
 
@@ -45,5 +45,17 @@ class PeriodoIngresoDatosFormularioAdmin extends Admin
     {
         $actions = parent::getBatchActions();
         $actions['delete'] = null;
+    }
+    
+    public function getTemplate($name)
+    {
+        switch ($name) {
+            case 'edit':
+                return 'CostosBundle:CRUD:periodoIngresoDatos-edit.html.twig';
+                break;
+            default:
+                return parent::getTemplate($name);
+                break;
+        }
     }
 }
