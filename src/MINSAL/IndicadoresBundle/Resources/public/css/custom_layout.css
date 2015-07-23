@@ -184,3 +184,20 @@ body {
     -moz-box-shadow: -4px 8px 8px -7px rgba(33,24,102,1);
     box-shadow: -4px 8px 8px -7px rgba(33,24,102,1);
 }
+
+#div_cargando{
+    position: fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    /* Para CSS3 */
+    background: rgba(98, 135, 167, .4);
+    /* IE8*/
+    filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#886287a7', endColorstr='#886287a7');
+    /* anteriores a IE8 */
+    -ms-filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#886287a7', endColorstr='#886287a7');
+
+    display:none;
+    z-index:10000;
+}
