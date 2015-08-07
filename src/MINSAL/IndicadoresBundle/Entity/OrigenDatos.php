@@ -87,7 +87,7 @@ class OrigenDatos
      */
     protected $nombreCatalogo;
 
-    /**u
+    /**
      * @var string $camposFusionados
      *
      * @ORM\Column(name="campos_fusionados", type="text", nullable=true)
@@ -114,6 +114,11 @@ class OrigenDatos
      * @ORM\OneToMany(targetEntity="Campo", mappedBy="origenDato")
      */
     private $campos;
+    
+    /**
+     * @ORM\ManyToOne(targetEntity="Campo")
+     * */
+    private $campoLecturaIncremental;
 
     /**
      * @ORM\OneToMany(targetEntity="VariableDato", mappedBy="origenDatos")
@@ -593,5 +598,28 @@ class OrigenDatos
     public function getAreaCosteo()
     {
         return $this->areaCosteo;
+    }
+
+    /**
+     * Set campoLecturaIncremental
+     *
+     * @param \MINSAL\IndicadoresBundle\Entity\Campo $campoLecturaIncremental
+     * @return OrigenDatos
+     */
+    public function setCampoLecturaIncremental(\MINSAL\IndicadoresBundle\Entity\Campo $campoLecturaIncremental = null)
+    {
+        $this->campoLecturaIncremental = $campoLecturaIncremental;
+
+        return $this;
+    }
+
+    /**
+     * Get campoLecturaIncremental
+     *
+     * @return \MINSAL\IndicadoresBundle\Entity\Campo 
+     */
+    public function getCampoLecturaIncremental()
+    {
+        return $this->campoLecturaIncremental;
     }
 }

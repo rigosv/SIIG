@@ -20,6 +20,7 @@ class OrigenDatosAdmin extends Admin
     protected function configureFormFields(FormMapper $formMapper)
     {
         $esFusionado = $this->getSubject()->getEsFusionado();
+        $origenActual = $this->getSubject();
 
         $formMapper
                 ->tab($this->getTranslator()->trans('datos_generales'))
@@ -36,6 +37,21 @@ class OrigenDatosAdmin extends Admin
                     ->with('', array('class' => 'col-md-12'))
                         ->add('nombre', null, array('label' => $this->getTranslator()->trans('nombre')))
                         ->add('descripcion', null, array('label' => $this->getTranslator()->trans('descripcion'), 'required' => false))
+                        ->add('campoLecturaIncremental', null, array('label' => $this->getTranslator()->trans('_campo_lectura_incremental_'), 'expanded' => false,
+                            'class' => 'IndicadoresBundle:Campo',
+                            'query_builder' => function ($repository) use($origenActual) {
+                                if($origenActual->getId() == null){
+                                    //no mostrar campos hasta que se guarde el origen
+                                    return $repository->createQueryBuilder('c')
+                                        ->where('1 = 2 ')
+                                            ;
+                                } else {
+                                    return $repository->createQueryBuilder('c')
+                                        ->where('c.origenDato = :origenActual ')
+                                        ->orderBy('c.nombre')
+                                        ->setParameter('origenActual', $origenActual);
+                                }
+                            }))
                     ->end()
                 ->end()
         ;
@@ -65,6 +81,17 @@ class OrigenDatosAdmin extends Admin
                         ->end()
                     ->end()
             ;
+        
+        $acciones = explode('/', $this->getRequest()->server->get("REQUEST_URI"));
+        $accion = array_pop($acciones);
+        if ($accion == 'create') {
+            $formMapper
+                    ->setHelps(array(
+                        'campoLecturaIncremental' => $this->getTranslator()->trans('_debe_guardar_para_ver_campos_')
+                    ))
+            ;
+        }
+        
     }
 
     protected function configureDatagridFilters(DatagridMapper $datagridMapper)

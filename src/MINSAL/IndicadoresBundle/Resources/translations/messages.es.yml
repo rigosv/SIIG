@@ -368,3 +368,5 @@ _general_: General
 _meta_: Meta
 _buscar_sala_: Buscar sala
 _recargar_: Recargar
+_campo_lectura_incremental_ : Campo para lectura incremental
+_debe_guardar_para_ver_campos_: Debe guardar para ver los campos disponibles

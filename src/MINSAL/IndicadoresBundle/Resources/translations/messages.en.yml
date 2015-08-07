@@ -366,3 +366,5 @@ _clasificacion_: Classification
 _meta_: Goal
 _buscar_sala_: Find Room
 _recargar_: Reload
+_campo_lectura_incremental_ : Incremental reading field
+_debe_guardar_para_ver_campos_: You must save to see the available fields
