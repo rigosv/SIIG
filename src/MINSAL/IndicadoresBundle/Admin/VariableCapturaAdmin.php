@@ -51,6 +51,7 @@ class VariableCapturaAdmin extends Admin
                 ->addIdentifier('codigo', null, array('label' => $this->getTranslator()->trans('_codigo_')))
                 ->add('descripcion', null, array('label' => $this->getTranslator()->trans('_descripcion_')))
                 ->add('categoria', null, array('label' => $this->getTranslator()->trans('_categoria_')))
+                ->add('formulario', null, array('label' => $this->getTranslator()->trans('_formulario_')))
         ;
     }    
 
