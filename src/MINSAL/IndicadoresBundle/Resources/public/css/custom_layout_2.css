@@ -13,8 +13,12 @@
 .main-header .logo{
     float: none !important;
     width: 100%;
+    overflow: visible !important;
 }
 .navbar-static-top{
     margin-left: 0px !important;
     margin-top: 50px !important;
+}
+.input-group{
+    width: 100%;
 }
