@@ -20,6 +20,7 @@ class FormularioAdminController extends Controller
         $cantFrm = 1;
         // Si es el código de formulario de captura de datos, 
         // pueden haber varios formularios para el usuario
+        $periodosEstructura = array();
         if ($codigoFrm == 'captura_variables'){
             if ($periodo != '-1'){
                 //Si ya se eligió un periodo ya se puede determinar el formulario, seleccionado
