@@ -489,7 +489,7 @@ class FormularioRepository extends EntityRepository {
                                     B.codigo, B.descripcion,  COALESCE(A.es_poblacion::varchar,'')]
                             ) 
                         FROM variable_captura A 
-                            INNER JOIN categoria_variable_captura B ON (A.id_categoria_captura = B.id)                             
+                            INNER JOIN categoria_variable_captura B ON (A.id_categoria_captura = B.id)
                         WHERE 
                              (".$Frm->getId(). ", A.codigo, '".$this->parametros['anio']."', '".$this->parametros['establecimiento']."' )
                                 NOT IN 
@@ -504,10 +504,16 @@ class FormularioRepository extends EntityRepository {
             $orden = "ORDER BY datos->'es_poblacion' DESC, datos->'descripcion_categoria_variable', datos->'descripcion_variable'";
             $em->getConnection()->executeQuery($sql);
             
+            //Actualizar los datos de las variables ya existentes
             $sql = " UPDATE almacen_datos.repositorio 
-                        SET datos = datos ||('\"ayuda\"=>'||'\"'||COALESCE(variable_captura.texto_ayuda,'')||'\"')::hstore 
-                        FROM variable_captura 
-                        WHERE almacen_datos.repositorio.datos->'codigo_variable' = variable_captura.codigo";
+                        SET datos = datos ||('\"ayuda\"=>'||'\"'||COALESCE(A.texto_ayuda,'')||'\"')::hstore 
+                            ||('\"codigo_categoria_variable\"=>'||'\"'||COALESCE(B.codigo,'')||'\"')::hstore 
+                            ||('\"descripcion_categoria_variable\"=>'||'\"'||COALESCE(B.descripcion,'')||'\"')::hstore
+                            ||('\"es_poblacion\"=>'||'\"'||COALESCE(A.es_poblacion::varchar,'')||'\"')::hstore
+                            ||('\"descripcion_variable\"=>'||'\"'||COALESCE(A.descripcion,'')||'\"')::hstore
+                        FROM variable_captura A
+                            INNER JOIN categoria_variable_captura B ON (A.id_categoria_captura = B.id)
+                        WHERE almacen_datos.repositorio.datos->'codigo_variable' = A.codigo";
             $em->getConnection()->executeQuery($sql);
         }
         if ($area == 'ga_compromisosFinancieros'){
