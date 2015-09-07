@@ -94,8 +94,8 @@ class GuardarRegistroOrigenDatoConsumer implements ConsumerInterface
                     $sql = "DELETE 
                                 FROM $tabla 
                                 WHERE id_origen_dato='$msg[id_origen_dato]'  
-                                    AND datos->'$msg[campo_lectura_incremental]' >= $msg[ultima_lectura_incremental]
-                                    AND datos->'$msg[campo_lectura_incremental]' <= $msg[ultima_lectura]
+                                    AND datos->'$msg[campo_lectura_incremental]' >= '$msg[ultima_lectura_incremental]'
+                                    AND datos->'$msg[campo_lectura_incremental]' <= '$msg[ultima_lectura]'
                                     ;
                         INSERT INTO $tabla SELECT * FROM fila_origen_dato_aux WHERE id_origen_dato='$msg[id_origen_dato]';
                         DELETE FROM fila_origen_dato_aux WHERE id_origen_dato='$msg[id_origen_dato]' ;

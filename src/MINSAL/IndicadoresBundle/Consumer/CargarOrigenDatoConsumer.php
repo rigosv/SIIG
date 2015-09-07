@@ -45,11 +45,11 @@ class CargarOrigenDatoConsumer implements ConsumerInterface
                 $ventana_inf = ($origenDato->getVentanaLimiteInferior() == null) ? 0 : $origenDato->getVentanaLimiteInferior();
                 $ventana_sup = ($origenDato->getVentanaLimiteSuperior() == null) ? 0 : $origenDato->getVentanaLimiteSuperior();
                                 
-                $ultimaLecturaIncremental->sub(new DateInterval('P'.$ventana_inf.''));
-                $ahora->sub(new DateInterval('P'.$ventana_sup.''));
+                $ultimaLecturaIncremental->sub(new \DateInterval('P'.$ventana_inf.'D'));
+                $fecha->sub(new \DateInterval('P'.$ventana_sup.'D'));
                 
-                $condicion_carga_incremental = " AND $campoLecturaIncremental >= $ultimaLecturaIncremental 
-                                                 AND $campoLecturaIncremental <= $ahora ";
+                $condicion_carga_incremental = " AND $campoLecturaIncremental >= '".$ultimaLecturaIncremental->format('Y-m-d H:i:s')."'
+                                                 AND $campoLecturaIncremental <= '".$fecha->format('Y-m-d H:i:s')."' ";
             }
             $orden = " ORDER BY $campoLecturaIncremental ";            
         }
@@ -109,14 +109,14 @@ class CargarOrigenDatoConsumer implements ConsumerInterface
             'method' => 'DELETE',
             'ultima_lectura' => $ahora,
             'es_lectura_incremental' => $esLecturaIncremental,
-            'ultima_lectura_incremental' => $ultimaLecturaIncremental,            
+            'ultima_lectura_incremental' => $ultimaLecturaIncremental->format('Y-m-d H:i:s'),            
             'campo_lectura_incremental' => $campoLecturaIncremental
         );
         $this->container->get('old_sound_rabbit_mq.guardar_registro_producer')
                 ->publish(serialize($msg_guardar));
-        
-        $origenDato->setUltimaActualizacion($ahora);
-        $origenDato->flush();
+                
+        $origenDato->setUltimaActualizacion($fecha);
+        $em->flush();
         return true;
     }
 
