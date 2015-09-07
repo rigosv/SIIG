@@ -395,7 +395,7 @@ class FichaTecnicaRepository extends EntityRepository {
                     $tipos[$campo->getSignificado()->getCodigo()] = $campo->getTipoCampo()->getCodigo();
                 }
                 foreach ($significados as $sig) {
-                    $sig_ = str_replace("'", '', $sig);
+                    $sig_ = trim(str_replace("'", '', $sig));
                     $significado = $em->getRepository('IndicadoresBundle:SignificadoCampo')->findOneBy(array('codigo' => $sig_));
                     $llave = $significado->getCodigo() . '-' . $tipos[$sig_];
                     $origen_campos[$origenDato[$k]->getId()][$llave]['significado'] = $sig_;

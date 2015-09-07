@@ -3,6 +3,7 @@
 namespace MINSAL\IndicadoresBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * MINSAL\IndicadoresBundle\Entity\OrigenDatos
@@ -119,6 +120,44 @@ class OrigenDatos
      * @ORM\ManyToOne(targetEntity="Campo")
      * */
     private $campoLecturaIncremental;
+    
+    /**
+     * @var datetime ultimaActualizacion
+     *
+     * @ORM\Column(name="ultima_actualizacion", type="datetime", nullable=true)
+     */
+    private $ultimaActualizacion;
+    
+    /**
+     * @var integer $ventana_limite_inferior
+     *
+     * @ORM\Column(name="ventana_limite_inferior", type="integer", nullable=true)
+     * 
+     * @Assert\Type(
+     *     type="integer"
+     * )
+     *  @Assert\GreaterThanOrEqual(
+     *     value = 0
+     * )
+     *
+     */
+    private $ventanaLimiteInferior;
+    
+    /**
+     * @var integer $ventana_limite_superior
+     *
+     * @ORM\Column(name="ventana_limite_superior", type="integer", nullable=true)
+     * 
+     * @Assert\Type(
+     *     type="integer"
+     * )
+     *  @Assert\GreaterThanOrEqual(
+     *     value = 0
+     * )
+     *
+     */
+    private $ventanaLimiteSuperior;
+    
 
     /**
      * @ORM\OneToMany(targetEntity="VariableDato", mappedBy="origenDatos")
@@ -130,6 +169,8 @@ class OrigenDatos
         $this->fusiones = new \Doctrine\Common\Collections\ArrayCollection();
         $this->conexiones = new \Doctrine\Common\Collections\ArrayCollection();
         $this->esCatalogo = false;
+        $this->ventanaLimiteInferior = 0;
+        $this->ventanaLimiteSuperior = 0;
     }
 
     public function getAbsolutePath()
@@ -621,5 +662,74 @@ class OrigenDatos
     public function getCampoLecturaIncremental()
     {
         return $this->campoLecturaIncremental;
+    }
+
+    /**
+     * Set ultimaActualizacion
+     *
+     * @param \DateTime $ultimaActualizacion
+     * @return OrigenDatos
+     */
+    public function setUltimaActualizacion($ultimaActualizacion)
+    {
+        $this->ultimaActualizacion = $ultimaActualizacion;
+
+        return $this;
+    }
+
+    /**
+     * Get ultimaActualizacion
+     *
+     * @return \DateTime 
+     */
+    public function getUltimaActualizacion()
+    {
+        return $this->ultimaActualizacion;
+    }
+
+    /**
+     * Set VentanaLimiteInferior
+     *
+     * @param integer $ventanaLimiteInferior
+     * @return OrigenDatos
+     */
+    public function setVentanaLimiteInferior($ventanaLimiteInferior)
+    {
+        $this->ventanaLimiteInferior = $ventanaLimiteInferior;
+
+        return $this;
+    }
+
+    /**
+     * Get VentanaLimiteInferior
+     *
+     * @return integer 
+     */
+    public function getVentanaLimiteInferior()
+    {
+        return $this->ventanaLimiteInferior;
+    }
+
+    /**
+     * Set VentanaLimiteSuperior
+     *
+     * @param integer $ventanaLimiteSuperior
+     * @return OrigenDatos
+     */
+    public function setVentanaLimiteSuperior($ventanaLimiteSuperior)
+    {
+        $this->ventanaLimiteSuperior = $ventanaLimiteSuperior;
+
+        return $this;
+    }
+
+    /**
+     * Get VentanaLimiteSuperior
+     *
+     * @return integer 
+     */
+    public function getVentanaLimiteSuperior()
+    {
+        return $this->ventanaLimiteSuperior;
     }
 }

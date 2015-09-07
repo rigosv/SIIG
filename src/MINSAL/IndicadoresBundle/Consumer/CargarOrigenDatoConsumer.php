@@ -30,7 +30,30 @@ class CargarOrigenDatoConsumer implements ConsumerInterface
 
         //Leeré los datos en grupos de 10,000
         $tamanio = 10000;
-
+        
+        //Verificar si elorigen de datos tiene un campo para lectura incremental
+        $campoLecturaIncremental = $origenDato->getCampoLecturaIncremental();
+        $condicion_carga_incremental = "";
+        $ultimaLecturaIncremental = null;
+        $esLecturaIncremental = ($campoLecturaIncremental == null) ? false: true;
+        $orden = " ";
+        if ($esLecturaIncremental){
+            //tomar la fecha de la última actualización del origen
+            $ultimaLecturaIncremental = $origenDato->getUltimaActualizacion();
+            if ($ultimaLecturaIncremental != null ){
+               //Ya se realizó al menos una carga, a partir de la segunda leer solo el incremento
+                $ventana_inf = ($origenDato->getVentanaLimiteInferior() == null) ? 0 : $origenDato->getVentanaLimiteInferior();
+                $ventana_sup = ($origenDato->getVentanaLimiteSuperior() == null) ? 0 : $origenDato->getVentanaLimiteSuperior();
+                                
+                $ultimaLecturaIncremental->sub(new DateInterval('P'.$ventana_inf.''));
+                $ahora->sub(new DateInterval('P'.$ventana_sup.''));
+                
+                $condicion_carga_incremental = " AND $campoLecturaIncremental >= $ultimaLecturaIncremental 
+                                                 AND $campoLecturaIncremental <= $ahora ";
+            }
+            $orden = " ORDER BY $campoLecturaIncremental ";            
+        }
+        
         if ($origenDato->getSentenciaSql() != '') {
             $sql = $origenDato->getSentenciaSql();
             foreach ($origenDato->getConexiones() as $cnx) {
@@ -39,13 +62,33 @@ class CargarOrigenDatoConsumer implements ConsumerInterface
                 $nombre_conexion = $cnx->getNombreConexion();
                 while ($leidos >= $tamanio) {
                     if ($cnx->getIdMotor()->getCodigo() == 'oci8' ) {
-                        $sql_aux = 'SELECT * FROM (' . $sql . ')  sqlOriginal '.
+                        $sql_aux = ($esLecturaIncremental) ? 
+                                "SELECT * FROM ( $sql )  sqlOriginal 
+                                    WHERE  1 = 1
+                                        $condicion_carga_incremental
+                                        AND ROWNUM >= " . $i * $tamanio . ' AND ROWNUM < '.  ($tamanio * ($i + 1)).
+                                    $orden
+                                :
+                                'SELECT * FROM (' . $sql . ')  sqlOriginal '.
                             'WHERE ROWNUM >= ' . $i * $tamanio . ' AND ROWNUM < '.  ($tamanio * ($i + 1));
+                        
                     }elseif($cnx->getIdMotor()->getCodigo() == 'pdo_dblib'){
-                        $sql_aux = $sql;                        
+                        $sql_aux = ($esLecturaIncremental) ? 
+                                "SELECT * FROM ( $sql )  sqlOriginal 
+                                    WHERE 1 = 1
+                                    $condicion_carga_incremental
+                                    $orden "
+                                :  $sql;                       
                     }
                     else {
-                        $sql_aux = $sql . ' LIMIT ' . $tamanio . ' OFFSET ' . $i * $tamanio;
+                        $sql_aux = ($esLecturaIncremental) ? 
+                                    "SELECT * FROM ( $sql) sqlOriginal 
+                                        WHERE 1 = 1
+                                        $condicion_carga_incremental
+                                        $orden
+                                        LIMIT " . $tamanio . ' OFFSET ' . $i * $tamanio 
+                                    :
+                                    $sql . ' LIMIT ' . $tamanio . ' OFFSET ' . $i * $tamanio;;
                     }
 
                     $datos = $em->getRepository('IndicadoresBundle:OrigenDatos')->getDatos($sql_aux, $cnx);
@@ -64,11 +107,16 @@ class CargarOrigenDatoConsumer implements ConsumerInterface
         //Después de enviados todos los registros para guardar, mandar mensaje para borrar los antiguos
         $msg_guardar = array('id_origen_dato' => $idOrigen,
             'method' => 'DELETE',
-            'ultima_lectura' => $ahora
+            'ultima_lectura' => $ahora,
+            'es_lectura_incremental' => $esLecturaIncremental,
+            'ultima_lectura_incremental' => $ultimaLecturaIncremental,            
+            'campo_lectura_incremental' => $campoLecturaIncremental
         );
         $this->container->get('old_sound_rabbit_mq.guardar_registro_producer')
                 ->publish(serialize($msg_guardar));
-
+        
+        $origenDato->setUltimaActualizacion($ahora);
+        $origenDato->flush();
         return true;
     }
 

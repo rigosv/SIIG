@@ -36,22 +36,7 @@ class OrigenDatosAdmin extends Admin
                 ->tab($this->getTranslator()->trans('datos_generales'), array('collapsed' => false))
                     ->with('', array('class' => 'col-md-12'))
                         ->add('nombre', null, array('label' => $this->getTranslator()->trans('nombre')))
-                        ->add('descripcion', null, array('label' => $this->getTranslator()->trans('descripcion'), 'required' => false))
-                        ->add('campoLecturaIncremental', null, array('label' => $this->getTranslator()->trans('_campo_lectura_incremental_'), 'expanded' => false,
-                            'class' => 'IndicadoresBundle:Campo',
-                            'query_builder' => function ($repository) use($origenActual) {
-                                if($origenActual->getId() == null){
-                                    //no mostrar campos hasta que se guarde el origen
-                                    return $repository->createQueryBuilder('c')
-                                        ->where('1 = 2 ')
-                                            ;
-                                } else {
-                                    return $repository->createQueryBuilder('c')
-                                        ->where('c.origenDato = :origenActual ')
-                                        ->orderBy('c.nombre')
-                                        ->setParameter('origenActual', $origenActual);
-                                }
-                            }))
+                        ->add('descripcion', null, array('label' => $this->getTranslator()->trans('descripcion'), 'required' => false))                        
                     ->end()
                 ->end()
         ;
@@ -79,7 +64,7 @@ class OrigenDatosAdmin extends Admin
                             ->add('archivoNombre', null, array('label' => $this->getTranslator()->trans('archivo_asociado'), 'required' => false, 'read_only' => true))
                             ->add('file', 'file', array('label' => $this->getTranslator()->trans('subir_nuevo_archivo'), 'required' => false))
                         ->end()
-                    ->end()
+                    ->end()                    
             ;
         
         $acciones = explode('/', $this->getRequest()->server->get("REQUEST_URI"));
@@ -90,7 +75,41 @@ class OrigenDatosAdmin extends Admin
                         'campoLecturaIncremental' => $this->getTranslator()->trans('_debe_guardar_para_ver_campos_')
                     ))
             ;
+        }else {
+            $formMapper
+                    ->tab($this->getTranslator()->trans('_carga_incremental_'), array('collapsed' => true))
+                        ->with('', array('class' => 'col-md-12'))
+                            ->add('campoLecturaIncremental', null, array('label' => $this->getTranslator()->trans('_campo_lectura_incremental_'), 'expanded' => false,
+                                'class' => 'IndicadoresBundle:Campo',
+                                'query_builder' => function ($repository) use($origenActual) {
+                                    if($origenActual->getId() == null){
+                                        //no mostrar campos hasta que se guarde el origen
+                                        return $repository->createQueryBuilder('c')
+                                            ->where('1 = 2 ')
+                                                ;
+                                    } else {
+                                        return $repository->createQueryBuilder('c')
+                                            ->where('c.origenDato = :origenActual ')
+                                            ->orderBy('c.nombre')
+                                            ->setParameter('origenActual', $origenActual);
+                                    }
+                                }                                
+                                ))
+                            ->add('ventanaLimiteInferior', null, array('label' => $this->getTranslator()->trans('_ventana_limite_inferior_'), 'required' => false))
+                            ->add('ventanaLimiteSuperior', null, array('label' => $this->getTranslator()->trans('_ventana_limite_superior_'), 'required' => false))
+                        ->end()
+                    ->end()
+                    ->setHelps(array(
+                        'campoLecturaIncremental' => $this->getTranslator()->trans('_debe_ser_tipo_fecha_'). '<BR/><IMG src="/bundles/indicadores/images/carga_incremental.png" />'
+                    ))
+            ;
         }
+        
+        $formMapper
+            ->setHelps(array(
+                'ventanaLimiteInferior' => $this->getTranslator()->trans('_ayuda_ventana_limite_inferior_'),
+                'ventanaLimiteSuperior' => $this->getTranslator()->trans('_ayuda_ventana_limite_superior_')
+            ));
         
     }
 
@@ -199,6 +218,8 @@ class OrigenDatosAdmin extends Admin
         $this->setNombreCatalogo($origenDato);
 
         $this->guardarDrescripcion($origenDato);
+        $origenDato->setVentanaLimiteInferior(0);
+        $origenDato->setVentanaLimiteSuperior(0);
     }
 
     public function preUpdate($origenDato)

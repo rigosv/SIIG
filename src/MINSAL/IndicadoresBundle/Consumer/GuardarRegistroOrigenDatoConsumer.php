@@ -90,11 +90,23 @@ class GuardarRegistroOrigenDatoConsumer implements ConsumerInterface
                         DELETE FROM fila_origen_dato_aux WHERE id_origen_dato='$msg[id_origen_dato]'
                         ";
             } else {
-                //Borrar los datos existentes por el momento así será pero debería haber una forma de ir a traer solo los nuevos
-                $sql = "DELETE FROM $tabla WHERE id_origen_dato='$msg[id_origen_dato]'  ;
+                if ($msg['es_lectura_incremental']){
+                    $sql = "DELETE 
+                                FROM $tabla 
+                                WHERE id_origen_dato='$msg[id_origen_dato]'  
+                                    AND datos->'$msg[campo_lectura_incremental]' >= $msg[ultima_lectura_incremental]
+                                    AND datos->'$msg[campo_lectura_incremental]' <= $msg[ultima_lectura]
+                                    ;
                         INSERT INTO $tabla SELECT * FROM fila_origen_dato_aux WHERE id_origen_dato='$msg[id_origen_dato]';
                         DELETE FROM fila_origen_dato_aux WHERE id_origen_dato='$msg[id_origen_dato]' ;
                         ";
+                }
+                else {
+                    $sql = "DELETE FROM $tabla WHERE id_origen_dato='$msg[id_origen_dato]'  ;
+                        INSERT INTO $tabla SELECT * FROM fila_origen_dato_aux WHERE id_origen_dato='$msg[id_origen_dato]';
+                        DELETE FROM fila_origen_dato_aux WHERE id_origen_dato='$msg[id_origen_dato]' ;
+                        ";
+                }
             }
             $this->em->getConnection()->exec($sql);
             $this->em->getConnection()->commit();
