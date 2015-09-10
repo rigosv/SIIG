@@ -368,4 +368,9 @@ _buscar_sala_: Find Room
 _recargar_: Reload
 _campo_lectura_incremental_ : Incremental reading field
 _debe_guardar_para_ver_campos_: You must save to see the available fields
-_debe_ser_tipo_fecha_: You must choose a type date field
+_debe_ser_tipo_fecha_: You must choose a type date or year field
+_carga_incremental_: Incremental load
+_ventana_limite_inferior_: Lower limit
+_ventana_limite_superior_: Upper limit
+_ayuda_ventana_limite_inferior_: Number of days before the last date reading from where the data is read (number of years if the field to load incremental is year)
+_ayuda_ventana_limite_superior_: 

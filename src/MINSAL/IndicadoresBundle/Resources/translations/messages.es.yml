@@ -370,9 +370,9 @@ _buscar_sala_: Buscar sala
 _recargar_: Recargar
 _campo_lectura_incremental_ : Campo para lectura incremental
 _debe_guardar_para_ver_campos_: Debe guardar para ver los campos disponibles
-_debe_ser_tipo_fecha_: Debe elegir un campo de tipo fecha
+_debe_ser_tipo_fecha_: Debe elegir un campo de tipo fecha o año
 _carga_incremental_: Carga incremental
 _ventana_limite_inferior_: Ventana límite inferior
 _ventana_limite_superior_: Ventana límite superior
-_ayuda_ventana_limite_inferior_: Número de días antes de la última fecha de lectura a partir de donde se leerán los datos
-_ayuda_ventana_limite_superior_: Número de días antes de la fecha actual hasta donde se realizará la lectura de datos
+_ayuda_ventana_limite_inferior_: Número de días antes de la última fecha de lectura a partir de donde se leerán los datos (número de años si el campo para carga incremental es año)
+_ayuda_ventana_limite_superior_: Número de días antes de la fecha actual hasta donde se realizará la lectura de datos (número de años si el campo para carga incremental es año)

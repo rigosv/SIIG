@@ -89,9 +89,13 @@ class OrigenDatosAdmin extends Admin
                                                 ;
                                     } else {
                                         return $repository->createQueryBuilder('c')
+                                            ->innerJoin('c.significado', 's')
                                             ->where('c.origenDato = :origenActual ')
+                                            ->andWhere('s.codigo = :codigoSignificado1 OR s.codigo = :codigoSignificado2')
                                             ->orderBy('c.nombre')
-                                            ->setParameter('origenActual', $origenActual);
+                                            ->setParameter('origenActual', $origenActual)
+                                            ->setParameter('codigoSignificado1', 'fecha')
+                                            ->setParameter('codigoSignificado2', 'anio');
                                     }
                                 }                                
                                 ))

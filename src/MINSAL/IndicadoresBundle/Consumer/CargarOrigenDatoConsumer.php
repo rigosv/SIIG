@@ -37,6 +37,8 @@ class CargarOrigenDatoConsumer implements ConsumerInterface
         $ultimaLecturaIncremental = null;
         $esLecturaIncremental = ($campoLecturaIncremental == null) ? false: true;
         $orden = " ";
+        $lim_inf= '';
+        $lim_sup =  '';
         if ($esLecturaIncremental){
             //tomar la fecha de la última actualización del origen
             $ultimaLecturaIncremental = $origenDato->getUltimaActualizacion();
@@ -45,17 +47,26 @@ class CargarOrigenDatoConsumer implements ConsumerInterface
                 $ventana_inf = ($origenDato->getVentanaLimiteInferior() == null) ? 0 : $origenDato->getVentanaLimiteInferior();
                 $ventana_sup = ($origenDato->getVentanaLimiteSuperior() == null) ? 0 : $origenDato->getVentanaLimiteSuperior();
                                 
-                $ultimaLecturaIncremental->sub(new \DateInterval('P'.$ventana_inf.'D'));
-                $fecha->sub(new \DateInterval('P'.$ventana_sup.'D'));
-                
-                $condicion_carga_incremental = " AND $campoLecturaIncremental >= '".$ultimaLecturaIncremental->format('Y-m-d H:i:s')."'
-                                                 AND $campoLecturaIncremental <= '".$fecha->format('Y-m-d H:i:s')."' ";
+                if ($campoLecturaIncremental->getSignificado()->getCodigo() == 'fecha'){                
+                    $ultimaLecturaIncremental->sub(new \DateInterval('P'.$ventana_inf.'D'));
+                    $fecha->sub(new \DateInterval('P'.$ventana_sup.'D'));
+                    $lim_inf= $ultimaLecturaIncremental->format('Y-m-d H:i:s');
+                    $lim_sup = $fecha->format('Y-m-d H:i:s');
+
+                } else {
+                    // Se está utilizando el campo año para la carga incremental
+                    $lim_inf = $ultimaLecturaIncremental->format('Y') - $ventana_inf ;
+                    $lim_sup = $fecha->format('Y') - $ventana_sup;
+                }
+                $condicion_carga_incremental = " AND $campoLecturaIncremental >= '$lim_inf'
+                                                     AND $campoLecturaIncremental <= '$lim_sup' ";
             }
             $orden = " ORDER BY $campoLecturaIncremental ";            
         }
         
         if ($origenDato->getSentenciaSql() != '') {
-            $sql = $origenDato->getSentenciaSql();
+            //$sql = $origenDato->getSentenciaSql();
+            $sql = $msg['sql'];
             foreach ($origenDato->getConexiones() as $cnx) {
                 $leidos = 10001;
                 $i = 0;
@@ -90,7 +101,7 @@ class CargarOrigenDatoConsumer implements ConsumerInterface
                                     :
                                     $sql . ' LIMIT ' . $tamanio . ' OFFSET ' . $i * $tamanio;;
                     }
-
+echo $sql_aux;
                     $datos = $em->getRepository('IndicadoresBundle:OrigenDatos')->getDatos($sql_aux, $cnx);
 
                     $this->enviarDatos($idOrigen, $datos, $campos_sig, $ahora, $nombre_conexion);
@@ -99,7 +110,7 @@ class CargarOrigenDatoConsumer implements ConsumerInterface
                     else $leidos = count($datos);
                     $i++;
                 }                
-            }
+            } 
         } else {
             $datos = $em->getRepository('IndicadoresBundle:OrigenDatos')->getDatos(null, null, $origenDato->getAbsolutePath());
             $this->enviarDatos($idOrigen, $datos, $campos_sig, $ahora, $nombre_conexion);
@@ -109,6 +120,8 @@ class CargarOrigenDatoConsumer implements ConsumerInterface
             'method' => 'DELETE',
             'ultima_lectura' => $ahora,
             'es_lectura_incremental' => $esLecturaIncremental,
+            'lim_inf'=> $lim_inf,
+            'lim_sup'=> $lim_sup,
             'ultima_lectura_incremental' => $ultimaLecturaIncremental->format('Y-m-d H:i:s'),            
             'campo_lectura_incremental' => $campoLecturaIncremental
         );
