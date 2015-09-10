@@ -31,39 +31,6 @@ class CargarOrigenDatoConsumer implements ConsumerInterface
         //Leeré los datos en grupos de 10,000
         $tamanio = 10000;
         
-        //Verificar si elorigen de datos tiene un campo para lectura incremental
-        $campoLecturaIncremental = $origenDato->getCampoLecturaIncremental();
-        $condicion_carga_incremental = "";
-        $ultimaLecturaIncremental = null;
-        $esLecturaIncremental = ($campoLecturaIncremental == null) ? false: true;
-        $orden = " ";
-        $lim_inf= '';
-        $lim_sup =  '';
-        if ($esLecturaIncremental){
-            //tomar la fecha de la última actualización del origen
-            $ultimaLecturaIncremental = $origenDato->getUltimaActualizacion();
-            if ($ultimaLecturaIncremental != null ){
-               //Ya se realizó al menos una carga, a partir de la segunda leer solo el incremento
-                $ventana_inf = ($origenDato->getVentanaLimiteInferior() == null) ? 0 : $origenDato->getVentanaLimiteInferior();
-                $ventana_sup = ($origenDato->getVentanaLimiteSuperior() == null) ? 0 : $origenDato->getVentanaLimiteSuperior();
-                                
-                if ($campoLecturaIncremental->getSignificado()->getCodigo() == 'fecha'){                
-                    $ultimaLecturaIncremental->sub(new \DateInterval('P'.$ventana_inf.'D'));
-                    $fecha->sub(new \DateInterval('P'.$ventana_sup.'D'));
-                    $lim_inf= $ultimaLecturaIncremental->format('Y-m-d H:i:s');
-                    $lim_sup = $fecha->format('Y-m-d H:i:s');
-
-                } else {
-                    // Se está utilizando el campo año para la carga incremental
-                    $lim_inf = $ultimaLecturaIncremental->format('Y') - $ventana_inf ;
-                    $lim_sup = $fecha->format('Y') - $ventana_sup;
-                }
-                $condicion_carga_incremental = " AND $campoLecturaIncremental >= '$lim_inf'
-                                                     AND $campoLecturaIncremental <= '$lim_sup' ";
-            }
-            $orden = " ORDER BY $campoLecturaIncremental ";            
-        }
-        
         if ($origenDato->getSentenciaSql() != '') {
             //$sql = $origenDato->getSentenciaSql();
             $sql = $msg['sql'];
@@ -73,35 +40,35 @@ class CargarOrigenDatoConsumer implements ConsumerInterface
                 $nombre_conexion = $cnx->getNombreConexion();
                 while ($leidos >= $tamanio) {
                     if ($cnx->getIdMotor()->getCodigo() == 'oci8' ) {
-                        $sql_aux = ($esLecturaIncremental) ? 
+                        $sql_aux = ($msg['esLecturaIncremental']) ? 
                                 "SELECT * FROM ( $sql )  sqlOriginal 
                                     WHERE  1 = 1
-                                        $condicion_carga_incremental
+                                        $msg[condicion_carga_incremental]
                                         AND ROWNUM >= " . $i * $tamanio . ' AND ROWNUM < '.  ($tamanio * ($i + 1)).
-                                    $orden
+                                    $msg[orden]
                                 :
                                 'SELECT * FROM (' . $sql . ')  sqlOriginal '.
                             'WHERE ROWNUM >= ' . $i * $tamanio . ' AND ROWNUM < '.  ($tamanio * ($i + 1));
                         
                     }elseif($cnx->getIdMotor()->getCodigo() == 'pdo_dblib'){
-                        $sql_aux = ($esLecturaIncremental) ? 
+                        $sql_aux = ($msg['esLecturaIncremental']) ? 
                                 "SELECT * FROM ( $sql )  sqlOriginal 
                                     WHERE 1 = 1
-                                    $condicion_carga_incremental
-                                    $orden "
+                                    $msg[condicion_carga_incremental]
+                                    $msg[orden] "
                                 :  $sql;                       
                     }
                     else {
-                        $sql_aux = ($esLecturaIncremental) ? 
+                        $sql_aux = ($msg['esLecturaIncremental']) ? 
                                     "SELECT * FROM ( $sql) sqlOriginal 
                                         WHERE 1 = 1
-                                        $condicion_carga_incremental
-                                        $orden
+                                        $msg[condicion_carga_incremental]
+                                        $msg[orden]
                                         LIMIT " . $tamanio . ' OFFSET ' . $i * $tamanio 
                                     :
                                     $sql . ' LIMIT ' . $tamanio . ' OFFSET ' . $i * $tamanio;;
                     }
-echo $sql_aux;
+                    
                     $datos = $em->getRepository('IndicadoresBundle:OrigenDatos')->getDatos($sql_aux, $cnx);
 
                     $this->enviarDatos($idOrigen, $datos, $campos_sig, $ahora, $nombre_conexion);
@@ -119,11 +86,11 @@ echo $sql_aux;
         $msg_guardar = array('id_origen_dato' => $idOrigen,
             'method' => 'DELETE',
             'ultima_lectura' => $ahora,
-            'es_lectura_incremental' => $esLecturaIncremental,
-            'lim_inf'=> $lim_inf,
-            'lim_sup'=> $lim_sup,
-            'ultima_lectura_incremental' => $ultimaLecturaIncremental->format('Y-m-d H:i:s'),            
-            'campo_lectura_incremental' => $campoLecturaIncremental
+            'es_lectura_incremental' => $msg['esLecturaIncremental'],
+            'lim_inf'=> $msg['lim_inf'],
+            'lim_sup'=> $msg['lim_sup'],
+            'ultima_lectura_incremental' => $msg['ultimaLecturaIncremental'],            
+            'campo_lectura_incremental' => $msg['campoLecturaIncremental']
         );
         $this->container->get('old_sound_rabbit_mq.guardar_registro_producer')
                 ->publish(serialize($msg_guardar));
