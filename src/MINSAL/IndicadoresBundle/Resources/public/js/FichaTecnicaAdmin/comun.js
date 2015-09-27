@@ -517,9 +517,9 @@ function dibujarControles(zona, datos) {
         $('#' + zona + ' .controles').append(opciones_indicador);
 
         $('#' + zona + ' .controles').append('<div class="btn-group sobre_div">' +
-                '<a class="btn btn-warning dropdown-toggle" data-toggle="dropdown" title="' + trans.alertas_indicador + '">' +
-                '<i class="icon-exclamation-sign"></i>' +
-                '</a>' +
+                '<button class="btn btn-warning dropdown-toggle" data-toggle="dropdown" title="' + trans.alertas_indicador + '">' +
+                    '<span class="glyphicon glyphicon-exclamation-sign"></span>' +
+                '</button>' +                
                 '<ul class="dropdown-menu">' +
                 alertas +
                 '</ul>' +
