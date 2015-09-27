@@ -1,6 +1,6 @@
 graficoTermometro = function(ubicacion, datos, colorChosen, categoryChoosen) {
 
-    this.tipo = 'Termómetro';
+    this.tipo = 'TermÃ³metro';
     var margin = {top: 0, right: 5, bottom: 25, left: 40},
     width = 390 - margin.left - margin.right,
             height = 250 - margin.top - margin.bottom,

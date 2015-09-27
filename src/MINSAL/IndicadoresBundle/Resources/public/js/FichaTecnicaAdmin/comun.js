@@ -429,7 +429,7 @@ function dibujarControles(zona, datos) {
                             '<div class="col-sm-4">'+
                                 '<div class="form-group">' + combo_tipo_grafico + '</div>'+
                             '</div>'+
-                            '<div class="col-sm-4">'+
+                            '<div class="col-sm-6">'+
                                 '<div class="form-group max-eje-y" ></div>'+
                             '</div>'+
                         '</div>'+
@@ -512,10 +512,26 @@ function dibujarControles(zona, datos) {
     if (rangos_alertas.length > 0) {
         opciones_max_eje_y += 
                 trans.max_escala_y +
-                ": <SELECT class='form-control max_y'>" +
-                "<OPTION VALUE='indicador' selected='selected'>" + trans.max_indicador + "</OPTION>" +
-                "<OPTION VALUE='rango_alertas'>" + trans.max_rango_alertas + "</OPTION>" +
-                "</SELECT>" 
+                "<div class='input-group'>"+
+                    "<span class='input-group-addon'>"+  
+                      "<input name= 'max_y' id= 'max_y1' type='radio' class= 'ejey max_y' value= 'indicador' aria-label='...' checked>"+
+                    "</span>"+
+                    "<input type='text' class='form-control' aria-label='...' value= '"+ trans.max_indicador +"' readonly>"+
+                "</div>"+
+                
+                "<div class='input-group'>"+
+                    "<span class='input-group-addon'>"+  
+                      "<input name= 'max_y' id= 'max_y2' type='radio' class= 'ejey max_y' value= 'rango_alertas' aria-label='...'>"+
+                    "</span>"+ 
+                    "<input type='text' class='form-control' aria-label='...' value= '"+ trans.max_rango_alertas +"' readonly>"+
+                "</div>"+
+                
+                "<div class='input-group'>"+
+                    "<span class='input-group-addon'>"+  
+                      "<input name= 'max_y' id= 'max_y2' type='radio' class= 'ejey max_y' value= 'fijo' aria-label='...'>"+
+                    "</span>"+ 
+                    "<input type='text' class='form-control ejey max_y_fijo' aria-label='...' value='100' >"+
+                "</div>"
                 ;        
 
         $('#' + zona + ' .controles').append('<div class="btn-group sobre_div">' +
@@ -534,16 +550,23 @@ function dibujarControles(zona, datos) {
     // Los botones botones
     $('#' + zona + ' .controles').append(botones);        
     $('#' + zona + ' .controles').append('<a id="' + zona + '_ultima_lectura" data-placement="bottom" data-toggle="popover" class="btn-small btn-warning pull-right" href="#" >' + datos.ultima_lectura + '</a>');
-    $('#' + zona + '_ultima_lectura').popover({title: trans.ultima_lectura, content: trans.ultima_lectura_exp});
-
-    $('#opciones_' + zona + ' .max_y').change(function() {
-        dibujarGraficoPrincipal(zona, $('#' + zona + ' .tipo_grafico_principal').val());
-    });
+    $('#' + zona + '_ultima_lectura').popover({title: trans.ultima_lectura, content: trans.ultima_lectura_exp});    
     
     
     $('#'+zona).append(opciones_indicador_modal);
     $('#'+zona).append(opciones_dimension_modal);
-    $('#' + zona + ' .max-eje-y').append(opciones_max_eje_y);
+    
+    $('#' + zona + ' .max-eje-y').append(opciones_max_eje_y);    
+    
+    $('#' + zona + ' .ejey').change(function() {
+        if($('#' + zona + ' .max_y:checked').val() == 'fijo'){
+            if (isNaN($('#' + zona + ' .max_y_fijo').val())){
+                $('#' + zona + ' .max_y_fijo').val(100);
+            }            
+        }
+        dibujarGraficoPrincipal(zona, $('#' + zona + ' .tipo_grafico_principal').val());
+    });
+    
     setTiposGraficos(zona);
     $('#opciones_' + zona + ' .ordenar_medida').change(function() {
         ordenarDatos(zona, 'medida', $(this).val());

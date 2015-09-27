@@ -26,9 +26,16 @@ graficoColumnas = function(ubicacion, datos, colorChosen, categoryChoosen) {
     max_y = d3.max(datasetPrincipal_bk, function(d) {
         return parseFloat(d.measure);
     });
-    if ($('#' + ubicacion + ' .max_y') != null && $('#' + ubicacion + ' .max_y').val() == 'rango_alertas')
-        max_y = $('#' + zona + ' .titulo_indicador').attr('data-max_rango');
     
+    if ($('#' + ubicacion + ' .max_y') != null){
+        if ($('#' + ubicacion + ' .max_y:checked').val() == 'rango_alertas') {
+            max_y = $('#' + zona + ' .titulo_indicador').attr('data-max_rango');
+        }
+        else if($('#' + ubicacion + ' .max_y:checked').val() == 'fijo') {
+            var max_y_fijo = $('#' + ubicacion + ' .max_y_fijo').val();
+            max_y = (isNaN(max_y_fijo)) ? 100 : max_y_fijo;
+        }
+    }
     // Tiene meta?
     var meta = parseFloat($('#' + ubicacion ).attr("meta"));
     max_y = (meta >0 && max_y < meta) ? meta : max_y;
