@@ -509,31 +509,31 @@ function dibujarControles(zona, datos) {
     $('#' + zona + ' .grafico').html('');
     
     var opciones_max_eje_y= '';
+    opciones_max_eje_y += 
+        trans.max_escala_y +
+        "<div class='input-group'>"+
+            "<span class='input-group-addon'>"+  
+              "<input name= 'max_y' id= 'max_y1' type='radio' class= 'ejey max_y' value= 'indicador' aria-label='...' checked>"+
+            "</span>"+
+            "<input type='text' class='form-control' aria-label='...' value= '"+ trans.max_indicador +"' readonly>"+
+        "</div>";
     if (rangos_alertas.length > 0) {
-        opciones_max_eje_y += 
-                trans.max_escala_y +
-                "<div class='input-group'>"+
-                    "<span class='input-group-addon'>"+  
-                      "<input name= 'max_y' id= 'max_y1' type='radio' class= 'ejey max_y' value= 'indicador' aria-label='...' checked>"+
-                    "</span>"+
-                    "<input type='text' class='form-control' aria-label='...' value= '"+ trans.max_indicador +"' readonly>"+
-                "</div>"+
-                
-                "<div class='input-group'>"+
-                    "<span class='input-group-addon'>"+  
-                      "<input name= 'max_y' id= 'max_y2' type='radio' class= 'ejey max_y' value= 'rango_alertas' aria-label='...'>"+
-                    "</span>"+ 
-                    "<input type='text' class='form-control' aria-label='...' value= '"+ trans.max_rango_alertas +"' readonly>"+
-                "</div>"+
-                
-                "<div class='input-group'>"+
-                    "<span class='input-group-addon'>"+  
-                      "<input name= 'max_y' id= 'max_y2' type='radio' class= 'ejey max_y' value= 'fijo' aria-label='...'>"+
-                    "</span>"+ 
-                    "<input type='text' class='form-control ejey max_y_fijo' aria-label='...' value='100' >"+
-                "</div>"
-                ;        
-
+        opciones_max_eje_y += "<div class='input-group'>"+
+            "<span class='input-group-addon'>"+  
+              "<input name= 'max_y' id= 'max_y2' type='radio' class= 'ejey max_y' value= 'rango_alertas' aria-label='...'>"+
+            "</span>"+ 
+            "<input type='text' class='form-control' aria-label='...' value= '"+ trans.max_rango_alertas +"' readonly>"+
+        "</div>";
+    }
+    opciones_max_eje_y +=
+        "<div class='input-group'>"+
+            "<span class='input-group-addon'>"+  
+              "<input name= 'max_y' id= 'max_y2' type='radio' class= 'ejey max_y' value= 'fijo' aria-label='...'>"+
+            "</span>"+ 
+            "<input type='text' class='form-control ejey max_y_fijo' aria-label='...' value='100' >"+
+        "</div>"
+        ;  
+    if (rangos_alertas.length > 0) {
         $('#' + zona + ' .controles').append('<div class="btn-group sobre_div">' +
                 '<button class="btn btn-warning dropdown-toggle" data-toggle="dropdown" title="' + trans.alertas_indicador + '">' +
                     '<span class="glyphicon glyphicon-exclamation-sign"></span>' +
@@ -542,9 +542,6 @@ function dibujarControles(zona, datos) {
                 alertas +
                 '</ul>' +
                 '</div>');
-    } else {
-        opciones_indicador += '';
-        //$('#' + zona + ' .controles').append(opciones_indicador);
     }
     
     // Los botones botones
