@@ -429,6 +429,9 @@ function dibujarControles(zona, datos) {
                             '<div class="col-sm-4">'+
                                 '<div class="form-group">' + combo_tipo_grafico + '</div>'+
                             '</div>'+
+                            '<div class="col-sm-4">'+
+                                '<div class="form-group max-eje-y" ></div>'+
+                            '</div>'+
                         '</div>'+
                     '</div>'+
                     '<div class="modal-footer">'+
@@ -505,16 +508,15 @@ function dibujarControles(zona, datos) {
     $('#' + zona + ' .alertas').html('');
     $('#' + zona + ' .grafico').html('');
     
-    var opciones_indicador= '';
+    var opciones_max_eje_y= '';
     if (rangos_alertas.length > 0) {
-        opciones_indicador += '<li><A >' +
+        opciones_max_eje_y += 
                 trans.max_escala_y +
-                ": <SELECT class='max_y'>" +
+                ": <SELECT class='form-control max_y'>" +
                 "<OPTION VALUE='indicador' selected='selected'>" + trans.max_indicador + "</OPTION>" +
                 "<OPTION VALUE='rango_alertas'>" + trans.max_rango_alertas + "</OPTION>" +
-                "</SELECT>" +
-                '</A></li></ul></div>';
-        $('#' + zona + ' .controles').append(opciones_indicador);
+                "</SELECT>" 
+                ;        
 
         $('#' + zona + ' .controles').append('<div class="btn-group sobre_div">' +
                 '<button class="btn btn-warning dropdown-toggle" data-toggle="dropdown" title="' + trans.alertas_indicador + '">' +
@@ -530,9 +532,7 @@ function dibujarControles(zona, datos) {
     }
     
     // Los botones botones
-    $('#' + zona + ' .controles').append(botones);
-    //$('#' + zona + ' .controles').append(opciones);
-    //$('#' + zona + ' .controles').append(opciones_dimension);
+    $('#' + zona + ' .controles').append(botones);        
     $('#' + zona + ' .controles').append('<a id="' + zona + '_ultima_lectura" data-placement="bottom" data-toggle="popover" class="btn-small btn-warning pull-right" href="#" >' + datos.ultima_lectura + '</a>');
     $('#' + zona + '_ultima_lectura').popover({title: trans.ultima_lectura, content: trans.ultima_lectura_exp});
 
@@ -543,6 +543,7 @@ function dibujarControles(zona, datos) {
     
     $('#'+zona).append(opciones_indicador_modal);
     $('#'+zona).append(opciones_dimension_modal);
+    $('#' + zona + ' .max-eje-y').append(opciones_max_eje_y);
     setTiposGraficos(zona);
     $('#opciones_' + zona + ' .ordenar_medida').change(function() {
         ordenarDatos(zona, 'medida', $(this).val());
