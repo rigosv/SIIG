@@ -123,7 +123,8 @@ $.fn.modal.Constructor.prototype.enforceFocus = function() {};
         var cant = $('DIV.area_grafico').length;
         $('.zona_actual').removeClass('zona_actual');
 
-        var html = '<div id="zgrafico_' + parseInt(cant + 1) + '" ><div class="area_grafico zona_actual panel panel-success" id="grafico_' + parseInt(cant + 1) + '" >' +
+        var html = 
+                '<div id="zgrafico_' + parseInt(cant + 1) + '" ><div class="area_grafico zona_actual panel panel-success" id="grafico_' + parseInt(cant + 1) + '" >' +
                 "<DIV class= 'titulo panel-heading'><h5><span class='titulo_indicador '></span>" +
                 "<span>(" + trans.por + " <span class='dimension' ></span>)</span></h5>" +
                 '</DIV>' +
@@ -135,6 +136,7 @@ $.fn.modal.Constructor.prototype.enforceFocus = function() {};
                 '<div class="grafico" ></div>' +
                 '</div>' +
                 '</div>' +
+                '<div class="pie_grafico" ></div>' +
                 '</DIV></div>';
 
 

@@ -567,6 +567,10 @@ function dibujarControles(zona, datos) {
         dibujarGraficoPrincipal(zona, $('#' + zona + ' .tipo_grafico_principal').val());
     });
     
+    if ($('#' + zona).attr('meta') > 0){
+        $('#' + zona + ' .pie_grafico').html(trans._meta_+': '+meta);
+    }
+    
     setTiposGraficos(zona);
     $('#opciones_' + zona + ' .ordenar_medida').change(function() {
         ordenarDatos(zona, 'medida', $(this).val());
@@ -821,7 +825,7 @@ function procesarDimensiones(resp, datos, zona_g, desde_sala) {
                 $('#' + zona_g + ' .titulo_indicador').attr('vista', datos.vista);
                 $('#' + zona_g).attr('orden', datos.orden);
                 var meta = (datos.meta==null) ? 0 : datos.meta;
-                $('#' + zona_g).attr('meta', meta);
+                $('#' + zona_g).attr('meta', meta);                
                 $('#' + zona_g).attr('orden-aplicado', 'false');
                 $('#opciones_dimension_' + zona_g + ' .dimensiones').val(datos.dimension);
                 $('#opciones_dimension_' + zona_g + ' .filtro_desde').val(datos.filtroPosicionDesde);

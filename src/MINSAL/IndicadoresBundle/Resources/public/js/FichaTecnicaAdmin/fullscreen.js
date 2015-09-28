@@ -41,7 +41,6 @@ function aplicarZoom() {
 }
 function goFullscreen(id) {
     var element = document.getElementById(id);
-
     // These function will not exist in the browsers that don't support fullscreen mode yet, 
     // so we'll have to check to see if they're available before calling them.    
     if (element.requestFullscreen) {
@@ -49,11 +48,12 @@ function goFullscreen(id) {
     } else if (element.mozRequestFullScreen) {
         // This is how to go into fullscren mode in Firefox
         // Note the "moz" prefix, which is short for Mozilla.
-        element.mozRequestFullScreen();
+        element.mozRequestFullScreen();        
     } else if (element.webkitRequestFullScreen) {
         // This is how to go into fullscreen mode in Chrome and Safari
         // Both of those browsers are based on the Webkit project, hence the same prefix.
         element.webkitRequestFullScreen();
+        //document.webkitCancelFullScreen(); 
     } else if (element.msRequestFullscreen) {
         element.msRequestFullscreen();
     }    
