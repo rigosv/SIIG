@@ -42,7 +42,7 @@ function dibujarGraficoPrincipal(zona, tipo) {
     var datasetPrincipal = JSON.parse($('#' + zona).attr('datasetPrincipal'));
     construir_tabla_datos(zona, datasetPrincipal);
     //Corrección de error no despliega los controles select en ventana modal en firefox
-    $( "SELECT" ).click(function() {
+    $( "SELECT, INPUT" ).click(function() {
         $( this ).focus();
     });
 }
@@ -513,14 +513,14 @@ function dibujarControles(zona, datos) {
         trans.max_escala_y +
         "<div class='input-group'>"+
             "<span class='input-group-addon'>"+  
-              "<input name= 'max_y' id= 'max_y1' type='radio' class= 'ejey max_y' value= 'indicador' aria-label='...' checked>"+
+              "<input name= 'max_y' type='radio' class= 'max_y1 ejey max_y' value= 'indicador' aria-label='...' checked>"+
             "</span>"+
             "<input type='text' class='form-control' aria-label='...' value= '"+ trans.max_indicador +"' readonly>"+
         "</div>";
     if (rangos_alertas.length > 0) {
         opciones_max_eje_y += "<div class='input-group'>"+
             "<span class='input-group-addon'>"+  
-              "<input name= 'max_y' id= 'max_y2' type='radio' class= 'ejey max_y' value= 'rango_alertas' aria-label='...'>"+
+              "<input name= 'max_y' type='radio' class= 'max_y2 ejey max_y' value= 'rango_alertas' aria-label='...'>"+
             "</span>"+ 
             "<input type='text' class='form-control' aria-label='...' value= '"+ trans.max_rango_alertas +"' readonly>"+
         "</div>";
@@ -528,7 +528,7 @@ function dibujarControles(zona, datos) {
     opciones_max_eje_y +=
         "<div class='input-group'>"+
             "<span class='input-group-addon'>"+  
-              "<input name= 'max_y' id= 'max_y2' type='radio' class= 'ejey max_y' value= 'fijo' aria-label='...'>"+
+              "<input name= 'max_y' type='radio' class= 'max_y3 ejey max_y' value= 'fijo' aria-label='...'>"+
             "</span>"+ 
             "<input type='text' class='form-control ejey max_y_fijo' aria-label='...' value='100' >"+
         "</div>"
@@ -555,6 +555,9 @@ function dibujarControles(zona, datos) {
     
     $('#' + zona + ' .max-eje-y').append(opciones_max_eje_y);    
     
+    $('#' + zona + ' .max_y_fijo').click(function() {
+        $('#' + zona + ' .max_y3').prop( "checked", true );
+    });
     $('#' + zona + ' .ejey').change(function() {
         if($('#' + zona + ' .max_y:checked').val() == 'fijo'){
             if (isNaN($('#' + zona + ' .max_y_fijo').val())){
