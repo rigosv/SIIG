@@ -226,3 +226,22 @@ div.popover-content, div.popover-title{
     cursor:pointer; 
     cursor: hand;
 }
+
+/* Fullscreen */
+DIV:-moz-full-screen {
+    background: white;
+}
+
+DIV:-webkit-full-screen {
+    background: white;
+    width: 100%; height: 100%;
+}
+
+DIV:-ms-fullscreen {
+    background: white;
+    width: 100%; /* needed to center contents in IE */
+}
+
+DIV:fullscreen {
+    background: white;
+}
