@@ -76,7 +76,7 @@ $.fn.modal.Constructor.prototype.enforceFocus = function() {};
         });
         $(document).bind("ajaxStop.mine", function() {
             $('#div_carga').hide();
-        });
+        });        
     }
 
     if ($('#sala_default').val() == 0) {
@@ -107,7 +107,7 @@ $.fn.modal.Constructor.prototype.enforceFocus = function() {};
     });*/
 
     function ver_ficha_tecnica(id_indicador) {
-        $.get(Routing.generate('get_indicador_ficha', {id: id_indicador}));
+        $.get(Routing.generate('get_indicador_ficha', {id: id_indicador})).fail(function() {alert( trans._error_conexion_2_ ); $('#div_carga').hide();});
     }
 
     $('DIV.area_grafico').click(function() {
@@ -202,7 +202,7 @@ $.fn.modal.Constructor.prototype.enforceFocus = function() {};
                 $('#info_sala').html('_error_guardar_sala_').addClass('error');
             }
 
-        }, 'json');
+        }, 'json').fail(function() {alert( trans._error_conexion_2_ ); $('#div_carga').hide();});
     });
 
     $('.salas-id').click(function() {

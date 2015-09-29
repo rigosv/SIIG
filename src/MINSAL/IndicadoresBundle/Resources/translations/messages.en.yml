@@ -375,5 +375,6 @@ _ventana_limite_superior_: Upper limit
 _ayuda_ventana_limite_inferior_: Number of days before the last date reading from where the data is read (number of years if the field to load incremental is year)
 _ayuda_ventana_limite_superior_: "Number of days before of the actual date until the reading of data is performed ('Number of years' if the increasing load rate is setup for years instead)"
 _error_conexion_: Communication error. Could not save the data, check your network connection if the problem persists, notify the system administrator
+_error_conexion_2_: Communication error. Check your network connection if the problem persists, notify the system administrator
 _error_anterior_: It happened an error saving the last edited cell, modify it and try to save it
 _elija_un_formulario_:  Choose a form

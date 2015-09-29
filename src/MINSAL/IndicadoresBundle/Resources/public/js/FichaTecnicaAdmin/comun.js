@@ -191,7 +191,7 @@ function dibujarGrafico(zona, dimension, desde_sala) {
                 {filtro: filtro, ver_sql: false},
         function(resp) {
             procesarDibujarGrafico(resp, zona, desde_sala);
-        });
+        }).fail(function() {alert( trans._error_conexion_2_ ); $('#div_carga').hide();});
     } else {
         procesarDibujarGrafico(indicadoresDatos[id_indicador], zona, desde_sala);
     }
@@ -251,7 +251,7 @@ function aplicarFiltro(zona) {
         //datasetPrincipal = resp.datos;
         $('#' + zona).attr('datasetPrincipal', JSON.stringify(resp.datos));
         dibujarGraficoPrincipal(zona, $('#opciones_' + zona + ' .tipo_grafico_principal').val());
-    }, 'json');
+    }, 'json').fail(function() {alert( trans._error_conexion_2_ ); $('#div_carga').hide();});
     $('#' + zona).attr('orden', '');
     $('#' + zona + ' .titulo_indicador').attr('filtro-elementos', '');
 }
@@ -661,7 +661,7 @@ function dibujarControles(zona, datos) {
             $('#myModalLabel2').html($('#' + zona + ' .titulo_indicador').html());
             $('#sql').html(resp.datos);
             $('#myModal2').modal('show');
-        });
+        }).fail(function() {alert( trans._error_conexion_2_ ); $('#div_carga').hide();});
     });
 
     $('#' + zona + ' .ver_imagen').click(function() {
@@ -721,7 +721,7 @@ function dibujarControles(zona, datos) {
                     });
                     $('#sql .DTTT_container').css('float', 'left');
                     $('#myModal2').modal('show');
-                }, 'html');
+                }, 'html').fail(function() {alert( trans._error_conexion_2_ ); $('#div_carga').hide();});
     });
     
     $('#' + zona + ' .refrescar').click(function() {
@@ -789,7 +789,7 @@ function recuperarDimensiones(id_indicador, datos, desde_sala) {
             Routing.generate('indicador_dimensiones', {id: id_indicador}),
             function(resp) {
                 procesarDimensiones(resp, datos, zona_g, desde_sala);
-            });
+            }).fail(function() {alert( trans._error_conexion_2_ ); $('#div_carga').hide();});
     } else {
         procesarDimensiones(indicadoresDimensiones[id_indicador], datos, zona_g, desde_sala);
     }
