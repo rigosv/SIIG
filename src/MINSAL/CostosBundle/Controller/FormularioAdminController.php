@@ -12,6 +12,7 @@ class FormularioAdminController extends Controller
         $em = $this->getDoctrine()->getManager();
         
         $periodo = (is_null($request->get('periodo_estructura')) ) ? '-1': $request->get('periodo_estructura');
+        $numero_carga = (is_null($request->get('periodo_estructura')) ) ? '1': '2';
         $periodoSeleccionado = ($periodo != '-1' ) ? 
                                 $em->getRepository("CostosBundle:PeriodoIngresoDatosFormulario")->find($periodo):
                                 null;
@@ -51,6 +52,7 @@ class FormularioAdminController extends Controller
             'periodosEstructura' => $periodosEstructura,
             'periodoSeleccionado' => $periodoSeleccionado,
             'titulo' => $titulo,
+            'numero_carga' => $numero_carga,
             'cantFrm' => $cantFrm,
             'editable' => $editable,
             'mostrar_resumen' => $mostrar_resumen,
@@ -313,7 +315,7 @@ class FormularioAdminController extends Controller
         } else {
             $parametros =  array('anio_mes'=>null, 
                 'anio'=>null, 
-                'establecimiento'=>null, 
+                'establecimiento'=>null,
                 'dependencia'=>null,
                 'periodo_estructura' => null
                 );

@@ -25,7 +25,19 @@
                                 </optgroup>
                             {% endif%}
                         {% endfor %}
-                    </select>
+                    </select>                    
+                    
+                    {% if (periodoSeleccionado == null or parametros.periodo_estructura == '-1') and numero_carga == 2 %}
+                        <center>
+                        <button type="button" class="btn btn-xs btn-danger" data-toggle="popover" 
+                                data-content="{{'_elija_un_formulario_'|trans}}"
+                                data-placement="bottom"
+                                animation = 'true'
+                        >
+                            <span class="glyphicon glyphicon-chevron-up" aria-hidden="true" style="float: left;"></span>
+                        </button>
+                        </center>
+                    {% endif %}
                 </TD>
             </TR>
         </table>

@@ -376,3 +376,6 @@ _ventana_limite_inferior_: Ventana límite inferior
 _ventana_limite_superior_: Ventana límite superior
 _ayuda_ventana_limite_inferior_: Número de días antes de la última fecha de lectura a partir de donde se leerán los datos (número de años si el campo para carga incremental es año)
 _ayuda_ventana_limite_superior_: Número de días antes de la fecha actual hasta donde se realizará la lectura de datos (número de años si el campo para carga incremental es año)
+_error_conexion_: Error de comunicación. No se pudo guardar el dato, verifique su conexión a la red, si el problema persiste notificarlo al administrador del sistema
+_error_anterior_: Sucedió un error al guardar la última celda editada, modifíquela y vuelva a intentar guardarla
+_elija_un_formulario_:  Elija un formulario
