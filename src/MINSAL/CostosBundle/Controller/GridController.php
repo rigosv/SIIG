@@ -68,7 +68,7 @@ class GridController extends Controller
                     eval('$r_ = '.$regla_.';');
                     
                     if (!$r_){
-                        $response->setContent('{"estado" : "error", "msj": "' . $this->get('translator')->trans('_error_validation_') .': '.$regla_msj. '"}');
+                        $response->setContent('{"estado" : "error", "msj": "' . $this->get('translator')->trans('_error_validation_') .' <h3>'.$regla_msj. '</h3>"}');
                         return $response;
                     }
                 }
