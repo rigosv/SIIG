@@ -139,7 +139,9 @@ function filtroRuta(filtros_obj) {
 }
 function descenderNivelDimension(zona, category) {
     if ($('#' + zona + ' .dimensiones option').length <= 1) {
-        alert(trans.no_mas_niveles);
+        //alert(trans.no_mas_niveles);
+        $('#modal_msj_content').html('<div class="alert alert-warning" role="alert">'+trans.no_mas_niveles+'</div>');
+        $('#modal_msj').modal('show');
         return;
     }
     var $dimension = $('#' + zona + ' .dimensiones option:selected');
@@ -191,7 +193,11 @@ function dibujarGrafico(zona, dimension, desde_sala) {
                 {filtro: filtro, ver_sql: false},
         function(resp) {
             procesarDibujarGrafico(resp, zona, desde_sala);
-        }).fail(function() {alert( trans._error_conexion_2_ ); $('#div_carga').hide();});
+        }).fail(function() {
+            $('#div_carga').hide();
+            $('#modal_msj_content').html('<div class="alert alert-danger" role="alert">'+trans._error_conexion_2_+'</div>');            
+            $('#modal_msj').modal('show');
+        });
     } else {
         procesarDibujarGrafico(indicadoresDatos[id_indicador], zona, desde_sala);
     }
@@ -251,7 +257,11 @@ function aplicarFiltro(zona) {
         //datasetPrincipal = resp.datos;
         $('#' + zona).attr('datasetPrincipal', JSON.stringify(resp.datos));
         dibujarGraficoPrincipal(zona, $('#opciones_' + zona + ' .tipo_grafico_principal').val());
-    }, 'json').fail(function() {alert( trans._error_conexion_2_ ); $('#div_carga').hide();});
+    }, 'json').fail(function() {
+        $('#div_carga').hide();
+        $('#modal_msj_content').html('<div class="alert alert-danger" role="alert">'+trans._error_conexion_2_+'</div>');        
+        $('#modal_msj').modal('show');
+    });
     $('#' + zona).attr('orden', '');
     $('#' + zona + ' .titulo_indicador').attr('filtro-elementos', '');
 }
@@ -661,7 +671,11 @@ function dibujarControles(zona, datos) {
             $('#myModalLabel2').html($('#' + zona + ' .titulo_indicador').html());
             $('#sql').html(resp.datos);
             $('#myModal2').modal('show');
-        }).fail(function() {alert( trans._error_conexion_2_ ); $('#div_carga').hide();});
+        }, 'json').fail(function() {
+            $('#div_carga').hide();
+            $('#modal_msj_content').html('<div class="alert alert-danger" role="alert">'+trans._error_conexion_2_+'</div>');            
+            $('#modal_msj').modal('show');            
+    });
     });
 
     $('#' + zona + ' .ver_imagen').click(function() {
@@ -721,7 +735,11 @@ function dibujarControles(zona, datos) {
                     });
                     $('#sql .DTTT_container').css('float', 'left');
                     $('#myModal2').modal('show');
-                }, 'html').fail(function() {alert( trans._error_conexion_2_ ); $('#div_carga').hide();});
+                }, 'html').fail(function() {
+                        $('#div_carga').hide();
+                        $('#modal_msj_content').html('<div class="alert alert-danger" role="alert">'+trans._error_conexion_2_+'</div>');                        
+                        $('#modal_msj').modal('show');                        
+                });
     });
     
     $('#' + zona + ' .refrescar').click(function() {
@@ -789,7 +807,11 @@ function recuperarDimensiones(id_indicador, datos, desde_sala) {
             Routing.generate('indicador_dimensiones', {id: id_indicador}),
             function(resp) {
                 procesarDimensiones(resp, datos, zona_g, desde_sala);
-            }).fail(function() {alert( trans._error_conexion_2_ ); $('#div_carga').hide();});
+            }).fail(function() {
+                $('#div_carga').hide();
+                $('#modal_msj_content').html('<div class="alert alert-danger" role="alert">'+trans._error_conexion_2_+'</div>');                
+                $('#modal_msj').modal('show');                
+            });
     } else {
         procesarDimensiones(indicadoresDimensiones[id_indicador], datos, zona_g, desde_sala);
     }
@@ -800,7 +822,8 @@ function procesarDimensiones(resp, datos, zona_g, desde_sala) {
 
     if (resp.resultado === 'ok') {
         if (resp.dimensiones == '') {
-            alert(trans.no_graficos_asignados);
+            $('#modal_msj_content').html('<div class="alert alert-danger" role="alert">'+trans.no_graficos_asignados+'</div>');
+            $('#modal_msj').modal('show');
         } else {
             dibujarControles(zona_g, resp);
             if (datos !== null) {

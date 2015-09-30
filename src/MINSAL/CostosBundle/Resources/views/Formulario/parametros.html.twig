@@ -38,7 +38,9 @@
                         </button>
                         </center>
                     <script type="text/javascript">
-                        alert("{{'_elija_un_formulario_'|trans}}");
+                        $(document).ready(function () {                            
+                            $('#modal_msj_solo_fondo').modal('show');
+                        });
                     </script>
                     {% endif %}
                 </TD>
