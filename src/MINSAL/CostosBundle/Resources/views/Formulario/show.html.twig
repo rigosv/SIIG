@@ -19,6 +19,7 @@
             background-color: orange;
         }
         
+        
     </style>
 {% endblock stylesheets %}
 {% block javascripts %}
@@ -85,23 +86,26 @@
                                     },
                         function(resp) {
                             if (resp.estado == 'ok') {         
-                                $('#mensaje').html('');
+                                //$('#mensaje').html('');
                                 //var commit_ = $("#jqxgrid").jqxGrid('updaterow', rowid, resp.data);
                                 commit(true);
                                 error = false;
                             }
                             else {
-                                $('#mensaje').html('<div class="alert alert-danger" role="alert">'+resp.msj+'</div>');
+                                //$('#mensaje').html('<div class="alert alert-danger" role="alert">'+resp.msj+'</div>');
+                                $('#modal_msj_content').html('<div class="alert alert-danger" role="alert">'+resp.msj+'</div>');
+                                $('#modal_msj').modal('show');
                                 commit(false);
                             }
 
                         }, 'json')
                                   .fail(function() {
                                     error = true;
-                                    commit(false);
-                                    alert( trans._error_conexion_ );
+                                    commit(false);                                   
+                                    $('#modal_msj_content').html('<div class="alert alert-danger" role="alert">{{'_error_conexion_'|trans}}</div>');
+                                    $('#modal_msj').modal('show');
                                   })
-                        ;
+                        ;me
                     }
                 },
                 datafields: [
@@ -123,7 +127,8 @@
                         {% endif %}
                     {% endfor %}
                     {name: 'es_poblacion'},
-                    {name: 'ayuda'}
+                    {name: 'ayuda'},
+                    {name: 'regla_validacion'}
                 ],
                 url: url,
                 root: 'data'
@@ -292,13 +297,17 @@
             
             $("#clear").click(function () {
                 $("#jqxgrid").jqxGrid('clear');
-                $('#mensaje').html('');
+                //$('#mensaje').html('');
             });
             $("#guardar").click(function () {
-                if (error)
-                    $('#mensaje').html('<div class="alert alert-warning" role="alert">{{'_error_anterior_'|trans}}</div>');
-                else 
-                    $('#mensaje').html('<div class="alert alert-success" role="alert">{{'_datos_guardados_'|trans}}</div>');
+                if (error){
+                    $('#modal_msj_content').html('<div class="alert alert-warning" role="alert">{{'_error_anterior_'|trans}}</div>');
+                    $('#modal_msj').modal('show');
+                }
+                else {
+                    $('#modal_msj_content').html('<div class="alert alert-success" role="alert">{{'_datos_guardados_'|trans}}</div>');
+                    $('#modal_msj').modal('show');                    
+                }
             });
             $("#exportar").click(function () {
                 $("#jqxgrid").jqxGrid('exportdata', 'xls', 'jqxGrid');           
@@ -348,5 +357,5 @@
             {% block frm_foot %} {% endblock frm_foot %}
         </div>
         <input type="hidden" name="pk" id='pk' value="{{pk}}" />
-    </form>
+    </form>    
 {% endblock content %}

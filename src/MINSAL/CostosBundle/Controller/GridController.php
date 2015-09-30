@@ -52,6 +52,29 @@ class GridController extends Controller
         $response = new Response();
         $em = $this->getDoctrine()->getManager();
         
+        $datos = json_decode($request->get('fila'), true);        
+        //var_dump(in_array('regla_validacion', $datos));
+        if ($datos['regla_validacion'] != ''){
+            $regla = $datos['regla_validacion'];
+            
+            foreach ($datos as $n=>$d){
+                //Buscar campos pivote: cant_mensual y importe_mensual, por el momento
+                if (strpos($n, 'cant_mensual_') !== false or strpos($n, 'importe_mensual_') !== false){
+                    $r_ = true;
+                    //aplicar la regla de validación
+                    $regla_ = str_replace('value', $d, $regla);
+                    $regla_msj = str_replace('value', 'valor_celda', $regla);
+                    
+                    eval('$r_ = '.$regla_.';');
+                    
+                    if (!$r_){
+                        $response->setContent('{"estado" : "error", "msj": "' . $this->get('translator')->trans('_error_validation_') .': '.$regla_msj. '"}');
+                        return $response;
+                    }
+                }
+            }
+        }
+        
         $periodoEstructura =  $em->getRepository('CostosBundle:PeriodoIngresoDatosFormulario')->find($periodo_ingreso);
         if (!$periodoEstructura) {
             $response->setContent('{"estado" : "error", "msj": "' . $this->get('translator')->trans('_parametros_no_establecidos_') . '"}');
@@ -68,7 +91,7 @@ class GridController extends Controller
                 $response->setContent('{"estado" : "ok", "data": '. $data_. '}');
             }
         }
-        return $response;        
+        return $response;
     }
     
     /**
