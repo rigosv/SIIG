@@ -378,5 +378,5 @@ _error_conexion_: Communication error. Could not save the data, check your netwo
 _error_conexion_2_: Communication error. Check your network connection if the problem persists, notify the system administrator
 _error_anterior_: It happened an error saving the last edited cell, modify it and try to save it
 _elija_un_formulario_:  Choose a form
-_operadores_permitidos_: 'Allowed operators: and, or, relational and arithmetic operators'
+_operadores_permitidos_: 'Use "value" to refer to the cell value to validate. Allowed operators: and, or, relational and arithmetic operators'
 _error_validation_: 'Error validating data, the entered value must pass the condition: '

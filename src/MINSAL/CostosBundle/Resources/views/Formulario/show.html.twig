@@ -71,7 +71,7 @@
                 datatype: "json",
                 updaterow: function (rowid, rowdata, commit) {
                     // synchronize with the server - send update command
-                    // call commit with parameter true if the synchronization with the server is successful 
+                    // call commit with parameter etrue if the synchronization with the server is successful 
                     // and with parameter false if the synchronization failder.
                     if (rowdata.local == 'si'){
                         rowdata.local = 'no';
@@ -86,13 +86,11 @@
                                     },
                         function(resp) {
                             if (resp.estado == 'ok') {         
-                                //$('#mensaje').html('');
-                                //var commit_ = $("#jqxgrid").jqxGrid('updaterow', rowid, resp.data);
-                                commit(true);
+                                var commit_ = $("#jqxgrid").jqxGrid('updaterow', rowid, resp.data);
+                                commit(true);                                
                                 error = false;
                             }
                             else {
-                                //$('#mensaje').html('<div class="alert alert-danger" role="alert">'+resp.msj+'</div>');
                                 $('#modal_msj_content').html('<div class="alert alert-danger" role="alert">'+resp.msj+'</div>');
                                 $('#modal_msj').modal('show');
                                 commit(false);
@@ -357,5 +355,15 @@
             {% block frm_foot %} {% endblock frm_foot %}
         </div>
         <input type="hidden" name="pk" id='pk' value="{{pk}}" />
-    </form>    
+    </form>
+    <div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" id='modal_msj' aria-labelledby="mySmallModalLabel">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content" id="modal_msj_content"></div>
+        </div>
+    </div>
+    <div class="modal fade bs-example-modal-sm" tabindex="-1" data-backdrop="true" data-keyboard= 'true' id='modal_msj_solo_fondo' aria-labelledby="mySmallModalLabel">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content"></div>
+        </div>
+    </div>
 {% endblock content %}

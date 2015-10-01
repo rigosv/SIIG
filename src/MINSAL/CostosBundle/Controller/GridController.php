@@ -65,8 +65,7 @@ class GridController extends Controller
                     $regla_ = str_replace('value', $d, $regla);
                     $regla_msj = str_replace('value', 'valor_celda', $regla);
                     
-                    eval('$r_ = '.$regla_.';');
-                    
+                    eval('$r_ = ('.$regla_.');');
                     if (!$r_){
                         $response->setContent('{"estado" : "error", "msj": "' . $this->get('translator')->trans('_error_validation_') .' <h3>'.$regla_msj. '</h3>"}');
                         return $response;

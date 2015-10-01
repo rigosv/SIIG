@@ -380,5 +380,5 @@ _error_conexion_: Error de comunicación. No se pudo guardar el dato, verifique 
 _error_conexion_2_: Error de comunicación. Verifique su conexión a la red, si el problema persiste notificarlo al administrador del sistema
 _error_anterior_: Sucedió un error al guardar la última celda editada, modifíquela y vuelva a intentar guardarla
 _elija_un_formulario_:  Elija un formulario
-_operadores_permitidos_: 'Operadores permitidos: and, or, operadores relacionales y aritméticos'
+_operadores_permitidos_: 'Utilice "value" para referirse al valor de la celda a validar. Operadores permitidos: and, or, operadores relacionales y aritméticos'
 _error_validation_: 'Error al validar dato, el valor ingresado debe pasar la condición: '

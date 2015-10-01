@@ -484,9 +484,11 @@ class FormularioRepository extends EntityRepository {
                     (SELECT ".$Frm->getId()." AS id_formulario, 
                             hstore(
                                 ARRAY['codigo_variable', 'anio', 'establecimiento', 'descripcion_variable',
-                                        'codigo_categoria_variable', 'descripcion_categoria_variable', 'es_poblacion'], 
+                                        'codigo_categoria_variable', 'descripcion_categoria_variable', 'es_poblacion',
+                                        'regla_validacion'], 
                                 ARRAY[A.codigo , '".$this->parametros['anio']."', '".$this->parametros['establecimiento']."', A.descripcion,
-                                    B.codigo, B.descripcion,  COALESCE(A.es_poblacion::varchar,'')]
+                                    B.codigo, B.descripcion,  COALESCE(A.es_poblacion::varchar,''),
+                                    COALESCE(A.regla_validacion::varchar,'')]
                             ) 
                         FROM variable_captura A 
                             INNER JOIN categoria_variable_captura B ON (A.id_categoria_captura = B.id)
@@ -511,6 +513,7 @@ class FormularioRepository extends EntityRepository {
                             ||('\"descripcion_categoria_variable\"=>'||'\"'||COALESCE(B.descripcion,'')||'\"')::hstore
                             ||('\"es_poblacion\"=>'||'\"'||COALESCE(A.es_poblacion::varchar,'')||'\"')::hstore
                             ||('\"descripcion_variable\"=>'||'\"'||COALESCE(A.descripcion,'')||'\"')::hstore
+                            ||('\"regla_validacion\"=>'||'\"'||COALESCE(A.regla_validacion::varchar,'')||'\"')::hstore
                         FROM variable_captura A
                             INNER JOIN categoria_variable_captura B ON (A.id_categoria_captura = B.id)
                         WHERE almacen_datos.repositorio.datos->'codigo_variable' = A.codigo";

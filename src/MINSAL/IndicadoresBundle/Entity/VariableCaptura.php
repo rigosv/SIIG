@@ -64,6 +64,13 @@ class VariableCaptura
      * @ORM\ManyToOne(targetEntity="MINSAL\CostosBundle\Entity\Formulario")
      * */
     private $formulario;
+    
+    /**
+     * @var string $regla_validacion
+     *
+     * @ORM\Column(name="regla_validacion", type="string", length=100, nullable=true)
+     */
+    private $reglaValidacion;
 
    
 
@@ -219,5 +226,28 @@ class VariableCaptura
     public function getFormulario()
     {
         return $this->formulario;
+    }
+
+    /**
+     * Set reglaValidacion
+     *
+     * @param string $reglaValidacion
+     * @return VariableCaptura
+     */
+    public function setReglaValidacion($reglaValidacion)
+    {
+        $this->reglaValidacion = $reglaValidacion;
+
+        return $this;
+    }
+
+    /**
+     * Get reglaValidacion
+     *
+     * @return string 
+     */
+    public function getReglaValidacion()
+    {
+        return $this->reglaValidacion;
     }
 }
