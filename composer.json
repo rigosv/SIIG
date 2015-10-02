@@ -41,8 +41,8 @@
         "friendsofsymfony/jsrouting-bundle": "v1.5.3",
         
         "os/excel-bundle": "v2.1",
-        "videlalvaro/php-amqplib": "dev-master",
-        "oldsound/rabbitmq-bundle": "v1.5.0",
+        "videlalvaro/php-amqplib": "2.5.*",
+        "oldsound/rabbitmq-bundle": "~1.6",
         "fr3d/ldap-bundle": "2.0.*@dev",
 	"knplabs/knp-snappy-bundle": "v1.2",
                 

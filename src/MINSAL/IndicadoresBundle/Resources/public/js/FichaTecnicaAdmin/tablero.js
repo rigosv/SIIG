@@ -262,7 +262,7 @@ $.fn.modal.Constructor.prototype.enforceFocus = function() {};
         $('li[sala-id="' + $('.marco-sala').attr('id-sala') + '"]').addClass('active');
 
         if ($('#sala_default').val() == 0) {
-            cargarMensajes();
+            cargarMensajes();            
             cargarUsuarios();
             cargarImagenes();
             cargarAcciones();
