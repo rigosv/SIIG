@@ -354,7 +354,7 @@ function dibujarControles(zona, datos) {
             .attr('filtro-elementos', '')
             .attr('rangos_alertas', JSON.stringify(datos.rangos));
     
-    var meta = (datos.meta==null) ? 0 : datos.meta;    
+    var meta = (datos.meta==null) ? 0 : datos.meta;
     $('#' + zona ).attr('meta', meta);
     
     var msj_favoritos = '',
@@ -843,18 +843,18 @@ function procesarDimensiones(resp, datos, zona_g, desde_sala) {
                     $('#' + zona_g + ' .filtros_dimensiones A').click(function() {
                         ascenderNivelDimension(zona_g, $(this).attr('data'));
                     });
+                    
                 }
                 $('#' + zona_g + ' .titulo_indicador').attr('data-id', datos.idIndicador);                
                 $('#' + zona_g + ' .titulo_indicador').attr('vista', datos.vista);
-                $('#' + zona_g).attr('orden', datos.orden);
-                var meta = (datos.meta==null) ? 0 : datos.meta;
-                $('#' + zona_g).attr('meta', meta);                
+                $('#' + zona_g).attr('orden', datos.orden);                
                 $('#' + zona_g).attr('orden-aplicado', 'false');
                 $('#opciones_dimension_' + zona_g + ' .dimensiones').val(datos.dimension);
                 $('#opciones_dimension_' + zona_g + ' .filtro_desde').val(datos.filtroPosicionDesde);
                 $('#opciones_dimension_' + zona_g + ' .filtro_hasta').val(datos.filtroPosicionHasta);
                 $('#' + zona_g + ' .titulo_indicador').attr('filtro-elementos', datos.filtroElementos);
                 $('#' + zona_g + ' .tipo_grafico_principal').val(datos.tipoGrafico);
+
             }
             dibujarGrafico(zona_g, $('#opciones_dimension_' + zona_g + ' .dimensiones').val(), desde_sala);            
             if ($('#' + zona_g + ' .titulo_indicador').attr('vista') == 'tabla'){
