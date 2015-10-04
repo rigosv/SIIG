@@ -183,7 +183,7 @@ function descenderNivelDimension(zona, category) {
 function dibujarGrafico(zona, dimension, desde_sala) {
     if (dimension === null)
         return;
-    var filtro = $('#opciones_dimension_' + zona + ' .filtros_dimensiones').attr('data');
+    var filtro = $('#' + zona + ' .filtros_dimensiones').attr('data');
     var id_indicador  = $('#' + zona + ' .titulo_indicador').attr('data-id');
     
     if ($('#sala_default').val()==0){ 
