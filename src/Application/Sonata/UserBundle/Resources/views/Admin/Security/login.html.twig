@@ -9,17 +9,14 @@
         {% block sonata_user_login_form %}
             {% block sonata_user_login_error %}
                 {% if error %}
-                    <div class="alert alert-danger">{{ error|trans({}, 'FOSUserBundle') }}</div>
+                    <div class="alert alert-danger">{{ error|trans }}</div>
                 {% endif %}
             {% endblock %}
 
             <form action="{{ path("sonata_user_admin_security_check") }}" method="post">  
                 <div class="panel panel-default">
                     <div class="panel-heading"><h4 class="login-box-msg">{{ 'title_user_authentication'|trans({}, 'SonataUserBundle') }}</h4></div>
-                    <div class="panel-body">
-                        {% if error %}
-                            <div class="alert alert-danger">{{ error|trans({}, 'SonataUserBundle') }}</div>
-                        {% endif %}
+                    <div class="panel-body">                        
 
                         <input type="hidden" name="_csrf_token" value="{{ csrf_token }}" />
 

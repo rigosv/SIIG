@@ -382,3 +382,4 @@ _error_anterior_: Sucedió un error al guardar la última celda editada, modifí
 _elija_un_formulario_:  Elija un formulario
 _operadores_permitidos_: 'Utilice "value" para referirse al valor de la celda a validar. Operadores permitidos: and, or, operadores relacionales y aritméticos'
 _error_validation_: 'Error al validar dato, el valor ingresado debe pasar la condición: '
+'Bad credentials.': Datos no válidos
