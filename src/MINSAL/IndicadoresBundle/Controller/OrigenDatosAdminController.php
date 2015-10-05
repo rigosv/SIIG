@@ -185,7 +185,8 @@ class OrigenDatosAdminController extends Controller
                     $condicion_carga_incremental = " AND $campoLecturaIncremental >= '$lim_inf'
                                                          AND $campoLecturaIncremental <= '$lim_sup' ";
                 }
-                $orden = " ORDER BY $campoLecturaIncremental ";            
+                $orden = " ORDER BY $campoLecturaIncremental ";
+                $ultimaLecturaIncremental = $ultimaLecturaIncremental->format('Y-m-d H:i:s');
             }
             $msg = array('id_origen_dato' => $origen, 
                         'sql' => $origenDato->getSentenciaSql(),
@@ -196,7 +197,7 @@ class OrigenDatosAdminController extends Controller
                         'orden' => $orden,
                         'esLecturaIncremental' => $esLecturaIncremental,
                         'campoLecturaIncremental' => $campoLecturaIncremental,
-                        'ultimaLecturaIncremental' => $ultimaLecturaIncremental->format('Y-m-d H:i:s')
+                        'ultimaLecturaIncremental' => $ultimaLecturaIncremental
                     
                 );
             
