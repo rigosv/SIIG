@@ -380,3 +380,6 @@ _error_anterior_: It happened an error saving the last edited cell, modify it an
 _elija_un_formulario_:  Choose a form
 _operadores_permitidos_: 'Use "value" to refer to the cell value to validate. Allowed operators: and, or, relational and arithmetic operators'
 _error_validation_: 'Error validating data, the entered value must pass the condition: '
+_estatus_: Status
+_user_: User
+_perfil_: Profile

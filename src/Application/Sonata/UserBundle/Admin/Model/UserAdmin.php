@@ -49,13 +49,13 @@ class UserAdmin extends BaseAdmin
         $pass_requerido = ($accion == 'create') ? true : false;
         
         $formMapper
-            ->tab('User')
-                ->with('Profile', array('class' => 'col-md-6'))->end()
+            ->tab($this->getTranslator()->trans('_usuario_'))
+                ->with($this->getTranslator()->trans('_perfil_'), array('class' => 'col-md-6'))->end()
                 ->with('General', array('class' => 'col-md-6'))->end()
                 //->with('Social', array('class' => 'col-md-6'))->end()
             ->end()
-            ->tab('Security')
-                ->with('Status', array('class' => 'col-md-4'))->end()
+            ->tab($this->getTranslator()->trans('_seguridad_'))
+                ->with($this->getTranslator()->trans('_estatus_'), array('class' => 'col-md-4'))->end()
                 ->with('Groups', array('class' => 'col-md-4'))->end()
                 //->with('Keys', array('class' => 'col-md-4'))->end()
                 ->with('Roles', array('class' => 'col-md-12'))->end()
@@ -65,7 +65,7 @@ class UserAdmin extends BaseAdmin
         $now = new \DateTime();
         
         $formMapper
-            ->tab('User')
+            ->tab($this->getTranslator()->trans('_usuario_'))
                 ->with('General')
                     ->add('username')
                     ->add('email')
@@ -73,7 +73,7 @@ class UserAdmin extends BaseAdmin
                         'required' => (!$this->getSubject() || is_null($this->getSubject()->getId()))
                     ))
                 ->end()
-                ->with('Profile')
+                ->with($this->getTranslator()->trans('_perfil_'))
                     ->add('dateOfBirth', 'sonata_type_date_picker', array(
                         'years' => range(1900, $now->format('Y')),
                         'dp_min_date' => '1-1-1900',
@@ -97,8 +97,8 @@ class UserAdmin extends BaseAdmin
 
         if ($this->getSubject() && !$this->getSubject()->hasRole('ROLE_SUPER_ADMIN')) {
             $formMapper
-                ->tab('Security')
-                    ->with('Status')
+                ->tab($this->getTranslator()->trans('_seguridad_'))
+                    ->with($this->getTranslator()->trans('_estatus_'))
                         ->add('locked', null, array('required' => false))
                         ->add('expired', null, array('required' => false))
                         ->add('enabled', null, array('required' => false))
