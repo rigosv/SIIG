@@ -124,4 +124,6 @@ _unidades_productivas_ : Unidades productivas
 _uso_costeo_: Utilizado para Costeo
 _variable_calculo_consumo_ : Variable para cálculo de consumo
 _variable_captura_: Variables de captura
-_variables_ga_: Gastos Administrativos :: Variables
+_variables_ga_: 'Gastos Administrativos :: Variables'
+_periodo_ingreso_grupo_usuarios_: Periodo ingreso por grupo de usuarios
+_grupo_usuarios_: Grupo usuarios
