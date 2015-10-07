@@ -383,3 +383,5 @@ _error_validation_: 'Error validating data, the entered value must pass the cond
 _estatus_: Status
 _user_: User
 _perfil_: Profile
+_establecimiento_principal_ : Main establishment
+_ayuda_establecimiento_principal_: Establishment on which enters data into data entry forms

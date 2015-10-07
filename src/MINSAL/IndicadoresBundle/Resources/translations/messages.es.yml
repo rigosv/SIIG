@@ -386,3 +386,5 @@ _error_validation_: 'Error al validar dato, el valor ingresado debe pasar la con
 _estatus_: Estatus
 _user_: Usuario
 _perfil_: Perfil
+_establecimiento_principal_ : Establecimiento principal
+_ayuda_establecimiento_principal_: Establecimiento sobre el cual ingresa datos en formularios de captura

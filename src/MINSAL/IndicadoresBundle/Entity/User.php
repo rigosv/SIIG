@@ -62,6 +62,11 @@ class User extends BaseUser
      * @ORM\OrderBy({"codigo" = "ASC"})
      **/
     private $agencia;
+    
+    /**
+     * @ORM\ManyToOne(targetEntity="MINSAL\CostosBundle\Entity\Estructura")
+     **/
+    private $establecimientoPrincipal;
 
     /**
      * Get id
@@ -273,5 +278,28 @@ class User extends BaseUser
     public function getAgencia()
     {
         return $this->agencia;
+    }
+
+    /**
+     * Set establecimientoPrincipal
+     *
+     * @param \MINSAL\CostosBundle\Entity\Estructura $establecimientoPrincipal
+     * @return User
+     */
+    public function setEstablecimientoPrincipal(\MINSAL\CostosBundle\Entity\Estructura $establecimientoPrincipal = null)
+    {
+        $this->establecimientoPrincipal = $establecimientoPrincipal;
+
+        return $this;
+    }
+
+    /**
+     * Get establecimientoPrincipal
+     *
+     * @return \MINSAL\CostosBundle\Entity\Estructura 
+     */
+    public function getEstablecimientoPrincipal()
+    {
+        return $this->establecimientoPrincipal;
     }
 }
