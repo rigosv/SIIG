@@ -60,7 +60,7 @@
     {% if periodoSeleccionado != null and parametros.periodo_estructura != '-1' %}
     <script type="text/javascript">
         $(document).ready(function () {
-            $.jqx.theme = 'energyblue';            
+            $.jqx.theme = 'energyblue';                    
             var url = Routing.generate('{{url}}', {id: {{Frm.id}}, periodo_ingreso: $('#periodo_estructura').val(),titulo_frm : '{{titulo}}', datos_frm: $('#frm_').serialize() });
             var fila = 0;
             var columna = 0;
@@ -170,9 +170,11 @@
                         {% for pivote in Pivotes_ %}
                         {                            
                             {% if editable == true %}
-                                {%if (campo.significadoCampo.codigo == 'cant_mensual' or campo.significadoCampo.codigo == 'importe_mensual') and campo.origenPivote %}
-                                    {% if pivote.id == periodoSeleccionado.periodo.mes %} {% set celda_editable = true %}
-                                    {% else %} {% set celda_editable = false %}
+                                {%if (campo.significadoCampo.codigo == 'cant_mensual' or campo.significadoCampo.codigo == 'importe_mensual') and campo.origenPivote %}                                    
+                                    {% if pivote.id in meses_activos %}
+                                        {% set celda_editable = true %}
+                                    {% else %} 
+                                        {% set celda_editable = false %}
                                     {% endif %}
                                 {% else %}
                                     {% set celda_editable = campo.esEditable|default('false') %} 

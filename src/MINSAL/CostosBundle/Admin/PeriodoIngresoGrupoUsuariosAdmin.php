@@ -32,7 +32,7 @@ class PeriodoIngresoGrupoUsuariosAdmin extends Admin
     {
         $listMapper            
             ->addIdentifier('id', null, array('label'=> $this->getTranslator()->trans('_id_')))
-            ->add('grupoUsuario', null, array('label'=> $this->getTranslator()->trans('_grupo_usuario_')))
+            ->add('grupoUsuario', null, array('label'=> $this->getTranslator()->trans('_grupo_usuarios_')))
             ->add('formulario', null, array('label'=> $this->getTranslator()->trans('_formulario_')))
             ->add('periodo', null, array('label'=> $this->getTranslator()->trans('_periodo_ingreso_')))
         ;

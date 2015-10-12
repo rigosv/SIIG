@@ -22,12 +22,24 @@ class GridController extends Controller
         $response = new Response();
         $em = $this->getDoctrine()->getManager();
         
-        $periodoEstructura =  $em->getRepository('CostosBundle:PeriodoIngresoDatosFormulario')->find($periodo_ingreso);
+        $tipo_periodo = null;
+        if (strpos($periodo_ingreso, '_') !== false){
+            $periodos_sel = split('_', $periodo_ingreso);
+            $tipo_periodo = $periodos_sel[0];
+            if ($periodos_sel[0]=='pu'){
+                $periodoEstructura = $em->getRepository("CostosBundle:PeriodoIngresoDatosFormulario")->find($periodos_sel[1]);
+            }else {
+                $periodoEstructura = $em->getRepository("CostosBundle:PeriodoIngresoGrupoUsuarios")->find($periodos_sel[1]);
+            }
+        } else{
+            $periodoEstructura = $em->getRepository("CostosBundle:PeriodoIngresoDatosFormulario")->find($periodo_ingreso);
+        }
+                
         if (!$periodoEstructura) {
             //$response->setContent('{"estado" : "ok", "data": []}');
             $response->setContent('{"estado" : "error", "msj": "' . $this->get('translator')->trans('_parametros_no_establecidos_') . '"}');
         } else{
-            $data = $em->getRepository('CostosBundle:Formulario')->getDatos($Frm, $periodoEstructura, $request);
+            $data = $em->getRepository('CostosBundle:Formulario')->getDatos($Frm, $periodoEstructura->getId(),$tipo_periodo , $request);
             if (count($data) > 0){
                 $data_ = '';
                 $ultimo = array_pop($data);
@@ -52,6 +64,19 @@ class GridController extends Controller
         $response = new Response();
         $em = $this->getDoctrine()->getManager();
         
+        $tipo_periodo = null;
+        if (strpos($periodo_ingreso, '_') !== false){
+            $periodos_sel = split('_', $periodo_ingreso);
+            $tipo_periodo = $periodos_sel[0];
+            if ($periodos_sel[0]=='pu'){
+                $periodoEstructura = $em->getRepository("CostosBundle:PeriodoIngresoDatosFormulario")->find($periodos_sel[1]);
+            }else {
+                $periodoEstructura = $em->getRepository("CostosBundle:PeriodoIngresoGrupoUsuarios")->find($periodos_sel[1]);
+            }
+        } else{
+            $periodoEstructura = $em->getRepository("CostosBundle:PeriodoIngresoDatosFormulario")->find($periodo_ingreso);
+        }
+        
         $datos = json_decode($request->get('fila'), true);        
         //var_dump(in_array('regla_validacion', $datos));
         if ($datos['regla_validacion'] != ''){
@@ -74,11 +99,11 @@ class GridController extends Controller
             }
         }
         
-        $periodoEstructura =  $em->getRepository('CostosBundle:PeriodoIngresoDatosFormulario')->find($periodo_ingreso);
+        //$periodoEstructura =  $em->getRepository('CostosBundle:PeriodoIngresoDatosFormulario')->find($periodo_ingreso);
         if (!$periodoEstructura) {
             $response->setContent('{"estado" : "error", "msj": "' . $this->get('translator')->trans('_parametros_no_establecidos_') . '"}');
         } else{
-            $guardar = $em->getRepository('CostosBundle:Formulario')->setDatos($Frm, $periodoEstructura, $request);
+            $guardar = $em->getRepository('CostosBundle:Formulario')->setDatos($Frm, $periodoEstructura->getId(), $tipo_periodo, $request);
         
             if ($guardar == false){
                 $response->setContent('{"estado" : "error", "msj": "' . $this->get('translator')->trans('_error_datos_no_guardados_') . '"}');

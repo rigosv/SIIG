@@ -10,14 +10,27 @@ class FormularioAdminController extends Controller
 {           
     public function mostrarPlantilla(Request $request, $codigoFrm, $pk, $titulo, $mostrar_resumen, $plantilla, $editable = true) {
         $em = $this->getDoctrine()->getManager();
+        $meses = Array();
         
         $periodo = (is_null($request->get('periodo_estructura')) ) ? '-1': $request->get('periodo_estructura');
         $numero_carga = (is_null($request->get('periodo_estructura')) ) ? '1': '2';
-        $periodoSeleccionado = ($periodo != '-1' ) ? 
-                                $em->getRepository("CostosBundle:PeriodoIngresoDatosFormulario")->find($periodo):
-                                null;
-        $parametros = $this->getParametros2($periodoSeleccionado);                
+        $tipo_periodo = null;
+        if ($periodo != '-1'){
+            $periodos_sel = split('_', $periodo);
+            $tipo_periodo = $periodos_sel[0];
+            if ($periodos_sel[0]=='pu'){
+                $periodoSeleccionado = $em->getRepository("CostosBundle:PeriodoIngresoDatosFormulario")->find($periodos_sel[1]);
+            }else {
+                $periodoSeleccionado = $em->getRepository("CostosBundle:PeriodoIngresoGrupoUsuarios")->find($periodos_sel[1]);
+            }
+        } else {
+            $periodoSeleccionado = null;
+        }
+
+        $parametros = $this->getParametros2($periodoSeleccionado, $tipo_periodo);       
         
+        $parametros['tipo_periodo'] = $tipo_periodo;
+        $periodos= array();
         $cantFrm = 1;
         // Si es el código de formulario de captura de datos, 
         // pueden haber varios formularios para el usuario
@@ -35,21 +48,53 @@ class FormularioAdminController extends Controller
             foreach ($aux as $p ) { 
                 if ($p->getFormulario()->getAreaCosteo() == 'almacen_datos')
                     $periodosEstructura [] = $p;
+            }            
+            
+            //Buscar los permisos para el formulario asignado por grupo de usuarios
+            //Verificar que el usuario tiene una unidad principal para ingreso de datos
+            if ($this->getUser()->getEstablecimientoPrincipal() != null) {
+                foreach($this->getUser()->getGroups() as $g){
+                    $aux_ = $em->getRepository("CostosBundle:PeriodoIngresoGrupoUsuarios")
+                    ->findBy(array('grupoUsuario' => $g), 
+                            array('periodo' => 'ASC'));
+                
+                    foreach($aux_ as $p){
+                        $llave = $p->getPeriodo()->getAnio().$this->getUser()->getEstablecimientoPrincipal()->getId().$p->getFormulario()->getId();
+                        $periodos[$llave] = array('id'=>'pg_'.$p->getId(),
+                                                'periodo_anio'=>$p->getPeriodo()->getAnio(),
+                                                'unidad' => $this->getUser()->getEstablecimientoPrincipal(),
+                                                'formulario' => $p->getFormulario()
+                                            );
+                        $meses[$p->getPeriodo()->getAnio()][] = $p->getPeriodo()->getMes();
+                    }
+                }
             }
-            $cantFrm = count($periodosEstructura);
         }
         else{ 
             $Frm = $em->getRepository('CostosBundle:Formulario')->findOneBy(array('codigo'=>$codigoFrm));
             $periodosEstructura = $em->getRepository("CostosBundle:PeriodoIngresoDatosFormulario")
                 ->findBy(array('usuario' => $this->getUser(), 'formulario'=>$Frm), 
                         array('periodo' => 'ASC', 'unidad'=>'ASC'));
-        }                
+        }    
+        
+        foreach ($periodosEstructura as $p){
+            $llave = $llave = $p->getPeriodo()->getAnio().$p->getUnidad()->getId().$p->getFormulario()->getId();
+            $periodos[$llave] = array('id'=>'pu_'.$p->getId(),
+                                                'periodo_anio'=>$p->getPeriodo()->getAnio(),
+                                                'unidad' => $p->getUnidad(),
+                                                'formulario' => $p->getFormulario()
+                                            );
+            $meses[$p->getPeriodo()->getAnio()][] = $p->getPeriodo()->getMes();
+        }
+        
+        $cantFrm = count($periodos);
         
         $parametrosPlantilla = array(
             'url' => 'get_grid_data',
             'url_save' => 'set_grid_data',
             'parametros' => $parametros,
-            'periodosEstructura' => $periodosEstructura,
+            'periodos'=>$periodos,
+            'tipo_periodo'=>$tipo_periodo,
             'periodoSeleccionado' => $periodoSeleccionado,
             'titulo' => $titulo,
             'numero_carga' => $numero_carga,
@@ -62,6 +107,8 @@ class FormularioAdminController extends Controller
             $parametrosPlantilla['Frm'] = $Frm;
             $parametrosPlantilla['origenes'] = $this->getOrigenes($Frm, $parametros);
             $parametrosPlantilla['pivotes'] = $this->getPivotes($Frm, $parametros);
+            $parametrosPlantilla['meses_activos'] = $meses[$periodoSeleccionado->getPeriodo()->getAnio()]; 
+            
         }             
         return $this->render('CostosBundle:Formulario:'.$plantilla.'.html.twig', $parametrosPlantilla);
     }
@@ -296,22 +343,28 @@ class FormularioAdminController extends Controller
         return $pivotes;
     }
     
-    private function getParametros2($periodoIngreso){
+    private function getParametros2($periodoIngreso, $tipo_periodo){
         $parametros = array();
+        if ($tipo_periodo == 'pu'){
+            $unidad = $periodoIngreso->getUnidad();
+        } elseif ($tipo_periodo == 'pg'){
+            $unidad = $this->getUser()->getEstablecimientoPrincipal();
+        }
+        
         if ($periodoIngreso !=  null ){
             if ($periodoIngreso->getFormulario()->getPeriodoLecturaDatos() == 'mensual')
                 $parametros['mes'] = $periodoIngreso->getPeriodo()->getMes();
             $parametros['anio'] = $periodoIngreso->getPeriodo()->getAnio();
-            if ($periodoIngreso->getUnidad()->getNivel() == 1 ) {
-                $parametros['establecimiento'] = $periodoIngreso->getUnidad()->getCodigo();
-            } elseif ($periodoIngreso->getUnidad()->getNivel() == 2 ) {
-                $parametros['establecimiento'] = $periodoIngreso->getUnidad()->getParent()->getCodigo();
-                $parametros['dependencia'] = $periodoIngreso->getUnidad()->getId();
-            } elseif ($periodoIngreso->getUnidad()->getNivel() == 3 ) {
-                $parametros['establecimiento'] = $periodoIngreso->getUnidad()->getParent()->getParent()->getCodigo();
-                $parametros['dependencia'] = $periodoIngreso->getUnidad()->getCodigo();
+            if ($unidad->getNivel() == 1 ) {
+                $parametros['establecimiento'] = $unidad->getCodigo();
+            } elseif ($unidad->getNivel() == 2 ) {
+                $parametros['establecimiento'] = $unidad->getParent()->getCodigo();
+                $parametros['dependencia'] = $unidad->getId();
+            } elseif ($unidad->getNivel() == 3 ) {
+                $parametros['establecimiento'] = $unidad->getParent()->getParent()->getCodigo();
+                $parametros['dependencia'] = $unidad->getCodigo();
             }
-            $parametros['periodo_estructura'] =  $periodoIngreso->getId();
+            $parametros['periodo_estructura'] =  $tipo_periodo.'_'.$periodoIngreso->getId();
         } else {
             $parametros =  array('anio_mes'=>null, 
                 'anio'=>null, 
