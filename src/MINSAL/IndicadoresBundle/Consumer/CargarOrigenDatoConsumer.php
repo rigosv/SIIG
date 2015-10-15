@@ -37,7 +37,6 @@ class CargarOrigenDatoConsumer implements ConsumerInterface
             foreach ($origenDato->getConexiones() as $cnx) {
                 $leidos = 10001;
                 $i = 0;
-                $nombre_conexion = $cnx->getNombreConexion();
                 while ($leidos >= $tamanio) {
                     if ($cnx->getIdMotor()->getCodigo() == 'oci8' ) {
                         $sql_aux = ($msg['esLecturaIncremental']) ? 
@@ -71,7 +70,7 @@ class CargarOrigenDatoConsumer implements ConsumerInterface
                     
                     $datos = $em->getRepository('IndicadoresBundle:OrigenDatos')->getDatos($sql_aux, $cnx);
 
-                    $this->enviarDatos($idOrigen, $datos, $campos_sig, $ahora, $nombre_conexion);
+                    $this->enviarDatos($idOrigen, $datos, $campos_sig, $ahora);
                     if ($cnx->getIdMotor()->getCodigo() == 'pdo_dblib')
                         $leidos = 1;
                     else $leidos = count($datos);
@@ -80,7 +79,7 @@ class CargarOrigenDatoConsumer implements ConsumerInterface
             } 
         } else {
             $datos = $em->getRepository('IndicadoresBundle:OrigenDatos')->getDatos(null, null, $origenDato->getAbsolutePath());
-            $this->enviarDatos($idOrigen, $datos, $campos_sig, $ahora, $nombre_conexion);
+            $this->enviarDatos($idOrigen, $datos, $campos_sig, $ahora);
         }
         //Después de enviados todos los registros para guardar, mandar mensaje para borrar los antiguos
         $msg_guardar = array('id_origen_dato' => $idOrigen,
@@ -100,7 +99,7 @@ class CargarOrigenDatoConsumer implements ConsumerInterface
         return true;
     }
 
-    public function enviarDatos($idOrigen, $datos, $campos_sig, $ultima_lectura, $nombre_conexion)
+    public function enviarDatos($idOrigen, $datos, $campos_sig, $ultima_lectura)
     {
         //Esta cola la utilizaré solo para leer todos los datos y luego mandar uno por uno
         // a otra cola que se encarará de guardarlo en la base de datos
@@ -117,8 +116,6 @@ class CargarOrigenDatoConsumer implements ConsumerInterface
                     //Verificar si ya está en UTF-8, si no, codificarlo
                     $nueva_fila[$campos_sig[$util->slug($k)]] = trim(mb_check_encoding($v, 'UTF-8') ? $v : utf8_encode($v));
                 }
-                //Agregar el nombre de la conexión como campo
-                $nueva_fila['origen_dato'] = $nombre_conexion;
                 $datos_a_enviar[] = $nueva_fila;
                 //Enviaré en grupos de 200
                 if ($i == 200) {
