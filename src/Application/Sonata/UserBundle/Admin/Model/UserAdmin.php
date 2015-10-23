@@ -120,6 +120,27 @@ class UserAdmin extends BaseAdmin {
                     ->end()
                     ->end()
             ;
+            $acciones = explode('/', $this->getRequest()->server->get("REQUEST_URI"));
+            
+            $accion = explode('?',array_pop($acciones));
+            if ($accion[0] == 'edit') {
+                $formMapper
+                    ->tab($this->getTranslator()->trans('_indicadores_y_salas_'))
+                        ->add('indicadores', null, array('label' => $this->getTranslator()->trans('indicadores'), 'expanded' => true))
+                        ->add('gruposIndicadores', null, array('label' => $this->getTranslator()->trans('_salas_situacionales_'),
+                            'property'=>'grupoIndicadores.id',
+                            'expanded' => true,
+                            'mapped' => false))
+                        ->add('salas', 'entity', array(
+                            'class' => 'IndicadoresBundle:GrupoIndicadores',                    
+                            'label' => $this->getTranslator()->trans('_salas_situacionales_'),
+                            'expanded' => true,
+                            'multiple' => true,
+                            'mapped' => false
+                            ))
+                    ->end()
+                ;
+            }
         }
         $formMapper
                 ->setHelps(array(
