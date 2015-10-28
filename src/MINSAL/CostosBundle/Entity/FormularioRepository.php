@@ -484,24 +484,29 @@ class FormularioRepository extends EntityRepository {
         if ($area == 'almacen_datos'){
             $origenes = array($Frm->getId());
             $campo = 'id_formulario';
-            
+            $dependencia1 = ''; $dependencia2 = ''; $dependencia3='';
+            if (array_key_exists('dependencia', $this->parametros)){
+                $dependencia1 = " 'dependencia', ";
+                $dependencia2 = "'". $this->parametros['dependencia'] . "' , ";
+                $dependencia3 = " datos->'dependencia', ";
+            }
             //Cargar las variables que no están en el año elegido
             $sql = "INSERT INTO almacen_datos.repositorio (id_formulario, datos)
                     (SELECT ".$Frm->getId()." AS id_formulario, 
                             hstore(
-                                ARRAY['codigo_variable', 'anio', 'establecimiento', 'descripcion_variable',
+                                ARRAY['codigo_variable', 'anio', 'establecimiento', $dependencia1 'descripcion_variable',
                                         'codigo_categoria_variable', 'descripcion_categoria_variable', 'es_poblacion',
                                         'regla_validacion'], 
-                                ARRAY[A.codigo , '".$this->parametros['anio']."', '".$this->parametros['establecimiento']."', A.descripcion,
+                                ARRAY[A.codigo , '".$this->parametros['anio']."', '".$this->parametros['establecimiento']."', $dependencia2 A.descripcion,
                                     B.codigo, B.descripcion,  COALESCE(A.es_poblacion::varchar,''),
                                     COALESCE(A.regla_validacion::varchar,'')]
                             ) 
                         FROM variable_captura A 
                             INNER JOIN categoria_variable_captura B ON (A.id_categoria_captura = B.id)
                         WHERE 
-                             (".$Frm->getId(). ", A.codigo, '".$this->parametros['anio']."', '".$this->parametros['establecimiento']."' )
+                             (".$Frm->getId(). ", A.codigo, '".$this->parametros['anio']."', $dependencia2 '".$this->parametros['establecimiento']."' )
                                 NOT IN 
-                                (SELECT id_formulario,  datos->'codigo_variable', datos->'anio', datos->'establecimiento'
+                                (SELECT id_formulario,  datos->'codigo_variable', datos->'anio', $dependencia3 datos->'establecimiento'
                                     FROM almacen_datos.repositorio
                                     WHERE id_formulario = ".$Frm->getId()."
                                         AND datos->'establecimiento' = '".$this->parametros['establecimiento']."'
