@@ -72,7 +72,7 @@ class FormularioAdminController extends Controller
         }
         else{ 
             $Frm = $em->getRepository('CostosBundle:Formulario')->findOneBy(array('codigo'=>$codigoFrm));
-            $periodosEstructura = $em->getRepository("CostosBundle:PeriodoIngresoDatosFormulario")
+            $periodosEstrugetctura = $em->getRepository("CostosBundle:PeriodoIngresoDatosFormulario")
                 ->findBy(array('usuario' => $this->getUser(), 'formulario'=>$Frm), 
                         array('periodo' => 'ASC', 'unidad'=>'ASC'));
         }    

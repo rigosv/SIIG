@@ -432,6 +432,25 @@ class FormularioRepository extends EntityRepository {
             return $e->getMessage();
         }
     }
+    
+    public function getDatosCapturaDatos($FrmId) {
+        
+        $em = $this->getEntityManager();
+        $Frm = $em->getRepository('CostosBundle:Formulario')->find($FrmId);
+        
+        //$origenes = array($Frm->getId());
+        //$campo = 'id_formulario';
+        
+        $sql = $Frm->getSqlLecturaDatos();        
+        
+        try {
+            return $em->getConnection()->executeQuery($sql)->fetchAll();
+        } catch (\PDOException $e) {
+            return $e->getMessage();
+        }
+        
+    }
+    
     public function getDatos(Formulario $Frm, $periodoIngreso, $tipo_periodo = null, Request $request) {
         $em = $this->getEntityManager();
         $area = $Frm->getAreaCosteo();

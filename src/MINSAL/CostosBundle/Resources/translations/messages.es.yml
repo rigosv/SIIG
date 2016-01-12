@@ -127,3 +127,5 @@ _variable_captura_: Variables de captura
 _variables_ga_: 'Gastos Administrativos :: Variables'
 _periodo_ingreso_grupo_usuarios_: Periodo ingreso por grupo de usuarios
 _grupo_usuarios_: Grupo usuarios
+_sql_lectura_datos_: Sentencia datos capturados
+_sql_lectura_datos_help: Sentencia SQL para obtener los datos capturados con el formulario y mostrarlos en la tabla dinámica

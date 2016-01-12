@@ -26,6 +26,7 @@
         <li ><a href="#tab1">{{'_tabla_pivote_'|trans}}</a></li>    
         <li class="active"><a href="#listado_indicadores">{{"indicadores"|trans}}</a></li>
         <li ><a href="#listado_costeo">{{"_costeo_"|trans}}</a></li>
+        <li ><a href="#listado_captura_datos">{{"_captura_datos_"|trans}}</a></li>
     </ul>
 
     <div id='nombre_sala2' ></div>
@@ -40,6 +41,9 @@
         {% if is_granted('ROLE_SONATA_ADMIN') or is_granted('ROLE_USER_COSTOS') %}
             {% include 'IndicadoresBundle:FichaTecnicaAdmin:listado_origenes_costos.html.twig'%}
         {% endif %}
+        {% if is_granted('ROLE_SONATA_ADMIN') or is_granted('ROLE_USER_CAPTURA_DATOS') %}
+            {% include 'IndicadoresBundle:FichaTecnicaAdmin:captura_datos.html.twig'%}
+        {% endif %}        
     </div>
 </div>
 <div id="myModal2" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">

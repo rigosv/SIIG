@@ -1,0 +1,24 @@
+<div class="content tab-pane " id="listado_captura_datos">
+    <div class="panel panel-default panel-info">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <a>
+                    {{"_almacen_datos_"|trans}}
+                </a>
+            </h4>
+        </div>
+        <div class="panel-body">
+            <div class="list-group" >                                
+                {% for frm in formularios %}
+                    {% if frm.SqlLecturaDatos != '' %}
+                        <A id='rmf-{{frm.id}}' class='formulario_captura_datos list-group-item'
+                            data-id='{{frm.id}}'
+                            >
+                                {{frm.nombre}}
+                        </A>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div> 

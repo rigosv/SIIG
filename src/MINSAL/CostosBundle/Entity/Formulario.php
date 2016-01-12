@@ -66,6 +66,13 @@ class Formulario
      * @ORM\Column(name="periodo_lectura_datos", type="string", length=20, nullable=true)
      */
     protected $periodoLecturaDatos;
+    
+    /**
+     * @var string $sql_lectura_datos
+     *
+     * @ORM\Column(name="sql_lectura_datos", type="text", nullable=true)
+     */
+    private $sqlLecturaDatos;
         
     /**
      * @var \Doctrine\Common\Collections\ArrayCollection
@@ -347,5 +354,28 @@ class Formulario
     public function getPeriodoLecturaDatos()
     {
         return $this->periodoLecturaDatos;
+    }
+
+    /**
+     * Set sqlLecturaDatos
+     *
+     * @param string $sqlLecturaDatos
+     * @return Formulario
+     */
+    public function setSqlLecturaDatos($sqlLecturaDatos)
+    {
+        $this->sqlLecturaDatos = $sqlLecturaDatos;
+
+        return $this;
+    }
+
+    /**
+     * Get sqlLecturaDatos
+     *
+     * @return string 
+     */
+    public function getSqlLecturaDatos()
+    {
+        return $this->sqlLecturaDatos;
     }
 }

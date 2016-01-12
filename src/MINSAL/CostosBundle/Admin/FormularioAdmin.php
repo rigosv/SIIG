@@ -49,8 +49,14 @@ class FormularioAdmin extends Admin
                                 return $repository->createQueryBuilder('c')
                                         ->join('c.significadoCampo', 's')
                                         ->orderBy('s.descripcion');
-                            }))            
+                            }))
+            ->add('sqlLecturaDatos', null, array('label'=> $this->getTranslator()->trans('_sql_lectura_datos_')))
         ;
+                            
+        $formMapper
+            ->setHelps(array(
+                'sqlLecturaDatos' => $this->getTranslator()->trans('_sql_lectura_datos_help'),                
+            ));
     }
 
     protected function configureDatagridFilters(DatagridMapper $datagridMapper)

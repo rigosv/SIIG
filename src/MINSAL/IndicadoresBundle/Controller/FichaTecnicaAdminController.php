@@ -249,11 +249,20 @@ class FichaTecnicaAdminController extends Controller {
 
     public function PivotTableAction() {
         $datos = $this->getListadoIndicadores();
+        $usuario = $this->getUser();
+        $em = $this->getDoctrine()->getManager();
+        $formularios = array();
+        
+        if ($usuario->hasRole('ROLE_SUPER_ADMIN') or $usuario->hasRole('ROLE_USER_CAPTURA_DATOS')) {
+            //Recuperar los formularios 
+            $formularios = $em->getRepository('CostosBundle:Formulario')->findBy(array('areaCosteo'=>'almacen_datos'));            
+        }
 
         return $this->render('IndicadoresBundle:FichaTecnicaAdmin:pivotTable.html.twig', array(
                     'categorias' => $datos['categorias'],
                     'clasificacionUso' => $datos['clasficacion_uso'],
-                    'indicadores_no_clasificados' => $datos['indicadores_no_clasificados']
+                    'indicadores_no_clasificados' => $datos['indicadores_no_clasificados'],
+                    'formularios' => $formularios
         ));
     }
 

@@ -21,6 +21,11 @@ costeo_rest:
     type:     rest
     resource: MINSAL\CostosBundle\Controller\CosteoRESTController
     prefix: /
+    
+captura_datos_rest:
+    type:     rest
+    resource: MINSAL\CostosBundle\Controller\FormularioRESTController
+    prefix: /
 # Internal routing configuration to handle ESI
 #_internal:
 #    resource: "@FrameworkBundle/Resources/config/routing/internal.xml"
