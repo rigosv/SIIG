@@ -15,7 +15,7 @@ $(document).ready(function() {
             /* A cada nombre de campo se le agrega como prefijo el id que se está usando 
              * para el formulario, lo quitaré para que sea más fácil de manipular del lado del servidor
              */
-            var $conexiones = $('#' + $id + '_conexiones');            
+            var $conexiones = $('#' + $id + '_conexiones');                        
             if ($('#' + $id + '_sentenciaSql').val() == '' || $conexiones.select2('val') == '') {
                 alert(trans.sentencia_sql_origen_requeridos);
                 return;
@@ -25,12 +25,15 @@ $(document).ready(function() {
             var conexiones_todas = '';
             $.each($conexiones, function(i, nodo) {
                 conexiones_todas += $(nodo).val() + '-';
-            });
+            });            
             var datos = $("form").serialize().replace(patron, '').replace(/%5D/ig, '').replace(/%5B/ig, '');
+            //Quitar los corchetes de las variables del formulario también las quita si las hubiere
+            // en la sentencia sql por eso se manda la sentencia de forma separada y sin quitar los corchetes
+            var sql = encodeURIComponent($('#' + $id + '_sentenciaSql').val());
             //Limpiar la tabla de datos
             $('#datos').html('');
 
-            $.post(Routing.generate('origen_dato_conexion_probar_sentencia'), datos + '&conexiones_todas=' + conexiones_todas, function(resp) {
+            $.post(Routing.generate('origen_dato_conexion_probar_sentencia'), datos + '&sql='+sql+ '&conexiones_todas=' + conexiones_todas, function(resp) {
                 $('#resultado_probar_consulta').html(resp.mensaje);
 
                 // Los encabezados de la fila

@@ -37,7 +37,7 @@ class OrigenDatoController extends Controller
     public function probarSentenciaAction()
     {
         $resultado = array('estado' => 'error', 'mensaje' => '', 'datos' => array());
-        $sql = $this->getRequest()->get('sentenciaSql');
+        $sql = $this->getRequest()->get('sql');
         $conexiones = explode('-', trim($this->getRequest()->get('conexiones_todas'), '-'));
 
         // Verificar que no tenga UPDATE o DELETE
