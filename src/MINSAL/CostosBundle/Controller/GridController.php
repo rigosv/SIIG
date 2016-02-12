@@ -39,7 +39,8 @@ class GridController extends Controller
             //$response->setContent('{"estado" : "ok", "data": []}');
             $response->setContent('{"estado" : "error", "msj": "' . $this->get('translator')->trans('_parametros_no_establecidos_') . '"}');
         } else{
-            $data = $em->getRepository('CostosBundle:Formulario')->getDatos($Frm, $periodoEstructura->getId(),$tipo_periodo , $request);
+            $user = $this->getUser();
+            $data = $em->getRepository('CostosBundle:Formulario')->getDatos($Frm, $periodoEstructura->getId(),$tipo_periodo , $request, $user);
             if (count($data) > 0){
                 $data_ = '';
                 $ultimo = array_pop($data);

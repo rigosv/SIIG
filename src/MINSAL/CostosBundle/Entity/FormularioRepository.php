@@ -451,21 +451,21 @@ class FormularioRepository extends EntityRepository {
         
     }
     
-    public function getDatos(Formulario $Frm, $periodoIngreso, $tipo_periodo = null, Request $request) {
+    public function getDatos(Formulario $Frm, $periodoIngreso, $tipo_periodo = null, Request $request, $user = null) {
         $em = $this->getEntityManager();
         $area = $Frm->getAreaCosteo();
         
-        $parametros = $request->get('datos_frm');        
+        $parametros = $request->get('datos_frm');
         
         $orden = '';
-        
+
         if ($tipo_periodo == null or $tipo_periodo == 'pu'){
             $periodoIngreso = $em->getRepository("CostosBundle:PeriodoIngresoDatosFormulario")->find($periodoIngreso);
         } elseif($tipo_periodo == 'pg'){
             $periodoIngreso = $em->getRepository("CostosBundle:PeriodoIngresoGrupoUsuarios")->find($periodoIngreso);
         }
         
-        $params_string = $this->getParameterString( $parametros, $periodoIngreso->getId());
+        $params_string = $this->getParameterString( $parametros, $periodoIngreso->getId(), $tipo_periodo, $user);       
         if ($area != 'ga_variables' and $area != 'ga_compromisosFinancieros' and 
                 $area != 'ga_distribucion' and $area != 'ga_costos' and $area != 'almacen_datos'){
             $origenes = $this->getOrigenes($Frm->getOrigenDatos());
@@ -610,26 +610,32 @@ class FormularioRepository extends EntityRepository {
         return $origenes;
     }
 
-    private function getParameterString($parametros, $periodoIngreso = null, $tipo_periodo = null ) {
+    private function getParameterString($parametros, $periodoIngreso = null, $tipo_periodo = null, $user = null ) {
         $params_string = '';
         $em = $this->getEntityManager();
         if ($tipo_periodo == null or $tipo_periodo == 'pu'){
             $periodoIngreso = $em->getRepository("CostosBundle:PeriodoIngresoDatosFormulario")->find($periodoIngreso);
         } elseif($tipo_periodo == 'pg'){
             $periodoIngreso = $em->getRepository("CostosBundle:PeriodoIngresoGrupoUsuarios")->find($periodoIngreso);
-        }
+        }        
         if ($periodoIngreso !=  null ){
             if ($periodoIngreso->getFormulario()->getPeriodoLecturaDatos() == 'mensual')
                 $this->parametros['mes'] = $periodoIngreso->getPeriodo()->getMes();
             $this->parametros['anio'] = $periodoIngreso->getPeriodo()->getAnio();
-            if ($periodoIngreso->getUnidad()->getNivel() == 1 ) {
-                $this->parametros['establecimiento'] = $periodoIngreso->getUnidad()->getCodigo();
-            } elseif ($periodoIngreso->getUnidad()->getNivel() == 2 ) {
-                $this->parametros['establecimiento'] = $periodoIngreso->getUnidad()->getParent()->getCodigo();
-                $this->parametros['dependencia'] = $periodoIngreso->getUnidad()->getId();
-            } elseif ($periodoIngreso->getUnidad()->getNivel() == 3 ) {
-                $this->parametros['establecimiento'] = $periodoIngreso->getUnidad()->getParent()->getParent()->getCodigo();
-                $this->parametros['dependencia'] = $periodoIngreso->getUnidad()->getCodigo();
+            
+            if ($tipo_periodo == 'pg'){
+                $unidad = $user->getEstablecimientoPrincipal();
+            } else {                
+                $unidad = $periodoIngreso->getUnidad();
+            }
+            if ($unidad->getNivel() == 1 ) {
+                $this->parametros['establecimiento'] = $unidad->getCodigo();
+            } elseif ($unidad->getNivel() == 2 ) {
+                $this->parametros['establecimiento'] = $unidad->getParent()->getCodigo();
+                $this->parametros['dependencia'] = $unidad->getId();
+            } elseif ($unidad->getNivel() == 3 ) {
+                $this->parametros['establecimiento'] = $unidad->getParent()->getParent()->getCodigo();
+                $this->parametros['dependencia'] = $unidad->getCodigo();
             }
         }
         foreach ($this->parametros as $key => $value) {
