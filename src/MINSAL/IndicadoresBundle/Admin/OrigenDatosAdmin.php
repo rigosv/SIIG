@@ -134,6 +134,7 @@ class OrigenDatosAdmin extends Admin
                 ->add('sentenciaSql', null, array('label' => $this->getTranslator()->trans('sentencia_sql'),
                     'template'=>'IndicadoresBundle:CRUD:list_sentencia_sql.html.twig'))
                 ->add('archivoNombre', null, array('label' => $this->getTranslator()->trans('archivo_asociado')))
+                ->add('ultimaActualizacion', null, array('label' => $this->getTranslator()->trans('_ultima_actualizacion_')))
                 ->add('_action', 'actions', array(
                     'actions' => array(
                         'load_data' => array('template' => 'IndicadoresBundle:OrigenDatosAdmin:list__action_load_data.html.twig')

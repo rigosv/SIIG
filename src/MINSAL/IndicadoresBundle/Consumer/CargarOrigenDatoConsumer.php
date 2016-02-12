@@ -89,7 +89,8 @@ class CargarOrigenDatoConsumer implements ConsumerInterface
             'lim_inf'=> $msg['lim_inf'],
             'lim_sup'=> $msg['lim_sup'],
             'ultima_lectura_incremental' => $msg['ultimaLecturaIncremental'],            
-            'campo_lectura_incremental' => $msg['campoLecturaIncremental']
+            'campo_lectura_incremental' => $msg['campoLecturaIncremental'],
+            'r' => microtime(true)
         );
         $this->container->get('old_sound_rabbit_mq.guardar_registro_producer')
                 ->publish(serialize($msg_guardar));
@@ -123,7 +124,9 @@ class CargarOrigenDatoConsumer implements ConsumerInterface
                         'method' => 'PUT',
                         'datos' => $datos_a_enviar,
                         'ultima_lectura' => $ultima_lectura,
-                        'num_msj' => $ii++);
+                        'num_msj' => $ii++,
+                        'r' => microtime(true)
+                    );
                     $this->container->get('old_sound_rabbit_mq.guardar_registro_producer')
                             ->publish(serialize($msg_guardar));
                     unset($datos_a_enviar);
@@ -139,7 +142,9 @@ class CargarOrigenDatoConsumer implements ConsumerInterface
                 'method' => 'PUT',
                 'datos' => $datos_a_enviar,
                 'ultima_lectura' => $ultima_lectura,
-                'num_msj' => $ii++);
+                'num_msj' => $ii++,
+                'r' => microtime(true)
+            );
             $this->container->get('old_sound_rabbit_mq.guardar_registro_producer')
                     ->publish(serialize($msg_guardar));
         }

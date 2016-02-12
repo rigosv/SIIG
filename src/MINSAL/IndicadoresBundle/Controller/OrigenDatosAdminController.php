@@ -197,7 +197,8 @@ class OrigenDatosAdminController extends Controller
                         'orden' => $orden,
                         'esLecturaIncremental' => $esLecturaIncremental,
                         'campoLecturaIncremental' => $campoLecturaIncremental,
-                        'ultimaLecturaIncremental' => $ultimaLecturaIncremental
+                        'ultimaLecturaIncremental' => $ultimaLecturaIncremental,
+                        'r' => microtime(true)
                     
                 );
             

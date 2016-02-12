@@ -74,12 +74,13 @@ class IndicadorController extends Controller {
             //de datos del indicador
             $ultima_lectura = null;
             foreach ($fichaTec->getVariables() as $var) {
+                //$fecha_lectura = $var->getOrigenDatos()->getUltimaActualizacion();
                 $fecha_lectura = $em->getRepository('IndicadoresBundle:OrigenDatos')->getUltimaActualizacion($var->getOrigenDatos());
                 if ($fecha_lectura > $ultima_lectura or $ultima_lectura == null) {
                     $ultima_lectura = $fecha_lectura;
                 }
             }
-            $fichaTec->setUltimaLectura(new \DateTime($ultima_lectura));
+            $fichaTec->setUltimaLectura($ultima_lectura);
             $em->flush();
 
             $resp['ultima_lectura'] = date('d/m/Y', $fichaTec->getUltimaLectura()->getTimestamp());

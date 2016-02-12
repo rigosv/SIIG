@@ -77,7 +77,7 @@ class OrigenDatosRepository extends EntityRepository
 
     public function getDatos($sql, $conexion, $ruta_archivo = null)
     {
-        $datos = array();
+        $datos = array();        
         $nombre_campos = array();
         if ($ruta_archivo == null) {
             //$conexion = $origenDato->getConexion();
