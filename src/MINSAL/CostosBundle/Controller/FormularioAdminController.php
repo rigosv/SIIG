@@ -88,12 +88,17 @@ class FormularioAdminController extends Controller
         }
         
         $cantFrm = count($periodos);
+        //Agrupar los periodos por formulario
+        foreach($periodos as $p){
+            $periodos_aux[$p['formulario']->getCodigo()]['nombre'] = $p['formulario']->getNombre();
+            $periodos_aux[$p['formulario']->getCodigo()]['datos'][] = $p;
+        }
         
         $parametrosPlantilla = array(
             'url' => 'get_grid_data',
             'url_save' => 'set_grid_data',
             'parametros' => $parametros,
-            'periodos'=>$periodos,
+            'periodos'=>$periodos_aux,
             'tipo_periodo'=>$tipo_periodo,
             'periodoSeleccionado' => $periodoSeleccionado,
             'titulo' => $titulo,
