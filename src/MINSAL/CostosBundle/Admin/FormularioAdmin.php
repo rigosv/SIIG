@@ -52,12 +52,14 @@ class FormularioAdmin extends Admin
                             }))
             ->add('rutaManualUso', null, array('label'=> $this->getTranslator()->trans('_ruta_manual_uso_')))
             ->add('ajustarAltoFila', null, array('label'=> $this->getTranslator()->trans('_ajustar_alto_fila_')))
+            ->add('tituloColumnas', null, array('label'=> $this->getTranslator()->trans('_titulo_columnas_')))
             ->add('sqlLecturaDatos', null, array('label'=> $this->getTranslator()->trans('_sql_lectura_datos_')))
         ;
                             
         $formMapper
             ->setHelps(array(
-                'sqlLecturaDatos' => $this->getTranslator()->trans('_sql_lectura_datos_help'),                
+                'sqlLecturaDatos' => $this->getTranslator()->trans('_sql_lectura_datos_help'),
+                'tituloColumnas' => $this->getTranslator()->trans('_titulo_columna_help_'),
             ));
     }
 

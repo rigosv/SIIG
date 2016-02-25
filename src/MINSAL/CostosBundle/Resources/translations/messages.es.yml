@@ -120,6 +120,8 @@ _tipo_contratacion_: Tipo contratación
 _tipo_control_: Tipo Control
 _tipo_dato_: Tipo Dato
 _tipo_recurso_: Tipo Recurso
+_titulo_columnas_: Título de columnas
+_titulo_columna_help_: 'Si se requiere cambiar el título por defecto de las columnas. Utilizar formato JSON (los valores van entre comillas dobles): [{"cod_col": "titulo", "cod_col2": "titulo2"}]'
 _tomas_con_planta_emergencia_: Cant. de tomas con Planta de Emergencia
 _total_: Total
 _total_personal_: Total personal asignado

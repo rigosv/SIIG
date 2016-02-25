@@ -87,6 +87,13 @@ class Formulario
      * @ORM\Column(name="ajustar_alto_fila", type="boolean", nullable=true)
      */
     private $ajustarAltoFila;
+    
+    /**
+     * @var string $tituloColumnas
+     *
+     * @ORM\Column(name="titulo_columnas", type="text", nullable=true)
+     */
+    private $tituloColumnas;
         
     /**
      * @var \Doctrine\Common\Collections\ArrayCollection
@@ -437,5 +444,28 @@ class Formulario
     public function getAjustarAltoFila()
     {
         return $this->ajustarAltoFila;
+    }
+
+    /**
+     * Set tituloColumnas
+     *
+     * @param string $tituloColumnas
+     * @return Formulario
+     */
+    public function setTituloColumnas($tituloColumnas)
+    {
+        $this->tituloColumnas = $tituloColumnas;
+
+        return $this;
+    }
+
+    /**
+     * Get tituloColumnas
+     *
+     * @return string 
+     */
+    public function getTituloColumnas()
+    {
+        return $this->tituloColumnas;
     }
 }
