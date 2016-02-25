@@ -24,7 +24,7 @@ class GridController extends Controller
         
         $tipo_periodo = null;
         if (strpos($periodo_ingreso, '_') !== false){
-            $periodos_sel = split('_', $periodo_ingreso);
+            $periodos_sel = explode('_', $periodo_ingreso);
             $tipo_periodo = $periodos_sel[0];
             if ($periodos_sel[0]=='pu'){
                 $periodoEstructura = $em->getRepository("CostosBundle:PeriodoIngresoDatosFormulario")->find($periodos_sel[1]);
@@ -67,7 +67,7 @@ class GridController extends Controller
         
         $tipo_periodo = null;
         if (strpos($periodo_ingreso, '_') !== false){
-            $periodos_sel = split('_', $periodo_ingreso);
+            $periodos_sel = explode('_', $periodo_ingreso);
             $tipo_periodo = $periodos_sel[0];
             if ($periodos_sel[0]=='pu'){
                 $periodoEstructura = $em->getRepository("CostosBundle:PeriodoIngresoDatosFormulario")->find($periodos_sel[1]);
@@ -78,7 +78,7 @@ class GridController extends Controller
             $periodoEstructura = $em->getRepository("CostosBundle:PeriodoIngresoDatosFormulario")->find($periodo_ingreso);
         }
         
-        $datos = json_decode($request->get('fila'), true);        
+        $datos = json_decode($request->get('fila'), true);
         //var_dump(in_array('regla_validacion', $datos));
         if ($datos['regla_validacion'] != ''){
             $regla = $datos['regla_validacion'];
@@ -104,19 +104,51 @@ class GridController extends Controller
         if (!$periodoEstructura) {
             $response->setContent('{"estado" : "error", "msj": "' . $this->get('translator')->trans('_parametros_no_establecidos_') . '"}');
         } else{
-            $guardar = $em->getRepository('CostosBundle:Formulario')->setDatos($Frm, $periodoEstructura->getId(), $tipo_periodo, $request);
+            //Verificar si tiene campos de control de calidad para calcular el 
+            // porcentaje de ejecución
+            $datos = json_decode($request->get('fila'), true);
+            $data_ = json_encode($this->setPorcentajeCompletado($datos));
+            $user = $this->getUser();
+            $request->attributes->set('fila', $data_);
+            $guardar = $em->getRepository('CostosBundle:Formulario')->setDatos($Frm, $periodoEstructura->getId(), $tipo_periodo, $request, $user);
         
             if ($guardar == false){
                 $response->setContent('{"estado" : "error", "msj": "' . $this->get('translator')->trans('_error_datos_no_guardados_') . '"}');
             }
             else{
-                $fila = array_pop($guardar);            
-                $data_ .= '{'.  str_replace('=>', ':', $fila['datos']). ', "local": "si"}';
+                $fila = array_pop($guardar);
+                $data_ = '{'.  str_replace('=>', ':', $fila['datos']). ', "local": "si"}';
+                                
+                $fila_array = json_decode($data_, true);
+                $data_ = json_encode($this->setPorcentajeCompletado($fila_array));
 
                 $response->setContent('{"estado" : "ok", "data": '. $data_. '}');
             }
         }
         return $response;
+    }
+    
+    /**
+     * Verificar si tiene variables de calidad para agregar el porcentaje de cumplimiento
+     * Es imporante que el campo pivote generado se llame cant_mensual_calidad
+     * y que se usa 01_p para la cantidad de enero planifiada
+     * y 01_c para contener el % de cumplimiento
+     * @param type $param
+     */
+    private function setPorcentajeCompletado($fila) {
+        $fila_porc_completado = $fila;
+        $meses = array('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12');
+
+        foreach ($meses as $v){
+            if (array_key_exists("cant_mensual_calidad_$v", $fila_porc_completado) 
+                    and array_key_exists("cant_mensual_calidad_$v".'_p', $fila_porc_completado) 
+                    and $fila_porc_completado["cant_mensual_calidad_$v".'_p'] > 0
+                    ) {
+                $cumplimiento = $fila_porc_completado['cant_mensual_calidad_'.$v] / $fila_porc_completado['cant_mensual_calidad_'.$v.'_p'] * 100;
+                $fila_porc_completado['cant_mensual_calidad_'.$v.'_c'] = number_format ($cumplimiento, 0, '.', ',').'%';
+            }
+        }
+        return $fila_porc_completado;
     }
     
     /**

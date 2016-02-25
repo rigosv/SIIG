@@ -33,6 +33,18 @@ class PeriodoIngresoAdmin extends Admin
                                 '10' => $this->getTranslator()->trans('_octubre_'),
                                 '11' => $this->getTranslator()->trans('_noviembre_'),
                                 '12' => $this->getTranslator()->trans('_diciembre_'),
+                                '01_p'=>$this->getTranslator()->trans('_enero_p_'),
+                                '02_p' => $this->getTranslator()->trans('_febrero_p_'),
+                                '03_p' => $this->getTranslator()->trans('_marzo_p_'),
+                                '04_p' => $this->getTranslator()->trans('_abril_p_'),
+                                '05_p' => $this->getTranslator()->trans('_mayo_p_'),
+                                '06_p' => $this->getTranslator()->trans('_junio_p_'),
+                                '07_p' => $this->getTranslator()->trans('_julio_p_'),
+                                '08_p' => $this->getTranslator()->trans('_agosto_p_'),
+                                '09_p' => $this->getTranslator()->trans('_septiembre_p_'),
+                                '10_p' => $this->getTranslator()->trans('_octubre_p_'),
+                                '11_p' => $this->getTranslator()->trans('_noviembre_p_'),
+                                '12_p' => $this->getTranslator()->trans('_diciembre_p_')
                             )
                         ))
         ;

@@ -645,7 +645,7 @@ class FormularioRepository extends EntityRepository {
         return $params_string;
     }
 
-    public function setDatos(Formulario $Frm, $periodoIngreso, $tipo_periodo = null, Request $request) {
+    public function setDatos(Formulario $Frm, $periodoIngreso, $tipo_periodo = null, Request $request, $user = null) {
         $em = $this->getEntityManager();
         $parametros = $request->get('datos_frm');
         
@@ -655,7 +655,7 @@ class FormularioRepository extends EntityRepository {
             $periodoIngreso = $em->getRepository("CostosBundle:PeriodoIngresoGrupoUsuarios")->find($periodoIngreso);
         }
 
-        $params_string = $this->getParameterString($parametros, $periodoIngreso->getId());
+        $params_string = $this->getParameterString($parametros, $periodoIngreso->getId(), $tipo_periodo, $user);
         $area = $Frm->getAreaCosteo();
         if ($area != 'ga_variables' and $area != 'ga_compromisosFinancieros' and $area != 'ga_distribucion' and $area != 'almacen_datos'){
             $origenes = $this->getOrigenes($Frm->getOrigenDatos());

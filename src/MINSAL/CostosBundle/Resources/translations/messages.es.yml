@@ -54,6 +54,8 @@ _es_poblacion_: Es variable de población
 _especialidad_: Especialidad
 _establecimiento_: Establecimiento
 _estructura_organizativa_: Estructura organizativa
+_error_validation_: Error de validación
+_error_datos_no_guardados_: Sucedió un error al guardar los datos
 _faltan_datos_requeridos_: Faltan datos requeridos
 _febrero_: Febrero
 _formato_: Formato
@@ -93,6 +95,7 @@ _oculto_: Oculto
 _origen_campo_: Origen campo
 _origen_formulario_: Origen del formulario
 _origen_pivote_: Origen pivote
+_parametros_no_establecidos_: No se han definido parámetros
 _periodos_ingreso_: Períodos de ingreso
 _periodo_ingreso_: Período de ingreso
 _periodo_ingreso_datos_formulario_: 'Periodo Ingreso - Datos formulario'
@@ -104,6 +107,7 @@ _rrhh_: Recurso Humano
 _rrhhCostos_: 'RRHH :: Costos'
 _rrhh_resumen_ : 'RRHH :: Resumen'
 _rrhhValorPagado_: 'RRHH :: VAlor Pagado'
+_ruta_manual_uso_:  Ruta manual de uso
 _seleccione_dependencia_: 'Seleccione la dependencia'
 _septiembre_: Septiembre
 _significado_campo_: Significado
@@ -129,3 +133,15 @@ _periodo_ingreso_grupo_usuarios_: Periodo ingreso por grupo de usuarios
 _grupo_usuarios_: Grupo usuarios
 _sql_lectura_datos_: Sentencia datos capturados
 _sql_lectura_datos_help: Sentencia SQL para obtener los datos capturados con el formulario y mostrarlos en la tabla dinámica
+_enero_p_: Enero planificado
+_febrero_p_: Febrero planificado
+_marzo_p_: Marzo planificado
+_abril_p_: Abril planificado
+_mayo_p_: Mayo planificado
+_junio_p_: Junio planificado
+_julio_p_: Julio planificado
+_agosto_p_: Agosto planificado
+_septiembre_p_: Septiembre planificado
+_octubre_p_: Octubre planificado
+_noviembre_p_: Noviembre planificado
+_diciembre_p_: Diciembre planificado
