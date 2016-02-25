@@ -50,6 +50,7 @@ class FormularioAdmin extends Admin
                                         ->join('c.significadoCampo', 's')
                                         ->orderBy('s.descripcion');
                             }))
+            ->add('rutaManualUso', null, array('label'=> $this->getTranslator()->trans('_ruta_manual_uso_')))
             ->add('sqlLecturaDatos', null, array('label'=> $this->getTranslator()->trans('_sql_lectura_datos_')))
         ;
                             

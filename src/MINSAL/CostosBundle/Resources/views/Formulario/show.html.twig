@@ -326,20 +326,23 @@
 {% block content %}
     <nav class="navbar navbar-default" role="navigation">
         <div class="navbar-header">
-            <span class="navbar-brand">{{titulo|trans}}</span>
+            <span class="navbar-brand">{{titulo|trans}}{% if periodoSeleccionado != null and parametros.periodo_estructura != '-1' %} :: <B>{{Frm.nombre}}</b>{% endif %}</span>
         </div>
     </nav>
+        
         <form id="frm_" class="form-inline" >
         <div class="box-body">        
             {% block frm_head %}
-                <DIV style="width: 98%; text-align: right">                    
+                <DIV style="width: 98%; text-align: right">
                     <button class="btn btn-success" type="submit" name="cargar_datos" id="cargar_datos" ><span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>{{'_cargar_datos_'|trans}}</button>                    
                     {#<button class="btn btn-danger" name="clear" id="clear" ><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>{{'_limpiar_'|trans}}</button>#}
                     <button class="btn btn-instagram" type="button" name="guardar" id="guardar" ><i class="fa fa-save" data-original-title="" title=""></i>{{'_guardar_'|trans}}</button>
                     <button class="btn btn-file" type="button" name="exportar" id="exportar" ><i class="fa fa-archive" data-original-title="" title=""></i>{{'_exportar_'|trans}}</button>
-                    <a href="/uploads/formulario_manual_de_uso.pdf" TARGET="_blank" class="btn btn-info" role="button"><i class="fa fa-question-circle" data-original-title="" title=""></i>Manual formulario</a>
+                    {% if periodoSeleccionado != null and parametros.periodo_estructura != '-1' and Frm.rutaManualUso != '' %}
+                    <a href="Frm.rutaManualUso" TARGET="_blank" class="btn btn-info" role="button"><i class="fa fa-question-circle" data-original-title="" title=""></i>{{'_manual_uso_'|trans}}</a>
+                    {% endif %}
                     <DIV id="mensaje"></div>
-                    </div>
+                </div>
             {% endblock frm_head %}
             {% block grid %}
                 <div id='jqxWidget' style="padding: 10px;">

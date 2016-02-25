@@ -68,6 +68,13 @@ class Formulario
     protected $periodoLecturaDatos;
     
     /**
+     * @var string $rutaManualUso
+     *
+     * @ORM\Column(name="ruta_manual_uso", type="string", length=250, nullable=true)
+     */
+    protected $rutaManualUso;
+    
+    /**
      * @var string $sql_lectura_datos
      *
      * @ORM\Column(name="sql_lectura_datos", type="text", nullable=true)
@@ -377,5 +384,28 @@ class Formulario
     public function getSqlLecturaDatos()
     {
         return $this->sqlLecturaDatos;
+    }
+
+    /**
+     * Set rutaManualUso
+     *
+     * @param string $rutaManualUso
+     * @return Formulario
+     */
+    public function setRutaManualUso($rutaManualUso)
+    {
+        $this->rutaManualUso = $rutaManualUso;
+
+        return $this;
+    }
+
+    /**
+     * Get rutaManualUso
+     *
+     * @return string 
+     */
+    public function getRutaManualUso()
+    {
+        return $this->rutaManualUso;
     }
 }
