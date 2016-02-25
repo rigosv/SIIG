@@ -80,6 +80,13 @@ class Formulario
      * @ORM\Column(name="sql_lectura_datos", type="text", nullable=true)
      */
     private $sqlLecturaDatos;
+    
+    /**
+     * @var string $ajustarAltoFila
+     *
+     * @ORM\Column(name="ajustar_alto_fila", type="boolean", nullable=true)
+     */
+    private $ajustarAltoFila;
         
     /**
      * @var \Doctrine\Common\Collections\ArrayCollection
@@ -407,5 +414,28 @@ class Formulario
     public function getRutaManualUso()
     {
         return $this->rutaManualUso;
+    }
+
+    /**
+     * Set ajustarAltoFila
+     *
+     * @param boolean $ajustarAltoFila
+     * @return Formulario
+     */
+    public function setAjustarAltoFila($ajustarAltoFila)
+    {
+        $this->ajustarAltoFila = $ajustarAltoFila;
+
+        return $this;
+    }
+
+    /**
+     * Get ajustarAltoFila
+     *
+     * @return boolean 
+     */
+    public function getAjustarAltoFila()
+    {
+        return $this->ajustarAltoFila;
     }
 }

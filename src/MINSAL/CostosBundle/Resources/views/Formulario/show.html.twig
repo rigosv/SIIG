@@ -140,6 +140,10 @@
                 columnsresize: true,
                 editable: {{editable|default(true)}},
                 sortable: true,
+                {% if Frm.ajustarAltoFila %}
+                autorowheight: true,
+                autoheight: true,
+                {% endif %}
                 altrows: true,
                 {% if mostrar_resumen %}
                     showaggregates: true,
@@ -339,7 +343,7 @@
                     <button class="btn btn-instagram" type="button" name="guardar" id="guardar" ><i class="fa fa-save" data-original-title="" title=""></i>{{'_guardar_'|trans}}</button>
                     <button class="btn btn-file" type="button" name="exportar" id="exportar" ><i class="fa fa-archive" data-original-title="" title=""></i>{{'_exportar_'|trans}}</button>
                     {% if periodoSeleccionado != null and parametros.periodo_estructura != '-1' and Frm.rutaManualUso != '' %}
-                    <a href="Frm.rutaManualUso" TARGET="_blank" class="btn btn-info" role="button"><i class="fa fa-question-circle" data-original-title="" title=""></i>{{'_manual_uso_'|trans}}</a>
+                        <a href="Frm.rutaManualUso" TARGET="_blank" class="btn btn-info" role="button"><i class="fa fa-question-circle" data-original-title="" title=""></i>{{'_manual_uso_'|trans}}</a>
                     {% endif %}
                     <DIV id="mensaje"></div>
                 </div>

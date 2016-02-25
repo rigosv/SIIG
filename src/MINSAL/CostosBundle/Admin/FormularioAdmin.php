@@ -51,6 +51,7 @@ class FormularioAdmin extends Admin
                                         ->orderBy('s.descripcion');
                             }))
             ->add('rutaManualUso', null, array('label'=> $this->getTranslator()->trans('_ruta_manual_uso_')))
+            ->add('ajustarAltoFila', null, array('label'=> $this->getTranslator()->trans('_ajustar_alto_fila_')))
             ->add('sqlLecturaDatos', null, array('label'=> $this->getTranslator()->trans('_sql_lectura_datos_')))
         ;
                             
