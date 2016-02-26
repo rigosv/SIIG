@@ -107,7 +107,7 @@ class GridController extends Controller
             //Verificar si tiene campos de control de calidad para calcular el 
             // porcentaje de ejecución
             $datos = json_decode($request->get('fila'), true);
-            $data_ = json_encode($this->setPorcentajeCompletado($datos));
+            $data_ = json_encode($this->setPorcentajeCompletado($datos), JSON_UNESCAPED_UNICODE);
             $user = $this->getUser();
             $request->attributes->set('fila', $data_);
             $guardar = $em->getRepository('CostosBundle:Formulario')->setDatos($Frm, $periodoEstructura->getId(), $tipo_periodo, $request, $user);
@@ -120,8 +120,8 @@ class GridController extends Controller
                 $data_ = '{'.  str_replace('=>', ':', $fila['datos']). ', "local": "si"}';
                                 
                 $fila_array = json_decode($data_, true);
-                $data_ = json_encode($this->setPorcentajeCompletado($fila_array));
-
+                $data_ = json_encode($this->setPorcentajeCompletado($fila_array), JSON_UNESCAPED_UNICODE);
+                
                 $response->setContent('{"estado" : "ok", "data": '. $data_. '}');
             }
         }
@@ -136,7 +136,7 @@ class GridController extends Controller
      * @param type $param
      */
     private function setPorcentajeCompletado($fila) {
-        $fila_porc_completado = $fila;
+        $fila_porc_completado = $fila;        
         $meses = array('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12');
 
         foreach ($meses as $v){
