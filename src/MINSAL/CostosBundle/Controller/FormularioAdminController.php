@@ -34,8 +34,9 @@ class FormularioAdminController extends Controller
         $cantFrm = 1;
         // Si es el código de formulario de captura de datos, 
         // pueden haber varios formularios para el usuario
-        $periodosEstructura = array();
+        $periodosEstructura = array();        
         if ($codigoFrm == 'captura_variables'){
+            $Frm = null;
             if ($periodo != '-1'){
                 //Si ya se eligió un periodo ya se puede determinar el formulario, seleccionado
                 $Frm = $periodoSeleccionado->getFormulario();
@@ -55,9 +56,8 @@ class FormularioAdminController extends Controller
             if ($this->getUser()->getEstablecimientoPrincipal() != null) {
                 foreach($this->getUser()->getGroups() as $g){
                     $aux_ = $em->getRepository("CostosBundle:PeriodoIngresoGrupoUsuarios")
-                    ->findBy(array('grupoUsuario' => $g), 
+                    ->findBy(array('grupoUsuario' => $g , 'formulario'=>$Frm), 
                             array('periodo' => 'ASC'));
-                
                     foreach($aux_ as $p){
                         $llave = $p->getPeriodo()->getAnio().$this->getUser()->getEstablecimientoPrincipal()->getId().$p->getFormulario()->getId();
                         $periodos[$llave] = array('id'=>'pg_'.$p->getId(),
@@ -68,15 +68,15 @@ class FormularioAdminController extends Controller
                         $meses[$p->getPeriodo()->getAnio()][] = $p->getPeriodo()->getMes();
                     }
                 }
-            }
+            }            
         }
         else{ 
             $Frm = $em->getRepository('CostosBundle:Formulario')->findOneBy(array('codigo'=>$codigoFrm));
-            $periodosEstrugetctura = $em->getRepository("CostosBundle:PeriodoIngresoDatosFormulario")
+            $periodosEstructura = $em->getRepository("CostosBundle:PeriodoIngresoDatosFormulario")
                 ->findBy(array('usuario' => $this->getUser(), 'formulario'=>$Frm), 
                         array('periodo' => 'ASC', 'unidad'=>'ASC'));
         }    
-        
+
         foreach ($periodosEstructura as $p){
             $llave = $llave = $p->getPeriodo()->getAnio().$p->getUnidad()->getId().$p->getFormulario()->getId();
             $periodos[$llave] = array('id'=>'pu_'.$p->getId(),
@@ -84,11 +84,12 @@ class FormularioAdminController extends Controller
                                                 'unidad' => $p->getUnidad(),
                                                 'formulario' => $p->getFormulario()
                                             );
-            $meses[$p->getPeriodo()->getAnio()][] = $p->getPeriodo()->getMes();
+            if ($Frm == $p->getFormulario())
+                $meses[$p->getPeriodo()->getAnio()][] = $p->getPeriodo()->getMes();
         }
-        
-        $cantFrm = count($periodos);
+                
         //Agrupar los periodos por formulario
+        $periodos_aux = array();
         foreach($periodos as $p){
             $periodos_aux[$p['formulario']->getCodigo()]['nombre'] = $p['formulario']->getNombre();
             $periodos_aux[$p['formulario']->getCodigo()]['datos'][] = $p;
@@ -114,7 +115,7 @@ class FormularioAdminController extends Controller
             $parametrosPlantilla['pivotes'] = $this->getPivotes($Frm, $parametros);
             $parametrosPlantilla['meses_activos'] = $meses[$periodoSeleccionado->getPeriodo()->getAnio()]; 
             
-        }             
+        }
         return $this->render('CostosBundle:Formulario:'.$plantilla.'.html.twig', $parametrosPlantilla);
     }
     public function rrhhValorPagadoAction(Request $request)
