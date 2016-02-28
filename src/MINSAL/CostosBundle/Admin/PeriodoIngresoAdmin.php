@@ -21,7 +21,8 @@ class PeriodoIngresoAdmin extends Admin
             ->add('anio', null, array('label'=> $this->getTranslator()->trans('_anio_')))
             ->add('mes', 'choice', array('label' => $this->getTranslator()->trans('_mes_'),
                         'choices' => 
-                            array('01'=>$this->getTranslator()->trans('_enero_'),
+                            array( '00' => $this->getTranslator()->trans('_solo_lectura_'),
+                                '01'=>$this->getTranslator()->trans('_enero_'),
                                 '02' => $this->getTranslator()->trans('_febrero_'),
                                 '03' => $this->getTranslator()->trans('_marzo_'),
                                 '04' => $this->getTranslator()->trans('_abril_'),
