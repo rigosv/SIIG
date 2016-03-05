@@ -51,28 +51,28 @@ class Formulario
      *
      * @ORM\Column(name="area_costeo", type="string", length=50, nullable=true)
      */
-    protected $areaCosteo;
+    private $areaCosteo;
     
     /**
      * @var string $columnas_fijas
      *
      * @ORM\Column(name="columnas_fijas", type="integer", nullable=true)
      */
-    protected $columnasFijas;
+    private $columnasFijas;
     
     /**
      * @var string $periodoLecturaDatos
      *
      * @ORM\Column(name="periodo_lectura_datos", type="string", length=20, nullable=true)
      */
-    protected $periodoLecturaDatos;
+    private $periodoLecturaDatos;
     
     /**
      * @var string $rutaManualUso
      *
      * @ORM\Column(name="ruta_manual_uso", type="string", length=250, nullable=true)
      */
-    protected $rutaManualUso;
+    private $rutaManualUso;
     
     /**
      * @var string $sql_lectura_datos

@@ -163,7 +163,8 @@ class FormularioAdminController extends FormularioAdminControllerBase
         
         $estructura = $em->getRepository("CostosBundle:Estructura")->findBy(array(), array('codigo' => 'ASC'));
         
-        $Frm = $em->getRepository('GridFormBundle:Formulario')->findOneBy(array('codigo'=>'gaDistribucion'));
+        //$Frm = $em->getRepository('GridFormBundle:Formulario')->findOneBy(array('codigo'=>'gaDistribucion'));
+        $Frm = $this->get('costos.repository.formulario')->findOneBy(array('codigo'=>'gaDistribucion'));
         $Frm->setAreaCosteo('ga_costos');
         
         $parametros = $this->getParametros($request);
@@ -174,7 +175,7 @@ class FormularioAdminController extends FormularioAdminControllerBase
         $totales = array();
         $i=0;
         if ($parametros['anio_mes'] != null and $parametros['establecimiento'] != null){       
-            $datos = $em->getRepository('CostosBundle:Formulario')->getDatosCostosGA($Frm, $request);
+            $datos = $this->get('costos.repository.formulario')->getDatosCostosGA($Frm, $request);
             
             foreach($datos as $f){
                 $f['total_gasto'] = ($f['total_gasto'] == null)? 0: $f['total_gasto'];
@@ -201,7 +202,7 @@ class FormularioAdminController extends FormularioAdminControllerBase
                 //$totales['general'] += $f['total_gasto'];
             }        
         }
-        return $this->render('GridFormBundle:Formulario:parametrosDependenciaGACosteo.html.twig', array(
+        return $this->render('CostosBundle:Formulario:parametrosDependenciaGACosteo.html.twig', array(
             'estructura' => $estructura,
             'parametros' => $parametros,
             'dependencias' => $dependencias,

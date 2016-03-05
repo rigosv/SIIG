@@ -1,6 +1,6 @@
 <?php
 
-namespace MINSAL\GridFormBundle\Entity;
+namespace MINSAL\CostosBundle\Repository;
 
 use MINSAL\GridFormBundle\Entity\FormularioRepository AS FormularioRepositoryBase;
 use MINSAL\GridFormBundle\Entity\Formulario;

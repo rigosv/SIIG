@@ -124,7 +124,7 @@ class FormularioAdminController extends Controller
         return $this->mostrarPlantilla($request, 'captura_variables', 'codigo_variable', '_captura_datos_', false, 'GridFormBundle:Formulario:parametros.html.twig');
     }    
     
-    private function getOrigenes($Frm, $parametros) {
+    protected function getOrigenes($Frm, $parametros) {
         $em = $this->getDoctrine()->getManager();
         $origenes = array();
         foreach($Frm->getCampos() as $c){
@@ -135,7 +135,7 @@ class FormularioAdminController extends Controller
         return $origenes;
     }
     
-    private function getPivotes($Frm, $parametros) {
+    protected function getPivotes($Frm, $parametros) {
         $em = $this->getDoctrine()->getManager();
         $pivotes = array();
         foreach($Frm->getCampos() as $c){
@@ -146,7 +146,7 @@ class FormularioAdminController extends Controller
         return $pivotes;
     }
     
-    private function getParametros2($periodoIngreso, $tipo_periodo){
+    protected function getParametros2($periodoIngreso, $tipo_periodo){
         $parametros = array();
         if ($tipo_periodo == 'pu'){
             $unidad = $periodoIngreso->getUnidad();
@@ -179,7 +179,7 @@ class FormularioAdminController extends Controller
         return $parametros;
     }
     
-    private function getParametros($r){
+    protected function getParametros($r){
         return array('anio_mes'=>$r->get('anio_mes'),
             'anio'=>$r->get('anio'),
             'establecimiento'=>$r->get('establecimiento'),
