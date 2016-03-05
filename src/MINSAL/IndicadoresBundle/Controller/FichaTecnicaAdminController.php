@@ -255,7 +255,7 @@ class FichaTecnicaAdminController extends Controller {
         
         if ($usuario->hasRole('ROLE_SUPER_ADMIN') or $usuario->hasRole('ROLE_USER_CAPTURA_DATOS')) {
             //Recuperar los formularios 
-            $formularios = $em->getRepository('CostosBundle:Formulario')->findBy(array('areaCosteo'=>'almacen_datos'));            
+            $formularios = $em->getRepository('GridFormBundle:Formulario')->findBy(array('areaCosteo'=>'almacen_datos'));            
         }
 
         return $this->render('IndicadoresBundle:FichaTecnicaAdmin:pivotTable.html.twig', array(

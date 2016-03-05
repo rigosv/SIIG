@@ -1,0 +1,82 @@
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>        
+        <service id="sonata.costos.admin.campo" class="MINSAL\GridFormBundle\Admin\CampoAdmin">
+            <tag name="sonata.admin" manager_type="orm" group="_configuracion_" label="_campo_"/>
+            <argument />
+            <argument>MINSAL\GridFormBundle\Entity\Campo</argument>
+            <argument />            
+        </service>
+        <service id="sonata.costos.admin.grupoColumnas" class="MINSAL\GridFormBundle\Admin\GrupoColumnasAdmin">
+            <tag name="sonata.admin" manager_type="orm" group="_configuracion_" label="_grupo_columnas_"/>
+            <argument />
+            <argument>MINSAL\GridFormBundle\Entity\GrupoColumnas</argument>
+            <argument />            
+        </service>        
+        <service id="sonata.costos.periodos.ingreso" class="MINSAL\GridFormBundle\Admin\PeriodoIngresoAdmin">
+            <tag name="sonata.admin" manager_type="orm" group="_configuracion_" label="_periodo_ingreso_"/>
+            <argument />
+            <argument>MINSAL\GridFormBundle\Entity\PeriodoIngreso</argument>
+            <argument />            
+        </service>
+        <service id="sonata.costos.periodos.ingreso.datos.formulario" class="MINSAL\GridFormBundle\Admin\PeriodoIngresoDatosFormularioAdmin">
+            <tag name="sonata.admin" manager_type="orm" group="_configuracion_" label="_periodo_ingreso_datos_formulario_"/>
+            <argument />
+            <argument>MINSAL\GridFormBundle\Entity\PeriodoIngresoDatosFormulario</argument>
+            <argument />            
+        </service>
+        <service id="sonata.costos.periodos.ingreso.grupo.usuarios" class="MINSAL\GridFormBundle\Admin\PeriodoIngresoGrupoUsuariosAdmin">
+            <tag name="sonata.admin" manager_type="orm" group="_configuracion_" label="_periodo_ingreso_grupo_usuarios_"/>
+            <argument />
+            <argument>MINSAL\GridFormBundle\Entity\PeriodoIngresoGrupoUsuarios</argument>
+            <argument />            
+        </service>
+        <service id="sonata.costos.admin.formato" class="MINSAL\GridFormBundle\Admin\FormatoAdmin">
+            <tag name="sonata.admin" manager_type="orm" group="catalogos" label="_formato_"/>
+            <argument />
+            <argument>MINSAL\GridFormBundle\Entity\Formato</argument>
+            <argument />            
+        </service>
+        <service id="sonata.costos.admin.tipo_control" class="MINSAL\GridFormBundle\Admin\TipoControlAdmin">
+            <tag name="sonata.admin" manager_type="orm" group="catalogos" label="_tipo_control_"/>
+            <argument />
+            <argument>MINSAL\GridFormBundle\Entity\TipoControl</argument>
+            <argument />            
+        </service>
+        <service id="sonata.costos.admin.tipo_dato" class="MINSAL\GridFormBundle\Admin\TipoDatoAdmin">
+            <tag name="sonata.admin" manager_type="orm" group="catalogos" label="_tipo_dato_"/>
+            <argument />
+            <argument>MINSAL\GridFormBundle\Entity\TipoDato</argument>
+            <argument />            
+        </service>
+        <service id="sonata.costos.admin.alineacion" class="MINSAL\GridFormBundle\Admin\AlineacionAdmin">
+            <tag name="sonata.admin" manager_type="orm" group="catalogos" label="_alineacion_"/>
+            <argument />
+            <argument>MINSAL\GridFormBundle\Entity\Alineacion</argument>
+            <argument />            
+        </service>
+        <service id="sonata.admin.variable_captura" class="MINSAL\GridFormBundle\Admin\VariableCapturaAdmin">
+            <tag name="sonata.admin"
+                 manager_type="orm" 
+                 group="origen_datos" 
+                 label="_variable_captura_"
+            />    
+            <argument />            
+            <argument>MINSAL\GridFormBundle\Entity\VariableCaptura</argument>
+            <argument>SonataAdminBundle:CRUD</argument>
+            <call method="setMaxPerPage"><argument>10</argument></call>
+        </service>
+        <service id="sonata.admin.categoria_variable_captura" class="MINSAL\GridFormBundle\Admin\CategoriaVariableCapturaAdmin">
+            <tag name="sonata.admin"
+                 manager_type="orm" 
+                 group="origen_datos" 
+                 label="_categoria_variable_captura_"
+            />    
+            <argument />            
+            <argument>MINSAL\GridFormBundle\Entity\CategoriaVariableCaptura</argument>
+            <argument>SonataAdminBundle:CRUD</argument>
+            <call method="setMaxPerPage"><argument>10</argument></call>
+        </service>                
+    </services>
+</container>

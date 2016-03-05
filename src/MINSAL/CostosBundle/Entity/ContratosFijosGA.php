@@ -69,7 +69,7 @@ class ContratosFijosGA
     private $criterioDistribucion;
     
     /**
-     * @ORM\ManyToOne(targetEntity="MINSAL\CostosBundle\Entity\Campo")
+     * @ORM\ManyToOne(targetEntity="MINSAL\GridFormBundle\Entity\Campo")
      * */
     private $variableCalculoConsumo;
     
@@ -249,10 +249,10 @@ class ContratosFijosGA
     /**
      * Set variableCalculoConsumo
      *
-     * @param \MINSAL\CostosBundle\Entity\Campo $variableCalculoConsumo
+     * @param \MINSAL\GridFormBundle\Entity\Campo $variableCalculoConsumo
      * @return ContratosFijosGA
      */
-    public function setVariableCalculoConsumo(\MINSAL\CostosBundle\Entity\Campo $variableCalculoConsumo = null)
+    public function setVariableCalculoConsumo(\MINSAL\GridFormBundle\Entity\Campo $variableCalculoConsumo = null)
     {
         $this->variableCalculoConsumo = $variableCalculoConsumo;
 
@@ -262,7 +262,7 @@ class ContratosFijosGA
     /**
      * Get variableCalculoConsumo
      *
-     * @return \MINSAL\CostosBundle\Entity\Campo 
+     * @return \MINSAL\GridFormBundle\Entity\Campo 
      */
     public function getVariableCalculoConsumo()
     {
@@ -271,7 +271,7 @@ class ContratosFijosGA
 
     /**
      * Set ubicacion
-     *
+     *c
      * @param \MINSAL\CostosBundle\Entity\Ubicacion $ubicacion
      * @return ContratosFijosGA
      */

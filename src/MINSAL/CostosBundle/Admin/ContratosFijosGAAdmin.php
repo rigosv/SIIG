@@ -44,7 +44,7 @@ class ContratosFijosGAAdmin extends Admin
                     }))
             ->add('variableCalculoConsumo', null, array('label' => $this->getTranslator()->trans('_variable_calculo_consumo_'),
                     'required' => false, 'expanded' => false,
-                    'class' => 'CostosBundle:Campo',
+                    'class' => 'GridFormBundle:Campo',
                     'query_builder' => function ($repository) {                        
                         return $repository->createQueryBuilder('c')
                                 ->join('c.formularios', 'f')

@@ -1,0 +1,49 @@
+{% extends 'GridFormBundle:Formulario:show.html.twig' %}
+{% block frm_head %}
+    <div class="form-group" id="mes_anio_f"></div>
+    <div class="form-group" id="dependencia_f" style="width: 70%">    
+        <table border="0" style="width: 100%">            
+            <TR>                
+                <TD>
+                    <select id="periodo_estructura" name="periodo_estructura">
+                        <option value="-1" selected>{{'_elija_parametros_'|trans}}</option>
+                        {% for frm in periodos %}
+                            <optgroup label="{{'_formulario_'|trans}}: {{frm.nombre}}">
+                                {% for pEstructura in frm.datos %}
+                                    <option value="{{pEstructura.id}}" {% if pEstructura.id == parametros.periodo_estructura %}selected="selected"{% endif %} >
+                                        {% if pEstructura.unidad.nivel == 1 %}
+                                            {{pEstructura.periodo_anio}} - {{pEstructura.unidad}}
+                                        {% elseif pEstructura.unidad.nivel == 2 %}
+                                            {{pEstructura.periodo_anio}} - {{pEstructura.unidad.parent}}::{{pEstructura.unidad}}
+                                        {% elseif pEstructura.unidad.nivel == 3 %}
+                                            {{pEstructura.periodo_anio}} - {{pEstructura.unidad.parent.parent}} :: {{pEstructura.unidad.parent}} :: {{pEstructura.unidad}}
+                                        {% endif%}
+                                    </option>
+                                {% endfor %}
+                            </optgroup>                            
+                        {% endfor %}
+                    </select>                    
+                    
+                    {% if (periodoSeleccionado == null or parametros.periodo_estructura == '-1') and numero_carga == 2 %}
+                        <center>
+                        <button type="button" class="btn btn-xs btn-danger" data-toggle="popover" 
+                                data-content="{{'_elija_un_formulario_'|trans}}"
+                                data-placement="bottom"
+                                animation = 'true'
+                        >
+                            <span class="glyphicon glyphicon-chevron-up" aria-hidden="true" style="float: left;"></span>
+                        </button>
+                        </center>
+                    <script type="text/javascript">
+                        $(document).ready(function () {                            
+                            $('#modal_msj_solo_fondo').modal('show');
+                        });
+                    </script>
+                    {% endif %}
+                </TD>
+            </TR>
+        </table>
+    </div>
+    <br/>
+    {{ parent() }}
+{% endblock %}

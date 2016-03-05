@@ -1,3 +1,8 @@
+grid_form:
+    resource: "@GridFormBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
 _inicio:
     pattern:  /
     defaults: { _controller: SonataAdminBundle:Core:dashboard }
@@ -24,7 +29,7 @@ costeo_rest:
     
 captura_datos_rest:
     type:     rest
-    resource: MINSAL\CostosBundle\Controller\FormularioRESTController
+    resource: MINSAL\GridFormBundle\Controller\FormularioRESTController
     prefix: /
 # Internal routing configuration to handle ESI
 #_internal:

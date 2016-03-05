@@ -1,25 +1,7 @@
 <container xmlns="http://symfony.com/schema/dic/services"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services/services-1.0.xsd">
-    <services>
-        <service id="sonata.admin.formulario" class="MINSAL\CostosBundle\Admin\FormularioAdmin">
-            <tag name="sonata.admin" manager_type="orm" group="_configuracion_" label="_formulario_"/>
-            <argument />
-            <argument>MINSAL\CostosBundle\Entity\Formulario</argument>
-            <argument>CostosBundle:FormularioAdmin</argument>
-        </service>
-        <service id="sonata.costos.admin.campo" class="MINSAL\CostosBundle\Admin\CampoAdmin">
-            <tag name="sonata.admin" manager_type="orm" group="_configuracion_" label="_campo_"/>
-            <argument />
-            <argument>MINSAL\CostosBundle\Entity\Campo</argument>
-            <argument />            
-        </service>
-        <service id="sonata.costos.admin.grupoColumnas" class="MINSAL\CostosBundle\Admin\GrupoColumnasAdmin">
-            <tag name="sonata.admin" manager_type="orm" group="_configuracion_" label="_grupo_columnas_"/>
-            <argument />
-            <argument>MINSAL\CostosBundle\Entity\GrupoColumnas</argument>
-            <argument />            
-        </service>
+    <services>        
         <service id="sonata.costos.admin.estructura" class="MINSAL\CostosBundle\Admin\EstructuraAdmin">
             <tag name="sonata.admin" manager_type="orm" group="_costeo_" label="_estructura_organizativa_"/>
             <argument />
@@ -43,49 +25,7 @@
             <argument />
             <argument>MINSAL\CostosBundle\Entity\Ubicacion</argument>
             <argument />            
-        </service>
-        <service id="sonata.costos.periodos.ingreso" class="MINSAL\CostosBundle\Admin\PeriodoIngresoAdmin">
-            <tag name="sonata.admin" manager_type="orm" group="_configuracion_" label="_periodo_ingreso_"/>
-            <argument />
-            <argument>MINSAL\CostosBundle\Entity\PeriodoIngreso</argument>
-            <argument />            
-        </service>
-        <service id="sonata.costos.periodos.ingreso.datos.formulario" class="MINSAL\CostosBundle\Admin\PeriodoIngresoDatosFormularioAdmin">
-            <tag name="sonata.admin" manager_type="orm" group="_configuracion_" label="_periodo_ingreso_datos_formulario_"/>
-            <argument />
-            <argument>MINSAL\CostosBundle\Entity\PeriodoIngresoDatosFormulario</argument>
-            <argument />            
-        </service>
-        <service id="sonata.costos.periodos.ingreso.grupo.usuarios" class="MINSAL\CostosBundle\Admin\PeriodoIngresoGrupoUsuariosAdmin">
-            <tag name="sonata.admin" manager_type="orm" group="_configuracion_" label="_periodo_ingreso_grupo_usuarios_"/>
-            <argument />
-            <argument>MINSAL\CostosBundle\Entity\PeriodoIngresoGrupoUsuarios</argument>
-            <argument />            
-        </service>
-        <service id="sonata.costos.admin.formato" class="MINSAL\CostosBundle\Admin\FormatoAdmin">
-            <tag name="sonata.admin" manager_type="orm" group="catalogos" label="_formato_"/>
-            <argument />
-            <argument>MINSAL\CostosBundle\Entity\Formato</argument>
-            <argument />            
-        </service>
-        <service id="sonata.costos.admin.tipo_control" class="MINSAL\CostosBundle\Admin\TipoControlAdmin">
-            <tag name="sonata.admin" manager_type="orm" group="catalogos" label="_tipo_control_"/>
-            <argument />
-            <argument>MINSAL\CostosBundle\Entity\TipoControl</argument>
-            <argument />            
-        </service>
-        <service id="sonata.costos.admin.tipo_dato" class="MINSAL\CostosBundle\Admin\TipoDatoAdmin">
-            <tag name="sonata.admin" manager_type="orm" group="catalogos" label="_tipo_dato_"/>
-            <argument />
-            <argument>MINSAL\CostosBundle\Entity\TipoDato</argument>
-            <argument />            
-        </service>
-        <service id="sonata.costos.admin.alineacion" class="MINSAL\CostosBundle\Admin\AlineacionAdmin">
-            <tag name="sonata.admin" manager_type="orm" group="catalogos" label="_alineacion_"/>
-            <argument />
-            <argument>MINSAL\CostosBundle\Entity\Alineacion</argument>
-            <argument />            
-        </service>
+        </service>                                
         <service id="sonata.costos.admin.tipo_contratacion" class="MINSAL\CostosBundle\Admin\TipoContratacionAdmin">
             <tag name="sonata.admin" manager_type="orm" group="catalogos" label="_tipo_contratacion_"/>
             <argument />
@@ -121,6 +61,12 @@
             <argument />
             <argument>MINSAL\CostosBundle\Entity\ContratosFijosGA</argument>
             <argument />            
-        </service>        
+        </service> 
+        <service id="sonata.admin.formulario" class="MINSAL\CostosBundle\Admin\FormularioAdmin">
+            <tag name="sonata.admin" manager_type="orm" group="_configuracion_" label="_formulario_"/>
+            <argument />
+            <argument>MINSAL\CostosBundle\Entity\Formulario</argument>
+            <argument>CostosBundle:FormularioAdmin</argument>
+        </service>       
     </services>
 </container>

@@ -34,7 +34,7 @@ class CosteoRESTController extends Controller {
 
         $em = $this->getDoctrine()->getManager();
 
-        $data = $em->getRepository('CostosBundle:Formulario')->getDatosCosteo($codigo);
+        $data = $em->getRepository('CosteoBundle:Formulario')->getDatosCosteo($codigo);
 
         if (count($data) == 0) {
             $response->setContent('{"estado" : "error", "msj": "' . $this->get('translator')->trans('_no_datos_') . '"}');

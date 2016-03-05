@@ -6,6 +6,7 @@ imports:
     - { resource: services.xml }
     - { resource: @IndicadoresBundle/Resources/config/admin.xml }
     - { resource: @CostosBundle/Resources/config/admin.xml }
+    - { resource: @GridFormBundle/Resources/config/admin.xml }
 
 framework:
     #esi:             ~

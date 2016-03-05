@@ -45,12 +45,13 @@ class AppKernel extends Kernel
             
             new MINSAL\IndicadoresBundle\IndicadoresBundle(),
             new MINSAL\CostosBundle\CostosBundle(),
+            new MINSAL\GridFormBundle\GridFormBundle(),
             
             new FOS\RestBundle\FOSRestBundle(),
             
             new JMS\SerializerBundle\JMSSerializerBundle(),
             
-            new Snc\RedisBundle\SncRedisBundle(),
+            new Snc\RedisBundle\SncRedisBundle(),            
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
