@@ -523,5 +523,73 @@ class FormularioCostosRepository extends FormularioRepositoryBase {
             return $e->getMessage();
         }
     }
-
+    
+    /**
+     * 
+     * Reescribir la función cargarDatos para que haga las actualizaciones
+     * correspondientes
+     */
+    protected function cargarDatos(Formulario $Frm) {
+        $em = $this->getEntityManager();
+        
+        if ($this->area == 'ga_variables' or $this->area == 'ga_distribucion'){
+            $this->origenes = array($Frm->getId());
+            $this->campo = 'id_formulario';
+            $this->area = 'ga';
+            
+            //Cargar las dependencias que no estén en el mes y año elegido
+            $sql = "INSERT INTO costos.fila_origen_dato_".strtolower($this->area)."(id_formulario, area_costeo, datos)
+                    (SELECT ".$Frm->getId()." AS id_formulario, '".$Frm->getAreaCosteo()."' AS area_costeo, hstore(ARRAY['dependencia', 'mes', 'anio', 'establecimiento'], 
+                            ARRAY[codigo , '".$this->parametros['mes']."', '".$this->parametros['anio']."', '".$this->parametros['establecimiento']."']) 
+                        FROM costos.estructura
+                        WHERE parent_id 
+                            IN
+                            (SELECT A.id FROM costos.estructura A
+                                INNER JOIN costos.estructura B ON (A.parent_id = B.id )
+                                WHERE B.codigo = '".$this->parametros['establecimiento']."'
+                            )
+                            AND (".$Frm->getId(). ", codigo, '".$this->parametros['mes']."', '".$this->parametros['anio']."', '".$this->parametros['establecimiento']."' )
+                                NOT IN 
+                                (SELECT id_formulario, datos->'dependencia', datos->'mes', datos->'anio', datos->'establecimiento'
+                                    FROM costos.fila_origen_dato_ga 
+                                    WHERE id_formulario = ".$Frm->getId()."
+                                        AND datos->'establecimiento' = '".$this->parametros['establecimiento']."'
+                                        AND datos->'anio' = '".$this->parametros['anio']."'
+                                        AND datos->'mes' = '".$this->parametros['mes']."'
+                                )                            
+                    )";
+            $em->getConnection()->executeQuery($sql);
+        }        
+        elseif ($this->area == 'ga_compromisosFinancieros'){
+            $this->origenes = array($Frm->getId());
+            $this->campo = 'id_formulario';
+            $this->area = 'ga';
+                                    
+            //Cargar los contratos que no están en el año elegido
+            $sql = "INSERT INTO costos.fila_origen_dato_".strtolower($this->area)."(id_formulario, area_costeo, datos)
+                    (SELECT ".$Frm->getId()." AS id_formulario, '".$Frm->getAreaCosteo()."' AS area_costeo, 
+                            hstore(
+                                ARRAY['codigo_contrato', 'anio', 'establecimiento', 'descripcion_contrato',
+                                        'criterio_distribucion', 'categoria_contrato'], 
+                                ARRAY[A.codigo , '".$this->parametros['anio']."', '".$this->parametros['establecimiento']."', A.descripcion,
+                                    B.descripcion, C.descripcion]
+                            ) 
+                        FROM costos.contratos_fijos_ga A 
+                            INNER JOIN costos.criterios_distribucion_ga B ON (A.criteriodistribucion_id = B.id) 
+                            INNER JOIN costos.categorias_contratos_fijos_ga C ON (A.categoria_id = C.id) 
+                            INNER JOIN estructura_contratosfijosga D ON (A.id = D.contratosfijosga_id) 
+                            INNER JOIN costos.estructura E ON (D.estructura_id = E.id)
+                        WHERE E.codigo = '".$this->parametros['establecimiento']."'
+                            AND (".$Frm->getId(). ", '".$Frm->getAreaCosteo(). "', A.codigo, '".$this->parametros['anio']."', '".$this->parametros['establecimiento']."' )
+                                NOT IN 
+                                (SELECT id_formulario, area_costeo, datos->'codigo_contrato', datos->'anio', datos->'establecimiento'
+                                    FROM costos.fila_origen_dato_ga 
+                                    WHERE id_formulario = ".$Frm->getId()."
+                                        AND datos->'establecimiento' = '".$this->parametros['establecimiento']."'
+                                        AND datos->'anio' = '".$this->parametros['anio']."'
+                                )                            
+                    )";
+            $em->getConnection()->executeQuery($sql);
+        }
+    }
 }
