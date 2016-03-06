@@ -58,7 +58,7 @@
     
     {% block frm %}
     {% if periodoSeleccionado != null and parametros.periodo_estructura != '-1' %}
-    {% set titulos = Frm.tituloColumnas | json_decode(true) %}
+    {% set titulos = Frm.tituloColumnas | jsonDecode(true) %}
     <script type="text/javascript">
         $(document).ready(function () {
             $.jqx.theme = 'energyblue';                    

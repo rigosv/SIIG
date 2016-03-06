@@ -8,13 +8,11 @@
     <parameters>
         <parameter key="grid_form.example.class">MINSAL\GridFormBundle\Example</parameter>
     </parameters>
-
+    -->
     <services>
-        <service id="grid_form.example" class="%grid_form.example.class%">
-            <argument type="service" id="service_id" />
-            <argument>plain_value</argument>
-            <argument>%parameter_name%</argument>
+        <service id="jsondecode_twig" class="MINSAL\GridFormBundle\Twig\Extension\VarsExtension">
+            <tag name="twig.extension" />
+            <argument type="service" id="service_container" />
         </service>
     </services>
-    -->
 </container>
