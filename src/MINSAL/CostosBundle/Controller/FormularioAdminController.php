@@ -27,14 +27,44 @@ class FormularioAdminController extends FormularioAdminControllerBase
         $Frm = $em->getRepository('GridFormBundle:Formulario')->findBy(array('codigo'=>'rrhhValorPagado'));
         $Frm = array_shift($Frm);
         
+        $periodo = (is_null($request->get('periodo_estructura')) ) ? '-1': $request->get('periodo_estructura');
+        $numero_carga = (is_null($request->get('periodo_estructura')) ) ? '1': '2';
+        
+        if ($periodo != '-1'){
+            $periodos_sel = explode('_', $periodo);
+            $tipo_periodo = $periodos_sel[0];
+            if ($periodos_sel[0]=='pu'){
+                $periodoSeleccionado = $em->getRepository("GridFormBundle:PeriodoIngresoDatosFormulario")->find($periodos_sel[1]);
+            }else {
+                $periodoSeleccionado = $em->getRepository("GridFormBundle:PeriodoIngresoGrupoUsuarios")->find($periodos_sel[1]);
+            }
+        } else {
+            $periodoSeleccionado = null;
+        }
+        $periodosEstructura = array();
+        
         $periodosEstructura = $em->getRepository("GridFormBundle:PeriodoIngresoDatosFormulario")
                 ->findBy(array('usuario' => $this->getUser(), 'formulario'=>$Frm), 
                         array('periodo' => 'ASC', 'unidad'=>'ASC'));
         
-        $periodo = (is_null($request->get('periodo_estructura')) ) ? -1: $request->get('periodo_estructura');        
-        $periodoSeleccionado = ($request->get('periodo_estructura') != '-1') ? 
-                                $em->getRepository("GridFormBundle:PeriodoIngresoDatosFormulario")->find($periodo):
-                                null;
+        foreach ($periodosEstructura as $p){
+            $llave = $llave = $p->getPeriodo()->getAnio().$p->getUnidad()->getId().$p->getFormulario()->getId();
+            $periodos[$llave] = array('id'=>'pu_'.$p->getId(),
+                                                'periodo_anio'=>$p->getPeriodo()->getAnio(),
+                                                'periodo_mes'=>$p->getPeriodo()->getMes(),
+                                                'unidad' => $p->getUnidad(),
+                                                'formulario' => $p->getFormulario()
+                                            );
+            if ($Frm == $p->getFormulario())
+                $meses[$p->getPeriodo()->getAnio()][] = $p->getPeriodo()->getMes();
+        }
+                
+        //Agrupar los periodos por formulario
+        $periodos_aux = array();
+        foreach($periodos as $p){
+            $periodos_aux[$p['formulario']->getCodigo()]['nombre'] = $p['formulario']->getNombre();
+            $periodos_aux[$p['formulario']->getCodigo()]['datos'][] = $p;
+        }
         
         $campos = array('nit'=>10, 
             'partida'=>20,
@@ -127,8 +157,9 @@ class FormularioAdminController extends FormularioAdminControllerBase
             'url_save' => 'set_grid_data',
             'estructura' => $estructura,
             'parametros' => $parametros,
-            'periodosEstructura' => $periodosEstructura,
+            'periodos' => $periodos_aux,
             'periodoSeleccionado' => $periodoSeleccionado,
+            'numero_carga' => $numero_carga,
             'titulo' => '_rrhhCostos_',
             'mostrar_resumen' => true,
             'editable' => false,

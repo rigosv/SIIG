@@ -62,6 +62,7 @@ class FormularioAdminController extends Controller
                         $llave = $p->getPeriodo()->getAnio().$this->getUser()->getEstablecimientoPrincipal()->getId().$p->getFormulario()->getId();
                         $periodos[$llave] = array('id'=>'pg_'.$p->getId(),
                                                 'periodo_anio'=>$p->getPeriodo()->getAnio(),
+                                                'periodo_mes'=>$p->getPeriodo()->getMes(),
                                                 'unidad' => $this->getUser()->getEstablecimientoPrincipal(),
                                                 'formulario' => $p->getFormulario()
                                             );
@@ -81,6 +82,7 @@ class FormularioAdminController extends Controller
             $llave = $llave = $p->getPeriodo()->getAnio().$p->getUnidad()->getId().$p->getFormulario()->getId();
             $periodos[$llave] = array('id'=>'pu_'.$p->getId(),
                                                 'periodo_anio'=>$p->getPeriodo()->getAnio(),
+                                                'periodo_mes'=>$p->getPeriodo()->getMes(),
                                                 'unidad' => $p->getUnidad(),
                                                 'formulario' => $p->getFormulario()
                                             );
