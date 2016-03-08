@@ -65,7 +65,7 @@
         <service id="sonata.admin.formulario" class="MINSAL\CostosBundle\Admin\FormularioAdmin">
             <tag name="sonata.admin" manager_type="orm" group="_configuracion_" label="_formulario_"/>
             <argument />
-            <argument>MINSAL\CostosBundle\Entity\Formulario</argument>
+            <argument>MINSAL\GridFormBundle\Entity\Formulario</argument>
             <argument>CostosBundle:FormularioAdmin</argument>
         </service>       
     </services>

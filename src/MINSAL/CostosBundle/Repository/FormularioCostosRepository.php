@@ -531,6 +531,7 @@ class FormularioCostosRepository extends FormularioRepositoryBase {
      */
     protected function cargarDatos(Formulario $Frm) {
         $em = $this->getEntityManager();
+        $this->area = $Frm->getAreaCosteo();
         
         if ($this->area == 'ga_variables' or $this->area == 'ga_distribucion'){
             $this->origenes = array($Frm->getId());
