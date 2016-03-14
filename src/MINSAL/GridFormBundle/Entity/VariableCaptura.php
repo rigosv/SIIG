@@ -61,7 +61,7 @@ class VariableCaptura
     private $categoria;
     
     /**
-     * @ORM\ManyToOne(targetEntity="Formulario")
+     * @ORM\ManyToOne(targetEntity="Formulario", inversedBy="variables")
      * */
     private $formulario;
     
@@ -71,8 +71,14 @@ class VariableCaptura
      * @ORM\Column(name="regla_validacion", type="string", length=100, nullable=true)
      */
     private $reglaValidacion;
+    
+    /**
+     * @ORM\ManyToOne(targetEntity="TipoControl")
+     * @ORM\JoinColumn(name="id_tipo_control", referencedColumnName="id")
+     * */
+    private $tipoControl;
+    
 
-   
 
     /**
      * Get id
@@ -249,5 +255,28 @@ class VariableCaptura
     public function getReglaValidacion()
     {
         return $this->reglaValidacion;
+    }
+    
+    /**
+     * Set tipoControl
+     *
+     * @param \MINSAL\GridFormBundle\Entity\TipoControl $tipoControl
+     * @return VariableCaptura
+     */
+    public function setTipoControl(\MINSAL\GridFormBundle\Entity\TipoControl $tipoControl = null)
+    {
+        $this->tipoControl = $tipoControl;
+
+        return $this;
+    }
+
+    /**
+     * Get tipoControl
+     *
+     * @return \MINSAL\GridFormBundle\Entity\TipoControl 
+     */
+    public function getTipoControl()
+    {
+        return $this->tipoControl;
     }
 }
