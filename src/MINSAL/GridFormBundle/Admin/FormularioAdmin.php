@@ -87,7 +87,7 @@ class FormularioAdmin extends Admin
     }
     
     protected function configureRoutes(RouteCollection $collection)
-    {        
+    {
         $collection->add('almacenDatos');
     }
 }

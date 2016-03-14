@@ -16,7 +16,7 @@ class FormularioAdmin extends FormularioAdminBase
         $collection->add('gaCompromisosFinancieros');
         $collection->add('gaVariables');
         $collection->add('gaDistribucion');
-        $collection->add('gaCostos');
+        $collection->add('gaCostos');        
         parent::configureRoutes($collection);
     }
 }

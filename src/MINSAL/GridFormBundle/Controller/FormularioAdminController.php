@@ -95,7 +95,7 @@ class FormularioAdminController extends Controller
         foreach($periodos as $p){
             $periodos_aux[$p['formulario']->getCodigo()]['nombre'] = $p['formulario']->getNombre();
             $periodos_aux[$p['formulario']->getCodigo()]['datos'][] = $p;
-        }
+        }                
         
         $parametrosPlantilla = array(
             'url' => 'get_grid_data',
@@ -116,7 +116,8 @@ class FormularioAdminController extends Controller
             $parametrosPlantilla['origenes'] = $this->getOrigenes($Frm, $parametros);
             $parametrosPlantilla['pivotes'] = $this->getPivotes($Frm, $parametros);
             $parametrosPlantilla['meses_activos'] = $meses[$periodoSeleccionado->getPeriodo()->getAnio()]; 
-            
+            $parametrosPlantilla['tipos_datos_por_filas'] = $em->getRepository('GridFormBundle:Formulario')->tipoDatoPorFila($Frm);
+                        
         }
         return $this->render($plantilla, $parametrosPlantilla);
     }

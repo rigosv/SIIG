@@ -80,6 +80,8 @@ _regla_validacion_: Regla de validación
 _tipo_contratacion_: Tipo contratación
 _tipo_control_: Tipo Control
 _tipo_dato_: Tipo Dato
+_tipo_definido_por_fila_: Tipo definido por fila
+_tipo_definido_por_fila_help_: 'Si existen tipos definidos para las variables, se utilizarán estos tipos en lugar del tipo de columna '
 _tipo_recurso_: Tipo Recurso
 _titulo_columnas_: Título de columnas
 _titulo_columna_help_: 'Si se requiere cambiar el título por defecto de las columnas. Utilizar formato JSON (los valores van entre comillas dobles): [{"cod_col": "titulo", "cod_col2": "titulo2"}]'

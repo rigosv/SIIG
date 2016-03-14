@@ -13,11 +13,11 @@ use MINSAL\GridFormBundle\Entity\PeriodoIngresoDatosFormulario;
  */
 class FormularioRepository extends EntityRepository {
 
-    private $parametros = array();
-    private $origenes = array();
-    private $campo = '';
-    private $orden = '';
-    private $area = '';
+    protected $parametros = array();
+    protected $origenes = array();
+    protected $campo = '';
+    protected $orden = '';
+    protected $area = '';
     
     public function getDatosCapturaDatos($FrmId) {
         
@@ -51,7 +51,7 @@ class FormularioRepository extends EntityRepository {
             $periodoIngreso = $em->getRepository("GridFormBundle:PeriodoIngresoGrupoUsuarios")->find($periodoIngreso);
         }
         
-        $params_string = $this->getParameterString( $parametros, $periodoIngreso->getId(), $tipo_periodo, $user);       
+        $params_string = $this->getParameterString( $parametros, $periodoIngreso->getId(), $tipo_periodo, $user);
         $this->origenes = $this->getOrigenes($Frm->getOrigenDatos());
         $this->campo = 'id_origen_dato';
         
@@ -125,11 +125,23 @@ class FormularioRepository extends EntityRepository {
                             ||('\"es_poblacion\"=>'||'\"'||COALESCE(A.es_poblacion::varchar,'')||'\"')::hstore
                             ||('\"descripcion_variable\"=>'||'\"'||COALESCE(A.descripcion,'')||'\"')::hstore
                             ||('\"regla_validacion\"=>'||'\"'||COALESCE(A.regla_validacion::varchar,'')||'\"')::hstore
+                            ||('\"codigo_tipo_control\"=>'||'\"'||COALESCE(C.codigo::varchar,'')||'\"')::hstore
                         FROM variable_captura A
                             INNER JOIN categoria_variable_captura B ON (A.id_categoria_captura = B.id)
+                            LEFT JOIN costos.tipo_control C ON (A.id_tipo_control = C.id)
                         WHERE almacen_datos.repositorio.datos->'codigo_variable' = A.codigo";
             $em->getConnection()->executeQuery($sql);
         }        
+    }
+    
+    public function tipoDatoPorFila(Formulario $Frm) {
+        $variables = $Frm->getVariables();
+        foreach ($variables as $v){
+            if ($v->getTipoControl() != null){
+                return true;
+            }
+        }
+        return false;
     }
     
     private function getOrigenes($origen) {

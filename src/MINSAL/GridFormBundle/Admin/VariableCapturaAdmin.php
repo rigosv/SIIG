@@ -26,6 +26,7 @@ class VariableCapturaAdmin extends Admin
                 ->add('textoAyuda', null, array('label' => $this->getTranslator()->trans('_ayuda_')))
                 ->add('esPoblacion', null, array('label' => $this->getTranslator()->trans('_es_poblacion_')))
                 ->add('reglaValidacion', null, array('label' => $this->getTranslator()->trans('_regla_validacion_')))
+                ->add('tipoControl', null, array('label'=> $this->getTranslator()->trans('_tipo_control_')))
                 ->add('categoria', 'entity', array('label' => $this->getTranslator()->trans('_categoria_'),
                     'class' => 'GridFormBundle:CategoriaVariableCaptura',
                     'property' => 'descripcion',

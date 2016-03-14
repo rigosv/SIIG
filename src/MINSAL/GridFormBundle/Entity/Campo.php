@@ -83,6 +83,13 @@ class Campo
     private $esEditable;
     
     /**
+     * @var string $tipoDefinidoPorFila
+     *
+     * @ORM\Column(name="tipo_definido_por_fila", type="boolean", nullable=true)
+     */
+    private $tipoDefinidoPorFila;
+    
+    /**
      * @var string $oculto
      *
      * @ORM\Column(name="es_oculto", type="boolean", nullable=true)
@@ -601,5 +608,28 @@ class Campo
     public function getOculto()
     {
         return $this->oculto;
+    }
+
+    /**
+     * Set tipoDefinidoPorFila
+     *
+     * @param boolean $tipoDefinidoPorFila
+     * @return Campo
+     */
+    public function setTipoDefinidoPorFila($tipoDefinidoPorFila)
+    {
+        $this->tipoDefinidoPorFila = $tipoDefinidoPorFila;
+
+        return $this;
+    }
+
+    /**
+     * Get tipoDefinidoPorFila
+     *
+     * @return boolean 
+     */
+    public function getTipoDefinidoPorFila()
+    {
+        return $this->tipoDefinidoPorFila;
     }
 }

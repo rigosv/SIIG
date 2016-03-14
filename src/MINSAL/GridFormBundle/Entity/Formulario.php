@@ -111,13 +111,20 @@ class Formulario
     */
     private $gruposColumnas;
     
+    /**
+    * @var \Doctrine\Common\Collections\ArrayCollection
+    * @ORM\OneToMany(targetEntity="VariableCaptura", mappedBy="formulario", cascade={"all"}, orphanRemoval=true)
+    * @ORM\OrderBy({"descripcion" = "ASC"})
+    */
+    private $variables;
+    
         
     /**
      * @ORM\ManyToOne(targetEntity="MINSAL\IndicadoresBundle\Entity\OrigenDatos")
      * */
     private $origenDatos;
-        
     
+            
     public function __toString()
     {
         return $this->nombre ? : '';
@@ -467,5 +474,38 @@ class Formulario
     public function getTituloColumnas()
     {
         return $this->tituloColumnas;
+    }
+
+    /**
+     * Add variables
+     *
+     * @param \MINSAL\GridFormBundle\Entity\VariableCaptura $variables
+     * @return Formulario
+     */
+    public function addVariable(\MINSAL\GridFormBundle\Entity\VariableCaptura $variables)
+    {
+        $this->variables[] = $variables;
+
+        return $this;
+    }
+
+    /**
+     * Remove variables
+     *
+     * @param \MINSAL\GridFormBundle\Entity\VariableCaptura $variables
+     */
+    public function removeVariable(\MINSAL\GridFormBundle\Entity\VariableCaptura $variables)
+    {
+        $this->variables->removeElement($variables);
+    }
+
+    /**
+     * Get variables
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getVariables()
+    {
+        return $this->variables;
     }
 }
