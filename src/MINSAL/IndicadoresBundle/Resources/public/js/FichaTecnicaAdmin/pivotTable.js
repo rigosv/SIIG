@@ -90,12 +90,17 @@ $(document).ready(function() {
                 
         
         $.getJSON(Routing.generate('get_datos_formulario_captura', {codigo: codigo}), function(mps) {
-            $("#output").pivotUI(mps, {
-                renderers: renderers,
-                menuLimit: 500,
-                unusedAttrsVertical: false
-            }, false, 'es');
-            $('#marco-sala').attr('data-content', nombre_elemento);
+            if (mps.estado == 'error'){
+                $('#output').html('<div class="alert alert-warning" role="alert">'+mps.msj+'</div>');
+            }
+            else {
+                $("#output").pivotUI(mps, {
+                    renderers: renderers,
+                    menuLimit: 500,
+                    unusedAttrsVertical: false
+                }, false, 'es');
+            }
+            $('#marco-sala').attr('data-content', nombre_elemento);   
             $('#myTab a:first').tab('show');
         });
     });
