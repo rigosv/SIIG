@@ -281,8 +281,9 @@
                                   
                                     if (tipo_control == 'checkbox'){                                   
                                         var checkBoxHTMLElement = editor.find('div:first');
-                                        alert(1);
-                                        n_  = (cellValue.toString() == "true")? false: true;
+                                        
+                                        n_ = (cellValue == undefined) ? true : (cellValue.toString() == "true") ? false: true;
+
                                         checkBoxHTMLElement.jqxCheckBox({ checked: n_ });
                                         editor.val(n_);
                                     }
