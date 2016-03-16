@@ -1,8 +1,8 @@
 {% extends 'IndicadoresBundle::standard_layout.html.twig' %}
 {% block stylesheets %}    
     {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('bundles/gridform/js/jqwidgets4/styles/jqx.base.css') }}" type="text/css" media="all" />
-    <link rel="stylesheet" href="{{ asset('bundles/gridform/js/jqwidgets4/styles/jqx.energyblue.css') }}" type="text/css" media="all" />
+    <link rel="stylesheet" href="{{ asset('bundles/gridform/js/jqwidgets4.1/styles/jqx.base.css') }}" type="text/css" media="all" />
+    <link rel="stylesheet" href="{{ asset('bundles/gridform/js/jqwidgets4.1/styles/jqx.energyblue.css') }}" type="text/css" media="all" />
     <style>
         .jqx-grid-cell-pinned{
             background-color: #F9F9F9 !important;
@@ -281,6 +281,7 @@
                                   
                                     if (tipo_control == 'checkbox'){                                   
                                         var checkBoxHTMLElement = editor.find('div:first');
+                                        alert(1);
                                         n_  = (cellValue.toString() == "true")? false: true;
                                         checkBoxHTMLElement.jqxCheckBox({ checked: n_ });
                                         editor.val(n_);
