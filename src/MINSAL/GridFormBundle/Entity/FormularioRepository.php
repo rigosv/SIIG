@@ -104,10 +104,10 @@ class FormularioRepository extends EntityRepository {
                     (SELECT ".$Frm->getId()." AS id_formulario, 
                             hstore(
                                 ARRAY['codigo_variable', 'anio', $mes_txt 'establecimiento', $dependencia1 'descripcion_variable',
-                                        'codigo_categoria_variable', 'descripcion_categoria_variable', 'es_poblacion',
+                                        'codigo_categoria_variable', 'descripcion_categoria_variable', 'es_poblacion', 'posicion',
                                         'regla_validacion'], 
                                 ARRAY[A.codigo , '".$this->parametros['anio']."', $mes_val '".$this->parametros['establecimiento']."', $dependencia2 A.descripcion,
-                                    B.codigo, B.descripcion,  COALESCE(A.es_poblacion::varchar,''),
+                                    B.codigo, B.descripcion,  COALESCE(A.es_poblacion::varchar,''), COALESCE(A.posicion::varchar,'0'), 
                                     COALESCE(A.regla_validacion::varchar,'')]
                             ) 
                         FROM variable_captura A 
@@ -124,7 +124,7 @@ class FormularioRepository extends EntityRepository {
                                 )
                             AND A.formulario_id =  ".$Frm->getId()."
                     )";
-            $this->orden = "ORDER BY datos->'es_poblacion' DESC, datos->'descripcion_categoria_variable', datos->'descripcion_variable'";
+            $this->orden = "ORDER BY datos->'es_poblacion' DESC, COALESCE(NULLIF(datos->'posicion', ''), '100000000')::integer, datos->'descripcion_categoria_variable', datos->'descripcion_variable'";
             $em->getConnection()->executeQuery($sql);
             
             //Actualizar los datos de las variables ya existentes
@@ -133,6 +133,7 @@ class FormularioRepository extends EntityRepository {
                             ||('\"codigo_categoria_variable\"=>'||'\"'||COALESCE(B.codigo,'')||'\"')::hstore 
                             ||('\"descripcion_categoria_variable\"=>'||'\"'||COALESCE(B.descripcion,'')||'\"')::hstore
                             ||('\"es_poblacion\"=>'||'\"'||COALESCE(A.es_poblacion::varchar,'')||'\"')::hstore
+                            ||('\"posicion\"=>'||'\"'||COALESCE(A.posicion::varchar,'')||'\"')::hstore
                             ||('\"descripcion_variable\"=>'||'\"'||COALESCE(A.descripcion,'')||'\"')::hstore
                             ||('\"regla_validacion\"=>'||'\"'||COALESCE(A.regla_validacion::varchar,'')||'\"')::hstore
                             ||('\"codigo_tipo_control\"=>'||'\"'||COALESCE(C.codigo::varchar,'')||'\"')::hstore

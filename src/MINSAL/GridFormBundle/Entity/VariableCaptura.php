@@ -55,6 +55,13 @@ class VariableCaptura
     private $descripcion;
     
     /**
+     * @var string $posicion
+     *
+     * @ORM\Column(name="posicion", type="integer", nullable=true)
+     */
+    private $posicion;
+    
+    /**
      * @ORM\ManyToOne(targetEntity="CategoriaVariableCaptura")
      * @ORM\JoinColumn(name="id_categoria_captura", referencedColumnName="id")
      * */
@@ -278,5 +285,28 @@ class VariableCaptura
     public function getTipoControl()
     {
         return $this->tipoControl;
+    }
+
+    /**
+     * Set posicion
+     *
+     * @param integer $posicion
+     * @return VariableCaptura
+     */
+    public function setPosicion($posicion)
+    {
+        $this->posicion = $posicion;
+
+        return $this;
+    }
+
+    /**
+     * Get posicion
+     *
+     * @return integer 
+     */
+    public function getPosicion()
+    {
+        return $this->posicion;
     }
 }
