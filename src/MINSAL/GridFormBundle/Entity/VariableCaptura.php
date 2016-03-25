@@ -80,6 +80,13 @@ class VariableCaptura
     private $reglaValidacion;
     
     /**
+     * @var string $esSeparador
+     *
+     * @ORM\Column(name="es_separador", type="boolean", nullable=true)
+     */
+    private $esSeparador;
+    
+    /**
      * @ORM\ManyToOne(targetEntity="TipoControl")
      * @ORM\JoinColumn(name="id_tipo_control", referencedColumnName="id")
      * */
@@ -308,5 +315,28 @@ class VariableCaptura
     public function getPosicion()
     {
         return $this->posicion;
+    }
+
+    /**
+     * Set esSeparador
+     *
+     * @param boolean $esSeparador
+     * @return VariableCaptura
+     */
+    public function setEsSeparador($esSeparador)
+    {
+        $this->esSeparador = $esSeparador;
+
+        return $this;
+    }
+
+    /**
+     * Get esSeparador
+     *
+     * @return boolean 
+     */
+    public function getEsSeparador()
+    {
+        return $this->esSeparador;
     }
 }

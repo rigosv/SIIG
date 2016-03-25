@@ -28,6 +28,7 @@ class VariableCapturaAdmin extends Admin
                 ->add('reglaValidacion', null, array('label' => $this->getTranslator()->trans('_regla_validacion_')))
                 ->add('tipoControl', null, array('label'=> $this->getTranslator()->trans('_tipo_control_')))
                 ->add('posicion', null, array('label'=> $this->getTranslator()->trans('_posicion_')))
+                ->add('esSeparador', null, array('label'=> $this->getTranslator()->trans('_separador_')))
                 ->add('categoria', 'entity', array('label' => $this->getTranslator()->trans('_categoria_'),
                     'class' => 'GridFormBundle:CategoriaVariableCaptura',
                     'property' => 'descripcion',
@@ -61,6 +62,7 @@ class VariableCapturaAdmin extends Admin
                 ->add('descripcion', null, array('label' => $this->getTranslator()->trans('_descripcion_')))
                 ->add('categoria', null, array('label' => $this->getTranslator()->trans('_categoria_')))
                 ->add('formulario', null, array('label' => $this->getTranslator()->trans('_formulario_')))
+                ->add('posicion', null, array('label'=> $this->getTranslator()->trans('_posicion_')))
         ;
     }    
 

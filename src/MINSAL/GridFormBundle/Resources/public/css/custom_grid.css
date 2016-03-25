@@ -1,0 +1,57 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Mar 24, 2016, 4:09:39 PM
+    Author     : rigo
+*/
+.jqx-grid-column-header
+{            
+    white-space: normal !important;
+    vertical-align: middle !important;
+}        
+.celda_no_editable {
+    background-color: #FCF9F9;
+}
+.popover-content{
+    background-color: orange;
+}
+.jqx-switchbutton-label-on{
+    background-color: #DFF0D8 !important;
+}
+.jqx-switchbutton-label-off{
+    background-color: #F2DEDE !important;
+}
+.jqx-checkbox-check-checked {
+    //background: transparent url("/bundles/gridform/images/checkbox_green.png") no-repeat scroll center center;
+    background-color: greenyellow !important;
+    background-size: 20px 20px;
+}
+.jqx-checkbox-check-indeterminate{
+    background: transparent url("/bundles/gridform/images/check_indeterminate_black.png") no-repeat scroll center center;
+    background-color: #E0E9F5 !important;
+    background-size: 20px 20px;
+}
+.jqx-checkbox-default {
+    background-color: #F99090 !important;
+    //background: transparent url("/bundles/gridform/images/checkbox_green2.png") no-repeat scroll center center;
+    background-size: 20px 20px;
+    //border: none !important;
+    //margin-top: 0px !important;    
+}
+.jqx-checkbox-default > div, .jqx-checkbox-default > div > span {
+    width: 20px !important;
+    height: 20px !important;
+}
+.jqx-checkbox{
+    width: 20px !important;
+    height: 20px !important;
+}
+.fila_separador{
+    font-weight: bold;
+    font-size: 12pt;
+    background-color: #356AA0;
+    color: white;
+}

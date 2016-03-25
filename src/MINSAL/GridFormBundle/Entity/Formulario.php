@@ -94,6 +94,20 @@ class Formulario
      * @ORM\Column(name="titulo_columnas", type="text", nullable=true)
      */
     private $tituloColumnas;
+    
+    /**
+     * @var string $ocultarNumeroFila
+     *
+     * @ORM\Column(name="ocultar_numero_fila", type="boolean", nullable=true)
+     */
+    private $ocultarNumeroFila;
+    
+    /**
+     * @var string $noOrdenarPorFila
+     *
+     * @ORM\Column(name="no_ordenar_fila", type="boolean", nullable=true)
+     */
+    private $noOrdenarPorFila;
         
     /**
      * @var \Doctrine\Common\Collections\ArrayCollection
@@ -507,5 +521,51 @@ class Formulario
     public function getVariables()
     {
         return $this->variables;
+    }
+
+    /**
+     * Set ocultarNumeroFila
+     *
+     * @param boolean $ocultarNumeroFila
+     * @return Formulario
+     */
+    public function setOcultarNumeroFila($ocultarNumeroFila)
+    {
+        $this->ocultarNumeroFila = $ocultarNumeroFila;
+
+        return $this;
+    }
+
+    /**
+     * Get ocultarNumeroFila
+     *
+     * @return boolean 
+     */
+    public function getOcultarNumeroFila()
+    {
+        return $this->ocultarNumeroFila;
+    }
+
+    /**
+     * Set noOrdenarPorFila
+     *
+     * @param boolean $noOrdenarPorFila
+     * @return Formulario
+     */
+    public function setNoOrdenarPorFila($noOrdenarPorFila)
+    {
+        $this->noOrdenarPorFila = $noOrdenarPorFila;
+
+        return $this;
+    }
+
+    /**
+     * Get noOrdenarPorFila
+     *
+     * @return boolean 
+     */
+    public function getNoOrdenarPorFila()
+    {
+        return $this->noOrdenarPorFila;
     }
 }

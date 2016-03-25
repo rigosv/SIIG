@@ -32,7 +32,7 @@ _elija_establecimiento_: Elija el Establecimiento
 _elija_parametros_: Elija parámetros
 _enero_: Enero
 _es_editable_: Editable
-_es_poblacion_: Es variable de población
+_es_poblacion_: Mostrar al inicio de cuadrícula
 _especialidad_: Especialidad
 _establecimiento_: Establecimiento
 _estructura_organizativa_: Estructura organizativa
@@ -59,6 +59,8 @@ _mes_: Mes
 _msj_validacion_: Mensaje de validación
 _nivel_ : Nivel
 _no_datos_: 'No se encontraron datos con los parámetros especificados'
+_no_ordenar_por_fila_: 'Desactivar ordenar'
+_ocultar_numero_fila_: 'Ocultar número de fila'
 _nombre_: Nombre
 _noviembre_: Noviembre
 _octubre_: Octubre
@@ -74,6 +76,7 @@ _periodo_lectura_datos_: 'Periodo de lectura de datos'
 _posicion_: Posición
 _ruta_manual_uso_:  Ruta manual de uso
 _seleccione_dependencia_: 'Seleccione la dependencia'
+_separador_: Es separador
 _septiembre_: Septiembre
 _significado_campo_: Significado
 _regla_validacion_: Regla de validación
