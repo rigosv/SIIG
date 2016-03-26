@@ -2,7 +2,7 @@
 {% block stylesheets %}    
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('bundles/gridform/js/jqwidgets4.1/styles/jqx.base.css') }}" type="text/css" media="all" />
-    <link rel="stylesheet" href="{{ asset('bundles/gridform/js/jqwidgets4.1/styles/jqx.energyblue.css') }}" type="text/css" media="all" />
+    <link rel="stylesheet" href="{{ asset('bundles/gridform/js/jqwidgets4.1/styles/jqx.ui-redmond.css') }}" type="text/css" media="all" />
     <link rel="stylesheet" href="{{ asset('bundles/gridform/css/custom_grid.css') }}" type="text/css" media="all" />
     
 {% endblock stylesheets %}
@@ -24,7 +24,7 @@
     <script src="{{ asset('bundles/gridform/js/jqwidgets4.1/jqxcheckbox.js') }}" type="text/javascript"></script>
     <script src="{{ asset('bundles/gridform/js/jqwidgets4.1/jqxlistbox.js') }}" type="text/javascript"></script>
     <script src="{{ asset('bundles/gridform/js/jqwidgets4.1/jqxdropdownlist.js') }}" type="text/javascript"></script>
-    <script src="{{ asset('bundles/gridform/js/jqwidgets4.1/jqxswitchbutton.js') }}" type="text/javascript"></script>
+    <!-- <script src="{{ asset('bundles/gridform/js/jqwidgets4.1/jqxswitchbutton.js') }}" type="text/javascript"></script> -->
     
     <script src="{{ asset('bundles/gridform/js/jqwidgets4.1/jqxgrid.filter.js') }}" type="text/javascript"></script>
     <script src="{{ asset('bundles/gridform/js/jqwidgets4.1/jqxgrid.columnsresize.js') }}" type="text/javascript"></script>    
@@ -50,7 +50,7 @@
     {% set titulos = Frm.tituloColumnas | jsonDecode(true) %}
     <script type="text/javascript">
         $(document).ready(function () {
-            $.jqx.theme = 'energyblue';                    
+            $.jqx.theme = 'ui-redmond';                    
             var url = Routing.generate('{{url}}', {id: {{Frm.id}}, periodo_ingreso: $('#periodo_estructura').val(),titulo_frm : '{{titulo}}', datos_frm: $('#frm_').serialize() });
             var fila = 0;
             
@@ -124,6 +124,7 @@
                     {% endfor %}
                     {name: 'es_poblacion'},
                     {name: 'es_separador'},
+                    {name: 'nivel_indentacion'},
                     {name: 'codigo_tipo_control'},
                     {name: 'codigo_tipo_dato'},
                     {name: 'ayuda'}
@@ -135,7 +136,7 @@
             $("#jqxgrid").jqxGrid(
             {
                 width: '95%',
-                columnsheight: {% if Frm.gruposColumnas|length > 0 %}'42px'{% else %}'65px'{% endif %},
+                columnsheight: {% if Frm.gruposColumnas|length > 0 %}'40px'{% else %}'45px'{% endif %},
                 source: dataAdapter,
                 columnsresize: true,
                 editable: {{editable|default(true)}},
@@ -342,13 +343,13 @@
                                 },
                             {% endif %}
                             cellsrenderer: function (index, datafield, cellValue, defaultvalue, column, datarow) {
-                                estilo = (datarow.es_poblacion == 'true') ? "style='color: blue;'" :  '';
+                                estilo = (datarow.es_poblacion == 'true') ? "style='color: blue; padding-left:"+(parseInt(datarow.nivel_indentacion) * 20)+"px '" :  "style = 'padding-left:"+(parseInt(datarow.nivel_indentacion) * 20)+"px' ";
                                 
                                 if (datarow.es_separador == 'true'){
                                     {% if campo.significadoCampo.codigo  ==  'descripcion_variable' %}
                                         return "<div class='separador_variable jqx-{{campo.alineacion.codigo|default('left')}}-align' "+ estilo + " title='"+datarow.ayuda+"'  data-placement= 'top' >" + cellValue +"</div>";
                                     {% else %}
-                                        return "<DIV class= 'separador'></DIV>"
+                                        return "<DIV class= 'separador' style= 'padding-left:"+(parseInt(datarow.nivel_indentacion) * 20)+"px'></DIV>"
                                     {% endif %}
                                 }
                                 {% if tipos_datos_por_filas  and campo.tipoDefinidoPorFila %}

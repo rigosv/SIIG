@@ -28,6 +28,7 @@ class VariableCapturaAdmin extends Admin
                 ->add('reglaValidacion', null, array('label' => $this->getTranslator()->trans('_regla_validacion_')))
                 ->add('tipoControl', null, array('label'=> $this->getTranslator()->trans('_tipo_control_')))
                 ->add('posicion', null, array('label'=> $this->getTranslator()->trans('_posicion_')))
+                ->add('nivelIndentacion', null, array('label'=> $this->getTranslator()->trans('_nivel_indentacion_')))
                 ->add('esSeparador', null, array('label'=> $this->getTranslator()->trans('_separador_')))
                 ->add('categoria', 'entity', array('label' => $this->getTranslator()->trans('_categoria_'),
                     'class' => 'GridFormBundle:CategoriaVariableCaptura',

@@ -105,10 +105,10 @@ class FormularioRepository extends EntityRepository {
                             hstore(
                                 ARRAY['codigo_variable', 'anio', $mes_txt 'establecimiento', $dependencia1 'descripcion_variable',
                                         'codigo_categoria_variable', 'descripcion_categoria_variable', 'es_poblacion', 'posicion', 
-                                        'es_separador', 'regla_validacion'], 
+                                        'es_separador', 'nivel_indentacion', 'regla_validacion'], 
                                 ARRAY[A.codigo , '".$this->parametros['anio']."', $mes_val '".$this->parametros['establecimiento']."', $dependencia2 A.descripcion,
                                     B.codigo, B.descripcion,  COALESCE(A.es_poblacion::varchar,''), COALESCE(A.posicion::varchar,'0'), 
-                                    COALESCE(A.es_separador::varchar,''), COALESCE(A.regla_validacion::varchar,'')]
+                                    COALESCE(A.es_separador::varchar,''), COALESCE(A.nivel_indentacion::varchar,'0'), COALESCE(A.regla_validacion::varchar,'')]
                             ) 
                         FROM variable_captura A 
                             INNER JOIN categoria_variable_captura B ON (A.id_categoria_captura = B.id)
@@ -135,6 +135,7 @@ class FormularioRepository extends EntityRepository {
                             ||('\"es_poblacion\"=>'||'\"'||COALESCE(A.es_poblacion::varchar,'')||'\"')::hstore
                             ||('\"es_separador\"=>'||'\"'||COALESCE(A.es_separador::varchar,'')||'\"')::hstore
                             ||('\"posicion\"=>'||'\"'||COALESCE(A.posicion::varchar,'')||'\"')::hstore
+                            ||('\"nivel_indentacion\"=>'||'\"'||COALESCE(A.nivel_indentacion::varchar,'')||'\"')::hstore
                             ||('\"descripcion_variable\"=>'||'\"'||COALESCE(A.descripcion,'')||'\"')::hstore
                             ||('\"regla_validacion\"=>'||'\"'||COALESCE(A.regla_validacion::varchar,'')||'\"')::hstore
                             ||('\"codigo_tipo_control\"=>'||'\"'||COALESCE(C.codigo::varchar,'')||'\"')::hstore

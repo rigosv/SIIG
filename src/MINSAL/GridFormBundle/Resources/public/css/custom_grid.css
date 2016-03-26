@@ -11,7 +11,7 @@ and open the template in the editor.
 {            
     white-space: normal !important;
     vertical-align: middle !important;
-}        
+}
 .celda_no_editable {
     background-color: #FCF9F9;
 }
@@ -51,7 +51,5 @@ and open the template in the editor.
 }
 .fila_separador{
     font-weight: bold;
-    font-size: 12pt;
-    background-color: #356AA0;
-    color: white;
+    background-color: #D6D6D6;
 }

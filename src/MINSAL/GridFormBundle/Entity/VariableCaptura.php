@@ -62,6 +62,13 @@ class VariableCaptura
     private $posicion;
     
     /**
+     * @var string $nivelIndentacion
+     *
+     * @ORM\Column(name="nivel_indentacion", type="integer", nullable=true)
+     */
+    private $nivelIndentacion;
+    
+    /**
      * @ORM\ManyToOne(targetEntity="CategoriaVariableCaptura")
      * @ORM\JoinColumn(name="id_categoria_captura", referencedColumnName="id")
      * */
@@ -338,5 +345,28 @@ class VariableCaptura
     public function getEsSeparador()
     {
         return $this->esSeparador;
+    }
+
+    /**
+     * Set nivelIndentacion
+     *
+     * @param integer $nivelIndentacion
+     * @return VariableCaptura
+     */
+    public function setNivelIndentacion($nivelIndentacion)
+    {
+        $this->nivelIndentacion = $nivelIndentacion;
+
+        return $this;
+    }
+
+    /**
+     * Get nivelIndentacion
+     *
+     * @return integer 
+     */
+    public function getNivelIndentacion()
+    {
+        return $this->nivelIndentacion;
     }
 }
