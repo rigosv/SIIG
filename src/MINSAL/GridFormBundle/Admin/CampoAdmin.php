@@ -20,7 +20,7 @@ class CampoAdmin extends Admin
         $formMapper
             ->add('significadoCampo', null, array('label'=> $this->getTranslator()->trans('_significado_campo_')))
             ->add('descripcion', null, array('label'=> $this->getTranslator()->trans('_descripcion_')))
-            ->add('formularios', null, array('label'=> $this->getTranslator()->trans('_formulario_'), 'expanded' => true, 'multiple' => true, 'by_reference' => false))
+            ->add('formularios', null, array('label'=> $this->getTranslator()->trans('_formulario_'), 'by_reference' => false))
             ->add('reglaValidacion', null, array('label'=> $this->getTranslator()->trans('_regla_validacion_')))
             ->add('msjValidacion', null, array('label'=> $this->getTranslator()->trans('_msj_validacion_')))
             ->add('posicion', null, array('label'=> $this->getTranslator()->trans('_posicion_')))
