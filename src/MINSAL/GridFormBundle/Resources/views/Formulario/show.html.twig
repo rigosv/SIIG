@@ -487,6 +487,9 @@
                     {% endif %}                                    
                     <DIV id="mensaje"></div>
                 </div>
+                <DIV class="descripcion_frm">
+                    {% if Frm is defined %}{{Frm.descripcion}}{% endif %}
+                </DIV>
             {% endblock frm_head %}
             {% block grid %}
                 <div id='jqxWidget' style="padding: 10px;">
