@@ -20,7 +20,7 @@
     background-color: #F2DEDE !important;
 }
 .jqx-checkbox-check-checked {
-    //background: transparent url("/bundles/gridform/images/checkbox_green.png") no-repeat scroll center center;
+    background: transparent url("/bundles/gridform/images/check_black.png") no-repeat scroll center center !important;
     background-color: greenyellow !important;
     background-size: 20px 20px;
 }
@@ -44,9 +44,9 @@
     width: 20px !important;
     height: 20px !important;
 }
-.fila_separador{
-    font-weight: bold;
-    background-color: #D6D6D6;
+.fila_separador .jqx-grid-cell{
+    font-weight: bold !important;
+    background-color: #D6D6D6 !important;
 }
 
 .descripcion_frm{
