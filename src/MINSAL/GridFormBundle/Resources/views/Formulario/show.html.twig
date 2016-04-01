@@ -399,10 +399,10 @@
                     });
                 },
                 ready: function(){
-                    var texto = $( "div.separador_variable" ).html();
+                    //var texto = $( "div.separador_variable" ).html();
                     $("#jqxgrid").jqxGrid('beginupdate');
-                    var elemento = $( "div.separador_variable" ).parent().parent();
-                    elemento.addClass('fila_separador');
+                    var elemento = $( "div.separador_variable" ).parent().parent();                    
+                    elemento.addClass('fila_separador');                    
                     $("#jqxgrid").jqxGrid('endupdate');
                 }
             });

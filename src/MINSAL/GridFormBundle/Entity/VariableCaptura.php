@@ -28,7 +28,7 @@ class VariableCaptura
     /**
      * @var string $codigo
      *
-     * @ORM\Column(name="codigo", type="string", length=20, nullable=false)
+     * @ORM\Column(name="codigo", type="string", length=200, nullable=false)
      */
     private $codigo;
     
@@ -48,9 +48,9 @@ class VariableCaptura
     
     
     /**
-     * @var string $nombre
+     * @var string $descripcion
      *
-     * @ORM\Column(name="descripcion", type="string", length=200, nullable=false)
+     * @ORM\Column(name="descripcion", type="text", nullable=false)
      */
     private $descripcion;
     
