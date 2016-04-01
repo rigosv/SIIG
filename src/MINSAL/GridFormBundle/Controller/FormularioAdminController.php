@@ -44,7 +44,7 @@ class FormularioAdminController extends Controller
             //Buscar todos los formularios del areaCosteo almacen_datos asignados al usuario
             $aux = $em->getRepository("GridFormBundle:PeriodoIngresoDatosFormulario")
                 ->findBy(array('usuario' => $this->getUser()), 
-                        array('periodo' => 'ASC', 'unidad'=>'ASC'));
+                        array('formulario' => 'ASC', 'periodo'=>'ASC'));
 
             foreach ($aux as $p ) { 
                 if ($p->getFormulario()->getAreaCosteo() == 'almacen_datos')
@@ -57,7 +57,7 @@ class FormularioAdminController extends Controller
                 foreach($this->getUser()->getGroups() as $g){
                     $aux_ = $em->getRepository("GridFormBundle:PeriodoIngresoGrupoUsuarios")
                     ->findBy(array('grupoUsuario' => $g , 'formulario'=>$Frm), 
-                            array('periodo' => 'ASC'));
+                            array('formulario' => 'ASC', 'periodo' => 'ASC'));
                     foreach($aux_ as $p){
                         $llave = $p->getPeriodo()->getAnio().$this->getUser()->getEstablecimientoPrincipal()->getId().$p->getFormulario()->getId();
                         $periodos[$llave] = array('id'=>'pg_'.$p->getId(),
@@ -90,12 +90,13 @@ class FormularioAdminController extends Controller
                 $meses[$p->getPeriodo()->getAnio()][] = $p->getPeriodo()->getMes();
         }
                 
-        //Agrupar los periodos por formulario
+        //Agrupar los periodos por unidad
         $periodos_aux = array();
         foreach($periodos as $p){
-            $periodos_aux[$p['formulario']->getCodigo()]['nombre'] = $p['formulario']->getNombre();
-            $periodos_aux[$p['formulario']->getCodigo()]['datos'][] = $p;
-        }                
+            $periodos_aux[$p['unidad']->getCodigo()]['unidad'] = $p['unidad'];
+            $periodos_aux[$p['unidad']->getCodigo()]['datos'][] = $p;
+        }
+        
         
         $parametrosPlantilla = array(
             'url' => 'get_grid_data',
