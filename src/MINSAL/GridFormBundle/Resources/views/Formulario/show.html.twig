@@ -343,13 +343,13 @@
                                 },
                             {% endif %}
                             cellsrenderer: function (index, datafield, cellValue, defaultvalue, column, datarow) {
-                                estilo = (datarow.es_poblacion == 'true') ? "style='color: blue; padding-left:"+(parseInt(datarow.nivel_indentacion) * 20)+"px '" :  "style = 'padding-left:"+(parseInt(datarow.nivel_indentacion) * 20)+"px' ";
+                                estilo = (datarow.es_poblacion == 'true') ? "style='color: blue; margin-left:"+(parseInt(datarow.nivel_indentacion) * 20)+"px '" :  "style = 'margin-left:"+(parseInt(datarow.nivel_indentacion) * 20)+"px' ";
                                 
                                 if (datarow.es_separador == 'true'){
                                     {% if campo.significadoCampo.codigo  ==  'descripcion_variable' %}
                                         return "<div class='separador_variable jqx-{{campo.alineacion.codigo|default('left')}}-align' "+ estilo + " title='"+datarow.ayuda+"'  data-placement= 'top' >" + cellValue +"</div>";
                                     {% else %}
-                                        return "<DIV class= 'separador' style= 'padding-left:"+(parseInt(datarow.nivel_indentacion) * 20)+"px'></DIV>"
+                                        return "<DIV class= 'separador' style= 'margin-left:"+(parseInt(datarow.nivel_indentacion) * 20)+"px'></DIV>"
                                     {% endif %}
                                 }
                                 {% if tipos_datos_por_filas  and campo.tipoDefinidoPorFila %}
@@ -368,10 +368,10 @@
                                         element_aux.append(element);
                                         return element_aux.html();
                                     }
-                                    else    return "<div class='jqx-{{campo.alineacion.codigo|default('left')}}-align' "+ estilo + " title='"+datarow.ayuda+"'  data-placement= 'top' >" + cellValue +"</div>";
+                                    else    return "<div class='jqx-{{campo.alineacion.codigo|default('left')}}-align nivel_"+datarow.nivel_indentacion+"' "+ estilo + " title='"+datarow.ayuda+"'  data-placement= 'top' >" + cellValue +"</div>";
                                     
                                 {% else %}
-                                    return "<div class='jqx-{{campo.alineacion.codigo|default('left')}}-align' "+ estilo + " title='"+datarow.ayuda+"'  data-placement= 'top' >" + cellValue +"</div>";
+                                    return "<div class='jqx-{{campo.alineacion.codigo|default('left')}}-align nivel_"+datarow.nivel_indentacion+"' "+ estilo + " title='"+datarow.ayuda+"'  data-placement= 'top' >" + cellValue +"</div>";
                                 {% endif %}                                
                             },
                         },
@@ -401,7 +401,7 @@
                 ready: function(){
                     //var texto = $( "div.separador_variable" ).html();
                     $("#jqxgrid").jqxGrid('beginupdate');
-                    var elemento = $( "div.separador_variable" ).parent().parent();                    
+                    var elemento = $( "div.separador_variable" ).parent().parent();
                     elemento.addClass('fila_separador');                    
                     $("#jqxgrid").jqxGrid('endupdate');
                 }

@@ -10,15 +10,16 @@ class FichaTecnicaRepository extends EntityRepository {
     public function crearIndicador(FichaTecnica $fichaTecnica, $dimension = null, $filtros = null) {
         $em = $this->getEntityManager();
         $ahora = new \DateTime('NOW');
-        $util = new \MINSAL\IndicadoresBundle\Util\Util();
-        $nombre_indicador = $util->slug($fichaTecnica->getNombre());
+        //$util = new \MINSAL\IndicadoresBundle\Util\Util();
+        //$nombre_indicador = $util->slug($fichaTecnica->getNombre());
+        $nombre_indicador = $fichaTecnica->getId();
         $formula = strtoupper($fichaTecnica->getFormula());
 
         //Verificar si existe la tabla
         $existe = true;
         $acumulado = $fichaTecnica->getEsAcumulado();
         try {
-            $em->getConnection()->query("select count(*) from tmp_ind_$nombre_indicador");
+            $em->getConnection()->query("select * from tmp_ind_$nombre_indicador LIMIT 1");
         } catch (\Doctrine\DBAL\DBALException $e) {
             $existe = false;
         }
@@ -59,10 +60,9 @@ class FichaTecnicaRepository extends EntityRepository {
                     $tablas_piv[] = 'od_' . $or_id;
                     $campos_piv = array_merge($pivote, $campos_regulares);
                     $sql .= ' ); ';
-                    $sql .= "INSERT INTO od_$or_id
+                    $sql .= " INSERT INTO od_$or_id
                     SELECT (populate_record(null::od_$or_id, datos)).*
-                    FROM fila_origen_dato
-                        WHERE id_origen_dato = '$or_id'
+                    FROM origenes.origen_dato_$or_id
                     ;";
                 }
             }
@@ -113,11 +113,24 @@ class FichaTecnicaRepository extends EntityRepository {
                         $origenes[] = $of->getId();
                 else
                     $origenes[] = $origen->getId();
-                $sql .= "INSERT INTO $tabla
-                    SELECT (populate_record(null::$tabla, datos)).*
-                    FROM fila_origen_dato
-                        WHERE id_origen_dato IN (" . implode(',', $origenes) . ")
-                    ;";
+                
+                
+                // Leer de todas las posibles tablas que pueda tener el origen
+                $j = 0;
+                $sql_origenes = '';
+                foreach($origenes as $id_origen){
+                    if ($j != 0)
+                        $sql_origenes =" UNION ";
+                    $sql_origenes .= 
+                    "
+                        SELECT (populate_record(null::$tabla, datos)).*
+                        FROM origenes.origen_dato_$id_origen
+                    ";
+                    $j++;
+                }
+                
+                $sql .= "INSERT INTO $tabla ( $sql_origenes );";
+
             }
             //Obtener los campos que son calculados
             $campos_calculados = array();
@@ -136,19 +149,29 @@ class FichaTecnicaRepository extends EntityRepository {
             } else
                 $campos_calculados = '';
             //Obtener solo los datos que se pueden procesar en el indicador
-            $sql .= "DROP TABLE IF EXISTS $tabla" . "_var; ";
+            $sql .= " DROP TABLE IF EXISTS $tabla" . "_var; ";
             //Obtener el operador de la variable
             $oper_ = explode('{'.$variable->getIniciales().'}', str_replace(' ', '', $formula));
             $tieneOperadores = preg_match('/([A-Z]+)\($/', $oper_[0], $coincidencias, PREG_OFFSET_CAPTURE);
             
             $oper = ($tieneOperadores) ? $coincidencias[1][0] : 'SUM';
             
-            $sql .= "SELECT  $campos, $oper(calculo::numeric) AS  $tabla $campos_calculados
+            if ($oper == 'SUM'){
+                $sql .= "SELECT  $campos, $oper(calculo::numeric) AS  $tabla $campos_calculados
+                            INTO  TEMP $tabla" . "_var
+                            FROM $tabla
+                            WHERE  (calculo::numeric) > 0
+                            GROUP BY $campos $campos_calculados_nombre                
+                                ;";
+            } else {
+                $sql .= "SELECT  $campos, $oper(calculo::numeric) AS  $tabla $campos_calculados
                 INTO  TEMP $tabla" . "_var
                 FROM $tabla
                 GROUP BY $campos $campos_calculados_nombre
-                HAVING  $oper(calculo::numeric) > 0
+                    HAVING  $oper(calculo::numeric) > 0
                     ;";
+            }
+            
 
             //aplicar transformaciones si las hubieran
             foreach ($diccionarios as $campo => $diccionario) {
@@ -175,8 +198,8 @@ class FichaTecnicaRepository extends EntityRepository {
 
     public function crearTablaIndicador(FichaTecnica $fichaTecnica, $tablas_variables) {
         $sql = '';
-        $util = new \MINSAL\IndicadoresBundle\Util\Util();
-        $nombre_indicador = $util->slug($fichaTecnica->getNombre());
+        //$util = new \MINSAL\IndicadoresBundle\Util\Util();
+        $nombre_indicador = $fichaTecnica->getId();
         $campos = str_replace("'", '', $fichaTecnica->getCamposIndicador());
         $formula = $fichaTecnica->getFormula();
 
@@ -204,9 +227,9 @@ class FichaTecnicaRepository extends EntityRepository {
      * esto será utilizado en la tabla dinámica
      */
     public function getDatosIndicador(FichaTecnica $fichaTecnica) {
-        $util = new \MINSAL\IndicadoresBundle\Util\Util();
+        //$util = new \MINSAL\IndicadoresBundle\Util\Util();
 
-        $nombre_indicador = $util->slug($fichaTecnica->getNombre());
+        $nombre_indicador = $fichaTecnica->getId();
         $tabla_indicador = 'tmp_ind_' . $nombre_indicador;
 
         $campos = array();
@@ -263,7 +286,7 @@ class FichaTecnicaRepository extends EntityRepository {
     }
 
     public function calcularIndicador(FichaTecnica $fichaTecnica, $dimension, $filtro_registros = null, $ver_sql = false) {
-        $util = new \MINSAL\IndicadoresBundle\Util\Util();
+        //$util = new \MINSAL\IndicadoresBundle\Util\Util();
         $acumulado = $fichaTecnica->getEsAcumulado();
         $formula = str_replace(' ', '',strtolower($fichaTecnica->getFormula()));
 
@@ -297,7 +320,7 @@ class FichaTecnicaRepository extends EntityRepository {
         }
         $variables_query = trim($variables_query, ', ');
 
-        $nombre_indicador = $util->slug($fichaTecnica->getNombre());
+        $nombre_indicador = $fichaTecnica->getId();
         $tabla_indicador = 'tmp_ind_' . $nombre_indicador;
 
         //Verificar si es un catálogo

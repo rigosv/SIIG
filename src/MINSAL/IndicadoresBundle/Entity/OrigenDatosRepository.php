@@ -249,15 +249,16 @@ class OrigenDatosRepository extends EntityRepository
     }
     
     public function getUltimaActualizacion(OrigenDatos $origenDato){
+        $id = $origenDato->getId();
         if ($origenDato->getEsFusionado()){
             $sql = 'SELECT MAX(ultima_lectura) as ultima_lectura
-                        FROM fila_origen_dato
-                        WHERE id_origen_dato
+                        FROM origenes.origen_dato_'.$id.
+                        ' WHERE id_origen_dato
                             IN
                             (SELECT id_origen_dato_fusionado FROM origen_datos_fusiones WHERE id_origen_dato = :id_origen_dato)';
         }
         else {
-            $sql = 'SELECT MAX(ultima_lectura) as ultima_lectura FROM fila_origen_dato WHERE id_origen_dato = :id_origen_dato';
+            $sql = 'SELECT MAX(ultima_lectura) as ultima_lectura FROM origenes.origen_dato_'.$id.' WHERE id_origen_dato = :id_origen_dato';
         }        $sth = $this->_em->getConnection()->prepare($sql);
 
         $sth->execute(array(':id_origen_dato' => $id = $origenDato->getId()));

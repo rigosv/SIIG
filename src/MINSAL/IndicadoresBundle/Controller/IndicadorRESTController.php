@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 use MINSAL\IndicadoresBundle\Entity\FichaTecnica;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\Annotations\Get;
+use Predis;
 
 class IndicadorRESTController extends Controller {
 
@@ -18,46 +19,49 @@ class IndicadorRESTController extends Controller {
      */
     public function getIndicadorAction(FichaTecnica $fichaTec, $dimension) {
         $response = new Response();
-
-// crea una respuesta con una cabecera ETag y Last-Modified
-// para determinar si se debe calcular el indicador u obtener de la caché
-// para el modo de desarrollo (dev) nunca tomar de caché
-        $response->setETag($fichaTec->getId());
-        $response->setLastModified(($this->get('kernel')->getEnvironment() == 'dev') ? new \DateTime('NOW') : $fichaTec->getUltimaLectura() );
-
-        $response->setPublic();
-// verifica que la respuesta no se ha modificado para la petición dada
-        if ($response->isNotModified($this->getRequest())) {
-// devuelve inmediatamente la respuesta 304 de la caché
-            return $response;
-        } else {
-            $resp = array();
-            $filtro = $this->getRequest()->get('filtro');
-            $verSql = ($this->getRequest()->get('ver_sql') == 'true') ? true : false;
-
-            if ($filtro == null or $filtro == '')
-                $filtros = null;
-            else {
-
-                $filtrObj = json_decode($filtro);
-                foreach ($filtrObj as $f) {
-                    $filtros_dimensiones[] = $f->codigo;
-                    $filtros_valores[] = $f->valor;
-                }
-                $filtros = array_combine($filtros_dimensiones, $filtros_valores);
+        $redis = new Predis\Client();
+        
+        $filtro = $this->getRequest()->get('filtro');
+        $verSql = ($this->getRequest()->get('ver_sql') == 'true') ? true : false;
+        $hash = md5($filtro.$verSql);
+        
+        // verifica que la respuesta no se ha modificado para la petición dada
+        if ($fichaTec->getUpdatedAt() != '' and $fichaTec->getUltimaLectura() != '' and $fichaTec->getUltimaLectura() < $fichaTec->getUpdatedAt()) {
+            // Buscar la petición en la caché de Redis
+            $respj = $redis->get('indicador_'.$fichaTec->getId().'_'.$dimension.$hash);
+            if ($respj != null){
+                $response->setContent($respj);
+                return $response;
             }
-
-            $em = $this->getDoctrine()->getManager();
-
-            $fichaRepository = $em->getRepository('IndicadoresBundle:FichaTecnica');
-
-            $fichaRepository->crearIndicador($fichaTec, $dimension, $filtros);
-            $resp['datos'] = $fichaRepository->calcularIndicador($fichaTec, $dimension, $filtros, $verSql);
-
-            $response->setContent(json_encode($resp));
-
-            return $response;
         }
+        //La respuesta de la petición no estaba en Redis, hacer el cálculo
+        $resp = array();
+
+        if ($filtro == null or $filtro == '')
+            $filtros = null;
+        else {
+
+            $filtrObj = json_decode($filtro);
+            foreach ($filtrObj as $f) {
+                $filtros_dimensiones[] = $f->codigo;
+                $filtros_valores[] = $f->valor;
+            }
+            $filtros = array_combine($filtros_dimensiones, $filtros_valores);
+        }
+
+        $em = $this->getDoctrine()->getManager();
+
+        $fichaRepository = $em->getRepository('IndicadoresBundle:FichaTecnica');
+
+        $fichaRepository->crearIndicador($fichaTec, $dimension, $filtros);
+        $resp['datos'] = $fichaRepository->calcularIndicador($fichaTec, $dimension, $filtros, $verSql);
+        $respj = json_encode($resp);
+
+        $response->setContent($respj);
+        $redis->set('indicador_'.$fichaTec->getId().'_'.$dimension.$hash, $respj);
+
+        return $response;
+        
     }
     
     /**
@@ -68,34 +72,35 @@ class IndicadorRESTController extends Controller {
      * @Rest\View
      */
     public function getDatosIndicadorAction(FichaTecnica $fichaTec) {
-        $response = new Response();
-
-        // crea una respuesta con una cabecera ETag y Last-Modified
-        // para determinar si se debe calcular el indicador u obtener de la caché
-        // para el modo de desarrollo (dev) nunca tomar de caché
-        $response->setETag($fichaTec->getId().'_datos');
-        $response->setLastModified(($this->get('kernel')->getEnvironment() == 'dev') ? new \DateTime('NOW') : $fichaTec->getUltimaLectura() );
-
-        $response->setPublic();
-        // verifica que la respuesta no se ha modificado para la petición dada
-        if ($response->isNotModified($this->getRequest())) {
-            // devuelve inmediatamente la respuesta 304 de la caché
-            return $response;
-        } else {
-            $resp = array();            
-
-            $em = $this->getDoctrine()->getManager();
-
-            $fichaRepository = $em->getRepository('IndicadoresBundle:FichaTecnica');
-
-            $fichaRepository->crearIndicador($fichaTec);
-            $resp = $fichaRepository->getDatosIndicador($fichaTec);
-            $respj = json_encode($resp);
-
-            $response->setContent($respj);
-
-            return $response;
+        $response = new Response();        
+                
+        $redis = new Predis\Client();
+        
+        if ($fichaTec->getUpdatedAt() != '' and $fichaTec->getUltimaLectura() != '' and $fichaTec->getUltimaLectura() < $fichaTec->getUpdatedAt()) {
+            // Buscar la petición en la caché de Redis
+            $respj = $redis->get('indicador_'.$fichaTec->getId());
+            if ($respj != null){
+                $response->setContent($respj);
+                    return $response;
+            }
         }
+        
+        $resp = array();            
+
+        $em = $this->getDoctrine()->getManager();
+
+        $fichaRepository = $em->getRepository('IndicadoresBundle:FichaTecnica');
+
+        $fichaRepository->crearIndicador($fichaTec);
+        $resp = $fichaRepository->getDatosIndicador($fichaTec);
+        $respj = json_encode($resp);
+
+        //Guardar los datos en caché de redis            
+        $response->setContent($respj);
+        $redis->set('indicador_'.$fichaTec->getId(), $respj);
+
+        return $response;
+        
     }
 
     /**

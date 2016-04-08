@@ -31,7 +31,7 @@ class IndicadorController extends Controller {
     public function getDimensionesAction(FichaTecnica $fichaTec) {
         $resp = array();
         $em = $this->getDoctrine()->getManager();
-        
+
         if ($fichaTec) {
             $resp['nombre_indicador'] = $fichaTec->getNombre();
             $resp['id_indicador'] = $fichaTec->getId();
@@ -53,7 +53,7 @@ class IndicadorController extends Controller {
                     $dimensiones[$significado->getCodigo()]['origenY'] = $significado->getOrigenY();
                     $dimensiones[$significado->getCodigo()]['graficos'] = $significado->getTiposGraficosArray();
                 }
-            }
+            }            
             $rangos_alertas_aux = array();
             foreach ($fichaTec->getAlertas() as $k => $rango) {
                 $rangos_alertas_aux[$rango->getLimiteSuperior()]['limite_sup'] = $rango->getLimiteSuperior();
@@ -73,6 +73,7 @@ class IndicadorController extends Controller {
             //Verificar que se tiene la más antigua de las últimas lecturas de los orígenes
             //de datos del indicador
             $ultima_lectura = null;
+            
             foreach ($fichaTec->getVariables() as $var) {
                 //$fecha_lectura = $var->getOrigenDatos()->getUltimaActualizacion();
                 $fecha_lectura = $em->getRepository('IndicadoresBundle:OrigenDatos')->getUltimaActualizacion($var->getOrigenDatos());
@@ -80,10 +81,11 @@ class IndicadorController extends Controller {
                     $ultima_lectura = $fecha_lectura;
                 }
             }
+            
             $fichaTec->setUltimaLectura($ultima_lectura);
             $em->flush();
 
-            $resp['ultima_lectura'] = date('d/m/Y', $fichaTec->getUltimaLectura()->getTimestamp());
+            //$resp['ultima_lectura'] = date('d/m/Y', $fichaTec->getUltimaLectura()->getTimestamp());
             $resp['resultado'] = 'ok';
         } else {
             $resp['resultado'] = 'error';

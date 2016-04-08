@@ -67,7 +67,17 @@ class GuardarRegistroOrigenDatoConsumer implements ConsumerInterface
             return true;
         } elseif ($msg['method'] == 'DELETE') {
             $this->em->getConnection()->beginTransaction();
-            $tabla = ($areaCosteo['area_costeo'] == '') ? 'fila_origen_dato' : 'costos.fila_origen_dato_' . $areaCosteo['area_costeo'];
+            $tabla = ($areaCosteo['area_costeo'] == '') ? 'origenes.fila_origen_dato_'.$msg['id_origen_dato'] : 'costos.fila_origen_dato_' . $areaCosteo['area_costeo'];
+            
+            //verificar si la tabla existe
+            if ($tabla == 'origenes.fila_origen_dato_'.$msg['id_origen_dato']){
+                try {
+                    $this->em->getConnection()->query("select * from $tabla LIMIT 1");
+                } catch (\Doctrine\DBAL\DBALException $e) {
+                    //Crear la tabla
+                    $this->em->getConnection()->exec("select * INTO $table from fila_origen_dato_aux $tabla ");
+                }
+            }
             
             if ($areaCosteo['area_costeo'] == 'rrhh'){
                 //Solo agregar los datos nuevos
@@ -111,6 +121,7 @@ class GuardarRegistroOrigenDatoConsumer implements ConsumerInterface
             $this->em->getConnection()->exec($sql);
             $this->em->getConnection()->commit();
 
+            /* Mover esto a otro lugar más adecuado, aquí hace que la carga de los indicadores tarde mucho
             //Recalcular la tabla del indicador
             //Recuperar las variables en las que está presente el origen de datos
             $origenDatos = $this->em->find('IndicadoresBundle:OrigenDatos', $msg['id_origen_dato']);
@@ -122,7 +133,7 @@ class GuardarRegistroOrigenDatoConsumer implements ConsumerInterface
                     if (!$fichaTec->getEsAcumulado())
                         $fichaRepository->crearIndicador($fichaTec);
                 }
-            }
+            }*/
 
             return true;
         }
