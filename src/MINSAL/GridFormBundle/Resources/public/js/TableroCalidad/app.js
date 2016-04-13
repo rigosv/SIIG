@@ -38,7 +38,6 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['servicios'])
                     respuesta =  valor[1].trim();
                 } else {
                     respuesta = exp.trim();
-                    alert(respuesta);
                 }
                 return respuesta;
             };
