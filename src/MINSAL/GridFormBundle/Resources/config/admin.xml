@@ -77,6 +77,6 @@
             <argument>MINSAL\GridFormBundle\Entity\CategoriaVariableCaptura</argument>
             <argument>SonataAdminBundle:CRUD</argument>
             <call method="setMaxPerPage"><argument>10</argument></call>
-        </service>                
+        </service>
     </services>
 </container>

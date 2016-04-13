@@ -31,6 +31,11 @@ captura_datos_rest:
     type:     rest
     resource: MINSAL\GridFormBundle\Controller\FormularioRESTController
     prefix: /
+    
+calidad_rest:
+    type:     rest
+    resource: MINSAL\GridFormBundle\Controller\TableroCalidadRESTController
+    prefix: /
 # Internal routing configuration to handle ESI
 #_internal:
 #    resource: "@FrameworkBundle/Resources/config/routing/internal.xml"

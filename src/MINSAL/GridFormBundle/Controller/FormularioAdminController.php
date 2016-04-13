@@ -34,7 +34,7 @@ class FormularioAdminController extends Controller
         $cantFrm = 1;
         // Si es el código de formulario de captura de datos, 
         // pueden haber varios formularios para el usuario
-        $periodosEstructura = array();        
+        $periodosEstructura = array();
         if ($codigoFrm == 'captura_variables'){
             $Frm = null;
             if ($periodo != '-1'){
@@ -47,7 +47,7 @@ class FormularioAdminController extends Controller
                         array('formulario' => 'ASC', 'periodo'=>'ASC'));
 
             foreach ($aux as $p ) { 
-                if ($p->getFormulario()->getAreaCosteo() == 'almacen_datos')
+                if ($p->getFormulario()->getAreaCosteo() == 'almacen_datos' or $p->getFormulario()->getAreaCosteo() == 'calidad')
                     $periodosEstructura [] = $p;
             }            
             
@@ -126,7 +126,7 @@ class FormularioAdminController extends Controller
     public function almacenDatosAction(Request $request)
     {        
         return $this->mostrarPlantilla($request, 'captura_variables', 'codigo_variable', '_captura_datos_', false, 'GridFormBundle:Formulario:parametros.html.twig');
-    }    
+    }
     
     protected function getOrigenes($Frm, $parametros) {
         $em = $this->getDoctrine()->getManager();

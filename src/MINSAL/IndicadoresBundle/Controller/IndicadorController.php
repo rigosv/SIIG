@@ -53,7 +53,7 @@ class IndicadorController extends Controller {
                     $dimensiones[$significado->getCodigo()]['origenY'] = $significado->getOrigenY();
                     $dimensiones[$significado->getCodigo()]['graficos'] = $significado->getTiposGraficosArray();
                 }
-            }            
+            }
             $rangos_alertas_aux = array();
             foreach ($fichaTec->getAlertas() as $k => $rango) {
                 $rangos_alertas_aux[$rango->getLimiteSuperior()]['limite_sup'] = $rango->getLimiteSuperior();
@@ -83,8 +83,8 @@ class IndicadorController extends Controller {
             }
             
             $fichaTec->setUltimaLectura($ultima_lectura);
-            $em->flush();
-
+            //$em->flush();
+//var_dump($ultima_lectura); exit;
             //$resp['ultima_lectura'] = date('d/m/Y', $fichaTec->getUltimaLectura()->getTimestamp());
             $resp['resultado'] = 'ok';
         } else {

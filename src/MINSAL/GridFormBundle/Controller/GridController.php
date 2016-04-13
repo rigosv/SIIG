@@ -40,7 +40,7 @@ class GridController extends Controller
             $response->setContent('{"estado" : "error", "msj": "' . $this->get('translator')->trans('_parametros_no_establecidos_') . '"}');
         } else{
             $user = $this->getUser();
-            if ($Frm->getAreaCosteo() == 'almacen_datos')
+            if ($Frm->getAreaCosteo() == 'almacen_datos' or $Frm->getAreaCosteo() == 'calidad')
                 $data = $em->getRepository('GridFormBundle:Formulario')->getDatos($Frm, $periodoEstructura->getId(),$tipo_periodo , $request, $user);
             else 
                 $data = $this->get('costos.repository.formulario')->getDatos($Frm, $periodoEstructura->getId(),$tipo_periodo , $request, $user);

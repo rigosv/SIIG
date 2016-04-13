@@ -114,6 +114,15 @@ class MenuBuilder
                                     ;
                                 }
                             }
+                            if (in_array($ruta, array('tableroCalidad'))) {
+                                if ($admin->hasRoute('tableroCalidad') and ( $usuario->hasRole('ROLE_SUPER_ADMIN') or $usuario->hasRole('ROLE_USER_TABLERO_CALIDAD'))) {
+                                    $menu[$name]
+                                            ->addChild('_tablero_calidad_', array('uri' => $admin->generateUrl('tableroCalidad')))
+                                            ->setExtra('translationdomain', $admin->getTranslationDomain())
+                                            ->setExtra('admin', $admin)
+                                    ;
+                                }
+                            }
                             if (in_array($ruta, array('rrhhValorPagado', 'rrhhDistribucionHora', 'rrhhCostos', 'gaVariables', 'gaAf', 
                                                 'gaCompromisosFinancieros', 'gaDistribucion', 'gaCostos'))
                                 ) {

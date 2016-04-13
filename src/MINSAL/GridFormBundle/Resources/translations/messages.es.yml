@@ -12,6 +12,7 @@ _ayuda_origen_campo_: 'Cuando el tipo de control sea Cuadro desplegable, se util
 _ayuda_origen_pivote_: 'Es una sentencia SQL que recupera registros con dos campos (valor y etiqueta) y se creará un campo de entrada por cada fila del origen pivote. También puede usar formato JSON '
 _ayuda_validacion_campo_: 'Ingrese la condición para ser válido. Usar "value" para referirse al valor del campo dentro de la fórmula. Ej.: value > 0 || value <150'
 _ayuda_variable_calculo_consumo_: 'Cuando el consumo del compromiso financiero se determine a partir de otra variable. Ej.: El mantenimiento la planta telefónica, será a partir de la cantidad de aparatos fijos asignados a la dependencia'
+_calidad_ : Calidad
 _cargar_datos_: Cargar
 _campo_: Campo
 _campos_: Campos
@@ -19,10 +20,13 @@ _captura_datos_: Captura de datos
 _categoria_ : Categoría
 _categoria_variable_captura_ : Categoría variable de captura
 _codigo_: Código
+_calificacion_: Calificacion
 _columnas_: Columnas
 _columnas_fijas_: Columnas fijas
 _configuracion_: Configuración
+_criterios_evaluacion_: Criterios de evaluación
 _cuadro_datos_: Cuadro de datos
+_cumplimiento_: Cumplimiento
 _datos_guardados_: Datos Guardados con éxito
 _dato_no_valido_: Dato no válido
 _descripcion_: Descripción
@@ -38,6 +42,7 @@ _establecimiento_: Establecimiento
 _estructura_organizativa_: Estructura organizativa
 _error_validation_: Error de validación
 _error_datos_no_guardados_: Sucedió un error al guardar los datos
+_evaluaciones_: Evaluaciones
 _faltan_datos_requeridos_: Faltan datos requeridos
 _febrero_: Febrero
 _formato_: Formato
@@ -60,9 +65,11 @@ _msj_validacion_: Mensaje de validación
 _nivel_ : Nivel
 _nivel_indentacion_: Nivel de indentación
 _no_datos_: 'No se encontraron datos con los parámetros especificados'
+_no_hay_datos_mostrar_: No hay datos para mostrar
 _no_ordenar_por_fila_: 'Desactivar ordenar'
 _ocultar_numero_fila_: 'Ocultar número de fila'
 _nombre_: Nombre
+_nombre_evaluacion_: Nombre evaluación
 _noviembre_: Noviembre
 _octubre_: Octubre
 _oculto_: Oculto
@@ -74,6 +81,7 @@ _periodos_ingreso_: Períodos de ingreso
 _periodo_ingreso_: Período de ingreso
 _periodo_ingreso_datos_formulario_: 'Periodo Ingreso - Datos formulario'
 _periodo_lectura_datos_: 'Periodo de lectura de datos'
+_porcentaje_cumplimiento_: Porcentaje de cumplimiento
 _posicion_: Posición
 _ruta_manual_uso_:  Ruta manual de uso
 _seleccione_dependencia_: 'Seleccione la dependencia'
@@ -81,6 +89,7 @@ _separador_: Es separador
 _septiembre_: Septiembre
 _significado_campo_: Significado
 _regla_validacion_: Regla de validación
+_tablero_calidad_: Tablero Calidad
 _tipo_contratacion_: Tipo contratación
 _tipo_control_: Tipo Control
 _tipo_dato_: Tipo Dato
@@ -89,11 +98,13 @@ _tipo_definido_por_fila_help_: 'Si existen tipos definidos para las variables, s
 _tipo_recurso_: Tipo Recurso
 _titulo_columnas_: Título de columnas
 _titulo_columna_help_: 'Si se requiere cambiar el título por defecto de las columnas. Utilizar formato JSON (los valores van entre comillas dobles): {"cod_col": "titulo", "cod_col2": "titulo2"}'
+_todos_: Todos
 _total_: Total
 _ubicacion_: Ubicación
 _unidad_: Unidad
 _unidad_superior_ : Unidad superior
 _variable_captura_: Variables de captura
+_periodo_evaluacion_: Periodo evaluación
 _periodo_ingreso_grupo_usuarios_: Periodo ingreso por grupo de usuarios
 _grupo_usuarios_: Grupo usuarios
 _solo_lectura_: Solo lectura

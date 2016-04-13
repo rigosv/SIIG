@@ -31,9 +31,11 @@ class FormularioAdmin extends Admin
                             'ga_variables' => $this->getTranslator()->trans('_ga_variables_'),
                             'ga_distribucion' => $this->getTranslator()->trans('_ga_distribucion_'),
                             'ga_costos' => $this->getTranslator()->trans('_ga_costos_'),
-                            'almacen_datos' => $this->getTranslator()->trans('_almacen_datos_')
+                            'almacen_datos' => $this->getTranslator()->trans('_almacen_datos_'),
+                            'calidad' => $this->getTranslator()->trans('_calidad_')
                             )
                         ))
+            ->add('meta', null, array('label'=> $this->getTranslator()->trans('_meta_')))
             ->add('periodoLecturaDatos', 'choice', array('label' => $this->getTranslator()->trans('_periodo_lectura_datos_'),
                         'choices' => array('mensual'=>$this->getTranslator()->trans('_mensual_'),
                             'anual'=>$this->getTranslator()->trans('_anual_')                            
@@ -90,6 +92,6 @@ class FormularioAdmin extends Admin
     
     protected function configureRoutes(RouteCollection $collection)
     {
-        $collection->add('almacenDatos');
+        $collection->add('almacenDatos');        
     }
 }

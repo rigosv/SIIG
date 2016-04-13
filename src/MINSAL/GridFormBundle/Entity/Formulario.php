@@ -103,6 +103,13 @@ class Formulario
     private $ocultarNumeroFila;
     
     /**
+     * @var string $meta
+     *
+     * @ORM\Column(name="meta", type="float", nullable=true)
+     */
+    private $meta;
+    
+    /**
      * @var string $noOrdenarPorFila
      *
      * @ORM\Column(name="no_ordenar_fila", type="boolean", nullable=true)
@@ -567,5 +574,28 @@ class Formulario
     public function getNoOrdenarPorFila()
     {
         return $this->noOrdenarPorFila;
+    }
+
+    /**
+     * Set meta
+     *
+     * @param float $meta
+     * @return Formulario
+     */
+    public function setMeta($meta)
+    {
+        $this->meta = $meta;
+
+        return $this;
+    }
+
+    /**
+     * Get meta
+     *
+     * @return float 
+     */
+    public function getMeta()
+    {
+        return $this->meta;
     }
 }
