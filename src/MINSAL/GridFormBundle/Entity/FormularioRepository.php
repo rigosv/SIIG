@@ -160,7 +160,7 @@ class FormularioRepository extends EntityRepository {
         $mes_txt = ""; $mes_val = "";
         if ($Frm->getPeriodoLecturaDatos() == 'mensual'){
             $mes_txt = "'mes'";
-            $mes_val = " '" . $this->parametros['mes'] . "', ";
+            $mes_val = "'" . $this->parametros['mes'] . "'";
         }
 
         // Inicializar todas las variables dentro del formulario
@@ -273,7 +273,7 @@ class FormularioRepository extends EntityRepository {
 
         $params_string = $this->getParameterString($parametros, $periodoIngreso->getId(), $tipo_periodo, $user);
         $area = $Frm->getAreaCosteo();
-        if ($area != 'ga_variables' and $area != 'ga_compromisosFinancieros' and $area != 'ga_distribucion' and $area != 'almacen_datos'){
+        if ($area != 'ga_variables' and $area != 'ga_compromisosFinancieros' and $area != 'ga_distribucion' and $area != 'almacen_datos' and $area != 'calidad'){
             $origenes = $this->getOrigenes($Frm->getOrigenDatos());
             $campo = 'id_origen_dato';
             $tabla = 'costos.fila_origen_dato_'.strtolower($area);
