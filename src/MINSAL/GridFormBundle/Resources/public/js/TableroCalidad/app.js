@@ -55,7 +55,7 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['servicios'])
             $scope.getEstablecimientos = function() {
                 $scope.mes_ = ($scope.periodoSeleccionado.mes < 10) ? '0' + $scope.periodoSeleccionado.mes : $scope.periodoSeleccionado.mes ;
                 
-                $scope.establecimientos = Establecimientos.query({ periodo: $scope.periodoSeleccionado.periodo })
+                Establecimientos.query({ periodo: $scope.periodoSeleccionado.periodo })
                     .$promise.then(
                         function (data) {                            
                             $scope.establecimientos = (data != '') ? data : [];

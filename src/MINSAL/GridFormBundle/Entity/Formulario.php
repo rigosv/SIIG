@@ -11,7 +11,6 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @ORM\Table(name="costos.formulario")
  * @UniqueEntity(fields="codigo", message="Código ya existe")
  * @ORM\Entity(repositoryClass="MINSAL\GridFormBundle\Entity\FormularioRepository")
-
  */
 class Formulario
 {
@@ -31,7 +30,7 @@ class Formulario
      * @ORM\Column(name="codigo", type="string", length=40, nullable=false)
      */
     private $codigo;
-    
+
     /**
      * @var string $nombre
      *
@@ -45,125 +44,125 @@ class Formulario
      * @ORM\Column(name="descripcion", type="text", nullable=true)
      */
     private $descripcion;
-    
+
     /**
      * @var string $areaCosteo
      *
      * @ORM\Column(name="area_costeo", type="string", length=50, nullable=true)
      */
     private $areaCosteo;
-    
+
     /**
      * @var string $columnas_fijas
      *
      * @ORM\Column(name="columnas_fijas", type="integer", nullable=true)
      */
     private $columnasFijas;
-    
+
     /**
      * @var string $periodoLecturaDatos
      *
      * @ORM\Column(name="periodo_lectura_datos", type="string", length=20, nullable=true)
      */
     private $periodoLecturaDatos;
-    
+
     /**
      * @var string $rutaManualUso
      *
      * @ORM\Column(name="ruta_manual_uso", type="string", length=250, nullable=true)
      */
     private $rutaManualUso;
-    
+
     /**
      * @var string $sql_lectura_datos
      *
      * @ORM\Column(name="sql_lectura_datos", type="text", nullable=true)
      */
     private $sqlLecturaDatos;
-    
+
     /**
      * @var string $ajustarAltoFila
      *
      * @ORM\Column(name="ajustar_alto_fila", type="boolean", nullable=true)
      */
     private $ajustarAltoFila;
-    
+
     /**
      * @var string $tituloColumnas
      *
      * @ORM\Column(name="titulo_columnas", type="text", nullable=true)
      */
     private $tituloColumnas;
-    
+
     /**
      * @var string $ocultarNumeroFila
      *
      * @ORM\Column(name="ocultar_numero_fila", type="boolean", nullable=true)
      */
     private $ocultarNumeroFila;
-    
+
     /**
      * @var string $meta
      *
      * @ORM\Column(name="meta", type="float", nullable=true)
      */
     private $meta;
-    
+
     /**
      * @var string $noOrdenarPorFila
      *
      * @ORM\Column(name="no_ordenar_fila", type="boolean", nullable=true)
      */
     private $noOrdenarPorFila;
-        
+
     /**
      * @var \Doctrine\Common\Collections\ArrayCollection
-     * 
+     *
      * @ORM\ManyToMany(targetEntity="Campo", inversedBy="formularios")
      * @ORM\JoinTable(name="costos.formulario_campo")
      * @ORM\OrderBy({"posicion" = "ASC"})
      **/
     private $campos;
-    
+
     /**
     * @var \Doctrine\Common\Collections\ArrayCollection
     * @ORM\OneToMany(targetEntity="GrupoColumnas", mappedBy="formulario", cascade={"all"}, orphanRemoval=true)
     * @ORM\OrderBy({"descripcion" = "ASC"})
     */
     private $gruposColumnas;
-    
+
     /**
     * @var \Doctrine\Common\Collections\ArrayCollection
     * @ORM\OneToMany(targetEntity="VariableCaptura", mappedBy="formulario", cascade={"all"}, orphanRemoval=true)
     * @ORM\OrderBy({"descripcion" = "ASC"})
     */
     private $variables;
-    
-        
+
+
     /**
      * @ORM\ManyToOne(targetEntity="MINSAL\IndicadoresBundle\Entity\OrigenDatos")
      * */
     private $origenDatos;
-    
-            
+
+
     public function __toString()
     {
         return $this->nombre ? : '';
     }
 
 
-    
+
 
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
         return $this->id;
     }
-    
+
     public function setIdentificador($id)
     {
         return $this->id = $id;
@@ -185,7 +184,7 @@ class Formulario
     /**
      * Get codigo
      *
-     * @return string 
+     * @return string
      */
     public function getCodigo()
     {
@@ -208,7 +207,7 @@ class Formulario
     /**
      * Get nombre
      *
-     * @return string 
+     * @return string
      */
     public function getNombre()
     {
@@ -231,13 +230,13 @@ class Formulario
     /**
      * Get descripcion
      *
-     * @return string 
+     * @return string
      */
     public function getDescripcion()
     {
         return $this->descripcion;
     }
-    
+
 
     /**
      * Add gruposColumnas
@@ -265,7 +264,7 @@ class Formulario
     /**
      * Get gruposColumnas
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getGruposColumnas()
     {
@@ -306,7 +305,7 @@ class Formulario
     /**
      * Get campos
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getCampos()
     {
@@ -329,7 +328,7 @@ class Formulario
     /**
      * Get origenDatos
      *
-     * @return \MINSAL\IndicadoresBundle\Entity\OrigenDatos 
+     * @return \MINSAL\IndicadoresBundle\Entity\OrigenDatos
      */
     public function getOrigenDatos()
     {
@@ -352,7 +351,7 @@ class Formulario
     /**
      * Get areaCosteo
      *
-     * @return string 
+     * @return string
      */
     public function getAreaCosteo()
     {
@@ -375,12 +374,12 @@ class Formulario
     /**
      * Get columnasFijas
      *
-     * @return integer 
+     * @return integer
      */
     public function getColumnasFijas()
     {
         return $this->columnasFijas;
-    }    
+    }
 
     /**
      * Set periodoLecturaDatos
@@ -398,7 +397,7 @@ class Formulario
     /**
      * Get periodoLecturaDatos
      *
-     * @return string 
+     * @return string
      */
     public function getPeriodoLecturaDatos()
     {
@@ -421,7 +420,7 @@ class Formulario
     /**
      * Get sqlLecturaDatos
      *
-     * @return string 
+     * @return string
      */
     public function getSqlLecturaDatos()
     {
@@ -444,7 +443,7 @@ class Formulario
     /**
      * Get rutaManualUso
      *
-     * @return string 
+     * @return string
      */
     public function getRutaManualUso()
     {
@@ -467,7 +466,7 @@ class Formulario
     /**
      * Get ajustarAltoFila
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getAjustarAltoFila()
     {
@@ -490,7 +489,7 @@ class Formulario
     /**
      * Get tituloColumnas
      *
-     * @return string 
+     * @return string
      */
     public function getTituloColumnas()
     {
@@ -523,7 +522,7 @@ class Formulario
     /**
      * Get variables
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getVariables()
     {
@@ -546,7 +545,7 @@ class Formulario
     /**
      * Get ocultarNumeroFila
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getOcultarNumeroFila()
     {
@@ -569,7 +568,7 @@ class Formulario
     /**
      * Get noOrdenarPorFila
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getNoOrdenarPorFila()
     {
@@ -592,7 +591,7 @@ class Formulario
     /**
      * Get meta
      *
-     * @return float 
+     * @return float
      */
     public function getMeta()
     {
