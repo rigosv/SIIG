@@ -50,7 +50,7 @@
     {% set titulos = Frm.tituloColumnas | jsonDecode(true) %}
     <script type="text/javascript">
         $(document).ready(function () {
-            $.jqx.theme = 'ui-redmond';                    
+            $.jqx.theme = 'ui-redmond';
             var url = Routing.generate('{{url}}', {id: {{Frm.id}}, periodo_ingreso: $('#periodo_estructura').val(),titulo_frm : '{{titulo}}', datos_frm: $('#frm_').serialize() });
             var fila = 0;
             
@@ -68,7 +68,7 @@
                             rowdata.local = 'no';                        
                             commit(true);                        
                         } else {
-                            $.post(Routing.generate('{{url_save}}', {id: {{Frm.id}}, periodo_ingreso: $('#periodo_estructura').val() }), 
+                            /*$.post(Routing.generate('{{url_save}}', {id: {{Frm.id}}, periodo_ingreso: $('#periodo_estructura').val() }), 
                                         {datos_frm: $('#frm_').serialize(),
                                             pk: $('#pk').val(),
                                             fila: JSON.stringify(rowdata),
@@ -88,11 +88,11 @@
                             }, 'json')
                                       .fail(function() {
                                         error = true;
-                                        commit(false);                                   
+                                        commit(false);
                                         $('#modal_msj_content').html('<div class="alert alert-danger" role="alert">{{'_error_conexion_'|trans}}</div>');
                                         $('#modal_msj').modal('show');
                                       })
-                            ;
+                            ;*/
                         }
                     }
                 },
@@ -227,9 +227,9 @@
                                 columntype: '{{campo.tipoControl.codigo}}',
                             {% endif %}
                             {% if campo.esCalculado and mostrar_resumen %} aggregates: ['sum'], {% endif %}                            
-                            {% if campo.tipoControl.codigo == 'datetimeinput' %}
+                            {#{% if campo.tipoControl.codigo == 'datetimeinput' %}
                                 cellsformat: 'dd/MM/yyyy',
-                            {% endif %}
+                            {% endif %}#}
                             {% if campo.origen or campo.significadoCampo.catalogo != '' %} displayfield: '{{campo.significadoCampo.codigo}}Source', 
                                 createeditor: function (row, value, editor) {
                                     editor.jqxDropDownList({ source: {{origenes[campo.significadoCampo.codigo]|raw}}, displayMember: 'descripcion', valueMember: 'id' });
@@ -270,9 +270,9 @@
                                             var inputElement = $("<input type='text' style='width: 100%; height: 100%;' />").prependTo(editor);
                                             inputElement.jqxInput({  width: width, height: height});                      
                                         } else if (tipo_control == 'datetimeinput') {        
-                                            var element = $('<div></div>');
+                                            var element = $('<input type="datetime"></input>');
                                             editor.append(element);
-                                            element.jqxDateTimeInput({width: '250px', height: '25px'});
+                                            element.jqxDateTimeInput({width: '110px', height: '25px', selectionMode: 'range', template: "info",});
                                         }
                                     }
                                 },
@@ -319,8 +319,8 @@
                                             }
                                         } else if (tipo_control == 'datetimeinput'){
                                             var dateElement = editor.find('div:first');
-                                            var startDate = moment(cellvalue, "DD/MM/YYYY").toDate();
-                                            dateElement.jqxDateTimeInput('setDate', startDate);
+                                            //var startDate = moment(cellvalue, "DD/MM/YYYY").toDate();
+                                            element.jqxDateTimeInput({width: '110px', height: '25px', selectionMode: 'range', template: "info",});
                                         }
                                     }
                                 },
@@ -451,7 +451,7 @@
                     $('#modal_msj_content').html('<div class="alert alert-success" role="alert">{{'_datos_guardados_'|trans}}</div>');
                     $('#modal_msj').modal('show');                    
                 }
-            });
+        });
             $("#exportar").click(function () {
                 $("#jqxgrid").jqxGrid('exportdata', 'xls', 'jqxGrid');           
             });         

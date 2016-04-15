@@ -441,10 +441,10 @@ class FormularioRepository extends EntityRepository {
         $em = $this->getEntityManager();
         list($anio, $mes) = explode('_', $periodo);
         
-        $sql = " SELECT codigo, nombre_evaluacion, category AS axis, descripcion, (meta/100) AS meta, periodo_lectura_datos,
+        $sql = " SELECT codigo, nombre_evaluacion, category AS axis, descripcion, round((meta/100),1) AS meta, periodo_lectura_datos,
             total_cumplimiento, total_no_cumplimiento, total_aplicable, 
             round(((total_cumplimiento::numeric/total_aplicable::numeric)::numeric * 100 )) AS measure,
-            ((total_cumplimiento::numeric/total_aplicable::numeric)::numeric) AS value
+            round(((total_cumplimiento::numeric/total_aplicable::numeric)::numeric)) AS value
             FROM 
             (
                 SELECT codigo, nombre_evaluacion, nombre_evaluacion AS category, descripcion, meta,

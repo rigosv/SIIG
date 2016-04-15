@@ -82,13 +82,14 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['servicios'])
                             var aux = [];
                                                         
                             var datos = JSON.stringify($scope.evaluaciones);
-                            datos = datos.replace('"value":','"valueant":');
-                            metas = JSON.parse(datos.replace('"meta":','"value":'));                            
+                            datos = datos.replace(/"value":/g,'"valueant":');
+                            metas = JSON.parse(datos.replace(/"meta":/g,'"value":'));                            
                             
                             aux.push($scope.evaluaciones);
                             aux.push(metas);
 
-                            $scope.datosGrafico2 = aux;                            
+                            $scope.datosGrafico2 = aux;
+                            $scope.criterios = [];
                         },
                         function (error) {
                             alert(error);
