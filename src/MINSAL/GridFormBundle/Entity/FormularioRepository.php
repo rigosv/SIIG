@@ -446,7 +446,8 @@ class FormularioRepository extends EntityRepository {
         $sql = " SELECT codigo, nombre_evaluacion, category AS axis, descripcion, round((meta/100),1) AS meta, periodo_lectura_datos,
             total_cumplimiento, total_no_cumplimiento, total_aplicable, 
             round(((total_cumplimiento::numeric/total_aplicable::numeric)::numeric * 100 )) AS measure,
-            round(((total_cumplimiento::numeric/total_aplicable::numeric)::numeric)) AS value
+            round(((total_cumplimiento::numeric/total_aplicable::numeric)::numeric),2) AS value,
+            (meta/100 - total_cumplimiento::numeric/total_aplicable::numeric) AS brecha
             FROM 
             (
                 SELECT codigo, nombre_evaluacion, nombre_evaluacion AS category, descripcion, meta,

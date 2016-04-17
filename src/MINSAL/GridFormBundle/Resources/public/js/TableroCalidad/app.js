@@ -6,12 +6,12 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['servicios'])
 
         .controller('mainCtrl', function AppCtrl ($scope, Periodos, Establecimientos, Evaluaciones, Criterios, HistorialEstablecimiento) {
             $scope.options = {width: 300, height: 250, 'bar': 'aaa'};
-            $scope.data = [1, 2, 3, 4];
+            $scope.data = [0];
             $scope.hovered = function(d){
                 $scope.barValue = d;
                 $scope.$apply();
             };
-            $scope.periodoSeleccionado = '';
+            $scope.periodoSeleccionado = '';            
             $scope.fila = 1;
             $scope.establecimientoSeleccionado = '';
             $scope.evaluacionSeleccionada = '';
@@ -24,6 +24,12 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['servicios'])
             $scope.datosGrafico2 =  [];
             $scope.evaluaciones = [];
             $scope.criterios = [];
+            
+            //Las areas del gráfico
+            $scope.capameta = 1;
+            $scope.calificaciones = [];
+            $scope.metas = [];
+            $scope.brechas = [];
             
             $scope.periodos = Periodos.query();
             
@@ -69,6 +75,7 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['servicios'])
                         }
                     );
             };
+           
             
             $scope.getEvaluaciones = function(establecimientoSel) {
                 $scope.establecimientoSeleccionado = establecimientoSel;
@@ -78,15 +85,24 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['servicios'])
                     .$promise.then(
                         function (data) {                            
                             $scope.evaluaciones = (data != '') ? data : [];
-                            var metas = [];
                             var aux = [];
-                                                        
+                                     
+                            $scope.calificaciones = $scope.evaluaciones
                             var datos = JSON.stringify($scope.evaluaciones);
-                            datos = datos.replace(/"value":/g,'"valueant":');
-                            metas = JSON.parse(datos.replace(/"meta":/g,'"value":'));                            
                             
-                            aux.push($scope.evaluaciones);
-                            aux.push(metas);
+                            datos = datos.replace(/"value":/g,'"valueant":');
+                            $scope.metas = JSON.parse(datos.replace(/"meta":/g,'"value":'));
+                            angular.forEach($scope.metas, function(value, key) {
+                                    this.categoria = 'Meta';
+                            }, $scope.metas);
+                            $scope.brechas = JSON.parse(datos.replace(/"brecha":/g,'"value":'));
+                            angular.forEach($scope.brechas, function(value, key) {
+                                    this.categoria = 'Brecha';
+                            }, $scope.brechas);
+                            
+                            aux.push($scope.calificaciones);
+                            aux.push($scope.metas);
+                            aux.push($scope.brechas);
 
                             $scope.datosGrafico2 = aux;
                             $scope.criterios = [];
@@ -117,8 +133,39 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['servicios'])
                             periodo: $scope.periodoSeleccionado.periodo,
                             evaluacion: evaluacionSel.codigo
                         });                
-            };            
+            };
             
+            $scope.toggleLabel = function(control, activo){
+                var aux = [];                
+                //var vacio = [];
+                //var aux_vacio = $scope.calificaciones[0];
+                var metas = $scope.metas;
+                var brechas = $scope.brechas;
+                
+                /*angular.forEach(aux_vacio, function(value, key) {
+                    this.value = 0;
+                }, aux_vacio);
+                vacio.push(aux_vacio);*/
+                
+                if (control == 'estandar'){
+                    metas = (activo == true ) ? metas : [];
+                }else if (control == 'brecha'){
+                    brechas = (activo == true ) ? brechas : [];
+                }
+                
+                aux.push($scope.calificaciones);
+                aux.push(metas);
+                aux.push(brechas);
+                
+                $scope.datosGrafico2 = aux;
+                $scope.$apply();
+            }
             
+            $('input').on('ifChecked', function(event){
+                $scope.toggleLabel($(this).val(), true);
+            });
+            $('input').on('ifUnchecked', function(event){
+                $scope.toggleLabel($(this).val(), false);
+            });
         })
         ;

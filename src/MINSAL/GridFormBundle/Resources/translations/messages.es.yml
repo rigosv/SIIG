@@ -12,6 +12,7 @@ _ayuda_origen_campo_: 'Cuando el tipo de control sea Cuadro desplegable, se util
 _ayuda_origen_pivote_: 'Es una sentencia SQL que recupera registros con dos campos (valor y etiqueta) y se creará un campo de entrada por cada fila del origen pivote. También puede usar formato JSON '
 _ayuda_validacion_campo_: 'Ingrese la condición para ser válido. Usar "value" para referirse al valor del campo dentro de la fórmula. Ej.: value > 0 || value <150'
 _ayuda_variable_calculo_consumo_: 'Cuando el consumo del compromiso financiero se determine a partir de otra variable. Ej.: El mantenimiento la planta telefónica, será a partir de la cantidad de aparatos fijos asignados a la dependencia'
+_brecha_: Brecha
 _calidad_ : Calidad
 _cargar_datos_: Cargar
 _campo_: Campo
@@ -20,7 +21,7 @@ _captura_datos_: Captura de datos
 _categoria_ : Categoría
 _categoria_variable_captura_ : Categoría variable de captura
 _codigo_: Código
-_calificacion_: Calificacion
+_calificacion_: Calificación
 _columnas_: Columnas
 _columnas_fijas_: Columnas fijas
 _configuracion_: Configuración
@@ -39,6 +40,7 @@ _es_editable_: Editable
 _es_poblacion_: Mostrar al inicio de cuadrícula
 _especialidad_: Especialidad
 _establecimiento_: Establecimiento
+_estandar_: Estándar
 _estructura_organizativa_: Estructura organizativa
 _error_validation_: Error de validación
 _error_datos_no_guardados_: Sucedió un error al guardar los datos

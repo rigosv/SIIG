@@ -7,7 +7,7 @@
             border: 1 solid red;
         }
         .glyphicon-off, .fa-user, .fa-caret-down{
-            color: blue;
+            color: #FF7722;
         }
         TR{
             cursor: pointer;
@@ -97,7 +97,7 @@
         }
     </style>
 {% endblock %}
-{% block javascripts %}
+{% block javascripts %}    
     {{parent()}}
     <script type="text/javascript" src="{{ asset('bundles/indicadores/js/d3.v3.min.js') }}" ></script>
     <!--<script type="text/javascript" src="{{ asset('bundles/indicadores/js/topojson.v1.min.js') }}" ></script> -->
@@ -105,7 +105,6 @@
     <script type="text/javascript" src="{{ asset('bundles/gridform/js/angular.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/gridform/js/d3tip.js') }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/gridform/js/angular-resource.min.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('bundles/gridform/js/jquery-scrollto.js') }}"></script>
     
     <script type="text/javascript" src="{{ asset('bundles/gridform/js/TableroCalidad/barchart.js') }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/gridform/js/TableroCalidad/radarchart.js') }}"></script>
@@ -204,15 +203,17 @@
                                     <TD>{{'_nombre_'|trans}}</TD>
                                     <TD>{{'_descripcion_'|trans}}</TD>
                                     <TD>{{'_calificacion_'|trans}}</TD>
-                                    <TD>{{'_meta_'|trans}}</TD>
+                                    <TD>{{'_estandar_'|trans}}</TD>
+                                    <TD>{{'_brecha_'|trans}}</TD>
                                 </TR>
                             </thead>
                             <tbody>
                                 <TR  ng-repeat="eval in evaluaciones | filter : buscar_evaluaciones" ng-click="getCriterios(eval)">
                                     <TD  >[[eval.nombre_evaluacion]]</TD>
                                     <TD >[[eval.descripcion]]</TD>
-                                    <TD>[[eval.total_cumplimiento]]/[[eval.total_aplicable]] = [[eval.measure]]%</TD>
-                                    <TD>[[eval.meta*100]]%</TD>
+                                    <TD>[[eval.total_cumplimiento]]/[[eval.total_aplicable]] = [[eval.measure | number:2]]%</TD>
+                                    <TD>[[eval.meta*100 | number:2 ]]%</TD>
+                                    <TD>[[eval.brecha*100 | number:2 ]]%</TD>
                                 </TR>
                             </tbody>
                         </table>                        
@@ -223,7 +224,9 @@
             </div>
             <div class="col-md-6">
                 <div class="panel panel-info panel_" >
-                    <div class="panel-body">                        
+                    <div class="panel-body">
+                        <input type="checkbox" checked="checked" value="estandar"/>{{'_estandar_'|trans}}
+                        <input type="checkbox" checked="checked" value="brecha"/>{{'_brecha_'|trans}}
                         <radar-chart data="datosGrafico2" ></radar-chart>
                     </div>                
                 </div>
