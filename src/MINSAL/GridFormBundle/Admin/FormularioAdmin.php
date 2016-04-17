@@ -57,6 +57,8 @@ class FormularioAdmin extends Admin
             ->add('ocultarNumeroFila', null, array('label'=> $this->getTranslator()->trans('_ocultar_numero_fila_')))
             ->add('noOrdenarPorFila', null, array('label'=> $this->getTranslator()->trans('_no_ordenar_por_fila_')))
             ->add('tituloColumnas', null, array('label'=> $this->getTranslator()->trans('_titulo_columnas_')))
+            ->add('grupoFormularios', null, array('label' => $this->getTranslator()->trans('_grupo_formulario_'), 'required' => false, 'expanded' => false))
+            ->add('formularioSup', null, array('label'=> $this->getTranslator()->trans('_formulario_superior_')))
             ->add('sqlLecturaDatos', null, array('label'=> $this->getTranslator()->trans('_sql_lectura_datos_')))
         ;
                             

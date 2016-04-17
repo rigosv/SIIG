@@ -53,3 +53,11 @@
     font-weight: bold;
     font-size: 12pt;
 }
+
+.tab-pane{
+    background: none !important;
+    border: none !important;
+}
+.jqx-grid-content{
+    background: none !important;
+}

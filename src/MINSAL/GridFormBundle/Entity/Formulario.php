@@ -130,6 +130,18 @@ class Formulario
     * @ORM\OrderBy({"descripcion" = "ASC"})
     */
     private $gruposColumnas;
+    
+    /**
+    * @var \Doctrine\Common\Collections\ArrayCollection
+    * @ORM\OneToMany(targetEntity="Formulario", mappedBy="formularioSup", cascade={"all"}, orphanRemoval=true)
+    */
+    private $grupoFormularios;
+    
+    /**
+     * @ORM\ManyToOne(targetEntity="Formulario", inversedBy="grupoFormularios")
+     * @ORM\JoinColumn(name="id_formulario_sup", referencedColumnName="id")
+     * */
+    private $formularioSup;
 
     /**
     * @var \Doctrine\Common\Collections\ArrayCollection
@@ -596,5 +608,61 @@ class Formulario
     public function getMeta()
     {
         return $this->meta;
+    }
+
+    /**
+     * Add grupoFormularios
+     *
+     * @param \MINSAL\GridFormBundle\Entity\Formulario $grupoFormularios
+     * @return Formulario
+     */
+    public function addGrupoFormulario(\MINSAL\GridFormBundle\Entity\Formulario $grupoFormularios)
+    {
+        $this->grupoFormularios[] = $grupoFormularios;
+
+        return $this;
+    }
+
+    /**
+     * Remove grupoFormularios
+     *
+     * @param \MINSAL\GridFormBundle\Entity\Formulario $grupoFormularios
+     */
+    public function removeGrupoFormulario(\MINSAL\GridFormBundle\Entity\Formulario $grupoFormularios)
+    {
+        $this->grupoFormularios->removeElement($grupoFormularios);
+    }
+
+    /**
+     * Get grupoFormularios
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getGrupoFormularios()
+    {
+        return $this->grupoFormularios;
+    }
+
+    /**
+     * Set formularioSup
+     *
+     * @param \MINSAL\GridFormBundle\Entity\Formulario $formularioSup
+     * @return Formulario
+     */
+    public function setFormularioSup(\MINSAL\GridFormBundle\Entity\Formulario $formularioSup = null)
+    {
+        $this->formularioSup = $formularioSup;
+
+        return $this;
+    }
+
+    /**
+     * Get formularioSup
+     *
+     * @return \MINSAL\GridFormBundle\Entity\Formulario 
+     */
+    public function getFormularioSup()
+    {
+        return $this->formularioSup;
     }
 }

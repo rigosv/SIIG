@@ -51,7 +51,7 @@ class FormularioRepository extends EntityRepository {
             $periodoIngreso = $em->getRepository("GridFormBundle:PeriodoIngresoGrupoUsuarios")->find($periodoIngreso);
         }
         
-        $params_string = $this->getParameterString( $parametros, $periodoIngreso->getId(), $tipo_periodo, $user);
+        $params_string = $this->getParameterString( $Frm, $parametros, $periodoIngreso->getId(), $tipo_periodo, $user);
         $this->origenes = $this->getOrigenes($Frm->getOrigenDatos());
         $this->campo = 'id_origen_dato';
         
@@ -228,7 +228,7 @@ class FormularioRepository extends EntityRepository {
         return $origenes;
     }
 
-    private function getParameterString($parametros, $periodoIngreso = null, $tipo_periodo = null, $user = null ) {
+    private function getParameterString(Formulario $Frm, $parametros, $periodoIngreso = null, $tipo_periodo = null, $user = null ) {
         $params_string = '';
         $em = $this->getEntityManager();
         if ($tipo_periodo == null or $tipo_periodo == 'pu'){
@@ -237,7 +237,7 @@ class FormularioRepository extends EntityRepository {
             $periodoIngreso = $em->getRepository("GridFormBundle:PeriodoIngresoGrupoUsuarios")->find($periodoIngreso);
         }        
         if ($periodoIngreso !=  null ){
-            if ($periodoIngreso->getFormulario()->getPeriodoLecturaDatos() == 'mensual')
+            if ($Frm->getPeriodoLecturaDatos() == 'mensual')
                 $this->parametros['mes'] = $periodoIngreso->getPeriodo()->getMes();
             $this->parametros['anio'] = $periodoIngreso->getPeriodo()->getAnio();
             

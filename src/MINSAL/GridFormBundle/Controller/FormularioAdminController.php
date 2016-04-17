@@ -31,7 +31,7 @@ class FormularioAdminController extends Controller
         
         $parametros['tipo_periodo'] = $tipo_periodo;
         $periodos= array();
-        $cantFrm = 1;
+
         // Si es el código de formulario de captura de datos, 
         // pueden haber varios formularios para el usuario
         $periodosEstructura = array();
@@ -107,17 +107,26 @@ class FormularioAdminController extends Controller
             'periodoSeleccionado' => $periodoSeleccionado,
             'titulo' => $titulo,
             'numero_carga' => $numero_carga,
-            'cantFrm' => $cantFrm,
             'editable' => $editable,
             'mostrar_resumen' => $mostrar_resumen,
+            'cantidad_formularios' => 0,
             'pk' => $pk);
         
         if ($periodo != '-1'){
+            $formularios = $Frm->getGrupoFormularios();
+            if ($formularios == null or count($formularios) == 0){
+                $formularios[] = $Frm;
+            }
             $parametrosPlantilla['Frm'] = $Frm;
-            $parametrosPlantilla['origenes'] = $this->getOrigenes($Frm, $parametros);
-            $parametrosPlantilla['pivotes'] = $this->getPivotes($Frm, $parametros);
-            $parametrosPlantilla['meses_activos'] = $meses[$periodoSeleccionado->getPeriodo()->getAnio()]; 
-            $parametrosPlantilla['tipos_datos_por_filas'] = $em->getRepository('GridFormBundle:Formulario')->tipoDatoPorFila($Frm);
+            $parametrosPlantilla['cantidad_formularios'] = count($formularios);
+            $parametrosPlantilla['Formularios'] = $formularios;
+            $parametrosPlantilla['meses_activos'] = $meses[$periodoSeleccionado->getPeriodo()->getAnio()];
+            foreach ($formularios as $frm){
+                $parametrosPlantilla['origenes'][$frm->getId()] = $this->getOrigenes($frm, $parametros);
+                $parametrosPlantilla['pivotes'][$frm->getId()] = $this->getPivotes($frm, $parametros);
+                $parametrosPlantilla['tipos_datos_por_filas'][$frm->getId()] = $em->getRepository('GridFormBundle:Formulario')->tipoDatoPorFila($frm);
+            }
+            
                         
         }
         return $this->render($plantilla, $parametrosPlantilla);
