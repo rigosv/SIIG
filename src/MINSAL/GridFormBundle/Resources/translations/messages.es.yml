@@ -13,6 +13,8 @@ _ayuda_origen_pivote_: 'Es una sentencia SQL que recupera registros con dos camp
 _ayuda_validacion_campo_: 'Ingrese la condición para ser válido. Usar "value" para referirse al valor del campo dentro de la fórmula. Ej.: value > 0 || value <150'
 _ayuda_variable_calculo_consumo_: 'Cuando el consumo del compromiso financiero se determine a partir de otra variable. Ej.: El mantenimiento la planta telefónica, será a partir de la cantidad de aparatos fijos asignados a la dependencia'
 _brecha_: Brecha
+_calculo_filas_formula_:  Fórmula para cálculo por filas
+_calculo_filas_help_: 'Cálculo por filas, se hará sobre la misma columna. Ej.Cálculo sobre dos columnas: nombreColumna : {F2}={F0}/{F1}, nombreColumna2 : {F8}={F2}/{F3}'
 _calidad_ : Calidad
 _cargar_datos_: Cargar
 _campo_: Campo
@@ -50,10 +52,12 @@ _febrero_: Febrero
 _formato_: Formato
 _formula_: Fórmula
 _formulario_: Formulario
+_formulario_superior_ : Formulario superior
 _formularios_: Formularios
-_grupo_padre_: Grupo padre
-_grupo_columnas_: Grupo Columnas
 _guardar_: Guardar
+_grupo_columnas_: Grupo Columnas
+_grupo_formularios_: Grupo formularios 
+_grupo_padre_: Grupo padre
 _junio_: Junio
 _julio_: Julio
 _limpiar_: Limpiar

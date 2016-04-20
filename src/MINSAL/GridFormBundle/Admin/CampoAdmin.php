@@ -29,7 +29,6 @@ class CampoAdmin extends Admin
             ->add('oculto', null, array('label'=> $this->getTranslator()->trans('_oculto_')))
             ->add('tipoDato', null, array('label'=> $this->getTranslator()->trans('_tipo_dato_')))
             ->add('tipoControl', null, array('label'=> $this->getTranslator()->trans('_tipo_control_')))
-            ->add('tipoDefinidoPorFila', null, array('label'=> $this->getTranslator()->trans('_tipo_definido_por_fila_')))
             ->add('alineacion', null, array('label'=> $this->getTranslator()->trans('_alineacion_')))
             ->add('formato', null, array('label'=> $this->getTranslator()->trans('_formato_')))
             ->add('origen', null, array('label'=> $this->getTranslator()->trans('_origen_campo_')))
@@ -39,8 +38,7 @@ class CampoAdmin extends Admin
                 'formula' => $this->getTranslator()->trans('_ayuda_formula_campo_'),
                 'reglaValidacion' => $this->getTranslator()->trans('_ayuda_validacion_campo_'),
                 'origen' => $this->getTranslator()->trans('_ayuda_origen_campo_'),
-                'origenPivote' => $this->getTranslator()->trans('_ayuda_origen_pivote_'), 
-                'tipoDefinidoPorFila' => $this->getTranslator()->trans('_tipo_definido_por_fila_help_')
+                'origenPivote' => $this->getTranslator()->trans('_ayuda_origen_pivote_')
             ))
             
         ;

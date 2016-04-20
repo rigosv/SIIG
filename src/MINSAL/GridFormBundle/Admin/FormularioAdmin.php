@@ -56,8 +56,14 @@ class FormularioAdmin extends Admin
             ->add('ajustarAltoFila', null, array('label'=> $this->getTranslator()->trans('_ajustar_alto_fila_')))
             ->add('ocultarNumeroFila', null, array('label'=> $this->getTranslator()->trans('_ocultar_numero_fila_')))
             ->add('noOrdenarPorFila', null, array('label'=> $this->getTranslator()->trans('_no_ordenar_por_fila_')))
+            ->add('calculoFilas', null, array('label'=> $this->getTranslator()->trans('_calculo_filas_formula_')))
             ->add('tituloColumnas', null, array('label'=> $this->getTranslator()->trans('_titulo_columnas_')))
-            ->add('grupoFormularios', null, array('label' => $this->getTranslator()->trans('_grupo_formulario_'), 'required' => false, 'expanded' => false))
+            ->add('grupoFormularios', null, array(
+                'label' => $this->getTranslator()->trans('_grupo_formularios_'), 
+                'required' => false, 
+                'expanded' => false,
+                'by_reference' => true
+                ))
             ->add('formularioSup', null, array('label'=> $this->getTranslator()->trans('_formulario_superior_')))
             ->add('sqlLecturaDatos', null, array('label'=> $this->getTranslator()->trans('_sql_lectura_datos_')))
         ;
@@ -66,6 +72,7 @@ class FormularioAdmin extends Admin
             ->setHelps(array(
                 'sqlLecturaDatos' => $this->getTranslator()->trans('_sql_lectura_datos_help'),
                 'tituloColumnas' => $this->getTranslator()->trans('_titulo_columna_help_'),
+                'calculoFilas' => $this->getTranslator()->trans('_calculo_filas_help_'),
             ));
     }
 
@@ -95,5 +102,20 @@ class FormularioAdmin extends Admin
     protected function configureRoutes(RouteCollection $collection)
     {
         $collection->add('almacenDatos');        
+    }
+    
+    public function prePersist($Formulario)
+    {
+        $this->setGrupoFormularios($Formulario);
+    }
+    
+    public function preUpdate($Formulario)
+    {
+        $this->setGrupoFormularios($Formulario); 
+    }
+    
+    protected function setGrupoFormularios($Formulario){        
+        if ($this->getForm()->getData()->getGrupoFormularios() != null)
+            $Formulario->setGrupoFormularios($this->getForm()->getData()->getGrupoFormularios()->getValues());        
     }
 }

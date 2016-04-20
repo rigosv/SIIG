@@ -1,10 +1,10 @@
 {% extends 'IndicadoresBundle::standard_layout.html.twig' %}
-{% block stylesheets %}    
+{% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('bundles/gridform/js/jqwidgets4.1/styles/jqx.base.css') }}" type="text/css" media="all" />
     <link rel="stylesheet" href="{{ asset('bundles/gridform/js/jqwidgets4.1/styles/jqx.ui-redmond.css') }}" type="text/css" media="all" />
     <link rel="stylesheet" href="{{ asset('bundles/gridform/css/custom_grid.css') }}" type="text/css" media="all" />
-    
+
 {% endblock stylesheets %}
 {% block javascripts %}
     {{ parent() }}
@@ -12,66 +12,89 @@
     <script src="{{ asset('bundles/gridform/js/jqwidgets4.1/jqxdata.js') }}" type="text/javascript"></script>
     <script src="{{ asset('bundles/gridform/js/jqwidgets4.1/jqxbuttons.js') }}" type="text/javascript"></script>
     <script src="{{ asset('bundles/gridform/js/jqwidgets4.1/jqxscrollbar.js') }}" type="text/javascript"></script>
-    <script src="{{ asset('bundles/gridform/js/jqwidgets4.1/jqxmenu.js') }}" type="text/javascript"></script>    
+    <script src="{{ asset('bundles/gridform/js/jqwidgets4.1/jqxmenu.js') }}" type="text/javascript"></script>
     <script src="{{ asset('bundles/gridform/js/jqwidgets4.1/jqxgrid.js') }}" type="text/javascript"></script>
     <script src="{{ asset('bundles/gridform/js/jqwidgets4.1/jqxgrid.sort.js') }}" type="text/javascript"></script>
     <script src="{{ asset('bundles/gridform/js/jqwidgets4.1/jqxgrid.pager.js') }}" type="text/javascript"></script>
     <script src="{{ asset('bundles/gridform/js/jqwidgets4.1/jqxgrid.selection.js') }}" type="text/javascript"></script>
     <script src="{{ asset('bundles/gridform/js/jqwidgets4.1/jqxgrid.edit.js') }}" type="text/javascript"></script>
     <script src="{{ asset('bundles/gridform/js/jqwidgets4.1/jqxtabs.js') }}" type="text/javascript"></script>
-    
+
     <script src="{{ asset('bundles/gridform/js/jqwidgets4.1/jqxinput.js') }}" type="text/javascript"></script>
     <script src="{{ asset('bundles/gridform/js/jqwidgets4.1/jqxnumberinput.js') }}" type="text/javascript"></script>
     <script src="{{ asset('bundles/gridform/js/jqwidgets4.1/jqxcheckbox.js') }}" type="text/javascript"></script>
     <script src="{{ asset('bundles/gridform/js/jqwidgets4.1/jqxlistbox.js') }}" type="text/javascript"></script>
     <script src="{{ asset('bundles/gridform/js/jqwidgets4.1/jqxdropdownlist.js') }}" type="text/javascript"></script>
-    
+
     <script src="{{ asset('bundles/gridform/js/jqwidgets4.1/jqxgrid.filter.js') }}" type="text/javascript"></script>
-    <script src="{{ asset('bundles/gridform/js/jqwidgets4.1/jqxgrid.columnsresize.js') }}" type="text/javascript"></script>    
+    <script src="{{ asset('bundles/gridform/js/jqwidgets4.1/jqxgrid.columnsresize.js') }}" type="text/javascript"></script>
     <script src="{{ asset('bundles/gridform/js/jqwidgets4.1/jqxscrollbar.js') }}" type="text/javascript"></script>
     <script src="{{ asset('bundles/gridform/js/jqwidgets4.1/jqxbuttons.js') }}" type="text/javascript"></script>
     <script src="{{ asset('bundles/gridform/js/jqwidgets4.1/jqxcheckbox.js') }}" type="text/javascript"></script>
     <script src="{{ asset('bundles/gridform/js/jqwidgets4.1/jqxdropdownlist.js') }}" type="text/javascript"></script>
     <script src="{{ asset('bundles/gridform/js/jqwidgets4.1/jqxlistbox.js') }}" type="text/javascript"></script>
-    <script src="{{ asset('bundles/gridform/js/jqwidgets4.1/jqxmenu.js') }}" type="text/javascript"></script>    
-    <script src="{{ asset('bundles/gridform/js/jqwidgets4.1/jqxcalendar.js') }}" type="text/javascript"></script>    
+    <script src="{{ asset('bundles/gridform/js/jqwidgets4.1/jqxmenu.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('bundles/gridform/js/jqwidgets4.1/jqxcalendar.js') }}" type="text/javascript"></script>
     <script src="{{ asset('bundles/gridform/js/jqwidgets4.1/jqxdatetimeinput.js') }}" type="text/javascript"></script>
     <script src="{{ asset('bundles/gridform/js/jqwidgets4.1/jqxgrid.aggregates.js') }}" type="text/javascript"></script>
     <script src="{{ asset('bundles/gridform/js/jqwidgets4.1/jqxdata.export.js') }}" type="text/javascript"></script>
-    <script src="{{ asset('bundles/gridform/js/jqwidgets4.1/jqxgrid.export.js') }}" type="text/javascript"></script>    
-    <script src="{{ asset('bundles/gridform/js/jquery.mtz.monthpicker.js') }}" type="text/javascript"></script> 
-    <script src="{{ asset('bundles/gridform/js/parametrosDependencia.js') }}" type="text/javascript"></script> 
+    <script src="{{ asset('bundles/gridform/js/jqwidgets4.1/jqxgrid.export.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('bundles/gridform/js/jquery.mtz.monthpicker.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('bundles/gridform/js/parametrosDependencia.js') }}" type="text/javascript"></script>
     <script src="{{ asset('bundles/gridform/js/jqwidgets4.1/globalization/globalize.js') }}" type="text/javascript"></script>
-    
+
     <script src="{{ asset("bundles/gridform/js/jqwidgets4.1/globalization/globalize.culture.#{app.request.locale}.js") }}" type="text/javascript"></script>
-    
+
     {% block frm %}
     {% if periodoSeleccionado != null and parametros.periodo_estructura != '-1' %}
     {% set titulos = Frm.tituloColumnas | jsonDecode(true) %}
     <script type="text/javascript">
         $(document).ready(function () {
             $.jqx.theme = 'ui-redmond';
-            
+
             {% for Frm in Formularios %}
             var initGrid{{Frm.id}} = function () {
                 var url = Routing.generate('{{url}}', {id: {{Frm.id}}, periodo_ingreso: $('#periodo_estructura').val(),titulo_frm : '{{titulo}}', datos_frm: $('#frm_').serialize() });
                 var fila = 0;
 
+                rowbeginedit =  function (row, datafield, columntype, value) {
+                    {% if Frm.calculoFilas != ''%}
+                        var campos = '{{Frm.calculoFilas}}'.split(',');
+                        var columna = datafield;
+                        var filasFormulas = [];
+                        campos.forEach(function(nodo, index){
+                            formula = nodo.split(':');
+                            var campo= new RegExp(formula[0]);
+                            if (campo.test(columna)){
+                                filasp = /\{F[0-9]{1,2}\}/g;
+                                lados_formula = formula[1].split('=');
+                                filasFormulas.push(filasp.exec(lados_formula[0]).toString().replace(/\{|\}|F/gi,''));
+                            }
+                        });
+                        for(i = 0; i < filasFormulas.length; i++){
+                            if (filasFormulas[i] == row){
+                                return false;
+                            }
+
+                        }
+                    {% endif %}
+                };
+
                 var error = false;
                 // prepare the data
                 var source =
                 {
-                    datatype: "json",               
+                    datatype: "json",
                     updaterow: function (rowid, rowdata, commit) {
                         // synchronize with the server - send update command
-                        // call commit with parameter etrue if the synchronization with the server is successful 
-                        // and with parameter false if the synchronization failder.                    
-                        if (rowdata.es_separador != 'true'){                    
+                        // call commit with parameter etrue if the synchronization with the server is successful
+                        // and with parameter false if the synchronization failder.
+                        if (rowdata.es_separador != 'true'){
                             if (rowdata.local == 'si'){
-                                rowdata.local = 'no';                        
-                                commit(true);                        
+                                rowdata.local = 'no';
+                                commit(true);
                             } else {
-                                $.post(Routing.generate('{{url_save}}', {id: {{Frm.id}}, periodo_ingreso: $('#periodo_estructura').val() }), 
+                                $.post(Routing.generate('{{url_save}}', {id: {{Frm.id}}, periodo_ingreso: $('#periodo_estructura').val() }),
                                             {datos_frm: $('#frm_').serialize(),
                                                 pk: $('#pk').val(),
                                                 fila: JSON.stringify(rowdata),
@@ -101,15 +124,15 @@
                     },
                     datafields: [
                         {% for campo in Frm.campos %}
-                            {% if campo.origenPivote %} 
+                            {% if campo.origenPivote %}
                                 {% for campoPivote in pivotes[Frm.id][campo.significadoCampo.codigo] %}
                                     {% if tipos_datos_por_filas[Frm.id] %}
                                         { name: '{{campo.significadoCampo.codigo}}_{{campoPivote.id}}', type: 'string' },
                                     {% else %}
                                         { name: '{{campo.significadoCampo.codigo}}_{{campoPivote.id}}', type: '{{campo.tipoDato.codigo}}' },
                                     {% endif %}
-                                    {% if campo.origen or campo.significadoCampo.catalogo != '' %} 
-                                        { name: '{{campo.significadoCampo.codigo}}Source', value: '{{campo.significadoCampo.codigo}}', 
+                                    {% if campo.origen or campo.significadoCampo.catalogo != '' %}
+                                        { name: '{{campo.significadoCampo.codigo}}Source', value: '{{campo.significadoCampo.codigo}}',
                                             values: { source: {{origenes[Frm.id][campo.significadoCampo.codigo]|raw}}, value: 'id', name: 'descripcion' } },
                                     {% endif %}
                                 {% endfor %}
@@ -118,9 +141,9 @@
                                         { name: '{{campo.significadoCampo.codigo}}', type: 'string' },
                                     {% else %}
                                         { name: '{{campo.significadoCampo.codigo}}', type: '{{campo.tipoDato.codigo}}' },
-                                    {% endif %}                            
-                                {% if campo.origen or campo.significadoCampo.catalogo != '' %} 
-                                    { name: '{{campo.significadoCampo.codigo}}Source', value: '{{campo.significadoCampo.codigo}}', 
+                                    {% endif %}
+                                {% if campo.origen or campo.significadoCampo.catalogo != '' %}
+                                    { name: '{{campo.significadoCampo.codigo}}Source', value: '{{campo.significadoCampo.codigo}}',
                                         values: { source: {{origenes[Frm.id][campo.significadoCampo.codigo]|raw}}, value: 'id', name: 'descripcion' } },
                                 {% endif %}
                             {% endif %}
@@ -143,7 +166,7 @@
                     source: dataAdapter,
                     columnsresize: true,
                     editable: {{editable|default(true)}},
-                    {% if (Frm.noOrdenarPorFila) %} 
+                    {% if (Frm.noOrdenarPorFila) %}
                         sortable: false,
                     {% else %}
                         sortable: true,
@@ -155,14 +178,14 @@
                     //altrows: true,
                     {% if mostrar_resumen %}
                         showaggregates: true,
-                        showstatusbar: true,                    
+                        showstatusbar: true,
                     {% endif %}
                     filterable: true,
-                    editmode: 'click',                
+                    editmode: 'click',
                     selectionmode: 'multiplecellsadvanced',
                     {% set columnas_fijas = Frm.columnasFijas|default(0) %}
                     columns: [
-                        {% if not(Frm.ocultarNumeroFila) %} 
+                        {% if not(Frm.ocultarNumeroFila) %}
                             {
                               text: '#', sortable: false, filterable: false, editable: false,
                               groupable: false, draggable: false, resizable: false,
@@ -173,7 +196,7 @@
                             },
                         {% endif %}
                         {% set indice = 0 %}
-                        {% for campo in Frm.campos %}                        
+                        {% for campo in Frm.campos %}
                             {% set indice = indice+1 %}
                             {% if campo.origenPivote %}
                                 {% set Pivotes_ =  pivotes[Frm.id][campo.significadoCampo.codigo] %}
@@ -182,37 +205,38 @@
                             {% endif %}
 
                             {% for pivote in Pivotes_ %}
-                            {                            
+                            {
                                 {% if editable == true %}
-                                    {%if (campo.significadoCampo.codigo == 'cant_mensual' 
-                                            or campo.significadoCampo.codigo == 'importe_mensual' 
+                                    {%if (campo.significadoCampo.codigo == 'cant_mensual'
+                                            or campo.significadoCampo.codigo == 'importe_mensual'
                                             or campo.significadoCampo.codigo == 'cant_mensual_calidad'
                                             or campo.significadoCampo.codigo == 'mes_check'
-                                        ) 
+                                        )
                                         and campo.origenPivote %}
                                         {% if pivote.id in meses_activos %}
                                             {% set celda_editable = true %}
-                                        {% else %} 
+                                        {% else %}
                                             {% set celda_editable = false %}
                                         {% endif %}
-                                    {% else %}                                    
-                                        {% set celda_editable = campo.esEditable  %}                                         
+                                    {% else %}
+                                        {% set celda_editable = campo.esEditable  %}
                                     {% endif %}
-                                {% else %} 
-                                    {% set celda_editable = false %} 
+                                {% else %}
+                                    {% set celda_editable = false %}
                                 {% endif %}
                                 {% if campo.origenPivote %}
-                                    text: '{{pivote.descripcion}}', 
-                                    datafield: '{{campo.significadoCampo.codigo}}_{{pivote.id}}', 
+                                    text: '{{pivote.descripcion}}',
+                                    datafield: '{{campo.significadoCampo.codigo}}_{{pivote.id}}',
                                 {% else %}
                                     {% if titulos != null and campo.significadoCampo.codigo in titulos|keys%}
-                                        text: '{{titulos[campo.significadoCampo.codigo]}}', 
+                                        text: '{{titulos[campo.significadoCampo.codigo]}}',
                                     {% else %}
-                                        text: '{{campo.significadoCampo.descripcion}}', 
+                                        text: '{{campo.significadoCampo.descripcion}}',
                                     {% endif %}
-                                    datafield: '{{campo.significadoCampo.codigo}}', 
+                                    datafield: '{{campo.significadoCampo.codigo}}',
                                 {% endif %}
-                                align: 'center',                            
+                                align: 'center',
+                                cellbeginedit: rowbeginedit,
                                 width: {{campo.ancho|default(100)}},
                                 {% if indice  <=  columnas_fijas %}
                                     pinned: true,
@@ -220,8 +244,8 @@
                                 cellsalign: '{{campo.alineacion.codigo|default('left')}}',
                                 {% if not celda_editable %}
                                     cellclassname: 'celda_no_editable',
-                                {% endif%}                            
-                                editable: {{ (celda_editable)? 'true' : 'false' }}, 
+                                {% endif%}
+                                editable: {{ (celda_editable)? 'true' : 'false' }},
 
                                 hidden: {{campo.oculto|default('false')}},
                                 {% if tipos_datos_por_filas[Frm.id] %}
@@ -236,18 +260,18 @@
                                             showCalendarButton: true
                                         });
                                     },
-                                {% else %}    
+                                {% else %}
                                     columntype: '{{campo.tipoControl.codigo}}',
                                 {% endif %}
-                                {% if campo.esCalculado and mostrar_resumen %} aggregates: ['sum'], {% endif %}                            
+                                {% if campo.esCalculado and mostrar_resumen %} aggregates: ['sum'], {% endif %}
                                 {% if campo.tipoControl.codigo == 'datetimeinput' %}
                                     cellsformat: 'dd/MM/yyyy h:mm',
                                 {% endif %}
-                                {% if campo.origen or campo.significadoCampo.catalogo != '' %} displayfield: '{{campo.significadoCampo.codigo}}Source', 
+                                {% if campo.origen or campo.significadoCampo.catalogo != '' %} displayfield: '{{campo.significadoCampo.codigo}}Source',
                                     createeditor: function (row, value, editor) {
                                         editor.jqxDropDownList({ source: {{origenes[Frm.id][campo.significadoCampo.codigo]|raw}}, displayMember: 'descripcion', valueMember: 'id' });
                                     },
-                                {% endif %}                            
+                                {% endif %}
                                 {% if campo.grupoColumnas %} columngroup: '{{campo.grupoColumnas.codigo}}', {% endif %}
                                 {% if campo.formato %} cellsformat: '{{campo.formato.formato}}', {% endif %}
                                 {% if campo.reglaValidacion %}
@@ -258,11 +282,11 @@
                                         return { result: false, message: "{{campo.msjValidacion|default('_dato_no_valido_')|trans}}" };
                                     },
                                 {% endif %}
-                                {% if campo.formula %} 
+                                {% if campo.formula %}
                                     cellsrenderer: function (index, datafield, value, defaultvalue, column, rowdata) {
                                         {{campo.formula|raw}};
                                         return "<div  class='jqx-{{campo.alineacion.codigo|default('left')}}-align'>" + dataAdapter.formatNumber(result,'{{campo.formato.formato|default('')}}') + "</div>";
-                                    }, 
+                                    },
                                 {% endif %}
                                 {% if tipos_datos_por_filas[Frm.id] %}
                                     createeditor: function(row, cellValue, editor, cellText, width, height)
@@ -276,13 +300,13 @@
                                                 editor.append(element);
                                                 if (tipo_control == 'checkbox_3_states')
                                                     element.jqxCheckBox({hasThreeStates: true, animationShowDelay: 0, animationHideDelay: 0});
-                                                else 
+                                                else
                                                     element.jqxCheckBox({animationShowDelay: 0, animationHideDelay: 0});
                                                 //element.jqxSwitchButton({onLabel:'SI', offLabel:'NO'});
                                             } else if (tipo_control == 'text') {
                                                 var inputElement = $("<input type='text' style='width: 100%; height: 100%;' />").prependTo(editor);
-                                                inputElement.jqxInput({  width: width, height: height});                      
-                                            } else if (tipo_control == 'datetimeinput') {        
+                                                inputElement.jqxInput({  width: width, height: height});
+                                            } else if (tipo_control == 'datetimeinput') {
                                                 var element = $('<input type="datetime"></input>');
                                                 editor.append(element);
                                                 element.jqxDateTimeInput({width: '110px', height: '25px', template: "info",});
@@ -312,15 +336,12 @@
                                                     checkBoxHTMLElement.jqxCheckBox({checked: n_});
                                                 }
                                                 //checkBoxHTMLElement.jqxCheckBox('toggle');
-                                                //checkBoxHTMLElement.jqxSwitchButton({checked: n_});                                            
+                                                //checkBoxHTMLElement.jqxSwitchButton({checked: n_});
                                                 checkBoxHTMLElement.jqxCheckBox('toggle');
                                                 var val = checkBoxHTMLElement.val();
                                                 editor.val(val);
                                             }
-                                            else if (tipo_control == 'text'){   
-                                                //var inputHTMLElement = editor.find("input");
-                                                //inputHTMLElement.jqxInput('val', cellValue);
-                                                //inputHTMLElement.focus();
+                                            else if (tipo_control == 'text'){
                                                 var inputField = editor.find('input');
                                                 if (pressedkey) {
                                                     inputField.val(pressedkey);
@@ -332,7 +353,6 @@
                                                 }
                                             } else if (tipo_control == 'datetimeinput'){
                                                 var dateElement = editor.find('div:first');
-                                                //var startDate = moment(cellvalue, "DD/MM/YYYY").toDate();
                                                 element.jqxDateTimeInput({width: '110px', height: '25px', template: "info",});
                                             }
                                         }
@@ -340,23 +360,22 @@
                                     geteditorvalue : function (row, cellValue, editor) {
                                         var datarow = $("#jqxgrid{{Frm.id}}").jqxGrid('getrowdata', row);
                                         var tipo_control = (datarow.codigo_tipo_control == undefined) ?  '{{campo.tipoControl.codigo}}' : datarow.codigo_tipo_control;
-                                        if (datarow.es_separador != 'true'){                                        
+                                        if (datarow.es_separador != 'true'){
                                           if (tipo_control == 'checkbox' || tipo_control == 'checkbox_3_states'){
                                               var checkBoxHTMLElement = editor.find('div:first');
                                               return checkBoxHTMLElement.val();
                                           } else if (tipo_control == 'text'){
-                                              return editor.find('input').val();
+                                            return editor.find('input').val();
                                           } else if (tipo_control == 'datetimeinput'){
                                               var dateElement = editor.find('div:first');
                                               return dateElement.jqxDateTimeInput('getDate');
                                           }
-
                                           return editor.val();
                                         }
                                     },
                                 {% endif %}
                                 cellsrenderer: function (index, datafield, cellValue, defaultvalue, column, datarow) {
-                                    estilo = (datarow.es_poblacion == 'true') ? "style='color: blue; margin-left:"+(parseInt(datarow.nivel_indentacion) * 20)+"px '" :  "style = 'margin-left:"+(parseInt(datarow.nivel_indentacion) * 20)+"px' ";
+                                    estilo = (datarow.es_poblacion == 'true') ? "style='color: blue; margin-left:"+(parseInt(datarow.nivel_indentacion) * 20)+"px '" :  "style = 'margin-left:"+(parseInt(datarow.nivel_indentacion) * 20)+"px' ";                                    
 
                                     if (datarow.es_separador == 'true'){
                                         {% if campo.significadoCampo.codigo  ==  'descripcion_variable' %}
@@ -366,7 +385,7 @@
                                         {% endif %}
                                     }
                                     {% if tipos_datos_por_filas[Frm.id]  and campo.tipoDefinidoPorFila %}
-                                        var tipo_control = (datarow.codigo_tipo_control == undefined) ?  '{{campo.tipoControl.codigo}}' : datarow.codigo_tipo_control;  
+                                        var tipo_control = (datarow.codigo_tipo_control == undefined) ?  '{{campo.tipoControl.codigo}}' : datarow.codigo_tipo_control;
                                         if (tipo_control == 'checkbox' || tipo_control == 'checkbox_3_states'){
                                             var element_aux = $('<div></div>')
                                             var element = $('<div tabIndex=0 style="position: absolute; top: 50%; left: 50%; margin-top: -10px; margin-left: -10px;"></div>');
@@ -376,7 +395,7 @@
                                                     element.jqxCheckBox('indeterminate');
                                                 }
                                             } else
-                                                element.jqxCheckBox({animationShowDelay: 0, animationHideDelay: 0, checked: cellValue.toString() == "true" });                                        
+                                                element.jqxCheckBox({animationShowDelay: 0, animationHideDelay: 0, checked: cellValue.toString() == "true" });
                                             //element.jqxSwitchButton({checked: cellValue.toString() == "true", onLabel:'SI', offLabel:'NO'});
                                             element_aux.append(element);
                                             return element_aux.html();
@@ -384,8 +403,13 @@
                                         else    return "<div class='jqx-{{campo.alineacion.codigo|default('left')}}-align nivel_"+datarow.nivel_indentacion+"' "+ estilo + " title='"+datarow.ayuda+"'  data-placement= 'top' >" + cellValue +"</div>";
 
                                     {% else %}
-                                        return "<div class='jqx-{{campo.alineacion.codigo|default('left')}}-align nivel_"+datarow.nivel_indentacion+"' "+ estilo + " title='"+datarow.ayuda+"'  data-placement= 'top' >" + cellValue +"</div>";
-                                    {% endif %}                                
+                                        /*if (index == 2){
+                                            var numerador = $('#jqxgrid{{Frm.id}}').jqxGrid('getcellvalue', 1, datafield);
+                                            var denominador = $('#jqxgrid{{Frm.id}}').jqxGrid('getcellvalue', 0, datafield);
+                                            return '<span style="margin: 4px; float: ' + column.cellsalign + ';">' + (parseFloat(numerador) / parseFloat(denominador)) + '</span>';
+                                        }*/
+                                        else return "<div class='jqx-{{campo.alineacion.codigo|default('left')}}-align nivel_"+datarow.nivel_indentacion+"' "+ estilo + " title='"+datarow.ayuda+"'  data-placement= 'top' >" + cellValue +"</div>";
+                                    {% endif %}
                                 },
                             },
                             {% endfor %}
@@ -398,15 +422,15 @@
                     {% if item_count > 0 %}
                         columngroups: [
                             {% for grp in Frm.gruposColumnas %}
-                                { text: '{{grp.descripcion}}', 
-                                    align: 'center', 
+                                { text: '{{grp.descripcion}}',
+                                    align: 'center',
                                     name: '{{grp.codigo}}',
                                     {% if grp.grupoPadre %} parentgroup: '{{grp.grupoPadre.codigo}}', {% endif %}
                                 },
                             {% endfor %}
                         ],
                     {% endif %}
-                    rendered: function(){                 
+                    rendered: function(){
                         $('.jqx-grid-column-header').each(function(i, nodo){
                             $($($(nodo).children()[0]).children()[0]).css('margin-top',0).css('margin-bottom',0);
                         });
@@ -415,14 +439,14 @@
                         //var texto = $( "div.separador_variable" ).html();
                         $("#jqxgrid{{Frm.id}}").jqxGrid('beginupdate');
                         var elemento = $( "div.separador_variable" ).parent().parent();
-                        elemento.addClass('fila_separador');                    
+                        elemento.addClass('fila_separador');
                         $("#jqxgrid{{Frm.id}}").jqxGrid('endupdate');
                     }
                 });
 
                 var listSource = [
                     {% for campo in Frm.campos %}
-                        {% if campo.origenPivote %} 
+                        {% if campo.origenPivote %}
                             {% for campoPivote in pivotes[Frm.id][campo.significadoCampo.codigo] %}
                                 { label: '{{campoPivote.descripcion}}', value: '{{campo.significadoCampo.codigo}}_{{campoPivote.id}}', checked: true },
                             {% endfor %}
@@ -431,14 +455,46 @@
                                 { label: '{{campo.significadoCampo.descripcion}}', value: '{{campo.significadoCampo.codigo}}', checked: true },
                             {% endif %}
                         {% endif %}
-                    {% endfor %}                
+                    {% endfor %}
                     ];
 
-                    $("#jqxgrid{{Frm.id}}").on('cellbeginedit', function (event) {
-                        var args = event.args;
-                        $('#col').val(args.datafield);
-                        $('#fil').val(args.rowindex);                
+                    {% if Frm.calculoFilas != '' %}
+                    $("#jqxgrid{{Frm.id}}").bind('cellendedit', function (event) {
+                        var fila = event.args.rowindex;
+                        var columna = event.args.datafield;
+                        var valor_celda_actual = event.args.value;
+                        var operaciones = '';
+
+                        var campos = '{{Frm.calculoFilas}}'.split(',');
+                        var formula = [];
+                        //se espera el formato codigoColumna: {F2} = {F0}/{F1} * 100
+                        // Primero se separa por : para obtener el nombre de la columna y la formula
+                        // Luego se separa por = para obtener los dos lados de la ecuación
+                        // Luego se sustituyen los valores por el dato de la fila correspondiente
+                        // y se hace el cálculo
+                        campos.forEach(function(nodo, index){
+                            formula = nodo.split(':');
+                            var campo= new RegExp(formula[0]);
+                            if (campo.test(columna)){
+                                filasp = /\{F[0-9]{1,2}\}/g;
+                                lados_formula = formula[1].split('=');
+                                fila_destino = filasp.exec(lados_formula[0]).toString().replace(/\{|\}|F/gi,'');
+                                operaciones = lados_formula[1];
+                                operadores = operaciones.toString().match(/\{F[0-9]{1,2}\}/g);
+                                operadores.forEach(function(nodo2, index){
+                                    fil = nodo2.toString().replace(/\{|\}|F/gi,'');
+                                    valor_oper = (fil == fila) ? valor_celda_actual :  $('#jqxgrid{{Frm.id}}').jqxGrid('getcellvalue', fil, columna);
+                                    operaciones = operaciones.replace(nodo2.toString(), valor_oper);
+                                });
+                                result =  eval(operaciones);
+                                $("#jqxgrid{{Frm.id}}").jqxGrid('setcellvalue', fila_destino, columna, result.toFixed(0));
+                            }
+                        });
                     });
+
+                    {% endif %}
+
+
                     {% if cantidad_formularios == 1 %}
                         $("#jqxlistbox").jqxListBox({ source: listSource, width: 500, height: 400,  checkboxes: true });
                         $("#jqxlistbox").on('checkChange', function (event) {
@@ -454,11 +510,11 @@
                     {% endif %}
             }
             {% endfor %}
-        
+
             {% if cantidad_formularios == 1 %}
-                initGrid{{Formularios[0].id}}()                                
+                initGrid{{Formularios[0].id}}()
                 $("#exportar").click(function () {
-                    $("#jqxgrid{{Formularios[0].id}}").jqxGrid('exportdata', 'xls', 'jqxGrid');           
+                    $("#jqxgrid{{Formularios[0].id}}").jqxGrid('exportdata', 'xls', 'jqxGrid');
                 });
                 $("#clear").click(function () {
                     $("#jqxgrid{{Formularios[0].id}}").jqxGrid('clear');
@@ -477,7 +533,7 @@
                 }
                 $('#jqxTabs').jqxTabs({ width: '100%', height: 560,  initTabContent: initWidgets, theme: 'summer' });
             {% endif %}
-                        
+
             $("#guardar").click(function () {
                 if (error){
                     $('#modal_msj_content').html('<div class="alert alert-warning" role="alert">{{'_error_anterior_'|trans}}</div>');
@@ -485,12 +541,12 @@
                 }
                 else {
                     $('#modal_msj_content').html('<div class="alert alert-success" role="alert">{{'_datos_guardados_'|trans}}</div>');
-                    $('#modal_msj').modal('show');                    
+                    $('#modal_msj').modal('show');
                 }
             });
-            
+
         });
-    </script>    
+    </script>
     {% else %}
         <script type="text/javascript">
             $(document).ready(function () {
@@ -502,7 +558,7 @@
 {% endblock javascripts %}
 {% block content %}
     <form id="frm_" class="form-inline" >
-        <div class="panel panel-primary">               
+        <div class="panel panel-primary">
             <div class="panel-heading">
                 {% block frm_head %}
                     <DIV class="row">
@@ -511,13 +567,13 @@
                         </div>
                         <div class="col-sm-6">
                             <DIV style="width: 98%; text-align: right" class="prueba">
-                                <button class="btn btn-success" type="submit" name="cargar_datos" id="cargar_datos" ><span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>{{'_cargar_datos_'|trans}}</button>                    
+                                <button class="btn btn-success" type="submit" name="cargar_datos" id="cargar_datos" ><span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>{{'_cargar_datos_'|trans}}</button>
                                 {#<button class="btn btn-danger" name="clear" id="clear" ><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>{{'_limpiar_'|trans}}</button>#}
                                 <button class="btn btn-warning" type="button" name="guardar" id="guardar" ><i class="fa fa-save" data-original-title="" title=""></i>{{'_guardar_'|trans}}</button>
                                 <button class="btn btn-instagram" type="button" name="exportar" id="exportar" ><i class="fa fa-archive" data-original-title="" title=""></i>{{'_exportar_'|trans}}</button>
                                 {% if periodoSeleccionado != null and parametros.periodo_estructura != '-1' and Frm.rutaManualUso != '' %}
                                     <a href="Frm.rutaManualUso" TARGET="_blank" class="btn btn-info" role="button"><i class="fa fa-question-circle" data-original-title="" title=""></i>{{'_manual_uso_'|trans}}</a>
-                                {% endif %}                                    
+                                {% endif %}
                                 <DIV id="mensaje"></div>
                             </div>
                         </div>
@@ -538,7 +594,7 @@
                             </ul>
                             <div class="tab-content">
                                 <div id="jqxgrid{{Formularios[0].id}}" role="tabpanel" class="tab-pane active"></div>
-                                <div role="tabpanel" class="tab-pane" id="jqxlistbox"></div>                    
+                                <div role="tabpanel" class="tab-pane" id="jqxlistbox"></div>
                             </div>
                         </div>
                         {% elseif cantidad_formularios > 1%}
@@ -554,7 +610,7 @@
                                 <div style="overflow: hidden;">
                                     <div style="border:none;" id="jqxgrid{{Frm.id}}"></div>
                                 </div>
-                            {% endfor %}                        
+                            {% endfor %}
                         </div>
                         {% endif %}
                     </div>

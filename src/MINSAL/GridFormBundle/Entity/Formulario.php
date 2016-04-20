@@ -114,6 +114,13 @@ class Formulario
      * @ORM\Column(name="no_ordenar_fila", type="boolean", nullable=true)
      */
     private $noOrdenarPorFila;
+    
+    /**
+     * @var string $calculoFilas
+     *
+     * @ORM\Column(name="calculo_filas", type="text", nullable=true)
+     */
+    private $calculoFilas;
 
     /**
      * @var \Doctrine\Common\Collections\ArrayCollection
@@ -133,7 +140,7 @@ class Formulario
     
     /**
     * @var \Doctrine\Common\Collections\ArrayCollection
-    * @ORM\OneToMany(targetEntity="Formulario", mappedBy="formularioSup", cascade={"all"}, orphanRemoval=true)
+    * @ORM\OneToMany(targetEntity="Formulario", mappedBy="formularioSup")
     */
     private $grupoFormularios;
     
@@ -289,6 +296,7 @@ class Formulario
     {
         $this->campos = new \Doctrine\Common\Collections\ArrayCollection();
         $this->gruposColumnas = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->gruposFormularios = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -618,8 +626,8 @@ class Formulario
      */
     public function addGrupoFormulario(\MINSAL\GridFormBundle\Entity\Formulario $grupoFormularios)
     {
-        $this->grupoFormularios[] = $grupoFormularios;
-
+        $this->grupoFormularios->add($grupoFormularios);
+        $grupoFormularios->setFormularioSup($this);
         return $this;
     }
 
@@ -631,6 +639,7 @@ class Formulario
     public function removeGrupoFormulario(\MINSAL\GridFormBundle\Entity\Formulario $grupoFormularios)
     {
         $this->grupoFormularios->removeElement($grupoFormularios);
+        //$grupoFormularios->setFormularioSup(null);
     }
 
     /**
@@ -641,6 +650,17 @@ class Formulario
     public function getGrupoFormularios()
     {
         return $this->grupoFormularios;
+    }
+    
+    public function setGrupoFormularios($formularios)
+    {        
+        if (count($formularios) > 0) {
+            foreach ($formularios as $i) {
+                $this->addGrupoFormulario($i);
+            }
+        }
+
+        return $this;
     }
 
     /**
@@ -664,5 +684,28 @@ class Formulario
     public function getFormularioSup()
     {
         return $this->formularioSup;
+    }
+
+    /**
+     * Set calculoFilas
+     *
+     * @param string $calculoFilas
+     * @return Formulario
+     */
+    public function setCalculoFilas($calculoFilas)
+    {
+        $this->calculoFilas = $calculoFilas;
+
+        return $this;
+    }
+
+    /**
+     * Get calculoFilas
+     *
+     * @return string 
+     */
+    public function getCalculoFilas()
+    {
+        return $this->calculoFilas;
     }
 }

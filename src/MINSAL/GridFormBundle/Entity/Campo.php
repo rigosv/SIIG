@@ -60,7 +60,7 @@ class Campo
      * @ORM\Column(name="origen", type="text", nullable=true)
      */
     private $origen;
-    
+
     /**
      * @var string $posicion
      *
@@ -81,14 +81,7 @@ class Campo
      * @ORM\Column(name="es_editable", type="boolean", nullable=true)
      */
     private $esEditable;
-    
-    /**
-     * @var string $tipoDefinidoPorFila
-     *
-     * @ORM\Column(name="tipo_definido_por_fila", type="boolean", nullable=true)
-     */
-    private $tipoDefinidoPorFila;
-    
+        
     /**
      * @var string $oculto
      *
@@ -610,26 +603,4 @@ class Campo
         return $this->oculto;
     }
 
-    /**
-     * Set tipoDefinidoPorFila
-     *
-     * @param boolean $tipoDefinidoPorFila
-     * @return Campo
-     */
-    public function setTipoDefinidoPorFila($tipoDefinidoPorFila)
-    {
-        $this->tipoDefinidoPorFila = $tipoDefinidoPorFila;
-
-        return $this;
-    }
-
-    /**
-     * Get tipoDefinidoPorFila
-     *
-     * @return boolean 
-     */
-    public function getTipoDefinidoPorFila()
-    {
-        return $this->tipoDefinidoPorFila;
-    }
 }
