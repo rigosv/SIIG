@@ -273,7 +273,7 @@ class FormularioRepository extends EntityRepository {
             $periodoIngreso = $em->getRepository("GridFormBundle:PeriodoIngresoGrupoUsuarios")->find($periodoIngreso);
         }
 
-        $params_string = $this->getParameterString($parametros, $periodoIngreso->getId(), $tipo_periodo, $user);
+        $params_string = $this->getParameterString($Frm, $parametros, $periodoIngreso->getId(), $tipo_periodo, $user);
         $area = $Frm->getAreaCosteo();
         if ($area != 'ga_variables' and $area != 'ga_compromisosFinancieros' and $area != 'ga_distribucion' and $area != 'almacen_datos' and $area != 'calidad'){
             $origenes = $this->getOrigenes($Frm->getOrigenDatos());
