@@ -45,6 +45,8 @@
 
     <script src="{{ asset("bundles/gridform/js/jqwidgets4.1/globalization/globalize.culture.#{app.request.locale}.js") }}" type="text/javascript"></script>
 
+    <script src="{{ asset('bundles/gridform/js/moment/es.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('bundles/gridform/js/moment/moment.js') }}" type="text/javascript"></script>
     {% block frm %}
     {% if periodoSeleccionado != null and parametros.periodo_estructura != '-1' %}
     {% set titulos = Frm.tituloColumnas | jsonDecode(true) %}
@@ -56,7 +58,8 @@
             var initGrid{{Frm.id}} = function () {
                 var url = Routing.generate('{{url}}', {id: {{Frm.id}}, periodo_ingreso: $('#periodo_estructura').val(),titulo_frm : '{{titulo}}', datos_frm: $('#frm_').serialize() });
                 var fila = 0;
-                
+                var pk = '{{Frm.llave_primaria | default ('codigo_variable')}}'
+
                 filaFormula = function(fila, columna){
                     {% if Frm.calculoFilas != ''%}
                         var campos = '{{Frm.calculoFilas}}'.split(',');
@@ -99,7 +102,7 @@
                             } else {
                                 $.post(Routing.generate('{{url_save}}', {id: {{Frm.id}}, periodo_ingreso: $('#periodo_estructura').val() }),
                                             {datos_frm: $('#frm_').serialize(),
-                                                pk: $('#pk').val(),
+                                                pk: pk,
                                                 fila: JSON.stringify(rowdata),
                                             },
                                 function(resp) {
@@ -253,22 +256,12 @@
                                 hidden: {{campo.oculto|default('false')}},
                                 {% if tipos_datos_por_filas[Frm.id] %}
                                     columntype: 'custom',
-                                {% elseif campo.TipoControl.codigo == 'datetime_range'%}
-                                    columntype: 'datetime',
-                                    createeditor: function (row, column, editor) {
-                                        editor.jqxDateTimeInput({
-                                            selectionMode: 'range',
-                                            formatString: 'dd/MM/yyyy HH:mm',
-                                            showTimeButton: true,
-                                            showCalendarButton: true
-                                        });
-                                    },
                                 {% else %}
                                     columntype: '{{campo.tipoControl.codigo}}',
                                 {% endif %}
                                 {% if campo.esCalculado and mostrar_resumen %} aggregates: ['sum'], {% endif %}
                                 {% if campo.tipoControl.codigo == 'datetimeinput' %}
-                                    cellsformat: 'dd/MM/yyyy h:mm',
+                                    cellsformat: 'dd/MMMM/yyyy HH:mm',
                                 {% endif %}
                                 {% if campo.origen or campo.significadoCampo.catalogo != '' %} displayfield: '{{campo.significadoCampo.codigo}}Source',
                                     createeditor: function (row, value, editor) {
@@ -312,20 +305,22 @@
                                             } else if (tipo_control == 'datetimeinput') {
                                                 var element = $('<input type="datetime"></input>');
                                                 editor.append(element);
-                                                element.jqxDateTimeInput({width: '110px', height: '25px', template: "info",});
-                                            } else if (tipo_control == 'datatime_range') {
-                                                var element = $('<input type="datetime"></input>');
-                                                editor.append(element);
-                                                var datum = null;
-                                                if(cellValue.length > 0)
-                                                    datum = cellValue;
-                                                element.jqxDateTimeInput({value: datum, 
-                                                    width: '310px', height: '25px', 
-                                                    template: "info", 
+                                                var fecha = (moment(cellValue).isValid()) ? moment(cellValue, "DD/MM/YYYY HH:mm") : new Date();
+                                                element.jqxDateTimeInput({value:fecha.toLocaleString('es-SV'), width: width, height: height, 
+                                                    template: "info",
                                                     formatString: 'dd/MM/yyyy HH:mm',
-                                                    culture: 'es-SV',
-                                                    showTimeButton: true,
-                                                    selectionMode: 'range'});
+                                                    showTimeButton: true}); 
+                                            } else if (tipo_control == 'time') {
+                                                var element = $('<input type="time"></input>');
+                                                editor.append(element);
+                                                var hora =  cellValue.split(':');
+                                                var fecha =  moment({hour: hora[0], minute: hora[1]});
+                                                
+                                                element.jqxDateTimeInput({value:fecha.toLocaleString('es-SV'), width: width, height: height, 
+                                                    template: "info",
+                                                    formatString: 'HH:mm', showCalendarButton: false,
+                                                    culture: 'es-SV', showTimeButton: true});
+                                                
                                             }
                                         }
                                     },
@@ -368,11 +363,18 @@
                                                     inputField.jqxInput('selectAll');
                                                 }
                                             } else if (tipo_control == 'datetimeinput'){
-                                                var dateElement = editor.find('div:first');
-                                                element.jqxDateTimeInput({width: '110px', height: '25px', template: "info"});
-                                            } else if (tipo_control == 'datetime_range') {
-                                                var dateElement = editor.find('div:first');
-                                                dateElement.jqxDateTimeInput({width: '310px', height: '25px', template: "info", selectionMode: 'range'});
+                                                var dateElement = editor.find('div:first');    
+                                                //alert(moment('12/12/2012', "DD/MM/YYYY HH:ss"));
+                                                
+                                                var fecha = (moment(cellValue).isValid()) ? moment(cellValue, "DD/MM/YYYY HH:mm") : new Date();
+                                                dateElement.jqxDateTimeInput('val', fecha);
+                                                //dateElement.jqxDateTimeInput({width: width, height: height, template: "info",formatString: 'dd/MM/yyyy HH:mm',
+                                                  //  showTimeButton: true});
+                                            } else if (tipo_control == 'time') {
+                                                var dateElement = editor.find('div:first');                                                
+                                                var hora =  cellValue.split(':');
+                                                var fecha =  moment({hour: hora[0], minute: hora[1]});
+                                                dateElement.jqxDateTimeInput('val', fecha);
                                             }
                                         }
                                     },
@@ -387,12 +389,17 @@
                                                 return editor.find('input').val();
                                             } else if (tipo_control == 'datetimeinput'){
                                                 var dateElement = editor.find('div:first');
-                                                return dateElement.jqxDateTimeInput('getDate');
-                                            } else if (tipo_control == 'datatime_range'){
-                                                var dateElement = editor.find('div:first');                                                
-                                                return dateElement.jqxDateTimeInput('getText');                                                
+                                                var date = new Date(dateElement.jqxDateTimeInput('getDate'));
+                                                return date.toLocaleString('es-SV');
+                                            } else if (tipo_control == 'time'){
+                                                var dateElement = editor.find('div:first');
+                                                var date = new Date(dateElement.jqxDateTimeInput('getDate')).toLocaleString('es-SV');
+                                                var partes = date.split(' ');
+                                                var partes2 = partes[1].split(':');
+                                                hora = (parseInt(partes2[0])<10) ? '0'+partes2[0]: partes2[0];
+                                                return hora+':'+partes2[1];
                                           }
-                                          
+
                                           return editor.val();
                                         }
                                     },
@@ -400,6 +407,7 @@
                                 cellsrenderer: function (index, datafield, cellValue, defaultvalue, column, datarow) {
                                     estilo = (datarow.es_poblacion == 'true') ? "style='color: blue; margin-left:"+(parseInt(datarow.nivel_indentacion) * 20)+"px '" :  "style = 'margin-left:"+(parseInt(datarow.nivel_indentacion) * 20)+"px' ";
                                     estilo = (filaFormula(index, datafield)) ? "style='color: green; font-weight: bold; margin-left:"+(parseInt(datarow.nivel_indentacion) * 20)+"px '" : estilo;
+                                    var tipo_control = (datarow.codigo_tipo_control == undefined) ?  '{{campo.tipoControl.codigo}}' : datarow.codigo_tipo_control;
                                     if (datarow.es_separador == 'true'){
                                         {% if campo.significadoCampo.codigo  ==  'descripcion_variable' %}
                                             return "<div class='separador_variable jqx-{{campo.alineacion.codigo|default('left')}}-align' "+ estilo + " title='"+datarow.ayuda+"'  data-placement= 'top' >" + cellValue +"</div>";
@@ -408,7 +416,6 @@
                                         {% endif %}
                                     }
                                     {% if tipos_datos_por_filas[Frm.id]  %}
-                                        var tipo_control = (datarow.codigo_tipo_control == undefined) ?  '{{campo.tipoControl.codigo}}' : datarow.codigo_tipo_control;
                                         if (tipo_control == 'checkbox' || tipo_control == 'checkbox_3_states'){
                                             var element_aux = $('<div></div>')
                                             var element = $('<div tabIndex=0 style="position: absolute; top: 50%; left: 50%; margin-top: -10px; margin-left: -10px;"></div>');
@@ -423,9 +430,11 @@
                                             return element_aux.html();
                                         }
                                         else    return "<div class='jqx-{{campo.alineacion.codigo|default('left')}}-align nivel_"+datarow.nivel_indentacion+"' "+ estilo + " title='"+datarow.ayuda+"'  data-placement= 'top' >" + cellValue +"</div>";
-
                                     {% else %}
-                                        else return "<div class='jqx-{{campo.alineacion.codigo|default('left')}}-align nivel_"+datarow.nivel_indentacion+"' "+ estilo + " title='"+datarow.ayuda+"'  data-placement= 'top' >" + cellValue +"</div>";
+                                        //if (tipo_control == 'datetimeinput'){
+                                          //  alert(cellValue);
+                                        //}
+                                        //return "<div class='jqx-{{campo.alineacion.codigo|default('left')}}-align nivel_"+datarow.nivel_indentacion+"' "+ estilo + " title='"+datarow.ayuda+"'  data-placement= 'top' >" + cellValue +"</div>";            
                                     {% endif %}
                                 },
                             },
@@ -510,7 +519,7 @@
                                 catch(err) {
                                     return
                                 }
-                                
+
                             }
                         });
                     });
@@ -641,7 +650,6 @@
             </div>
         </div>
         {% block frm_foot %} {% endblock frm_foot %}
-        <input type="hidden" name="pk" id='pk' value="{{pk}}" />
         <input type="hidden" name="col" id='col' />
         <input type="hidden" name="fil" id='fil' />
     </form>
