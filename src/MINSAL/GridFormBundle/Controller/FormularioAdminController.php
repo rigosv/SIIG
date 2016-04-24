@@ -118,6 +118,7 @@ class FormularioAdminController extends Controller
                 $formularios[] = $Frm;
             }
             $parametrosPlantilla['Frm'] = $Frm;
+            $parametrosPlantilla['llave_primaria'] = $pk;
             $parametrosPlantilla['cantidad_formularios'] = count($formularios);
             $parametrosPlantilla['Formularios'] = $formularios;
             $parametrosPlantilla['meses_activos'] = $meses[$periodoSeleccionado->getPeriodo()->getAnio()];
