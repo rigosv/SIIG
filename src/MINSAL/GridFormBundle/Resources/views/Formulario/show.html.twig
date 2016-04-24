@@ -432,7 +432,7 @@
                                         {% endif %}
                                     }
                                     {% if tipos_datos_por_filas[Frm.id]  %}
-                                        if (tipo_control == 'checkbox' || tipo_control == 'checkbox_3_states'){
+                                        if ( (tipo_control == 'checkbox' || tipo_control == 'checkbox_3_states') && datafield != 'descripcion_variable' ){
                                             var element_aux = $('<div></div>')
                                             var element = $('<div tabIndex=0 style="position: absolute; top: 50%; left: 50%; margin-top: -10px; margin-left: -10px;"></div>');
                                             if (tipo_control == 'checkbox_3_states'){
