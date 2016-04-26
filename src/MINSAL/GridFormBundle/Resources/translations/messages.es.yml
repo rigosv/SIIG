@@ -1,6 +1,7 @@
 _abril_: Abril
 _agosto_: Agosto
 _ajustar_alto_fila_: Ajustar alto de las filas
+_alertas_: Alertas
 _alineacion_: Alineación
 _almacen_datos_: Captura de datos
 _ancho_: Ancho
@@ -60,6 +61,7 @@ _grupo_formularios_: Grupo formularios
 _grupo_padre_: Grupo padre
 _junio_: Junio
 _julio_: Julio
+_limite_inferior_: Límite inferior
 _limpiar_: Limpiar
 _manual_uso_: Manual de uso
 _marzo_: Marzo
@@ -89,6 +91,7 @@ _periodo_ingreso_datos_formulario_: 'Periodo Ingreso - Datos formulario'
 _periodo_lectura_datos_: 'Periodo de lectura de datos'
 _porcentaje_cumplimiento_: Porcentaje de cumplimiento
 _posicion_: Posición
+_rango_alerta_: Rango alertas
 _ruta_manual_uso_:  Ruta manual de uso
 _seleccione_dependencia_: 'Seleccione la dependencia'
 _separador_: Es separador

@@ -38,6 +38,12 @@ class VariableCapturaAdmin extends Admin
                                 ->orderBy('c.descripcion');
                     }
                 ))
+                ->add('alertas', null, 
+                    array('label'=> $this->getTranslator()->trans('_alertas_'), 
+                    'expanded' => false, 
+                    'multiple' => true,
+                    'by_reference' => false
+                    ))
         ;
         $formMapper
             ->setHelps(array(
@@ -107,6 +113,18 @@ class VariableCapturaAdmin extends Admin
     {
         $actions = parent::getBatchActions();
         $actions['delete'] = null;
+    }
+    
+    public function getTemplate($name)
+    {
+        switch ($name) {
+            case 'edit':
+                return 'GridFormBundle:CRUD:variableCaptura-edit.html.twig';
+                break;
+            default:
+                return parent::getTemplate($name);
+                break;
+        }
     }
 
 }

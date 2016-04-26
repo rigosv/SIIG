@@ -99,7 +99,14 @@ class VariableCaptura
      * */
     private $tipoControl;
     
-
+    /**
+     * @var \Doctrine\Common\Collections\ArrayCollection
+     *
+     * @ORM\ManyToMany(targetEntity="RangoAlerta", inversedBy="criterios")
+     * @ORM\OrderBy({"limiteInferior" = "ASC", "limiteSuperior" = "ASC", "color" = "ASC"})
+     **/
+    private $alertas;
+    
 
     /**
      * Get id
@@ -368,5 +375,45 @@ class VariableCaptura
     public function getNivelIndentacion()
     {
         return $this->nivelIndentacion;
+    }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->alertas = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add alertas
+     *
+     * @param \MINSAL\GridFormBundle\Entity\RangoAlerta $alertas
+     * @return VariableCaptura
+     */
+    public function addAlerta(\MINSAL\GridFormBundle\Entity\RangoAlerta $alertas)
+    {
+        $this->alertas[] = $alertas;
+
+        return $this;
+    }
+
+    /**
+     * Remove alertas
+     *
+     * @param \MINSAL\GridFormBundle\Entity\RangoAlerta $alertas
+     */
+    public function removeAlerta(\MINSAL\GridFormBundle\Entity\RangoAlerta $alertas)
+    {
+        $this->alertas->removeElement($alertas);
+    }
+
+    /**
+     * Get alertas
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getAlertas()
+    {
+        return $this->alertas;
     }
 }

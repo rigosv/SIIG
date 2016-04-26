@@ -125,7 +125,24 @@ class FormularioRepository extends EntityRepository {
                 )";
         $this->orden = "ORDER BY datos->'es_poblacion' DESC, COALESCE(NULLIF(datos->'posicion', ''), '100000000')::integer, datos->'descripcion_categoria_variable', datos->'descripcion_variable'";
         $em->getConnection()->executeQuery($sql);
-
+        
+        //Los rangos de alertas
+        $sql = "SELECT DISTINCT ON (variablecaptura_id) variablecaptura_id, 
+                    (select array_to_string(
+                                array(
+                                    SELECT limite_inferior||'-'||limite_superior||'-'||color  
+                                        FROM variablecaptura_rangoalerta A 
+                                            INNER JOIN rango_alerta B ON (A.rangoalerta_id = B.id) 
+                                        WHERE A.variablecaptura_id = AA.variablecaptura_id
+                                    ), ','
+                                ) AS alertas
+                    ) AS alertas 
+                INTO TEMP rangos_alertas
+                FROM variablecaptura_rangoalerta AA 
+                    INNER JOIN variable_captura BB ON (AA.variablecaptura_id = BB.id) 
+                WHERE formulario_id= ".$Frm->getId();
+        $em->getConnection()->executeQuery($sql);
+        
         //Actualizar los datos de las variables ya existentes
         $sql = " UPDATE almacen_datos.repositorio 
                     SET datos = datos ||('\"ayuda\"=>'||'\"'||COALESCE(A.texto_ayuda,'')||'\"')::hstore 
@@ -138,11 +155,13 @@ class FormularioRepository extends EntityRepository {
                         ||('\"descripcion_variable\"=>'||'\"'|| COALESCE(A.descripcion::varchar, '') ||'\"')::hstore
                         ||('\"regla_validacion\"=>'||'\"'||COALESCE(A.regla_validacion::varchar,'')||'\"')::hstore
                         ||('\"codigo_tipo_control\"=>'||'\"'||COALESCE(C.codigo::varchar,'')||'\"')::hstore
+                        ||('\"alertas\"=>'||'\"'||COALESCE(D.alertas::varchar,'')||'\"')::hstore
                     FROM (SELECT texto_ayuda, es_poblacion, es_separador, posicion, nivel_indentacion, regla_validacion, 
-                        replace(descripcion, '\"', '\\\"') AS descripcion, id_categoria_captura, id_tipo_control, codigo
+                        replace(descripcion, '\"', '\\\"') AS descripcion, id_categoria_captura, id_tipo_control, codigo, id
                         FROM variable_captura ) AS A
                         INNER JOIN categoria_variable_captura B ON (A.id_categoria_captura = B.id)
                         LEFT JOIN costos.tipo_control C ON (A.id_tipo_control = C.id)
+                        LEFT JOIN rangos_alertas D ON (A.id = D.variablecaptura_id)
                     WHERE almacen_datos.repositorio.datos->'codigo_variable' = A.codigo";        
         $em->getConnection()->executeQuery($sql);      
     }

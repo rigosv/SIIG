@@ -1,0 +1,18 @@
+{% extends 'IndicadoresBundle:CRUD:edit.html.twig' %}
+
+{% block javascripts %}
+    {{ parent() }}    
+    <script type="text/javascript">
+        $(document).ready(function() {
+            function formatState (state) {
+                var partes = state.text.split('-');
+                return partes[0] + ' - ' + partes[1] + '<span style="background-color:'+partes[2]+'"> '+partes[2]+'</span>';
+            };            
+            $('select[id$="_alertas"]').select2({
+                formatSelection: formatState,
+                formatResult: formatState
+            });
+
+        });
+    </script>
+{% endblock %}

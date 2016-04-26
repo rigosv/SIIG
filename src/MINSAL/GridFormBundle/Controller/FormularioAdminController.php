@@ -113,7 +113,8 @@ class FormularioAdminController extends Controller
             'pk' => $pk);
         
         if ($periodo != '-1'){
-            $formularios = $Frm->getGrupoFormularios();
+            //$formularios = $Frm->getGrupoFormularios();
+            $formularios = $em->getRepository('GridFormBundle:Formulario')->findBy(array('formularioSup'=>$Frm), array('codigo'=>'ASC'));
             if ($formularios == null or count($formularios) == 0){
                 $formularios[] = $Frm;
             }

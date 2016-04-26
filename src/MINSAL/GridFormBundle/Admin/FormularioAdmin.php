@@ -35,7 +35,7 @@ class FormularioAdmin extends Admin
                             'calidad' => $this->getTranslator()->trans('_calidad_')
                             )
                         ))
-            ->add('meta', null, array('label'=> $this->getTranslator()->trans('_meta_')))
+            ->add('meta', null, array('label'=> $this->getTranslator()->trans('_estandar_')))
             ->add('periodoLecturaDatos', 'choice', array('label' => $this->getTranslator()->trans('_periodo_lectura_datos_'),
                         'choices' => array('mensual'=>$this->getTranslator()->trans('_mensual_'),
                             'anual'=>$this->getTranslator()->trans('_anual_')                            

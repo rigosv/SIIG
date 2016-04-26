@@ -61,7 +61,7 @@
                  manager_type="orm" 
                  group="origen_datos" 
                  label="_variable_captura_"
-            />    
+            />
             <argument />            
             <argument>MINSAL\GridFormBundle\Entity\VariableCaptura</argument>
             <argument>SonataAdminBundle:CRUD</argument>
@@ -77,6 +77,12 @@
             <argument>MINSAL\GridFormBundle\Entity\CategoriaVariableCaptura</argument>
             <argument>SonataAdminBundle:CRUD</argument>
             <call method="setMaxPerPage"><argument>10</argument></call>
+        </service>
+        <service id="sonata.gridform.admin.rango_alerta" class="MINSAL\GridFormBundle\Admin\RangoAlertaAdmin">
+            <tag name="sonata.admin" manager_type="orm" group="_configuracion_" label="_rango_alerta_"/>
+            <argument />
+            <argument>MINSAL\GridFormBundle\Entity\RangoAlerta</argument>
+            <argument />            
         </service>
     </services>
 </container>
