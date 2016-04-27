@@ -424,7 +424,13 @@
                                     nivel = (datafield == 'descripcion_variable') ? datarow.nivel_indentacion : 0.3;
                                     estilo = (datarow.es_poblacion == 'true') ? "style='color: blue; margin-left:"+(parseFloat(nivel) * 20)+"px '" :  "style = 'margin-left:"+(parseFloat(nivel) * 20)+"px' ";
                                     estilo = (filaFormula(index, datafield)) ? "style='color: green; font-weight: bold; margin-left:"+(parseFloat(nivel) * 20)+"px '" : estilo;
+                                    var tipo_control = (datarow.codigo_tipo_control == undefined) ?  '{{campo.tipoControl.codigo}}' : datarow.codigo_tipo_control;
                                     var valor = cellValue;
+                                    // Si es tiempo pasarlo a minutos
+                                    if (tipo_control == 'time'){
+                                        partes = cellValue.split(':');
+                                        valor = parseInt(partes[0]) * 60 + parseInt(partes[1]);
+                                    }
                                     if (datarow.alertas != ''){
                                         var rangos = datarow.alertas.split(',');
                                         rangos.forEach(function(nodo, index){
@@ -436,7 +442,7 @@
                                             }
                                         });
                                     }
-                                    var tipo_control = (datarow.codigo_tipo_control == undefined) ?  '{{campo.tipoControl.codigo}}' : datarow.codigo_tipo_control;
+                                    
                                     if (datarow.es_separador == 'true'){
                                         {% if campo.significadoCampo.codigo  ==  'descripcion_variable' %}
                                             return "<div class='separador_variable jqx-{{campo.alineacion.codigo|default('left')}}-align' "+ estilo + " title='"+datarow.ayuda+"'  data-placement= 'top' >" + cellValue +"</div>";
