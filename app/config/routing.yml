@@ -1,3 +1,8 @@
+estructura_organizativa:
+    resource: "@EstructuraOrganizativaBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
 grid_form:
     resource: "@GridFormBundle/Controller/"
     type:     annotation

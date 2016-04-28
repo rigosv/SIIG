@@ -140,6 +140,12 @@ class Formulario
     
     /**
     * @var \Doctrine\Common\Collections\ArrayCollection
+    * @ORM\OneToMany(targetEntity="EvaluacionAtencion", mappedBy="formulario", cascade={"all"}, orphanRemoval=true)
+    */
+    private $areasEvaluacion;
+    
+    /**
+    * @var \Doctrine\Common\Collections\ArrayCollection
     * @ORM\OneToMany(targetEntity="Formulario", mappedBy="formularioSup")
     */
     private $grupoFormularios;
@@ -707,5 +713,38 @@ class Formulario
     public function getCalculoFilas()
     {
         return $this->calculoFilas;
+    }
+
+    /**
+     * Add areasEvaluacion
+     *
+     * @param \MINSAL\GridFormBundle\Entity\EvaluacionAtencion $areasEvaluacion
+     * @return Formulario
+     */
+    public function addAreasEvaluacion(\MINSAL\GridFormBundle\Entity\EvaluacionAtencion $areasEvaluacion)
+    {
+        $this->areasEvaluacion[] = $areasEvaluacion;
+
+        return $this;
+    }
+
+    /**
+     * Remove areasEvaluacion
+     *
+     * @param \MINSAL\GridFormBundle\Entity\EvaluacionAtencion $areasEvaluacion
+     */
+    public function removeAreasEvaluacion(\MINSAL\GridFormBundle\Entity\EvaluacionAtencion $areasEvaluacion)
+    {
+        $this->areasEvaluacion->removeElement($areasEvaluacion);
+    }
+
+    /**
+     * Get areasEvaluacion
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getAreasEvaluacion()
+    {
+        return $this->areasEvaluacion;
     }
 }

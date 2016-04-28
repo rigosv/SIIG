@@ -91,7 +91,7 @@ class MenuBuilder
                                 if ($admin->hasRoute('almacenDatos') and ( $usuario->hasRole('ROLE_SUPER_ADMIN') or $usuario->hasRole('ROLE_USER_CAPTURA_DATOS'))) {
                                     $menu['origen_datos']
                                             ->addChild('_almacen_datos_', array('uri' => $admin->generateUrl('almacenDatos')))
-                                            ->setExtra('translationdomain', $admin->getTranslationDomain())
+                                            
                                             ->setExtra('admin', $admin)
                                     ;
                                 }
@@ -100,7 +100,7 @@ class MenuBuilder
                                 if ($admin->hasRoute('tablero') and ( $usuario->hasRole('ROLE_SUPER_ADMIN') or $usuario->hasRole('ROLE_USER_TABLERO'))) {
                                     $menu[$name]
                                             ->addChild('indicador_tablero', array('uri' => $admin->generateUrl('tablero')))
-                                            ->setExtra('translationdomain', $admin->getTranslationDomain())
+                                            
                                             ->setExtra('admin', $admin)
                                     ;
                                 }
@@ -109,7 +109,7 @@ class MenuBuilder
                                 if ($admin->hasRoute('pivotTable') and ( $usuario->hasRole('ROLE_SUPER_ADMIN') or $usuario->hasRole('ROLE_USER_PIVOT_TABLE'))) {
                                     $menu[$name]
                                             ->addChild('_tabla_pivote_', array('uri' => $admin->generateUrl('pivotTable')))
-                                            ->setExtra('translationdomain', $admin->getTranslationDomain())
+                                            
                                             ->setExtra('admin', $admin)
                                     ;
                                 }
@@ -118,7 +118,7 @@ class MenuBuilder
                                 if ($admin->hasRoute('tableroCalidad') and ( $usuario->hasRole('ROLE_SUPER_ADMIN') or $usuario->hasRole('ROLE_USER_TABLERO_CALIDAD'))) {
                                     $menu[$name]
                                             ->addChild('_tablero_calidad_', array('uri' => $admin->generateUrl('tableroCalidad')))
-                                            ->setExtra('translationdomain', $admin->getTranslationDomain())
+                                            
                                             ->setExtra('admin', $admin)
                                     ;
                                 }
@@ -129,7 +129,7 @@ class MenuBuilder
                                 if ( $usuario->hasRole('ROLE_SUPER_ADMIN') or $usuario->hasRole('ROLE_USER_COSTEO')) {
                                     $menu['_costeo_']
                                             ->addChild('_'.$ruta.'_', array('uri' => $admin->generateUrl($ruta)))
-                                            ->setExtra('translationdomain', $admin->getTranslationDomain())
+                                            
                                             ->setExtra('admin', $admin)
                                     ;
                                 }
