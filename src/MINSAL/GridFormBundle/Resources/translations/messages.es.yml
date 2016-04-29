@@ -48,6 +48,8 @@ _estructura_organizativa_: Estructura organizativa
 _error_validation_: Error de validación
 _error_datos_no_guardados_: Sucedió un error al guardar los datos
 _evaluaciones_: Evaluaciones
+_evaluacion_atencion_: Areas a evaluar
+_areas_atencion_: Areas a evaluar
 _faltan_datos_requeridos_: Faltan datos requeridos
 _febrero_: Febrero
 _formato_: Formato
@@ -82,6 +84,7 @@ _noviembre_: Noviembre
 _octubre_: Octubre
 _oculto_: Oculto
 _origen_campo_: Origen campo
+_origen_filas_help_: Sentencia SQL para recuperar filas que serán representadas por la variable
 _origen_formulario_: Origen del formulario
 _origen_pivote_: Origen pivote
 _parametros_no_establecidos_: No se han definido parámetros

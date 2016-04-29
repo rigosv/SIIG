@@ -38,6 +38,7 @@ class VariableCapturaAdmin extends Admin
                                 ->orderBy('c.descripcion');
                     }
                 ))
+                ->add('origenFilas', null, array('label' => $this->getTranslator()->trans('_origen_filas_')))
                 ->add('alertas', null, 
                     array('label'=> $this->getTranslator()->trans('_alertas_'), 
                     'expanded' => false, 
@@ -47,7 +48,8 @@ class VariableCapturaAdmin extends Admin
         ;
         $formMapper
             ->setHelps(array(
-                    'reglaValidacion' => $this->getTranslator()->trans('_operadores_permitidos_')
+                    'reglaValidacion' => $this->getTranslator()->trans('_operadores_permitidos_'),
+                    'origenFilas' => $this->getTranslator()->trans('_origen_filas_help_')
                 ))
                 ;
     }

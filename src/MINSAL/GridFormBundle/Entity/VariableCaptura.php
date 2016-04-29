@@ -55,6 +55,13 @@ class VariableCaptura
     private $descripcion;
     
     /**
+     * @var string $origenFilas
+     *
+     * @ORM\Column(name="origen_filas", type="text", nullable=true)
+     */
+    private $origenFilas;
+    
+    /**
      * @var string $posicion
      *
      * @ORM\Column(name="posicion", type="integer", nullable=true)
@@ -415,5 +422,28 @@ class VariableCaptura
     public function getAlertas()
     {
         return $this->alertas;
+    }
+
+    /**
+     * Set origenFilas
+     *
+     * @param string $origenFilas
+     * @return VariableCaptura
+     */
+    public function setOrigenFilas($origenFilas)
+    {
+        $this->origenFilas = $origenFilas;
+
+        return $this;
+    }
+
+    /**
+     * Get origenFilas
+     *
+     * @return string 
+     */
+    public function getOrigenFilas()
+    {
+        return $this->origenFilas;
     }
 }

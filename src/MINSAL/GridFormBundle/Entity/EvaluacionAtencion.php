@@ -9,7 +9,6 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * MINSAL\GridFormBundle\Entity\EvaluacionAtencion
  *
  * @ORM\Table(name="evaluacion_atencion")
- * @UniqueEntity(fields="codigo", message="Código ya existe")
  * @ORM\Entity
  */
 class EvaluacionAtencion

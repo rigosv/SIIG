@@ -84,5 +84,11 @@
             <argument>MINSAL\GridFormBundle\Entity\RangoAlerta</argument>
             <argument />            
         </service>
+        <service id="sonata.gridform.admin.evaluacionatencion" class="MINSAL\GridFormBundle\Admin\EvaluacionAtencionAdmin">
+            <tag name="sonata.admin" manager_type="orm" group="_configuracion_" label="_evaluacion_atencion_"/>
+            <argument />
+            <argument>MINSAL\GridFormBundle\Entity\EvaluacionAtencion</argument>
+            <argument />            
+        </service>
     </services>
 </container>
