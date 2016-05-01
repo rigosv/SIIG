@@ -264,18 +264,8 @@
                                     </TD>
                                     <TD class="indentacion_[[criterio.nivel_indentacion]]" ng-if="criterio.es_separador != 'true'" >
                                         [[criterio.descripcion_variable]]
-                                    </TD>
-                                    <TD ng-if="evaluacionSeleccionada.periodo_lectura_datos =='anual' && criterio.es_separador != 'true' "  >
-                                        <button class="btn btn-success" ng-if="getValorMes(criterio)=='true'">
-                                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                                        </button>
-                                        <button class="btn btn-danger " ng-if="getValorMes(criterio)=='false' || getValorMes(criterio)==''">
-                                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                                        </button>
-                                        <span ng-if="getValorMes(criterio) != 'false' && getValorMes(criterio) != 'true'">[[getValorMes(criterio)]]</span>
-                                    </TD>
-
-                                    <TD ng-if="evaluacionSeleccionada.periodo_lectura_datos =='mensual' && criterio.es_separador != 'true' "
+                                    </TD>                                    
+                                    <TD ng-if="criterio.es_separador != 'true' "
                                         ng-repeat="exp in getExpedientes(criterio)"
                                         >
                                         <button class="btn btn-success" ng-if="getValorExpediente(exp)=='true'">

@@ -36,6 +36,12 @@ class FormularioAdmin extends Admin
                             )
                         ))
             ->add('meta', null, array('label'=> $this->getTranslator()->trans('_estandar_')))
+            ->add('formaEvaluacion', 'choice', array('label' => $this->getTranslator()->trans('_forma_evaluacion_'),
+                        'choices' => array(
+                            'lista_chequeo'=>$this->getTranslator()->trans('_lista_chequeo_'),
+                            'rango_colores' => $this->getTranslator()->trans('_rango_colores_')
+                            )
+                        ))
             ->add('periodoLecturaDatos', 'choice', array('label' => $this->getTranslator()->trans('_periodo_lectura_datos_'),
                         'choices' => array('mensual'=>$this->getTranslator()->trans('_mensual_'),
                             'anual'=>$this->getTranslator()->trans('_anual_')                            

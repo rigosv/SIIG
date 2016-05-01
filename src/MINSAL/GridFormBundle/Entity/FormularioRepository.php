@@ -391,158 +391,251 @@ class FormularioRepository extends EntityRepository {
     public function getEstablecimientosEvaluados($periodo) {
         $em = $this->getEntityManager();
         list($anio, $mes) = explode('_', $periodo);
+        $datos = array();
         
-        $sql = " SELECT id_establecimiento, category, nombre, total_cumplimiento, 
-            total_no_cumplimiento, total_aplicable, round(((total_cumplimiento::numeric/total_aplicable::numeric)::numeric * 100 )) AS measure
-            FROM 
-            (
-            SELECT id_establecimiento, id_establecimiento AS category, establecimiento AS nombre,
-                SUM(cumplimiento) AS total_cumplimiento, 
-                SUM(no_cumplimiento) AS total_no_cumplimiento, 
-                SUM(cumplimiento) + SUM(no_cumplimiento) AS total_aplicable
-            FROM (
-                SELECT AA.id_establecimiento, AA,establecimiento,
-                    CASE WHEN AA.dato = 'true' THEN 1 END AS cumplimiento, 
-                    CASE WHEN AA.dato = 'false' OR AA.dato = '' THEN 1 END AS no_cumplimiento
-                FROM (
-                    SELECT C.id AS id_establecimiento, C.descripcion AS establecimiento,
-                        unnest(array[datos->'num_expe_1', datos->'num_expe_2',
-                            datos->'num_expe_3' , datos->'num_expe_4' ,
-                            datos->'num_expe_5' , datos->'num_expe_6' ,
-                            datos->'num_expe_7' , datos->'num_expe_8' , 
-                            datos->'num_expe_9' , datos->'num_expe_10' ]
-                            ) AS dato
+        //Obtener los establecimientos
+        $sql = "SELECT distinct on (datos->'establecimiento') datos->'establecimiento' AS id_establecimiento, C.descripcion
                     FROM  almacen_datos.repositorio A
                         INNER JOIN costos.formulario B ON (A.id_formulario = B.id)
                         INNER JOIN ctl_establecimiento_simmow C ON (A.datos->'establecimiento' = C.id::text)
                     WHERE B.area_costeo = 'calidad'
-                        AND B.periodo_lectura_datos = 'mensual'
                         AND A.datos->'anio' = '$anio'
-                        AND (A.datos->'mes')::integer = '$mes'
-                        AND A.datos->'es_separador' != 'true'
+                        AND A.datos->'es_separador' != 'true'";
+        $establecimientos = $em->getConnection()->executeQuery($sql)->fetchAll();
+        
+        foreach ($establecimientos as $est){
+            $establecimiento = $est['id_establecimiento'];
+            
+            $frms = $this->getFormulariosEstablecimiento($establecimiento, $anio);
+            $total_evaluacion = array('cumplimiento'=>0, 'no_cumplimiento'=>0);
+            
+            $formularios = array();
+            foreach ($frms as $f) {
+                $Frm = $em->getRepository('GridFormBundle:Formulario')->find($f);
+                $formularios[$Frm->getId()]['form'] = $Frm;
+                $grupos = $Frm->getGrupoFormularios();
+                $datos_frm = (count($grupos) > 0 ) ? $grupos : array($Frm);
 
-                    UNION ALL
-
-                    SELECT BB.id_establecimiento, BB.establecimiento, BB.dato 
-                        FROM (
-                            SELECT C.id AS id_establecimiento, C.descripcion AS establecimiento, 
-                                A.datos->'anio' AS anio, 
-                                unnest(array['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']) AS mes, 
-                                unnest(array[datos->'mes_check_01', datos->'mes_check_02',
-                                    datos->'mes_check_03' , datos->'mes_check_04' ,
-                                    datos->'mes_check_05' , datos->'mes_check_06' ,
-                                    datos->'mes_check_07' , datos->'mes_check_08' , 
-                                    datos->'mes_check_09' , datos->'mes_check_10' , 
-                                    datos->'mes_check_11' , datos->'mes_check_12']
-                                    ) AS dato
-                                FROM  almacen_datos.repositorio A
-                                    INNER JOIN costos.formulario B ON (A.id_formulario = B.id)
-                                    INNER JOIN ctl_establecimiento_simmow C ON (A.datos->'establecimiento' = C.id::text)
-                                WHERE B.area_costeo = 'calidad'
-                                    AND B.periodo_lectura_datos = 'anual'
-                                    AND A.datos->'anio' = '$anio'
-                                    AND A.datos->'es_separador' != 'true'
-                            ) AS BB
-                        WHERE (BB.mes)::integer = '$mes'
-                    ) AS AA
-            ) AS AAA
-            GROUP BY id_establecimiento, establecimiento
-            HAVING (SUM(cumplimiento) + SUM(no_cumplimiento)) > 0
-            ) AS A1            
-            ORDER BY total_cumplimiento DESC
-                ;";
-        try {
-            return $em->getConnection()->executeQuery($sql)->fetchAll();
-        } catch (\PDOException $e) {
-            return $e->getMessage();
+                foreach ($datos_frm as $ff){
+                    $result = $this->getResultadoEvaluacion($ff, $establecimiento, $anio, $mes);
+                    $total_evaluacion['cumplimiento'] = $total_evaluacion['cumplimiento'] + $result['total_cumplimiento'];
+                    $total_evaluacion['no_cumplimiento'] = $total_evaluacion['no_cumplimiento'] + $result['total_no_cumplimiento'];
+                }
+                
+            }
+            
+            $datos_['id_establecimiento'] = $est['id_establecimiento'];
+            $datos_['category'] = $est['id_establecimiento'];
+            $datos_['nombre'] = $est['descripcion'];
+            $datos_['total_cumplimiento'] = $total_evaluacion['cumplimiento'];
+            $datos_['total_no_cumplimiento'] = $total_evaluacion['no_cumplimiento'];
+            $datos_['total_aplicable'] = $total_evaluacion['cumplimiento'] + $total_evaluacion['no_cumplimiento'];
+            $datos_['measure'] = round($total_evaluacion['cumplimiento'] /  $datos_['total_aplicable'] * 100, 0 );
+            $datos[] = $datos_;
         }
+        
+        return $datos;
     }
     
     public function getEvaluaciones($establecimiento, $periodo) {
         $em = $this->getEntityManager();
+        $datos = array();
+        $datos_ = array();
         list($anio, $mes) = explode('_', $periodo);
         
-        $sql = " SELECT codigo, nombre_evaluacion, category AS axis, descripcion, round((meta/100),1) AS meta, periodo_lectura_datos,
-            total_cumplimiento, total_no_cumplimiento, total_aplicable, 
-            round(((total_cumplimiento::numeric/total_aplicable::numeric)::numeric * 100 )) AS measure,
-            round(((total_cumplimiento::numeric/total_aplicable::numeric)::numeric),2) AS value,
-            (meta/100 - total_cumplimiento::numeric/total_aplicable::numeric) AS brecha
-            FROM 
-            (
-                SELECT codigo, nombre_evaluacion, nombre_evaluacion AS category, descripcion, meta,
-                    periodo_lectura_datos, 
-                    COUNT(cumplimiento) AS total_cumplimiento, 
-                    COUNT(no_cumplimiento) AS total_no_cumplimiento, 
-                    COUNT(cumplimiento) + COUNT(no_cumplimiento) AS total_aplicable
-                FROM (
-                    SELECT AA.codigo, AA.nombre_evaluacion, AA.descripcion, COALESCE(AA.meta, 0)::numeric AS meta, AA.periodo_lectura_datos,
-                        CASE WHEN AA.dato = 'true' THEN 1 END AS cumplimiento, 
-                        CASE WHEN AA.dato = 'false' OR AA.dato = '' THEN 1 END AS no_cumplimiento
-                    FROM (
-
-                        SELECT B.codigo, B.nombre AS nombre_evaluacion, B.descripcion, COALESCE(B.meta, 0)::numeric AS meta, B.periodo_lectura_datos,
-                            unnest(array[datos->'num_expe_1', datos->'num_expe_2',
-                                datos->'num_expe_3' , datos->'num_expe_4' ,
-                                datos->'num_expe_5' , datos->'num_expe_6' ,
-                                datos->'num_expe_7' , datos->'num_expe_8' , 
-                                datos->'num_expe_9' , datos->'num_expe_10' ]
-                                ) AS dato
-                        FROM  almacen_datos.repositorio A
-                            INNER JOIN costos.formulario B ON (A.id_formulario = B.id)
-                            INNER JOIN ctl_establecimiento_simmow C ON (A.datos->'establecimiento' = C.id::text)
-                        WHERE area_costeo = 'calidad'
-                            AND B.periodo_lectura_datos = 'mensual'
-                            AND A.datos->'anio' = '$anio'
-                            AND (A.datos->'mes')::integer = '$mes'
-                            AND A.datos->'establecimiento' = '$establecimiento'
-                            AND A.datos->'es_separador' != 'true'
-
-                        UNION ALL
-
-                        SELECT BB.codigo, BB.nombre_evaluacion, BB.descripcion, COALESCE(BB.meta, 0)::numeric AS meta, BB.periodo_lectura_datos,
-                            BB.dato 
-                            FROM (
-                                SELECT B.codigo, B.nombre AS nombre_evaluacion, B.descripcion, COALESCE(B.meta, 0)::numeric AS meta, B.periodo_lectura_datos,
-                                    A.datos->'anio' AS anio, 
-                                    unnest(array['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']) AS mes, 
-                                    unnest(array[datos->'mes_check_01', datos->'mes_check_02',
-                                        datos->'mes_check_03' , datos->'mes_check_04' ,
-                                        datos->'mes_check_05' , datos->'mes_check_06' ,
-                                        datos->'mes_check_07' , datos->'mes_check_08' , 
-                                        datos->'mes_check_09' , datos->'mes_check_10' , 
-                                        datos->'mes_check_11' , datos->'mes_check_12']
-                                        ) AS dato
-                                    FROM  almacen_datos.repositorio A
-                                        INNER JOIN costos.formulario B ON (A.id_formulario = B.id)
-                                        INNER JOIN ctl_establecimiento_simmow C ON (A.datos->'establecimiento' = C.id::text)
-                                    WHERE area_costeo = 'calidad'
-                                        AND B.periodo_lectura_datos = 'anual'
-                                        AND A.datos->'anio' = '$anio'
-                                        AND A.datos->'establecimiento' = '$establecimiento'
-                                        AND A.datos->'es_separador' != 'true'
-                                ) AS BB
-                            WHERE (BB.mes)::integer = '$mes'
-                        ) AS AA
-                ) AS AAA
-                GROUP BY codigo, nombre_evaluacion, descripcion, meta, periodo_lectura_datos
-                HAVING COUNT(cumplimiento) + COUNT(no_cumplimiento) > 0
-            ) AS A1
-            ORDER BY total_cumplimiento DESC
-                ";
-        try {
-            return $em->getConnection()->executeQuery($sql)->fetchAll();
-        } catch (\PDOException $e) {
-            return $e->getMessage();
+        $frms = $this->getFormulariosEstablecimiento($establecimiento, $anio);
+        
+        $formularios = array();
+        foreach ($frms as $f) {
+            $Frm = $em->getRepository('GridFormBundle:Formulario')->find($f);
+            $total_evaluacion = array('cumplimiento'=>0, 'no_cumplimiento'=>0);
+            $formularios[$Frm->getId()]['form'] = $Frm;
+            $grupos = $Frm->getGrupoFormularios();
+            $datos_frm = (count($grupos) > 0 ) ? $grupos : array($Frm);
+            
+            foreach ($datos_frm as $ff){
+                $result = $this->getResultadoEvaluacion($ff, $establecimiento, $anio, $mes);
+                $total_evaluacion['cumplimiento'] = $total_evaluacion['cumplimiento'] + $result['total_cumplimiento'];
+                $total_evaluacion['no_cumplimiento'] = $total_evaluacion['no_cumplimiento'] + $result['total_no_cumplimiento'];
+                
+            }
+            $datos_['codigo'] = $Frm->getCodigo();
+            $datos_['nombre_evaluacion'] = $Frm->getNombre();
+            $datos_['axis'] = $Frm->getNombre();
+            $datos_['descripcion'] = $Frm->getDescripcion();
+            $datos_['descripcion'] = $Frm->getDescripcion();
+            $datos_['meta'] = ($Frm->getMeta() > 0) ? number_format($Frm->getMeta()/100, 1) : 0;
+            $datos_['periodo_lectura_datos'] = $Frm->getPeriodoLecturaDatos();
+            $datos_['total_cumplimiento'] = $total_evaluacion['cumplimiento'];
+            $datos_['total_no_cumplimiento'] = $total_evaluacion['no_cumplimiento'];
+            $datos_['total_aplicable'] = $total_evaluacion['cumplimiento'] + $total_evaluacion['no_cumplimiento'];
+            
+            $datos_['measure'] = ($datos_['total_aplicable'] > 0)  ? round($total_evaluacion['cumplimiento'] /  $datos_['total_aplicable'] * 100, 0 ) : 0;
+            $datos_['value'] = ($datos_['total_aplicable'] > 0 ) ? round($total_evaluacion['cumplimiento'] /  $datos_['total_aplicable'] * 100, 0 ) : 0;
+            $datos_['brecha'] = ($datos_['meta'] > 0) ? $datos_['meta'] - $datos_['measure'] : 0;
+            
+            $datos[] = $datos_;
         }
+        return $datos;
+    }
+    
+    protected function getListaCampos(Formulario $Frm, $array = true) {
+        $campos = '';
+        foreach ($Frm->getCampos() as $c){
+            $piv = $c->getOrigenPivote();
+            $codigoCampo = $c->getSignificadoCampo()->getCodigo();
+            if ($piv != ''){
+                $piv_ = json_decode($piv);                
+                $campos .= ($array) ? "unnest(array[" : '';                
+                foreach($piv_ as $p){
+                    $alias = ($array) ? '' : ' AS "'.$p->descripcion.'" ';
+                    $campos .= " datos->'".$codigoCampo."_".$p->id."'". $alias.", ";
+                }
+                $campos = ($array) ? trim($campos, ', ') : $campos;
+                $campos .= ($array) ? "]) AS dato, " : '';
+            } else {
+                $campos .= " datos->'$codigoCampo' AS $codigoCampo, ";
+            }
+        }
+        return trim($campos, ', ');
+    }
+    
+    protected function getFormulariosEstablecimiento($establecimiento, $anio) {
+        $em = $this->getEntityManager();
+        $resp = array();
+        $sql = "SELECT DISTINCT ON (id_formulario) COALESCE(id_formulario_sup, id_formulario) AS id_formulario
+                FROM almacen_datos.repositorio A
+                    INNER JOIN costos.formulario B ON (A.id_formulario = B.id)
+                WHERE area_costeo = 'calidad'
+                    AND A.datos->'establecimiento' = '$establecimiento'
+                    AND A.datos->'anio' = '$anio'
+                    AND A.datos->'es_separador' != 'true'
+                ";
+        
+        $frms_ = $em->getConnection()->executeQuery($sql)->fetchAll();
+        foreach ($frms_ as $f){
+            $resp[$f['id_formulario']] = $f['id_formulario'];
+        }
+        
+        return $resp;
+    }
+    
+    protected function getDatosEvaluacion(Formulario $Frm, $establecimiento, $anio, $mes, $arreglo=true, $crear_tabla = true, $criteriosTodos = false) {
+        $em = $this->getEntityManager();
+        $periodo_lectura = '';
+        $idFrm = $Frm->getId();
+        $mes_ = '';
+        if ($Frm->getPeriodoLecturaDatos() == 'mensual' and $mes != null){
+            $periodo_lectura = " AND (A.datos->'mes')::integer = '$mes' ";
+            $mes_ = " '$mes' AS mes, ";
+        }
+        $campos = $this->getListaCampos($Frm, $arreglo);
+        
+        $sql = "DROP TABLE IF EXISTS datos_tmp";
+        $em->getConnection()->executeQuery($sql);
+        
+        $tablaTmp = ($crear_tabla) ? ' INTO TEMP datos_tmp ': '';        
+        $excluirCriterios = ($criteriosTodos) ? '': " AND A.datos->'es_separador' != 'true' ";
+
+        $sql = "
+                SELECT $campos, $anio AS anio, $mes_ '$establecimiento' as establecimiento
+                 $tablaTmp 
+                 FROM almacen_datos.repositorio A
+                 WHERE id_formulario = '$idFrm'
+                    AND A.datos->'establecimiento' = '$establecimiento'
+                    AND A.datos->'anio' = '$anio'
+                    $excluirCriterios
+                    $periodo_lectura
+                 ";
+        return $em->getConnection()->executeQuery($sql);
+    }
+    
+    protected function getResultadoEvaluacion(Formulario $Frm, $establecimiento, $anio, $mes = null) {
+        $em = $this->getEntityManager();
+        
+        $this->getDatosEvaluacion($Frm, $establecimiento, $anio, $mes);
+        $idFrm = $Frm->getId();
+        
+        if ($Frm->getFormaEvaluacion() == 'lista_chequeo'){
+            $sql = "SELECT CASE WHEN dato = 'true' THEN 1 ELSE 0 END AS cumplimiento, 
+                        CASE WHEN dato = 'false' OR dato = '' THEN 1 ELSE 0 END AS no_cumplimiento 
+                    FROM datos_tmp";
+            $sql = "SELECT SUM(cumplimiento) AS total_cumplimiento, SUM(no_cumplimiento) AS total_no_cumplimiento
+                FROM ( " . $sql . ") AS A";
+        
+            return array_pop($em->getConnection()->executeQuery($sql)->fetchAll());
+        } elseif ($Frm->getFormaEvaluacion() == 'rango_colores'){
+            $cumplimientos= 0 ;
+            $no_cumplimientos= 0 ;
+            $rangos = array();
+            $sql = "SELECT CASE WHEN dato = 'green' THEN 1 ELSE 0 END AS cumplimiento, 
+                        CASE WHEN dato != 'green' AND dato != '' THEN 1 ELSE 0 END AS no_cumplimiento
+                    FROM datos_tmp";
+            $sql = "SELECT B.codigo, C.limite_inferior, C.limite_superior
+                    FROM variablecaptura_rangoalerta A
+                        INNER JOIN variable_captura B ON (A.variablecaptura_id = B.id)
+                        INNER JOIN rango_alerta C ON (A.rangoalerta_id = C.id)
+                    WHERE C.color = 'green' 
+                        AND B.formulario_id = '$idFrm' ";
+            foreach ($em->getConnection()->executeQuery($sql)->fetchAll() as $r){
+                $rangos[$r['codigo']] = array ('li'=>$r['limite_inferior'], 'ls'=>$r['limite_superior']);
+            }
+            
+            $sql = "SELECT A.codigo_variable, dato, C.codigo AS codigo_tipo_control
+                        FROM datos_tmp A 
+                            INNER JOIN variable_captura B ON (A.codigo_variable = B.codigo)
+                            INNER JOIN costos.tipo_control C ON (B.id_tipo_control = C.id)
+                ";
+            foreach ($em->getConnection()->executeQuery($sql)->fetchAll() as $c){
+                if (array_key_exists($c['codigo_variable'], $rangos) and $c['dato'] != ''){
+                    if ($c['codigo_tipo_control'] == 'time'){
+                        $hora =  split($c['dato'], ':');
+                        $valor = $hora[0] * 60 + $hora[1];
+                    } else{
+                        $valor = $c['dato'];
+                    }
+                    if ($valor >= $rangos[$c['codigo_variable']]['li'] and $valor <= $rangos[$c['codigo_variable']]['ls']){
+                        $cumplimientos++;
+                    } else $no_cumplimientos++;
+                }
+            }
+            return array('total_cumplimiento'=>$cumplimientos, 'total_no_cumplimiento'=>$no_cumplimientos);
+        }
+        
+        
     }
     
     public function getCriterios($establecimiento, $periodo, $formulario) {
         $em = $this->getEntityManager();
         list($anio, $mes) = explode('_', $periodo);
+        $Frm = $em->getRepository('GridFormBundle:Formulario')->findOneByCodigo($formulario); 
+        $frmId = $Frm->getId();
         
-        $sql = "SELECT AA.datos
+        /*$grupos = $Frm->getGrupoFormularios();
+        $filas = '';
+        $datos_frm = (count($grupos) > 0 ) ? $grupos : array($Frm);
+        foreach ($datos_frm as $f){
+            $datosCriterios = $this->getDatosEvaluacion($f, $establecimiento, $anio, $mes, $arreglo = false, $crear_tabla = false, $criteriosTodos = true);
+            foreach($datosCriterios->fetchAll() as $f){
+                $col = '';
+                $i = 1;
+                foreach($f as $k=>$c){                    
+                    $fila_tit = '';
+                    if ($k != 'anio' and $k != 'establecimiento' and $k != 'mes' and $k != 'codigo_variable'){
+                        $col .= "<TD>$c</TD>";
+                    }
+                    $i++;
+                }
+                $filas .= "<TR>$col</TR>";
+            }
+            //return $datosCriterios->fetchAll();
+        }
+        
+        return $filas;*/
+       
+        $sql = "SELECT AA.id, AA.datos
                 FROM (
-                    SELECT datos                        
+                    SELECT datos, B.id                        
                     FROM  almacen_datos.repositorio A
                         INNER JOIN costos.formulario B ON (A.id_formulario = B.id)
                         INNER JOIN ctl_establecimiento_simmow C ON (A.datos->'establecimiento' = C.id::text)
@@ -551,11 +644,11 @@ class FormularioRepository extends EntityRepository {
                         AND A.datos->'anio' = '$anio'
                         AND (A.datos->'mes')::integer = '$mes'
                         AND A.datos->'establecimiento' = '$establecimiento'
-                        AND B.codigo = '$formulario'
+                        AND (B.id = '$frmId' OR B.id_formulario_sup = '$frmId')
 
                     UNION ALL
 
-                    SELECT datos
+                    SELECT datos, B.id 
                         FROM  almacen_datos.repositorio A
                             INNER JOIN costos.formulario B ON (A.id_formulario = B.id)
                             INNER JOIN ctl_establecimiento_simmow C ON (A.datos->'establecimiento' = C.id::text)
@@ -563,9 +656,9 @@ class FormularioRepository extends EntityRepository {
                             AND B.periodo_lectura_datos = 'anual'
                             AND A.datos->'anio' = '$anio'
                             AND A.datos->'establecimiento' = '$establecimiento'
-                            AND B.codigo = '$formulario'
+                            AND (B.id = '$frmId' OR B.id_formulario_sup = '$frmId')
                 ) AS AA
-                ORDER BY datos->'es_poblacion' DESC, COALESCE(NULLIF(datos->'posicion', ''), '100000000')::integer, datos->'descripcion_categoria_variable', datos->'descripcion_variable'
+                ORDER BY id, datos->'es_poblacion' DESC, COALESCE(NULLIF(datos->'posicion', ''), '100000000')::integer, datos->'descripcion_categoria_variable', datos->'descripcion_variable'
                 ;";
         try {
             return $em->getConnection()->executeQuery($sql)->fetchAll();
@@ -593,7 +686,7 @@ class FormularioRepository extends EntityRepository {
                     CASE WHEN AA.dato = 'true' THEN 1 END AS cumplimiento, 
                     CASE WHEN AA.dato = 'false' OR AA.dato = '' THEN 1 END AS no_cumplimiento
                 FROM (
-                    SELECT A.datos->'anio' as anio, A.datos->'mes' AS mes,
+                    SELECT A.datos->'anio' as anio, A.datos->'mes' AS mes, A.datos->'rango' AS rango, B.forma_evaluacion,
                         unnest(array[datos->'num_expe_1', datos->'num_expe_2',
                             datos->'num_expe_3' , datos->'num_expe_4' ,
                             datos->'num_expe_5' , datos->'num_expe_6' ,
@@ -610,10 +703,10 @@ class FormularioRepository extends EntityRepository {
 
                     UNION ALL
 
-                    SELECT BB.anio, BB.mes, BB.dato 
+                    SELECT BB.anio, BB.mes, BB.rango, BB.forma_evaluacion, BB.dato 
                         FROM (
                             SELECT C.id AS id_establecimiento, C.descripcion AS establecimiento, 
-                                A.datos->'anio' AS anio, 
+                                A.datos->'anio' AS anio, A.datos->'rango' AS rango, B.forma_evaluacion,
                                 unnest(array['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']) AS mes, 
                                 unnest(array[datos->'mes_check_01', datos->'mes_check_02',
                                     datos->'mes_check_03' , datos->'mes_check_04' ,

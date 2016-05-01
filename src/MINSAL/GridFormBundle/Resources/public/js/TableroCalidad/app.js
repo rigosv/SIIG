@@ -11,7 +11,7 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['servicios'])
                 $scope.barValue = d;
                 $scope.$apply();
             };
-            $scope.periodoSeleccionado = '';            
+            $scope.periodoSeleccionado = '';
             $scope.fila = 1;
             $scope.establecimientoSeleccionado = '';
             $scope.evaluacionSeleccionada = '';
@@ -41,7 +41,8 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['servicios'])
                 var respuesta='';
                 if (exp.search(':') !== -1){
                     valor = exp.split(':');
-                    respuesta =  valor[1].trim();
+                    valor.shift();
+                    respuesta =  valor.join(':');
                 } else {
                     respuesta = exp.trim();
                 }
@@ -51,7 +52,7 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['servicios'])
             $scope.getExpedientes = function(criterio){
                 var expedientes = [];
                 angular.forEach(criterio, function(value, key) {
-                    if (key.search('num_expe_') !== -1)
+                    if (key.search('num_expe_') !== -1 || key.search('cant_mensual') !== -1 || key.search('dias_mes') !== -1 )
                         this.push(key+":"+value);
                 }, expedientes);
                 
@@ -123,7 +124,7 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['servicios'])
                         function (error) {
                             alert(error);
                         }
-                    );                
+                    );
             };
             
             $scope.getCriterios = function(evaluacionSel) {

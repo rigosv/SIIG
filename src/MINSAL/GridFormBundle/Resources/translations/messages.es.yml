@@ -52,6 +52,7 @@ _evaluacion_atencion_: Areas a evaluar
 _areas_atencion_: Areas a evaluar
 _faltan_datos_requeridos_: Faltan datos requeridos
 _febrero_: Febrero
+_forma_evaluacion_: Forma de evaluación
 _formato_: Formato
 _formula_: Fórmula
 _formulario_: Formulario
@@ -65,6 +66,7 @@ _junio_: Junio
 _julio_: Julio
 _limite_inferior_: Límite inferior
 _limpiar_: Limpiar
+_lista_chequeo_: Lista chequeo
 _manual_uso_: Manual de uso
 _marzo_: Marzo
 _mayo_: Mayo
@@ -84,6 +86,7 @@ _noviembre_: Noviembre
 _octubre_: Octubre
 _oculto_: Oculto
 _origen_campo_: Origen campo
+_origen_filas_: Origen de filas
 _origen_filas_help_: Sentencia SQL para recuperar filas que serán representadas por la variable
 _origen_formulario_: Origen del formulario
 _origen_pivote_: Origen pivote
@@ -95,6 +98,7 @@ _periodo_lectura_datos_: 'Periodo de lectura de datos'
 _porcentaje_cumplimiento_: Porcentaje de cumplimiento
 _posicion_: Posición
 _rango_alerta_: Rango alertas
+_rango_colores_: Rango colores
 _ruta_manual_uso_:  Ruta manual de uso
 _seleccione_dependencia_: 'Seleccione la dependencia'
 _separador_: Es separador

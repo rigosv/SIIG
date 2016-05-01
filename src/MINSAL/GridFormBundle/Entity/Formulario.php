@@ -65,6 +65,13 @@ class Formulario
      * @ORM\Column(name="periodo_lectura_datos", type="string", length=20, nullable=true)
      */
     private $periodoLecturaDatos;
+    
+    /**
+     * @var string $formaEvaluacion
+     *
+     * @ORM\Column(name="forma_evaluacion", type="string", length=50, nullable=true)
+     */
+    private $formaEvaluacion;
 
     /**
      * @var string $rutaManualUso
@@ -121,7 +128,7 @@ class Formulario
      * @ORM\Column(name="calculo_filas", type="text", nullable=true)
      */
     private $calculoFilas;
-
+    
     /**
      * @var \Doctrine\Common\Collections\ArrayCollection
      *
@@ -137,13 +144,7 @@ class Formulario
     * @ORM\OrderBy({"descripcion" = "ASC"})
     */
     private $gruposColumnas;
-    
-    /**
-    * @var \Doctrine\Common\Collections\ArrayCollection
-    * @ORM\OneToMany(targetEntity="EvaluacionAtencion", mappedBy="formulario", cascade={"all"}, orphanRemoval=true)
-    */
-    private $areasEvaluacion;
-    
+        
     /**
     * @var \Doctrine\Common\Collections\ArrayCollection
     * @ORM\OneToMany(targetEntity="Formulario", mappedBy="formularioSup")
@@ -716,35 +717,25 @@ class Formulario
     }
 
     /**
-     * Add areasEvaluacion
+     * Set formaEvaluacion
      *
-     * @param \MINSAL\GridFormBundle\Entity\EvaluacionAtencion $areasEvaluacion
+     * @param string $formaEvaluacion
      * @return Formulario
      */
-    public function addAreasEvaluacion(\MINSAL\GridFormBundle\Entity\EvaluacionAtencion $areasEvaluacion)
+    public function setFormaEvaluacion($formaEvaluacion)
     {
-        $this->areasEvaluacion[] = $areasEvaluacion;
+        $this->formaEvaluacion = $formaEvaluacion;
 
         return $this;
     }
 
     /**
-     * Remove areasEvaluacion
+     * Get formaEvaluacion
      *
-     * @param \MINSAL\GridFormBundle\Entity\EvaluacionAtencion $areasEvaluacion
+     * @return string 
      */
-    public function removeAreasEvaluacion(\MINSAL\GridFormBundle\Entity\EvaluacionAtencion $areasEvaluacion)
+    public function getFormaEvaluacion()
     {
-        $this->areasEvaluacion->removeElement($areasEvaluacion);
-    }
-
-    /**
-     * Get areasEvaluacion
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getAreasEvaluacion()
-    {
-        return $this->areasEvaluacion;
+        return $this->formaEvaluacion;
     }
 }
