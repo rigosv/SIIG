@@ -554,7 +554,7 @@
                                         } else if (datarow.codigo_tipo_control == 'datetimeinput'){
                                             fecha = moment(valor_oper, "DD/MM/YYYY HH:mm")
                                             //valor de la fecha en milisegundos
-                                            ran =  fecha.valueOf();
+                                            valor_oper =  fecha.valueOf();
                                         }
                                         operaciones = operaciones.replace(nodo2.toString(), valor_oper);
                                     });
