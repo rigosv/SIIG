@@ -61,3 +61,6 @@
 .jqx-grid-content{
     background: none !important;
 }
+.jqx-tabs-content-element{
+    overflow: auto !important;
+}
