@@ -304,7 +304,7 @@
                                                     var element = $('<div tabIndex=0 class="switch_cont" ></div>');
                                                     
                                                     //element.jqxCheckBox({animationShowDelay: 0, animationHideDelay: 0});
-                                                    element.jqxSwitchButton({onLabel:'SÍ', offLabel:'NO', width:60, height:25});
+                                                    element.jqxSwitchButton({onLabel:'{{'_si_'|trans}}', offLabel:'{{'_no_'|trans}}', width:60, height:25});
                                                     element_aux.append(element);
                                                     editor.append(element);
                                                 }
@@ -470,9 +470,13 @@
                                                     element.jqxCheckBox('indeterminate');
                                                 }
                                             } else{
-                                                var element = $('<div tabIndex=0 style="position: absolute;"></div>');
+                                                
                                                 var estado = (cellValue.toString() == 'true') ? true : false;
-                                                element.jqxSwitchButton({onLabel:'SÍ', offLabel:'NO', checked:estado, width:60, height:25});
+                                                estado_ = (estado) ? '<div class="si"><div class="sw_etiqueta">{{'_si_'|trans}}</div><div class="sw_separador"></div></div>'
+                                                                : '<div class="no"><div class="sw_separador"></div><div class="sw_etiqueta">{{'_no_'|trans}}</div></div>';
+                                                //var element = $('<div tabIndex=0 style="position: absolute;">'+estado_+'</div>');
+                                                var element = estado_;
+                                                //element.jqxSwitchButton({onLabel:'SÍ', offLabel:'NO', checked:estado, width:60, height:25});
                                             }
                                                 //element.jqxCheckBox({animationShowDelay: 0, animationHideDelay: 0, checked: cellValue.toString() == "true" });
                                             element_aux.append(element);

@@ -13,7 +13,45 @@
 .popover-content{
     background-color: orange;
 }
+div.si, div.no{
+    width: 60px;
+    height: 25px;
+    font-size: 10pt;
+    font-family: sans-serif;
+    font-weight: bold;
+    border-radius: 5px;
+}
+div.sw_etiqueta{
+    width: 60%;
+    height: 100%;
+    float: left;
+    text-align: center;
+}
+div.sw_separador{
+    float: left;
+    height: 100%;
+    width: 40%;
+    background: #dfeffc url("/bundles/gridform/js/jqwidgets4.1/styles/images/redmond/ui-bg_glass_85_dfeffc_1x400.png") repeat-x scroll 50% 50%;    
+    border-color: #c5dbec;
+    color: #2e6e9e;
+    border-width: 1px;
+}
+.si div.sw_separador{
+    border-top-right-radius:  5px;
+    border-bottom-right-radius: 5px;
+}
 
+.no div.sw_separador{
+    border-top-left-radius:  5px;
+    border-bottom-left-radius: 5px;
+}
+div.si{
+    background-color: #DFF0D8;
+}
+
+div.no{
+    background-color: #F2DEDE;
+}
 .jqx-switchbutton-label{
     font-size: 10pt;
 }
