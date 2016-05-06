@@ -13,6 +13,10 @@
 .popover-content{
     background-color: orange;
 }
+
+.jqx-switchbutton-label{
+    font-size: 10pt;
+}
 .jqx-switchbutton-label-on{
     background-color: #DFF0D8 !important;
 }
