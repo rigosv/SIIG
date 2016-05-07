@@ -75,6 +75,7 @@ class VariableCapturaAdmin extends Admin
                 ->add('categoria', null, array('label' => $this->getTranslator()->trans('_categoria_')))
                 ->add('formulario', null, array('label' => $this->getTranslator()->trans('_formulario_')))
                 ->add('posicion', null, array('label'=> $this->getTranslator()->trans('_posicion_')))
+                ->add('alertas', null, array('label'=> $this->getTranslator()->trans('_alertas_')))
         ;
     }    
 
