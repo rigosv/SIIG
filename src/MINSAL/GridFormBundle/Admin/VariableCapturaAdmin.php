@@ -38,11 +38,16 @@ class VariableCapturaAdmin extends Admin
                                 ->orderBy('c.descripcion');
                     }
                 ))
-                ->add('alertas', null, 
+                ->add('alertas', 'entity', 
                     array('label'=> $this->getTranslator()->trans('_alertas_'), 
                     'expanded' => false, 
                     'multiple' => true,
-                    'by_reference' => false
+                    'by_reference' => false,
+                    'class' => 'GridFormBundle:RangoAlerta',
+                    'query_builder' => function(EntityRepository $er) {
+                        return $er->createQueryBuilder('c')
+                                ->orderBy('c.color, c.limiteInferior, c.limiteSuperior');
+                    }    
                     ))
         ;
         $formMapper
