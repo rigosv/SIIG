@@ -58,6 +58,7 @@ _formula_: Fórmula
 _formulario_: Formulario
 _formulario_superior_ : Formulario superior
 _formularios_: Formularios
+_green_: Verde
 _guardar_: Guardar
 _grupo_columnas_: Grupo Columnas
 _grupo_formularios_: Grupo formularios 
@@ -100,6 +101,7 @@ _porcentaje_cumplimiento_: Porcentaje de cumplimiento
 _posicion_: Posición
 _rango_alerta_: Rango alertas
 _rango_colores_: Rango colores
+_red_: Rojo
 _ruta_manual_uso_:  Ruta manual de uso
 _seleccione_dependencia_: 'Seleccione la dependencia'
 _separador_: Es separador
@@ -122,6 +124,7 @@ _ubicacion_: Ubicación
 _unidad_: Unidad
 _unidad_superior_ : Unidad superior
 _variable_captura_: Variables de captura
+_yellow_: Amarillo
 _periodo_evaluacion_: Periodo evaluación
 _periodo_ingreso_grupo_usuarios_: Periodo ingreso por grupo de usuarios
 _grupo_usuarios_: Grupo usuarios
