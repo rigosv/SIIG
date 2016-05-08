@@ -133,17 +133,23 @@ class FormularioAdminController extends Controller
         }
         return $this->render($plantilla, $parametrosPlantilla);
     }
-    
+    /**
+     * 
+     * @param Formulario[] $formularios
+     * @return Formulario[] $frm_ajustados
+     * 
+     * Esta funciones cambia las fórmulas, que fueron ingresados con el código
+     * de la variable, al correspondiente número de fila en el grid. En el grid
+     * la fórmula se ejecuta por número de fila que ocupan.
+     */
     protected function ajustarFormulas($formularios){
         $em = $this->getDoctrine()->getManager();
         $frm_ajustados = array();
         foreach ($formularios as $f){
-            //$variables = array();
             $var_ = $em->getRepository("GridFormBundle:VariableCaptura")->findBy(array('formulario'=>$f), array('posicion'=>'ASC'));
             $i = 0;
             $formula = $f->getCalculoFilas();
             foreach($var_ as $v){
-                //$variables[$v->getCodigo()] = $i++;
                 $formula = str_replace($v->getCodigo(), 'F'.$i++, $formula);
             }
             $f->setCalculoFilas($formula);
