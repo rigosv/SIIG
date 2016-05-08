@@ -4,6 +4,7 @@ _ajustar_alto_fila_: Ajustar alto de las filas
 _alertas_: Alertas
 _alineacion_: Alineación
 _almacen_datos_: Captura de datos
+_ambos_limites_vacios_: Ambos límites no pueden ser vacíos
 _ancho_: Ancho
 _anio_: Año
 _anual_: Anual
@@ -28,6 +29,7 @@ _calificacion_: Calificación
 _columnas_: Columnas
 _columnas_fijas_: Columnas fijas
 _configuracion_: Configuración
+_criterios_: Criterios
 _criterios_evaluacion_: Criterios de evaluación
 _cuadro_datos_: Cuadro de datos
 _cumplimiento_: Cumplimiento
@@ -63,6 +65,7 @@ _guardar_: Guardar
 _grupo_columnas_: Grupo Columnas
 _grupo_formularios_: Grupo formularios 
 _grupo_padre_: Grupo padre
+_indicador_: Indicador
 _junio_: Junio
 _julio_: Julio
 _limite_inferior_: Límite inferior

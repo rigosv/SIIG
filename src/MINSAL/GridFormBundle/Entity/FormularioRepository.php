@@ -130,7 +130,7 @@ class FormularioRepository extends EntityRepository {
         $sql = "SELECT DISTINCT ON (variablecaptura_id) variablecaptura_id, 
                     (select array_to_string(
                                 array(
-                                    SELECT limite_inferior||'-'||limite_superior||'-'||color  
+                                    SELECT COALESCE(limite_inferior::varchar,'')||'-'||COALESCE(limite_superior::varchar, '')||'-'||color  
                                         FROM variablecaptura_rangoalerta A 
                                             INNER JOIN rango_alerta B ON (A.rangoalerta_id = B.id) 
                                         WHERE A.variablecaptura_id = AA.variablecaptura_id

@@ -6,6 +6,7 @@ use Sonata\AdminBundle\Admin\Admin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Form\FormMapper;
+use Sonata\CoreBundle\Validator\ErrorElement;
 
 class RangoAlertaAdmin extends Admin {
 
@@ -17,10 +18,8 @@ class RangoAlertaAdmin extends Admin {
 
     protected function configureFormFields(FormMapper $formMapper) {       
         $formMapper
-                ->add('limiteInferior', null, array('label' => $this->getTranslator()->trans('_alerta_limite_inferior_'),
-                    'required' => true))
-                ->add('limiteSuperior', null, array('label' => $this->getTranslator()->trans('limite_superior'),
-                    'required' => true))
+                ->add('limiteInferior', null, array('label' => $this->getTranslator()->trans('_alerta_limite_inferior_')))
+                ->add('limiteSuperior', null, array('label' => $this->getTranslator()->trans('limite_superior')))
                 ->add('color', 'choice', array('label' => $this->getTranslator()->trans('color'),
                         'choices' => array(
                             'green'=>$this->getTranslator()->trans('_green_'),
@@ -56,5 +55,15 @@ class RangoAlertaAdmin extends Admin {
         $actions = parent::getBatchActions();
         $actions['delete'] = null;
     }
-
+    
+    public function validate(ErrorElement $errorElement, $object)
+    {
+        if ($object->getLimiteInferior() == "" and $object->getLimiteSuperior() == ""){
+            $errorElement
+                    ->with('limiteInferior')
+                    ->addViolation($this->getTranslator()->trans('_ambos_limites_vacios_'))
+                    ->end();
+                return;
+        }
+    }
 }

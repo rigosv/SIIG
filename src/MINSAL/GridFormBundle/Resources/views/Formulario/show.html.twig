@@ -440,14 +440,18 @@
                                         partes = cellValue.split(':');
                                         valor = parseInt(partes[0]) * 60 + parseInt(partes[1]);
                                     }
-                                    if (datarow.alertas != ''){
+                                    if (datarow.alertas != '' && datafield != 'descripcion_variable'){
                                         var rangos = datarow.alertas.split(',');
                                         rangos.forEach(function(nodo, index){
-                                            opciones = nodo.split('-');
+                                            limites = nodo.split('-');
+                                            //Si no existe alguno de los límites del rango ponerle valores 
+                                            // muy grandes (si falta lim sup) o muy pequeño( si falta el lim inf)
+                                            limites[0] = (limites[0]=='') ? -1000000 : limites[0]; 
+                                            limites[1] = (limites[1]=='') ? 1000000 : limites[1];
                                             if (!(isNaN(valor))){
-                                                if (valor >= opciones[0] && valor <= opciones[1]){
-                                                    estilo = "style='color: " + opciones[2]+ "; font-size:14pt; font-weight: bold; margin-left:"+(parseFloat(nivel) * 20)+"px '";
-                                                    datarow.rango = opciones[2];
+                                                if (valor >= parseFloat(limites[0]) && parseFloat(valor) <= parseFloat(limites[1])){                                                    
+                                                    estilo = "style='border-style: solid; border-color:"+limites[2]+ " white ; color: " +limites[2]+" ; font-size:14pt; font-weight: bold; margin-left:"+(parseFloat(nivel) * 20)+"px '";
+                                                    datarow.rango = limites[2];
                                                 }
                                             }
                                         });

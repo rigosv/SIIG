@@ -3,11 +3,13 @@
 namespace MINSAL\GridFormBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * MINSAL\IndicadoresBundle\Entity\RangoAlerta
  *
  * @ORM\Table(name="rango_alerta")
+ * @UniqueEntity(fields={"limiteInferior", "limiteSuperior", "color"}, message="Rango ya existe")
  * @ORM\Entity
  */
 class RangoAlerta
@@ -24,14 +26,14 @@ class RangoAlerta
     /**
      * @var decimal $limiteInferior
      *
-     * @ORM\Column(name="limite_inferior", type="float", nullable=false)
+     * @ORM\Column(name="limite_inferior", type="float", nullable=true)
      */
     private $limiteInferior;
 
     /**
      * @var decimal $limiteSuperior
      *
-     * @ORM\Column(name="limite_superior", type="float",  nullable=false)
+     * @ORM\Column(name="limite_superior", type="float",  nullable=true)
      */
     private $limiteSuperior;
 
