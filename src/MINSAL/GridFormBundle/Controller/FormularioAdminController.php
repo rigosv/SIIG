@@ -121,7 +121,7 @@ class FormularioAdminController extends Controller
             $parametrosPlantilla['Frm'] = $Frm;
             $parametrosPlantilla['llave_primaria'] = $pk;
             $parametrosPlantilla['cantidad_formularios'] = count($formularios);
-            $parametrosPlantilla['Formularios'] = $formularios;
+            $parametrosPlantilla['Formularios'] = $this->ajustarFormulas($formularios);
             $parametrosPlantilla['meses_activos'] = $meses[$periodoSeleccionado->getPeriodo()->getAnio()];
             foreach ($formularios as $frm){
                 $parametrosPlantilla['origenes'][$frm->getId()] = $this->getOrigenes($frm, $parametros);
@@ -132,6 +132,24 @@ class FormularioAdminController extends Controller
                         
         }
         return $this->render($plantilla, $parametrosPlantilla);
+    }
+    
+    protected function ajustarFormulas($formularios){
+        $em = $this->getDoctrine()->getManager();
+        $frm_ajustados = array();
+        foreach ($formularios as $f){
+            //$variables = array();
+            $var_ = $em->getRepository("GridFormBundle:VariableCaptura")->findBy(array('formulario'=>$f), array('posicion'=>'ASC'));
+            $i = 0;
+            $formula = $f->getCalculoFilas();
+            foreach($var_ as $v){
+                //$variables[$v->getCodigo()] = $i++;
+                $formula = str_replace($v->getCodigo(), 'F'.$i++, $formula);
+            }
+            $f->setCalculoFilas($formula);
+            $frm_ajustados[] = $f;
+        }
+        return $frm_ajustados;
     }
         
     public function almacenDatosAction(Request $request)
