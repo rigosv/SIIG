@@ -103,7 +103,6 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['servicios'])
                             
                             aux.push($scope.calificaciones);
                             aux.push($scope.metas);
-                            aux.push($scope.brechas);
 
                             $scope.datosGrafico2 = aux;
                             $scope.criterios = [];
@@ -156,7 +155,6 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['servicios'])
                 
                 aux.push($scope.calificaciones);
                 aux.push(metas);
-                aux.push(brechas);
                 
                 $scope.datosGrafico2 = aux;
                 $scope.$apply();

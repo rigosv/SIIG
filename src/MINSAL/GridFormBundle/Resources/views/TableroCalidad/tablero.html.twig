@@ -93,6 +93,9 @@
         .indentacion_2 {
             padding-left: 60px !important;
         }
+        .encabezado_tabla{
+            background-color: #88B6D9;
+        }
     </style>
 {% endblock %}
 {% block javascripts %}
@@ -223,8 +226,8 @@
             <div class="col-md-6">
                 <div class="panel panel-info panel_" >
                     <div class="panel-body">
-                        <input type="checkbox" checked="checked" value="estandar"/>{{'_estandar_'|trans}}
-                        <input type="checkbox" checked="checked" value="brecha"/>{{'_brecha_'|trans}}
+                        <div style="font-weight: bold; float:left;  background-color: #02A1B1">{{'_calificacion_'|trans}}</div>
+                        <div style="font-weight: bold; float:left; background-color: #C13D4A">{{'_estandar_'|trans}}</div>
                         <radar-chart data="datosGrafico2" ></radar-chart>
                     </div>
                 </div>
@@ -247,19 +250,14 @@
                     </div>
                     <div class="panel-body">
                         <div class="alert alert-warning" role="alert" ng-show="!criterios.length">{{'_no_hay_datos_mostrar_'|trans}}</div>
-                        <TABLE CLASS="table table-hover">
-                            <!-- <thead>
-                                <TR>
-                                    <TD>{{'_nombre_evaluacion_'|trans}}</TD>
-                                    <TD>{{'_descripcion_'|trans}}</TD>
-                                    <TD>{{'_cumplimiento_'|trans}}</TD>
-                                </TR>
-                            </thead> -->
+                        <TABLE CLASS="table table-hover" ng-repeat='Formulario in criterios'>
+                            <THEAD ng-if="criterios.length > 1">
+                                <tr class="encabezado_tabla"><td>[[Formulario.descripcion]]</TD></tr>
+                            </thead>
                             <TBODY>
-                                <!--<respuestas evaluacion='evaluacionSeleccionada' periodo='periodoSeleccionado' data='criterios' ></respuestas> -->
-                                <TR  class="fila_criterios" ng-repeat="criterio in criterios | filter : buscar_criterios" >
+                                <TR  class="fila_criterios" ng-repeat="criterio in Formulario.criterios | filter : buscar_criterios" >
                                     <TD class="separador indentacion_[[criterio.nivel_indentacion]]"
-                                        ng-if="criterio.es_separador == 'true'" colspan="2" >
+                                        ng-if="criterio.es_separador == 'true'" colspan="20" >
                                         [[criterio.descripcion_variable]]
                                     </TD>
                                     <TD class="indentacion_[[criterio.nivel_indentacion]]" ng-if="criterio.es_separador != 'true'" >

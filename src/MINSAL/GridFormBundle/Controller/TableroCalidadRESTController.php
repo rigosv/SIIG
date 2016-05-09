@@ -83,15 +83,25 @@ class TableroCalidadRESTController extends Controller {
         $datos = $em->getRepository('GridFormBundle:Formulario')->getCriterios($establecimiento, $periodo, $formulario);
         $data_= '';
         
-        $ultimo = array_pop($datos);
+        /*$ultimo = array_pop($datos);
         foreach ($datos as $d){            
             $data_ .= '{'.  str_replace('=>', ':', $d['datos']). '},';
         }
         $data_ .= '{'.  str_replace('=>', ':', $ultimo['datos']). '}';
-        //var_dump($data_);
+         */
+        $data =  array();
+        foreach ($datos as $d) {            
+            $data[$d['codigo']]['descripcion'] = $d['descripcion'];
+            $data[$d['codigo']]['forma_evaluacion'] = $d['forma_evaluacion'];
+            $data[$d['codigo']]['criterios'][] = json_decode('{'.str_replace('=>', ':', $d['datos']).'}', true);            
+        }
+        $data_ = array();
+        foreach ($data as $d){
+            $data_[] = array('descripcion'=>$d['descripcion'], 'forma_evaluacion'=>$d['forma_evaluacion'], 'criterios'=>$d['criterios']);
+        }
+        $resp = json_encode($data_); 
         
-        $response->setContent('['. $data_. ']');
-        //$response->setContent(json_encode($resp));
+        $response->setContent($resp);
 
         return $response;
     }

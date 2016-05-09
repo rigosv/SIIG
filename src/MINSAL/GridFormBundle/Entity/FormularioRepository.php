@@ -485,7 +485,8 @@ class FormularioRepository extends EntityRepository {
             $piv = $c->getOrigenPivote();
             $codigoCampo = $c->getSignificadoCampo()->getCodigo();
             if ($piv != ''){
-                $piv_ = json_decode($piv);                
+                $piv_ = json_decode($piv);
+                //La parte de datos
                 $campos .= ($array) ? "unnest(array[" : '';                
                 foreach($piv_ as $p){
                     $alias = ($array) ? '' : ' AS "'.$p->descripcion.'" ';
@@ -493,6 +494,15 @@ class FormularioRepository extends EntityRepository {
                 }
                 $campos = ($array) ? trim($campos, ', ') : $campos;
                 $campos .= ($array) ? "]) AS dato, " : '';
+                
+                //La parte del nombre del campo
+                $campos .= ($array) ? "unnest(array[" : '';                
+                foreach($piv_ as $p){
+                    //$alias = ($array) ? '' : ' AS "'.$p->descripcion.'" ';
+                    $campos .= "'$codigoCampo"."_".$p->id."', ";
+                }
+                $campos = ($array) ? trim($campos, ', ') : $campos;
+                $campos .= ($array) ? "]) AS nombre_pivote, " : '';
             } else {
                 $campos .= " datos->'$codigoCampo' AS $codigoCampo, ";
             }
@@ -520,7 +530,7 @@ class FormularioRepository extends EntityRepository {
         return $resp;
     }
     
-    protected function getDatosEvaluacion(Formulario $Frm, $establecimiento, $anio, $mes, $arreglo=true, $crear_tabla = true, $criteriosTodos = false) {
+    protected function getDatosEvaluacion(Formulario $Frm, $establecimiento, $anio, $mes, $arreglo=true, $crear_tabla = true, $criteriosTodos = false, $eliminar_vacios = true) {
         $em = $this->getEntityManager();
         $periodo_lectura = '';
         $idFrm = $Frm->getId();
@@ -533,13 +543,12 @@ class FormularioRepository extends EntityRepository {
         
         $sql = "DROP TABLE IF EXISTS datos_tmp";
         $em->getConnection()->executeQuery($sql);
-        
-        $tablaTmp = ($crear_tabla) ? ' INTO TEMP datos_tmp ': '';        
+                
         $excluirCriterios = ($criteriosTodos) ? '': " AND A.datos->'es_separador' != 'true' ";
 
         $sql = "
-                SELECT $campos, $anio AS anio, $mes_ '$establecimiento' as establecimiento
-                 $tablaTmp 
+                SELECT $campos, $anio AS anio, $mes_ '$establecimiento' as establecimiento, A.datos->'es_poblacion' AS es_poblacion
+                 INTO TEMP datos_tmp 
                  FROM almacen_datos.repositorio A
                  WHERE id_formulario = '$idFrm'
                     AND A.datos->'establecimiento' = '$establecimiento'
@@ -547,7 +556,24 @@ class FormularioRepository extends EntityRepository {
                     $excluirCriterios
                     $periodo_lectura
                  ";
-        return $em->getConnection()->executeQuery($sql);
+        $em->getConnection()->executeQuery($sql);
+        
+        if ($eliminar_vacios){
+            //Verificar si tiene la variable num_exp para obtener qué expedientes se ingresaron
+            $sql = "SELECT codigo_variable FROM datos_tmp WHERE es_poblacion = 'true'";
+            $cons = $em->getConnection()->executeQuery($sql);
+
+            if ($cons->rowCount() > 0){
+                //Quitar las columnas para las que no se ingresó número de expediente
+                $sql = "DELETE FROM datos_tmp WHERE nombre_pivote NOT IN (SELECT nombre_pivote FROM datos_tmp WHERE es_poblacion = 'true' AND dato is not null AND dato != '')";
+                $em->getConnection()->executeQuery($sql);
+            }
+        }
+        if (!$crear_tabla){
+            $sql = "SELECT * FROM datos_tmp";
+            return $em->getConnection()->executeQuery($sql);
+        }
+        //$tablaTmp = ($crear_tabla) ? ' INTO TEMP datos_tmp ': '';
     }
     
     protected function getResultadoEvaluacion(Formulario $Frm, $establecimiento, $anio, $mes = null) {
@@ -606,59 +632,67 @@ class FormularioRepository extends EntityRepository {
     }
     
     public function getCriterios($establecimiento, $periodo, $formulario) {
-        $em = $this->getEntityManager();
+        $em = $this->getEntityManager();        
         list($anio, $mes) = explode('_', $periodo);
+        
+        
         $Frm = $em->getRepository('GridFormBundle:Formulario')->findOneByCodigo($formulario); 
-        $frmId = $Frm->getId();
         
-        /*$grupos = $Frm->getGrupoFormularios();
-        $filas = '';
+        
+        $grupos = $Frm->getGrupoFormularios();
         $datos_frm = (count($grupos) > 0 ) ? $grupos : array($Frm);
-        foreach ($datos_frm as $f){
-            $datosCriterios = $this->getDatosEvaluacion($f, $establecimiento, $anio, $mes, $arreglo = false, $crear_tabla = false, $criteriosTodos = true);
-            foreach($datosCriterios->fetchAll() as $f){
-                $col = '';
-                $i = 1;
-                foreach($f as $k=>$c){                    
-                    $fila_tit = '';
-                    if ($k != 'anio' and $k != 'establecimiento' and $k != 'mes' and $k != 'codigo_variable'){
-                        $col .= "<TD>$c</TD>";
-                    }
-                    $i++;
-                }
-                $filas .= "<TR>$col</TR>";
-            }
-            //return $datosCriterios->fetchAll();
-        }
         
-        return $filas;*/
-       
-        $sql = "SELECT AA.id, AA.datos
-                FROM (
-                    SELECT datos, B.id                        
+        $sql_forms = '';
+        foreach ($datos_frm as $ff){
+            $datos = 'datos';
+            $periodo = $ff->getPeriodoLecturaDatos() == 'mensual';
+            $this->getDatosEvaluacion($ff, $establecimiento, $anio, $mes, true, true, true, false);
+
+            //Verificar si tiene la variable de poblacion para obtener solo las columnas válidas        
+            $sql = "SELECT codigo_variable FROM datos_tmp WHERE es_poblacion = 'true'";
+            $cons = $em->getConnection()->executeQuery($sql);        
+            if ($cons->rowCount() > 0){
+                //Quitar las columnas para las que no se ingresó número de expediente
+                $sql = "SELECT nombre_pivote FROM datos_tmp WHERE es_poblacion = 'true' AND (dato is null OR dato = '') ";
+                $pivotes_borrar = $em->getConnection()->executeQuery($sql)->fetchAll();
+                $piv_ = array();
+                foreach ($pivotes_borrar as $c){
+                    $piv_[] = $c['nombre_pivote'];
+                }
+                //var_dump(implode("','", $pivotes_borrar)); exit;
+                $pivotes_borrar = "'".implode("','", $piv_)."'";
+                $datos = "delete(datos, ARRAY[$pivotes_borrar]) AS datos";
+            }
+            
+            $frmId = $ff->getId();
+            $mes_cadena = ($periodo) ? " AND (A.datos->'mes')::integer = '$mes' " : '';
+            
+            $sql_forms .= "
+                SELECT $datos, B.id, B.codigo, B.descripcion, B.forma_evaluacion                        
                     FROM  almacen_datos.repositorio A
                         INNER JOIN costos.formulario B ON (A.id_formulario = B.id)
                         INNER JOIN ctl_establecimiento_simmow C ON (A.datos->'establecimiento' = C.id::text)
                     WHERE area_costeo = 'calidad'
                         AND B.periodo_lectura_datos = 'mensual'
                         AND A.datos->'anio' = '$anio'
-                        AND (A.datos->'mes')::integer = '$mes'
+                        $mes_cadena
                         AND A.datos->'establecimiento' = '$establecimiento'
-                        AND (B.id = '$frmId' OR B.id_formulario_sup = '$frmId')
-
-                    UNION ALL
-
-                    SELECT datos, B.id 
-                        FROM  almacen_datos.repositorio A
-                            INNER JOIN costos.formulario B ON (A.id_formulario = B.id)
-                            INNER JOIN ctl_establecimiento_simmow C ON (A.datos->'establecimiento' = C.id::text)
-                        WHERE area_costeo = 'calidad'
-                            AND B.periodo_lectura_datos = 'anual'
-                            AND A.datos->'anio' = '$anio'
-                            AND A.datos->'establecimiento' = '$establecimiento'
-                            AND (B.id = '$frmId' OR B.id_formulario_sup = '$frmId')
+                        AND B.id = '$frmId'
+                            
+                    UNION ALL ";
+        }
+        $sql_forms = trim($sql_forms, 'UNION ALL ');
+        //if ($Frm->getFormaEvaluacion() == 'lista_chequeo'){
+            
+        //}
+        
+        
+       
+        $sql = "SELECT AA.id, AA.codigo, AA.descripcion, AA.forma_evaluacion , AA.datos
+                FROM (
+                    $sql_forms
                 ) AS AA
-                ORDER BY id, datos->'es_poblacion' DESC, COALESCE(NULLIF(datos->'posicion', ''), '100000000')::integer, datos->'descripcion_categoria_variable', datos->'descripcion_variable'
+                ORDER BY codigo, datos->'es_poblacion' DESC, COALESCE(NULLIF(datos->'posicion', ''), '100000000')::integer, datos->'descripcion_categoria_variable', datos->'descripcion_variable'
                 ;";
         try {
             return $em->getConnection()->executeQuery($sql)->fetchAll();
