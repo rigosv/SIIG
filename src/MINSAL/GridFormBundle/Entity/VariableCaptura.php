@@ -57,7 +57,7 @@ class VariableCaptura
     /**
      * @var string $posicion
      *
-     * @ORM\Column(name="posicion", type="integer", nullable=true)
+     * @ORM\Column(name="posicion", type="float", nullable=true)
      */
     private $posicion;
     
@@ -78,6 +78,13 @@ class VariableCaptura
      * @ORM\ManyToOne(targetEntity="Formulario", inversedBy="variables")
      * */
     private $formulario;
+    
+    /**
+     * @var \Doctrine\Common\Collections\ArrayCollection
+     * 
+     * @ORM\ManyToMany(targetEntity="Indicador", mappedBy="criterios")
+     * */
+    private $indicadores;
     
     /**
      * @var string $regla_validacion
@@ -188,7 +195,7 @@ class VariableCaptura
     }
     
     public function __toString() {
-        return $this->descripcion;
+        return '(' . $this->getCodigo() . ')' . $this->descripcion;
     }
 
     /**
@@ -417,4 +424,37 @@ class VariableCaptura
         return $this->alertas;
     }
 
+
+    /**
+     * Add indicadores
+     *
+     * @param \MINSAL\GridFormBundle\Entity\Indicador $indicadores
+     * @return VariableCaptura
+     */
+    public function addIndicadore(\MINSAL\GridFormBundle\Entity\Indicador $indicadores)
+    {
+        $this->indicadores[] = $indicadores;
+
+        return $this;
+    }
+
+    /**
+     * Remove indicadores
+     *
+     * @param \MINSAL\GridFormBundle\Entity\Indicador $indicadores
+     */
+    public function removeIndicadore(\MINSAL\GridFormBundle\Entity\Indicador $indicadores)
+    {
+        $this->indicadores->removeElement($indicadores);
+    }
+
+    /**
+     * Get indicadores
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getIndicadores()
+    {
+        return $this->indicadores;
+    }
 }

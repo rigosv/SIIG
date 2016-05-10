@@ -163,7 +163,13 @@ class Formulario
     * @ORM\OrderBy({"descripcion" = "ASC"})
     */
     private $variables;
-
+    
+    /**
+    * @var \Doctrine\Common\Collections\ArrayCollection
+    * @ORM\OneToMany(targetEntity="Indicador", mappedBy="formulario", cascade={"all"}, orphanRemoval=true)
+    * @ORM\OrderBy({"descripcion" = "ASC"})
+    */
+    private $indicadores;
 
     /**
      * @ORM\ManyToOne(targetEntity="MINSAL\IndicadoresBundle\Entity\OrigenDatos")
@@ -737,5 +743,38 @@ class Formulario
     public function getFormaEvaluacion()
     {
         return $this->formaEvaluacion;
+    }
+
+    /**
+     * Add indicadores
+     *
+     * @param \MINSAL\GridFormBundle\Entity\Indicador $indicadores
+     * @return Formulario
+     */
+    public function addIndicadore(\MINSAL\GridFormBundle\Entity\Indicador $indicadores)
+    {
+        $this->indicadores[] = $indicadores;
+
+        return $this;
+    }
+
+    /**
+     * Remove indicadores
+     *
+     * @param \MINSAL\GridFormBundle\Entity\Indicador $indicadores
+     */
+    public function removeIndicadore(\MINSAL\GridFormBundle\Entity\Indicador $indicadores)
+    {
+        $this->indicadores->removeElement($indicadores);
+    }
+
+    /**
+     * Get indicadores
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getIndicadores()
+    {
+        return $this->indicadores;
     }
 }

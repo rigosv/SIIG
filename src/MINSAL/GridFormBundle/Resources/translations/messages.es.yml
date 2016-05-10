@@ -35,6 +35,7 @@ _criterios_: Criterios
 _criterios_evaluacion_: Criterios de evaluación
 _cuadro_datos_: Cuadro de datos
 _cumplimiento_: Cumplimiento
+_cumplimiento_porcentaje_aceptacion_: Cumplimiento porcentaje aceptación
 _datos_guardados_: Datos Guardados con éxito
 _dato_no_valido_: Dato no válido
 _descripcion_: Descripción
@@ -106,8 +107,10 @@ _periodos_ingreso_: Períodos de ingreso
 _periodo_ingreso_: Período de ingreso
 _periodo_ingreso_datos_formulario_: 'Periodo Ingreso - Datos formulario'
 _periodo_lectura_datos_: 'Periodo de lectura de datos'
+_porcentaje_aceptacion_ : Porcentaje aceptación
 _porcentaje_cumplimiento_: Porcentaje de cumplimiento
 _posicion_: Posición
+_promedio_: Promedio
 _rango_alerta_: Rango alertas
 _rango_colores_: Rango colores
 _red_: Rojo
@@ -119,6 +122,7 @@ _si_: SÍ
 _significado_campo_: Significado
 _regla_validacion_: Regla de validación
 _tablero_calidad_: Tablero Calidad
+_tablero_general_calidad_: Tablero General de Calidad
 _tipo_contratacion_: Tipo contratación
 _tipo_control_: Tipo Control
 _tipo_dato_: Tipo Dato
