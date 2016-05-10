@@ -116,7 +116,8 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['servicios'])
                 //Cambiar el gráfico 1
                 $scope.titulo_grafico1 = 'Cumplimiento por mes';
                 $scope.titulo = 'Evaluación de Calidad :: '+establecimientoSel.nombre;
-                HistorialEstablecimiento.query({ establecimiento: establecimientoSel.id_establecimiento})
+                //HistorialEstablecimiento.query({ establecimiento: establecimientoSel.id_establecimiento, periodo: $scope.periodoSeleccionado.periodo})
+                HistorialEstablecimiento.query({ establecimiento: establecimientoSel.id_establecimiento, periodo: $scope.periodoSeleccionado.periodo })
                     .$promise.then(
                         function (data) {                            
                             $scope.datosGrafico1 = (data != '') ? data : [];
@@ -136,7 +137,7 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['servicios'])
                         });                
             };
             
-            $scope.toggleLabel = function(control, activo){
+            /*$scope.toggleLabel = function(control, activo){
                 var aux = [];                
                 //var vacio = [];
                 //var aux_vacio = $scope.calificaciones[0];
@@ -147,7 +148,7 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['servicios'])
                     this.value = 0;
                 }, aux_vacio);
                 vacio.push(aux_vacio);*/
-                
+                /*
                 if (control == 'estandar'){
                     metas = (activo == true ) ? metas : [];
                 }else if (control == 'brecha'){
@@ -159,7 +160,7 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['servicios'])
                 
                 $scope.datosGrafico2 = aux;
                 $scope.$apply();
-            }
+            }*/
             
             $('input').on('ifChecked', function(event){
                 $scope.toggleLabel($(this).val(), true);

@@ -109,14 +109,14 @@ class TableroCalidadRESTController extends Controller {
     
     /**
      * Obtener los datos del formulario
-     * @Get("/rest-service/tablero-calidad/historial/{establecimiento}", options={"expose"=true})
+     * @Get("/rest-service/tablero-calidad/historial/{establecimiento}/{periodo}", options={"expose"=true})
      * @Rest\View
      */
-    public function getHistorialEstablecimientoAction($establecimiento) {
+    public function getHistorialEstablecimientoAction($establecimiento, $periodo) {
         $response = new Response();
         $em = $this->getDoctrine()->getManager();
         
-        $data = $em->getRepository('GridFormBundle:Formulario')->getHistorialEstablecimiento($establecimiento);
+        $data = $em->getRepository('GridFormBundle:Formulario')->getHistorialEstablecimiento($establecimiento, $periodo);
         $resp = (count($data) == 0)? array(): $data;
         
         $response->setContent(json_encode($resp));
