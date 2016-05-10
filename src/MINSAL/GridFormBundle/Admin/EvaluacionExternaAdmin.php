@@ -19,7 +19,7 @@ class EvaluacionExternaAdmin extends Admin
         $formMapper
             ->add('establecimiento', null, array('label'=> $this->getTranslator()->trans('_establecimiento_')))
             ->add('tipoEvaluacion', null, array('label'=> $this->getTranslator()->trans('_tipo_evaluacion_')))
-            ->add('aniio', null, array('label'=> $this->getTranslator()->trans('_anio_')))
+            ->add('anio', null, array('label'=> $this->getTranslator()->trans('_anio_')))
             ->add('valor', null, array('label'=> $this->getTranslator()->trans('_valor_')))
         ;
     }
@@ -29,7 +29,7 @@ class EvaluacionExternaAdmin extends Admin
         $datagridMapper
             ->add('establecimiento', null, array('label'=> $this->getTranslator()->trans('_establecimiento_')))
             ->add('tipoEvaluacion', null, array('label'=> $this->getTranslator()->trans('_tipo_evaluacion_')))
-            ->add('aniio', null, array('label'=> $this->getTranslator()->trans('_anio_')))
+            ->add('anio', null, array('label'=> $this->getTranslator()->trans('_anio_')))
             ->add('valor', null, array('label'=> $this->getTranslator()->trans('_valor_')))
         ;
     }
@@ -40,7 +40,7 @@ class EvaluacionExternaAdmin extends Admin
             ->addIdentifier('id', null, array('label'=> $this->getTranslator()->trans('_id_')))
             ->add('establecimiento', null, array('label'=> $this->getTranslator()->trans('_establecimiento_')))
             ->add('tipoEvaluacion', null, array('label'=> $this->getTranslator()->trans('_tipo_evaluacion_')))
-            ->add('aniio', null, array('label'=> $this->getTranslator()->trans('_anio_')))
+            ->add('anio', null, array('label'=> $this->getTranslator()->trans('_anio_')))
             ->add('valor', null, array('label'=> $this->getTranslator()->trans('_valor_')))
         ;
     }

@@ -427,8 +427,22 @@ class FormularioRepository extends EntityRepository {
             $datos_['id_establecimiento'] = $est['id_establecimiento'];
             $datos_['category'] = $est['id_establecimiento'];
             $datos_['nombre'] = $est['descripcion'];
-            $datos_['carta_iberoamericana'] = 80;
-            $datos_['evaluacion_capacidad_especial'] = 43.3;
+            //Obtener valores de evaluaciones externas, extraer la medición 
+            //del último año ingresado para cada evaluación
+            $sql = "SELECT C.descripcion AS categoria, B.descripcion AS tipo_evaluacion, 
+                           A.anio, A.valor, B.unidad_medida
+                        FROM evaluacion_externa A
+                        INNER JOIN evaluacion_externa_tipo B ON (A.tipoevaluacion_id = B.id)
+                        INNER JOIN evaluacion_categoria C ON (B.categoriaevaluacion_id = C.id)
+                        WHERE ($establecimiento, tipoevaluacion_id, anio) 
+                            IN 
+                            (SELECT establecimiento_id, tipoevaluacion_id, MAX(anio) AS anio 
+                                FROM evaluacion_externa 
+                                GROUP BY establecimiento_id, tipoevaluacion_id
+                            ) ";
+            $evaluaciones = $em->getConnection()->executeQuery($sql)->fetchAll();
+            $datos_['evaluaciones_externas'] = ( $evaluaciones);
+            
             $datos_['total_cumplimiento'] = $total_evaluacion['cumplimiento'];
             $datos_['total_no_cumplimiento'] = $total_evaluacion['no_cumplimiento'];
             $datos_['total_aplicable'] = $total_evaluacion['cumplimiento'] + $total_evaluacion['no_cumplimiento'];

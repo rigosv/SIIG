@@ -7,7 +7,7 @@ use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 
-class EvaluacionExternaTipoAdmin extends Admin
+class EvaluacionCategoriaAdmin extends Admin
 {
     protected $datagridValues = array(
         '_page' => 1, // Display the first page (default = 1)
@@ -20,8 +20,6 @@ class EvaluacionExternaTipoAdmin extends Admin
         $formMapper
             ->add('codigo', null, array('label'=> $this->getTranslator()->trans('_codigo_')))
             ->add('descripcion', null, array('label'=> $this->getTranslator()->trans('_descripcion_')))
-            ->add('unidadMedida', null, array('label'=> $this->getTranslator()->trans('_unidad_medida_')))
-            ->add('categoriaEvaluacion', null, array('label'=> $this->getTranslator()->trans('_categoria_evaluacion_')))
         ;
     }
 
@@ -30,8 +28,6 @@ class EvaluacionExternaTipoAdmin extends Admin
         $datagridMapper
             ->add('codigo', null, array('label'=> $this->getTranslator()->trans('_codigo_')))
             ->add('descripcion', null, array('label'=> $this->getTranslator()->trans('_descripcion_')))
-            ->add('unidadMedida', null, array('label'=> $this->getTranslator()->trans('_unidad_medida_')))
-            ->add('categoriaEvaluacion', null, array('label'=> $this->getTranslator()->trans('_categoria_evaluacion_')))
         ;
     }
 
@@ -40,8 +36,6 @@ class EvaluacionExternaTipoAdmin extends Admin
         $listMapper
             ->addIdentifier('codigo', null, array('label'=> $this->getTranslator()->trans('_codigo_')))
             ->add('descripcion', null, array('label'=> $this->getTranslator()->trans('_descripcion_')))
-            ->add('unidadMedida', null, array('label'=> $this->getTranslator()->trans('_unidad_medida_')))
-            ->add('categoriaEvaluacion', null, array('label'=> $this->getTranslator()->trans('_categoria_evaluacion_')))
         ;
     }
 

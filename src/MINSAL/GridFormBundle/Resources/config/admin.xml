@@ -84,10 +84,28 @@
             <argument>MINSAL\GridFormBundle\Entity\RangoAlerta</argument>
             <argument />            
         </service>
-        <service id="sonata.gridform.admin.evaluacionatencion" class="MINSAL\GridFormBundle\Admin\EvaluacionAtencionAdmin">
-            <tag name="sonata.admin" manager_type="orm" group="_configuracion_" label="_evaluacion_atencion_"/>
+        <service id="sonata.gridform.admin.indicador" class="MINSAL\GridFormBundle\Admin\IndicadorAdmin">
+            <tag name="sonata.admin" manager_type="orm" group="_configuracion_" label="_indicador_"/>
             <argument />
-            <argument>MINSAL\GridFormBundle\Entity\EvaluacionAtencion</argument>
+            <argument>MINSAL\GridFormBundle\Entity\Indicador</argument>
+            <argument />            
+        </service>
+        <service id="sonata.gridform.admin.evaluacion_externa_tipo" class="MINSAL\GridFormBundle\Admin\EvaluacionExternaTipoAdmin">
+            <tag name="sonata.admin" manager_type="orm" group="_configuracion_" label="_evaluacion_externa_tipo_"/>
+            <argument />
+            <argument>MINSAL\GridFormBundle\Entity\EvaluacionExternaTipo</argument>
+            <argument />            
+        </service>
+        <service id="sonata.gridform.admin.evaluacion_externa" class="MINSAL\GridFormBundle\Admin\EvaluacionExternaAdmin">
+            <tag name="sonata.admin" manager_type="orm" group="_configuracion_" label="_evaluacion_externa_"/>
+            <argument />
+            <argument>MINSAL\GridFormBundle\Entity\EvaluacionExterna</argument>
+            <argument />            
+        </service>
+        <service id="sonata.gridform.admin.evaluacion_categoria" class="MINSAL\GridFormBundle\Admin\EvaluacionCategoriaAdmin">
+            <tag name="sonata.admin" manager_type="orm" group="_configuracion_" label="_evaluacion_categoria_"/>
+            <argument />
+            <argument>MINSAL\GridFormBundle\Entity\EvaluacionCategoria</argument>
             <argument />            
         </service>
     </services>

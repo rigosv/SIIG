@@ -167,23 +167,23 @@
                         <DIV id="info_establecimiento" ng-show="!mostrarListadoEstablecimientos" >
                             <span title="{{'_volver_listado_'|trans}}" style="float:right; cursor: pointer;" class="glyphicon glyphicon-th-list" aria-hidden="true" ng-click="mostrarListadoEstablecimientos = true"></span>
                             <table class="table table-hover" >
+                                <caption>[[establecimientoSeleccionado.nombre]] :: Evaluación de calidad: [[establecimientoSeleccionado.measure]]%</caption>
                                 <thead>
                                     <TR class="success">
-                                        <TH colspan="2">[[establecimientoSeleccionado.nombre]]</TH>
+                                        <TH>{{'_categoria_'|trans}}</TH>
+                                        <TH>{{'_tipo_evaluacion_'|trans}}</TH>
+                                        <TH>{{'_anio_'|trans}}</TH>
+                                        <TH>{{'_valor_'|trans}}</TH>
+                                        <TH>{{'_unidad_medida_'|trans}}</TH>
                                     </TR>
                                 </thead>
-                                <tbody>
-                                    <TR>
-                                        <TD>{{'_calificacion_'|trans}}</TD>
-                                        <TD>[[establecimientoSeleccionado.measure]]</TD>
-                                    </TR>
-                                    <TR>
-                                        <TD>{{'_carta_iberoamericana_'|trans}}</TD>
-                                        <TD>[[establecimientoSeleccionado.carta_iberoamericana]]</TD>
-                                    </TR>
-                                    <TR>
-                                        <TD>{{'_evaluacion_capacidad_especial_'|trans}}</TD>
-                                        <TD>[[establecimientoSeleccionado.evaluacion_capacidad_especial]]</TD>
+                                <tbody>                                    
+                                    <TR ng-repeat="eval_ext in establecimientoSeleccionado.evaluaciones_externas">
+                                        <TD>[[eval_ext.categoria]]</TD>
+                                        <TD>[[eval_ext.tipo_evaluacion]]</TD>
+                                        <TD>[[eval_ext.anio]]</TD>
+                                        <TD>[[eval_ext.valor]]</TD>
+                                        <TD>[[eval_ext.unidad_medida]]</TD>
                                     </TR>
                                 </tbody>
                             </table>
@@ -225,7 +225,6 @@
                         <table class="table table-hover" ng-show="evaluaciones.length">
                             <thead>
                                 <TR>
-                                    <TD>{{'_nombre_'|trans}}</TD>
                                     <TD>{{'_descripcion_'|trans}}</TD>
                                     <TD>{{'_calificacion_'|trans}}</TD>
                                     <TD>{{'_estandar_'|trans}}</TD>
@@ -234,7 +233,6 @@
                             </thead>
                             <tbody>
                                 <TR  ng-repeat="eval in evaluaciones | filter : buscar_evaluaciones" ng-click="getCriterios(eval)">
-                                    <TD  >[[eval.nombre_evaluacion]]</TD>
                                     <TD >[[eval.descripcion]]</TD>
                                     <TD>[[eval.total_cumplimiento]]/[[eval.total_aplicable]] = [[eval.measure | number:2]]%</TD>
                                     <TD>[[eval.meta*100 | number:2 ]]%</TD>

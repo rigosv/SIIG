@@ -6,13 +6,13 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
- * MINSAL\GridFormBundle\Entity\EvaluacionExternaTipo
+ * MINSAL\GridFormBundle\Entity\EvaluacionCategoria
  *
- * @ORM\Table(name="evaluacion_externa_tipo")
+ * @ORM\Table(name="evaluacion_categoria")
  * @UniqueEntity(fields="codigo", message="Código ya existe")
  * @ORM\Entity
  */
-class EvaluacionExternaTipo
+class EvaluacionCategoria
 {
     /**
      * @var integer $id
@@ -35,28 +35,12 @@ class EvaluacionExternaTipo
      *
      * @ORM\Column(name="descripcion", type="text", nullable=false)
      */
-    private $descripcion;
-    
-    /**
-     * @ORM\ManyToOne(targetEntity="EvaluacionCategoria")
-     * */
-    private $categoriaEvaluacion;
-    
-    /**
-     * @var string $descripcion
-     *
-     * @ORM\Column(name="unidad_medida", type="string", length=30, nullable=true)
-     */
-    private $unidadMedida;
-    
-
+    private $descripcion;    
+        
     public function __toString()
     {
         return $this->descripcion ? : '';
     }
-
-
-    
 
     /**
      * Get id
@@ -112,51 +96,5 @@ class EvaluacionExternaTipo
     public function getDescripcion()
     {
         return $this->descripcion;
-    }
-
-    /**
-     * Set unidadMedida
-     *
-     * @param string $unidadMedida
-     * @return EvaluacionExternaTipo
-     */
-    public function setUnidadMedida($unidadMedida)
-    {
-        $this->unidadMedida = $unidadMedida;
-
-        return $this;
-    }
-
-    /**
-     * Get unidadMedida
-     *
-     * @return string 
-     */
-    public function getUnidadMedida()
-    {
-        return $this->unidadMedida;
-    }
-
-    /**
-     * Set categoriaEvaluacion
-     *
-     * @param \MINSAL\GridFormBundle\Entity\EvaluacionCategoria $categoriaEvaluacion
-     * @return EvaluacionExternaTipo
-     */
-    public function setCategoriaEvaluacion(\MINSAL\GridFormBundle\Entity\EvaluacionCategoria $categoriaEvaluacion = null)
-    {
-        $this->categoriaEvaluacion = $categoriaEvaluacion;
-
-        return $this;
-    }
-
-    /**
-     * Get categoriaEvaluacion
-     *
-     * @return \MINSAL\GridFormBundle\Entity\EvaluacionCategoria 
-     */
-    public function getCategoriaEvaluacion()
-    {
-        return $this->categoriaEvaluacion;
-    }
+    }    
 }
