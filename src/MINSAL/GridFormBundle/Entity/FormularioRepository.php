@@ -123,7 +123,7 @@ class FormularioRepository extends EntityRepository {
                             )
                         AND A.formulario_id =  ".$Frm->getId()."
                 )";
-        $this->orden = "ORDER BY datos->'es_poblacion' DESC, COALESCE(NULLIF(datos->'posicion', ''), '100000000')::integer, datos->'descripcion_categoria_variable', datos->'descripcion_variable'";
+        $this->orden = "ORDER BY datos->'es_poblacion' DESC, COALESCE(NULLIF(datos->'posicion', ''), '100000000')::numeric, datos->'descripcion_categoria_variable', datos->'descripcion_variable'";
         $em->getConnection()->executeQuery($sql);
         
         //Los rangos de alertas
@@ -427,6 +427,8 @@ class FormularioRepository extends EntityRepository {
             $datos_['id_establecimiento'] = $est['id_establecimiento'];
             $datos_['category'] = $est['id_establecimiento'];
             $datos_['nombre'] = $est['descripcion'];
+            $datos_['carta_iberoamericana'] = 80;
+            $datos_['evaluacion_capacidad_especial'] = 43.3;
             $datos_['total_cumplimiento'] = $total_evaluacion['cumplimiento'];
             $datos_['total_no_cumplimiento'] = $total_evaluacion['no_cumplimiento'];
             $datos_['total_aplicable'] = $total_evaluacion['cumplimiento'] + $total_evaluacion['no_cumplimiento'];
@@ -692,7 +694,7 @@ class FormularioRepository extends EntityRepository {
                 FROM (
                     $sql_forms
                 ) AS AA
-                ORDER BY codigo, datos->'es_poblacion' DESC, COALESCE(NULLIF(datos->'posicion', ''), '100000000')::integer, datos->'descripcion_categoria_variable', datos->'descripcion_variable'
+                ORDER BY codigo, datos->'es_poblacion' DESC, COALESCE(NULLIF(datos->'posicion', ''), '100000000')::numeric, datos->'descripcion_categoria_variable', datos->'descripcion_variable'
                 ;";
         try {
             return $em->getConnection()->executeQuery($sql)->fetchAll();
