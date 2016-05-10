@@ -6,7 +6,7 @@
             height: 350px !important;
             border: 1 solid red;
         }
-        .glyphicon-off, .fa-user, .fa-caret-down{
+        .glyphicon-off, .fa-user, .fa-caret-down, .glyphicon-th-list{
             color: #FF7722;
         }
         TR{
@@ -150,7 +150,7 @@
                     </div>
                     <div class="panel-body">
                         <div class="alert alert-warning" role="alert" ng-show="!establecimientos.length">{{'_no_hay_datos_mostrar_'|trans}}</div>
-                        <table class="table table-hover" ng-show="establecimientos.length">
+                        <table class="table table-hover" ng-show="establecimientos.length && mostrarListadoEstablecimientos" >
                             <thead>
                                 <TR>
                                     <TD>{{'_establecimiento_'|trans}}</TD>
@@ -164,6 +164,30 @@
                                 </TR>
                             </tbody>
                         </table>
+                        <DIV id="info_establecimiento" ng-show="!mostrarListadoEstablecimientos" >
+                            <span title="{{'_volver_listado_'|trans}}" style="float:right; cursor: pointer;" class="glyphicon glyphicon-th-list" aria-hidden="true" ng-click="mostrarListadoEstablecimientos = true"></span>
+                            <table class="table table-hover" >
+                                <thead>
+                                    <TR class="success">
+                                        <TH colspan="2">[[establecimientoSeleccionado.nombre]]</TH>
+                                    </TR>
+                                </thead>
+                                <tbody>
+                                    <TR>
+                                        <TD>{{'_calificacion_'|trans}}</TD>
+                                        <TD>[[establecimientoSeleccionado.measure]]</TD>
+                                    </TR>
+                                    <TR>
+                                        <TD>{{'_carta_iberoamericana_'|trans}}</TD>
+                                        <TD>[[establecimientoSeleccionado.carta_iberoamericana]]</TD>
+                                    </TR>
+                                    <TR>
+                                        <TD>{{'_evaluacion_capacidad_especial_'|trans}}</TD>
+                                        <TD>[[establecimientoSeleccionado.evaluacion_capacidad_especial]]</TD>
+                                    </TR>
+                                </tbody>
+                            </table>
+                        </DIV>
                     </div>
 
 

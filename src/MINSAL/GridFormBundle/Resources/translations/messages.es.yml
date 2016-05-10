@@ -22,6 +22,7 @@ _cargar_datos_: Cargar
 _campo_: Campo
 _campos_: Campos
 _captura_datos_: Captura de datos
+_carta_iberoamericana_: Carta Iberoamericana
 _categoria_ : Categoría
 _categoria_variable_captura_ : Categoría variable de captura
 _codigo_: Código
@@ -51,6 +52,9 @@ _error_validation_: Error de validación
 _error_datos_no_guardados_: Sucedió un error al guardar los datos
 _evaluaciones_: Evaluaciones
 _evaluacion_atencion_: Areas a evaluar
+_evaluacion_capacidad_especial_: Evaluación Capacidades Especiales
+_evaluacion_externa_: Evaluación externa
+_evaluacion_externa_tipo_: Evaluación externa tipo
 _areas_atencion_: Areas a evaluar
 _faltan_datos_requeridos_: Faltan datos requeridos
 _febrero_: Febrero
@@ -127,6 +131,7 @@ _ubicacion_: Ubicación
 _unidad_: Unidad
 _unidad_superior_ : Unidad superior
 _variable_captura_: Variables de captura
+_volver_listado_: Volver al listado
 _yellow_: Amarillo
 _periodo_evaluacion_: Periodo evaluación
 _periodo_ingreso_grupo_usuarios_: Periodo ingreso por grupo de usuarios

@@ -68,7 +68,7 @@
                         campos.forEach(function(nodo, index){
                             formula = nodo.split(':');
                             var campo= new RegExp(formula[0].toString().trim());
-                            filasp = /\{F[0-9]{1,2}\}/g;
+                            filasp = /\{F[0-9]{1,3}\}/g;
                             lados_formula = formula[1].split('=');
                             filasFormulas.push(filasp.exec(lados_formula[0]).toString().replace(/\{|\}|F/gi,''));
                         });

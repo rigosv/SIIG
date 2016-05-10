@@ -12,6 +12,7 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['servicios'])
                 $scope.$apply();
             };
             $scope.periodoSeleccionado = '';
+            $scope.mostrarListadoEstablecimientos = true;
             $scope.fila = 1;
             $scope.establecimientoSeleccionado = '';
             $scope.evaluacionSeleccionada = '';
@@ -80,7 +81,7 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['servicios'])
             
             $scope.getEvaluaciones = function(establecimientoSel) {
                 $scope.establecimientoSeleccionado = establecimientoSel;
-                
+                $scope.mostrarListadoEstablecimientos = false;
                 
                 Evaluaciones.query({ establecimiento: establecimientoSel.id_establecimiento, periodo: $scope.periodoSeleccionado.periodo })
                     .$promise.then(
