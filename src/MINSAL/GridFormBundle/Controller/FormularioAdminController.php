@@ -118,11 +118,14 @@ class FormularioAdminController extends Controller
             if ($formularios == null or count($formularios) == 0){
                 $formularios[] = $Frm;
             }
+            
             $parametrosPlantilla['Frm'] = $Frm;
             $parametrosPlantilla['llave_primaria'] = $pk;
-            $parametrosPlantilla['cantidad_formularios'] = count($formularios);
+            $parametrosPlantilla['cantidad_formularios'] = count($formularios);            
             $parametrosPlantilla['Formularios'] = $this->ajustarFormulas($formularios);
+            //$parametrosPlantilla['Formularios'] = $formularios;
             $parametrosPlantilla['meses_activos'] = $meses[$periodoSeleccionado->getPeriodo()->getAnio()];
+            
             foreach ($formularios as $frm){
                 $parametrosPlantilla['origenes'][$frm->getId()] = $this->getOrigenes($frm, $parametros);
                 $parametrosPlantilla['pivotes'][$frm->getId()] = $this->getPivotes($frm, $parametros);
@@ -131,6 +134,7 @@ class FormularioAdminController extends Controller
             
                         
         }
+        
         return $this->render($plantilla, $parametrosPlantilla);
     }
     /**
@@ -154,10 +158,9 @@ class FormularioAdminController extends Controller
                 $formula = str_replace('{'.$v->getCodigo().'}', '{F'.$i++.'}', $formula);
             }
             $f->setCalculoFilas($formula);
-            echo $formula.'</BR></BR>';
+          
             $frm_ajustados[] = $f;
         } 
-        exit;
         return $frm_ajustados;
     }
         
@@ -195,7 +198,6 @@ class FormularioAdminController extends Controller
         } elseif ($tipo_periodo == 'pg'){
             $unidad = $this->getUser()->getEstablecimientoPrincipal();
         }
-        
         if ($periodoIngreso !=  null ){
             if ($periodoIngreso->getFormulario()->getPeriodoLecturaDatos() == 'mensual')
                 $parametros['mes'] = $periodoIngreso->getPeriodo()->getMes();
