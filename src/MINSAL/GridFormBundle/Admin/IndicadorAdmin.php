@@ -25,6 +25,7 @@ class IndicadorAdmin extends Admin
             ->add('formaEvaluacion', 'choice', array('label' => $this->getTranslator()->trans('_forma_evaluacion_'),
                         'choices' => array(
                             'cumplimiento_porcentaje_aceptacion'=>$this->getTranslator()->trans('_cumplimiento_porcentaje_aceptacion_'),
+                            'cumplimiento_criterios'=>$this->getTranslator()->trans('_cumplimiento_criterios_'),
                             'promedio' => $this->getTranslator()->trans('_promedio_')
                             )
                         ))

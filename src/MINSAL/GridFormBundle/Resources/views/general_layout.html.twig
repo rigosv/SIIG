@@ -1,0 +1,42 @@
+{% extends 'SonataAdminBundle::standard_layout.html.twig' %}
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+{% block javascripts %}
+    {{parent()}}
+    <script type="text/javascript" src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+    <script type="text/javascript" src="{{ path('fos_js_routing_js', {"callback": "fos.Router.setData"}) }}"></script>
+{% endblock %}
+{% block sonata_head_title %}
+    eTAB
+{% endblock %}
+
+{% block logo %}
+    {% spaceless %}
+        <a class="logo" href="{{ path('sonata_admin_dashboard') }}">
+            <span class="glyphicon glyphicon-off" aria-hidden="true"></span>            
+        </a>        
+    {% endspaceless %}
+{% endblock %}
+
+{% block body_attributes %}ng-app="tableroCalidadApp" ng-controller="mainCtrl" class="sonata-bc sidebar-collapse"{% endblock %}
+
+{% block sonata_nav %}
+    <nav class="navbar navbar-static-top" role="navigation">
+        <span class="titulo_">[[titulo]]</span>
+        {% block sonata_top_nav_menu %}
+            <div class="navbar-custom-menu">
+                <ul class="nav navbar-nav">
+                    <li class="dropdown user-menu">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                            <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-user">
+                            {% include sonata_admin.adminPool.getTemplate('user_block') %}
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        {% endblock %}
+    </nav>
+{% endblock sonata_nav %}

@@ -5,7 +5,7 @@ servicios.factory('Periodos', ['$resource',
     return $resource(Routing.generate('get_periodos_evaluacion'), {}, {
       query: {method:'GET', params:{}, isArray:true}
     });
-  }])
+  }]);
   
 servicios.factory('Establecimientos', ['$resource',
   function($resource){

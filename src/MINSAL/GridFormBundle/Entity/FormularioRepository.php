@@ -496,7 +496,7 @@ class FormularioRepository extends EntityRepository {
         return $datos;
     }
     
-    protected function getListaCampos(Formulario $Frm, $array = true) {
+    public function getListaCampos(Formulario $Frm, $array = true) {
         $campos = '';
         foreach ($Frm->getCampos() as $c){
             $piv = $c->getOrigenPivote();

@@ -310,5 +310,10 @@ class FichaTecnicaAdminController extends Controller {
     {                
         return $this->render('GridFormBundle:TableroCalidad:tablero.html.twig', array());
     }
+    
+    public function tableroGeneralCalidadAction(Request $request)
+    {                
+        return $this->render('GridFormBundle:TableroCalidad:tablero-general.html.twig', array());
+    }
 
 }
