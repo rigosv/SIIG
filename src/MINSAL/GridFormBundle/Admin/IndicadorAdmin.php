@@ -21,7 +21,6 @@ class IndicadorAdmin extends Admin
             ->add('codigo', null, array('label'=> $this->getTranslator()->trans('_codigo_')))
             ->add('descripcion', null, array('label'=> $this->getTranslator()->trans('_descripcion_')))
             ->add('estandar', null, array('label'=> $this->getTranslator()->trans('_estandar_')))
-            ->add('formaEvaluacion', null, array('label'=> $this->getTranslator()->trans('_forma_evaluacion_')))
             ->add('formaEvaluacion', 'choice', array('label' => $this->getTranslator()->trans('_forma_evaluacion_'),
                         'choices' => array(
                             'cumplimiento_porcentaje_aceptacion'=>$this->getTranslator()->trans('_cumplimiento_porcentaje_aceptacion_'),
@@ -30,6 +29,7 @@ class IndicadorAdmin extends Admin
                             )
                         ))            
             ->add('porcentajeAceptacion', null, array('label'=> $this->getTranslator()->trans('_porcentaje_aceptacion_')))
+            ->add('IndicadorPadre', null, array('label'=> $this->getTranslator()->trans('_indicador_padre_')))
             ->add('criterios', null, 
                     array('label'=> $this->getTranslator()->trans('_criterios_'), 
                         'expanded' => true, 
@@ -40,7 +40,7 @@ class IndicadorAdmin extends Admin
                                 return $repository->createQueryBuilder('c')
                                         ->orderBy('c.formulario, c.posicion');
                             }))
-            ->add('criterios', null, array('label'=> $this->getTranslator()->trans('_criterios_')))
+            
         ;
         $formMapper
             ->setHelps(array(

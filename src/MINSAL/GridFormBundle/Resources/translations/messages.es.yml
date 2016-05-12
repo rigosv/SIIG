@@ -80,6 +80,7 @@ _grupo_columnas_: Grupo Columnas
 _grupo_formularios_: Grupo formularios 
 _grupo_padre_: Grupo padre
 _indicador_: Indicador
+_indicador_padre_: Indicador padre
 _indicador_estandar_help_: Este campo quedará vacío, cuando los criterios del indicadores estén en varios formularios de captura
 _junio_: Junio
 _julio_: Julio
