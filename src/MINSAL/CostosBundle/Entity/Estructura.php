@@ -37,7 +37,25 @@ class Estructura
      * @ORM\Column(name="nombre", type="string", length=250, nullable=false)
      */
     private $nombre;
-        
+    
+    /**
+     * @var string $nombreCorto
+     *
+     * @ORM\Column(name="nombre_corto", type="string", length=60, nullable=true)
+     */
+    private $nombreCorto;        
+    
+    /**
+     * @ORM\ManyToOne(targetEntity="TipoEstablecimiento")
+     * */
+    private $tipoEstablecimiento;
+    
+    /**
+     * @var string $nivelCategoria
+     *
+     * @ORM\Column(name="nivel_categoria", type="integer", nullable=true)
+     */
+    private $nivelCategoria;
 
     /**
      * @var string $nivel
@@ -377,5 +395,74 @@ class Estructura
     public function getUbicacionDependencia()
     {
         return $this->ubicacionDependencia;
+    }
+
+    /**
+     * Set nombreCorto
+     *
+     * @param string $nombreCorto
+     * @return Estructura
+     */
+    public function setNombreCorto($nombreCorto)
+    {
+        $this->nombreCorto = $nombreCorto;
+
+        return $this;
+    }
+
+    /**
+     * Get nombreCorto
+     *
+     * @return string 
+     */
+    public function getNombreCorto()
+    {
+        return $this->nombreCorto;
+    }
+
+    /**
+     * Set nivelCategoria
+     *
+     * @param integer $nivelCategoria
+     * @return Estructura
+     */
+    public function setNivelCategoria($nivelCategoria)
+    {
+        $this->nivelCategoria = $nivelCategoria;
+
+        return $this;
+    }
+
+    /**
+     * Get nivelCategoria
+     *
+     * @return integer 
+     */
+    public function getNivelCategoria()
+    {
+        return $this->nivelCategoria;
+    }
+
+    /**
+     * Set tipoEstablecimiento
+     *
+     * @param \MINSAL\CostosBundle\Entity\TipoEstablecimiento $tipoEstablecimiento
+     * @return Estructura
+     */
+    public function setTipoEstablecimiento(\MINSAL\CostosBundle\Entity\TipoEstablecimiento $tipoEstablecimiento = null)
+    {
+        $this->tipoEstablecimiento = $tipoEstablecimiento;
+
+        return $this;
+    }
+
+    /**
+     * Get tipoEstablecimiento
+     *
+     * @return \MINSAL\CostosBundle\Entity\TipoEstablecimiento 
+     */
+    public function getTipoEstablecimiento()
+    {
+        return $this->tipoEstablecimiento;
     }
 }

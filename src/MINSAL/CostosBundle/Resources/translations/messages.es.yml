@@ -33,6 +33,7 @@ _gaVariables_: 'Gastos Administrativos:: Variables'
 _ga_variables_: 'Gastos Administrativos:: Variables'
 _gaCostos_: 'Gastos Administrativos:: Costos'
 _ga_costos_: 'Gastos Administrativos:: Costos'
+_nombre_corto_ : Nombre corto
 _promedio_usuarios_x_dia_: Promedio diario de usuarios
 _rrhhDistribucionHora_: 'RRHH :: Distribución de horas'
 _rrhh_: Recurso Humano

@@ -9,7 +9,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * MINSAL\GridFormBundle\Entity\ParametrosIngresoDatos
  *
  * @ORM\Table(name="parametros_ingreso_datos")
- * @UniqueEntity(fields="{codigo}", message="Registro ya existe")
+ * @UniqueEntity(fields="{anio, mes, establecimiento, formulario}", message="Registro ya existe")
  * @ORM\Entity
  */
 class ParametrosIngresoDatos
@@ -141,6 +141,29 @@ class ParametrosIngresoDatos
     }
 
     /**
+     * Set cantidadExpedienteReportar
+     *
+     * @param integer $cantidadExpedienteReportar
+     * @return ParametrosIngresoDatos
+     */
+    public function setCantidadExpedienteReportar($cantidadExpedienteReportar)
+    {
+        $this->cantidadExpedienteReportar = $cantidadExpedienteReportar;
+
+        return $this;
+    }
+
+    /**
+     * Get cantidadExpedienteReportar
+     *
+     * @return integer 
+     */
+    public function getCantidadExpedienteReportar()
+    {
+        return $this->cantidadExpedienteReportar;
+    }
+
+    /**
      * Set nombreResponsable
      *
      * @param string $nombreResponsable
@@ -235,10 +258,10 @@ class ParametrosIngresoDatos
     /**
      * Set formulario
      *
-     * @param \MINSAL\CostosBundle\Entity\Formulario $formulario
+     * @param \MINSAL\GridFormBundle\Entity\Formulario $formulario
      * @return ParametrosIngresoDatos
      */
-    public function setFormulario(\MINSAL\CostosBundle\Entity\Formulario $formulario = null)
+    public function setFormulario(\MINSAL\GridFormBundle\Entity\Formulario $formulario = null)
     {
         $this->formulario = $formulario;
 
@@ -248,33 +271,10 @@ class ParametrosIngresoDatos
     /**
      * Get formulario
      *
-     * @return \MINSAL\CostosBundle\Entity\Formulario 
+     * @return \MINSAL\GridFormBundle\Entity\Formulario 
      */
     public function getFormulario()
     {
         return $this->formulario;
-    }
-
-    /**
-     * Set cantidadExpedienteReportar
-     *
-     * @param integer $cantidadExpedienteReportar
-     * @return ParametrosIngresoDatos
-     */
-    public function setCantidadExpedienteReportar($cantidadExpedienteReportar)
-    {
-        $this->cantidadExpedienteReportar = $cantidadExpedienteReportar;
-
-        return $this;
-    }
-
-    /**
-     * Get cantidadExpedienteReportar
-     *
-     * @return integer 
-     */
-    public function getCantidadExpedienteReportar()
-    {
-        return $this->cantidadExpedienteReportar;
     }
 }
