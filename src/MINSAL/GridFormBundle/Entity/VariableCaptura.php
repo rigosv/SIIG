@@ -42,7 +42,7 @@ class VariableCaptura
     /**
      * @var string $esPoblacion
      *
-     * @ORM\Column(name="es_poblacion", type="boolean", nullable=true)
+     * @ORM\Column(name="es_poblacion", type="boolean", nullable=true, options={"default" = false})
      */
     private $esPoblacion;
     
@@ -96,7 +96,7 @@ class VariableCaptura
     /**
      * @var string $esSeparador
      *
-     * @ORM\Column(name="es_separador", type="boolean", nullable=true)
+     * @ORM\Column(name="es_separador", type="boolean", nullable=true, options={"default" = false})
      */
     private $esSeparador;
     
