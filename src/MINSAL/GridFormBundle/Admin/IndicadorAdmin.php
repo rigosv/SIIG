@@ -32,7 +32,7 @@ class IndicadorAdmin extends Admin
             ->add('IndicadorPadre', null, array('label'=> $this->getTranslator()->trans('_indicador_padre_')))
             ->add('criterios', null, 
                     array('label'=> $this->getTranslator()->trans('_criterios_'), 
-                        'expanded' => true, 
+                        'expanded' => false, 
                         'multiple' => true,
                         'by_reference' => false,
                         'class' => 'GridFormBundle:VariableCaptura',
