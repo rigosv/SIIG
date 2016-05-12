@@ -33,6 +33,7 @@ _gaVariables_: 'Gastos Administrativos:: Variables'
 _ga_variables_: 'Gastos Administrativos:: Variables'
 _gaCostos_: 'Gastos Administrativos:: Costos'
 _ga_costos_: 'Gastos Administrativos:: Costos'
+_nivel_categoria_ : Nivel categoría
 _nombre_corto_ : Nombre corto
 _promedio_usuarios_x_dia_: Promedio diario de usuarios
 _rrhhDistribucionHora_: 'RRHH :: Distribución de horas'
@@ -43,6 +44,7 @@ _rrhhValorPagado_: 'RRHH :: VAlor Pagado'
 _tiempo_utilizacion_luminarias_ : Tiempo promedio de utilización de luminarias (horas x día)
 _tipo_contratacion_: Tipo contratación
 _tipo_recurso_: Tipo Recurso
+_tipo_establecimiento_ : Tipo Establecimiento
 _tomas_con_planta_emergencia_: Cant. de tomas con Planta de Emergencia
 _total_personal_: Total personal asignado
 _unidades_productivas_ : Unidades productivas

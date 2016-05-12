@@ -21,6 +21,8 @@ class EstructuraAdmin extends Admin
             ->add('codigo', null, array('label'=> $this->getTranslator()->trans('_codigo_')))
             ->add('nombre', null, array('label'=> $this->getTranslator()->trans('_nombre_')))
             ->add('nombreCorto', null, array('label'=> $this->getTranslator()->trans('_nombre_corto_')))
+            ->add('nivelCategoria', null, array('label'=> $this->getTranslator()->trans('_nivel_categoria_')))
+            ->add('tipoEstablecimiento', null, array('label'=> $this->getTranslator()->trans('_tipo_establecimiento_')))
             ->add('parent', null, array('label' => $this->getTranslator()->trans('_unidad_superior_'),
                     'required' => false, 'expanded' => false,
                     'class' => 'CostosBundle:Estructura',
