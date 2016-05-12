@@ -1,6 +1,7 @@
 {% extends 'GridFormBundle::general_layout.html.twig' %}
 {% block stylesheets %}
     {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('bundles/gridform/js/LineChart/LineChart.min.css') }}" type="text/css" media="all" />
     <style>
         .panel_{
             height: 350px !important;
@@ -114,14 +115,15 @@
     <script type="text/javascript" src="{{ asset('bundles/gridform/js/ui-bootstrap-tpls-1.3.2.min.js') }}"></script>    
 
     <script type="text/javascript" src="{{ asset('bundles/gridform/js/TableroCalidad/barchart.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/gridform/js/LineChart/LineChart.min.js') }}"></script>
     <!--<script type="text/javascript" src="{{ asset('bundles/gridform/js/TableroCalidad/radarchart.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('bundles/gridform/js/TableroCalidad/linechart.js') }}"></script>
-    -->
+    <script type="text/javascript" src="{{ asset('bundles/gridform/js/TableroCalidad/linechart.js') }}"></script> -->
+    
     <script type="text/javascript" src="{{ asset('bundles/gridform/js/TableroCalidad/appGeneral.js') }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/gridform/js/TableroCalidad/serviciosGeneral.js') }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/gridform/js/TableroCalidad/barchartComponent.js') }}"></script>
-    <!--<script type="text/javascript" src="{{ asset('bundles/gridform/js/TableroCalidad/radarchartComponent.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('bundles/gridform/js/TableroCalidad/linechartComponent.js') }}"></script> -->
+    <!--<script type="text/javascript" src="{{ asset('bundles/gridform/js/TableroCalidad/radarchartComponent.js') }}"></script> 
+    <script type="text/javascript" src="{{ asset('bundles/gridform/js/TableroCalidad/linechartComponent.js') }}"></script>-->
     
 
 {% endblock %}
@@ -152,7 +154,7 @@
         </div> -->
     </div>
     <div class="row row_tablero" ng-if="indicadores.length > 1">
-        <DIV class="col-md-6">
+        <DIV class="col-md-6 listado">
             <div class="panel panel-info panel_" >
                 <div class="panel-heading">
                     <div class="form_row row">
@@ -189,20 +191,20 @@
                             </TR>
                         </thead>
                         <tbody ng-show="filtroListadoIndicador == 'todos'">
-                            <TR  ng-repeat="ind in indicadores | filter : buscar_indicadores" >
+                            <TR  ng-repeat="ind in indicadores | filter : buscar_indicadores" ng-click="seleccionarIndicador(ind)">
                                 <TD >[[ind.descripcion_estandar]]</TD>
                                 <TD >[[ind.descripcion_indicador]]</TD>
                                 <TD>[[ind.calificacion | number:2]]%</TD>
                             </TR>
                         </tbody>
-                        <tbody ng-show="filtroListadoIndicador == '+10'">
+                        <tbody ng-show="filtroListadoIndicador == '+10'" ng-click="seleccionarIndicador(ind)">
                             <TR  ng-repeat="ind in indicadoresTop10 " >
                                 <TD >[[ind.descripcion_estandar]]</TD>
                                 <TD >[[ind.descripcion_indicador]]</TD>
                                 <TD>[[ind.calificacion | number:2]]%</TD>
                             </TR>
                         </tbody>
-                        <tbody ng-show="filtroListadoIndicador == '-10'">
+                        <tbody ng-show="filtroListadoIndicador == '-10'" ng-click="seleccionarIndicador(ind)">
                             <TR  ng-repeat="ind in indicadoresLess10 " >
                                 <TD >[[ind.descripcion_estandar]]</TD>
                                 <TD >[[ind.descripcion_indicador]]</TD>
@@ -220,6 +222,67 @@
                 </div>
                 <div class="panel-body" >
                     <bar-chart height="options.height" data="datosGrafico1" ></bar-chart>
+                </div>                
+            </div>
+        </div>
+    </div>
+    <!-- FILA 2 -->
+    <div class="row row_tablero" ng-if="mostrarInfoIndicador">
+        <div class="col-md-6 listado">
+            <div class="panel panel-info panel_" >
+                <div class="panel-heading">
+                    <div class="form_row row">
+                        <DIV class="col-md-4"><strong>{{'_Establecimientos_'|trans}}</strong></div>
+                        <DIV class="col-md-4">
+                            <!--<div class="btn-group">
+                                <label class="btn btn-primary active" ng-model="filtroListadoIndicador" uib-btn-radio="'todos'" ng-change="cambiarGrafico1('todos')">
+                                    <!--<span class="glyphicon glyphicon-tasks" aria-hidden="true" title="Todos"></span> -->
+                                    <!-- Todos
+                                </label>
+                                <label class="btn btn-success" ng-model="filtroListadoIndicador" uib-btn-radio="'+10'" ng-change="cambiarGrafico1('+10')">
+                                  +10
+                                </label>
+                                <label class="btn btn-danger" ng-model="filtroListadoIndicador" uib-btn-radio="'-10'" ng-change="cambiarGrafico1('-10')">
+                                  -10
+                                </label>
+                            </div> -->
+                        </div>
+                        <DIV class="col-md-4">
+                            <div class="input-group">
+                                <div class="input-group-addon"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></div>
+                                <input type="text" class="form-control" size="10" ng-model="buscar_establecimientos" >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body">                        
+                    <table class="table table-hover">
+                        <thead>
+                            <TR class="success">
+                                <TH>{{'_establecimiento_'|trans}}</TH>
+                                <TH>{{'_valor_indicador_'|trans}}</TH>
+                                <TH>{{'_valor_indicador_general_'|trans}}</TH>
+                            </TR>
+                        </thead>
+                        <tbody >
+                            <TR  ng-repeat="est in indicadorSeleccionado.evaluacion | filter : buscar_establecimientos" >
+                                <TD >[[est.establecimiento]]</TD>
+                                <TD >[[est.calificacion]]</TD>
+                                <TD>[[indicadorSeleccionado.calificacion | number:2]]%</TD>
+                            </TR>
+                        </tbody>                        
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="panel panel-info panel_" >
+                <div class="panel-heading">
+                    <strong>[[titulo_grafico2]]</strong>
+                </div>
+                <div class="panel-body" >
+                    <!-- <scatter height="options.height" data="employers" ></scatter> -->
+                    <linechart data="data" options="options"></linechart>
                 </div>                
             </div>
         </div>

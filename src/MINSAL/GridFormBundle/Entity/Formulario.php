@@ -95,6 +95,21 @@ class Formulario
     private $ajustarAltoFila;
 
     /**
+     * @var string $evaluacionPorExpedientes
+     *
+     * @ORM\Column(name="evaluacion_por_expedientes", type="boolean", nullable=true)
+     */
+    private $evaluacionPorExpedientes;
+
+    /**
+     * @var string $posicion
+     *
+     * @ORM\Column(name="posicion", type="float", nullable=true)
+     */
+    private $posicion;
+    
+    
+    /**
      * @var string $tituloColumnas
      *
      * @ORM\Column(name="titulo_columnas", type="text", nullable=true)
@@ -776,5 +791,51 @@ class Formulario
     public function getIndicadores()
     {
         return $this->indicadores;
+    }
+
+    /**
+     * Set evaluacionPorExpedientes
+     *
+     * @param boolean $evaluacionPorExpedientes
+     * @return Formulario
+     */
+    public function setEvaluacionPorExpedientes($evaluacionPorExpedientes)
+    {
+        $this->evaluacionPorExpedientes = $evaluacionPorExpedientes;
+
+        return $this;
+    }
+
+    /**
+     * Get evaluacionPorExpedientes
+     *
+     * @return boolean 
+     */
+    public function getEvaluacionPorExpedientes()
+    {
+        return $this->evaluacionPorExpedientes;
+    }
+
+    /**
+     * Set posicion
+     *
+     * @param float $posicion
+     * @return Formulario
+     */
+    public function setPosicion($posicion)
+    {
+        $this->posicion = $posicion;
+
+        return $this;
+    }
+
+    /**
+     * Get posicion
+     *
+     * @return float 
+     */
+    public function getPosicion()
+    {
+        return $this->posicion;
     }
 }

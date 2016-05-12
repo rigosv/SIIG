@@ -35,7 +35,8 @@ _criterios_: Criterios
 _criterios_evaluacion_: Criterios de evaluación
 _cuadro_datos_: Cuadro de datos
 _cumplimiento_: Cumplimiento
-_cumplimiento_porcentaje_aceptacion_: Cumplimiento porcentaje aceptación
+_cumplimiento_criterios_: % de cumplimiento de criterios
+_cumplimiento_porcentaje_aceptacion_: % de expedientes que cumplen el porcentaje aceptación
 _datos_guardados_: Datos Guardados con éxito
 _dato_no_valido_: Dato no válido
 _descripcion_: Descripción
@@ -55,12 +56,14 @@ _error_datos_no_guardados_: Sucedió un error al guardar los datos
 _evaluaciones_: Evaluaciones
 _evaluacion_atencion_: Areas a evaluar
 _evaluacion_capacidad_especial_: Evaluación Capacidades Especiales
-_evaluacion_categoria_ : Evaluación categoría
-_evaluacion_externa_: Evaluación externa
-_evaluacion_externa_tipo_: Evaluación externa tipo
+_evaluacion_categoria_ : Evaluación complementaria categoría
+_evaluacion_externa_: Evaluación complementaria
+_evaluacion_externa_tipo_: Evaluacion complementaria tipo
+_evaluacion_por_expedientes_: Evaluación por expedientes
 _areas_atencion_: Areas a evaluar
 _faltan_datos_requeridos_: Faltan datos requeridos
 _febrero_: Febrero
+_fecha_evaluacion_ : Fecha evaluación
 _forma_evaluacion_: Forma de evaluación
 _formato_: Formato
 _formula_: Fórmula
@@ -94,6 +97,7 @@ _ocultar_numero_fila_: 'Ocultar número de fila'
 _no_: NO
 _nombre_: Nombre
 _nombre_evaluacion_: Nombre evaluación
+_nombre_responsable_evaluacion_ : Nombre responsable evaluación
 _noviembre_: Noviembre
 _octubre_: Octubre
 _oculto_: Oculto
@@ -102,6 +106,7 @@ _origen_filas_: Origen de filas
 _origen_filas_help_: Sentencia SQL para recuperar filas que serán representadas por la variable
 _origen_formulario_: Origen del formulario
 _origen_pivote_: Origen pivote
+_parametros_ingreso_datos_ : Parámetros ingreso datos
 _parametros_no_establecidos_: No se han definido parámetros
 _periodos_ingreso_: Períodos de ingreso
 _periodo_ingreso_: Período de ingreso
@@ -110,6 +115,7 @@ _periodo_lectura_datos_: 'Periodo de lectura de datos'
 _porcentaje_aceptacion_ : Porcentaje aceptación
 _porcentaje_cumplimiento_: Porcentaje de cumplimiento
 _posicion_: Posición
+_posicion_listados_: Posición en listados
 _promedio_: Promedio
 _rango_alerta_: Rango alertas
 _rango_colores_: Rango colores
@@ -135,6 +141,7 @@ _titulo_columna_help_: 'Si se requiere cambiar el título por defecto de las col
 _todos_: Todos
 _total_: Total
 _ubicacion_: Ubicación
+_umbral_estandar_: Umbral del estándar
 _unidad_: Unidad
 _unidad_medida_: Unidad de medida
 _unidad_superior_: Unidad superior

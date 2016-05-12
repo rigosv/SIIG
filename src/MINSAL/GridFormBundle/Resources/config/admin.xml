@@ -108,5 +108,11 @@
             <argument>MINSAL\GridFormBundle\Entity\EvaluacionCategoria</argument>
             <argument />            
         </service>
+        <service id="sonata.gridform.admin.parametros_ingreso_datos" class="MINSAL\GridFormBundle\Admin\ParametrosIngresoDatosAdmin">
+            <tag name="sonata.admin" manager_type="orm" group="_configuracion_" label="_parametros_ingreso_datos_"/>
+            <argument />
+            <argument>MINSAL\GridFormBundle\Entity\ParametrosIngresoDatos</argument>
+            <argument />            
+        </service>
     </services>
 </container>

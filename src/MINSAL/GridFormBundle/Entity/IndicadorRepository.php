@@ -39,12 +39,20 @@ class IndicadorRepository extends EntityRepository {
         foreach ($indicadores as $ind){
             
             $Frm = $em->getRepository('GridFormBundle:Formulario')->find($ind['estandar_id']);
-            $eval = $this->getDatosEvaluacion($Frm, $periodo, $ind['total_criterios'], $ind['porcentaje_aceptacion'], $ind['forma_evaluacion'] );
+            $eval_ = $this->getDatosEvaluacion($Frm, $periodo, $ind['total_criterios'], $ind['porcentaje_aceptacion'], $ind['forma_evaluacion'] );
+            
             $calificacion = 0;
-            foreach($eval as $e){
+            $eval = array();
+            foreach($eval_ as $e){
                 $calificacion += $e['calificacion'];
             }
-            $calificacionIndicador = (count($eval) > 0) ? ($calificacion / count($eval)) : 0;
+            $calificacionIndicador = (count($eval_) > 0) ? ($calificacion / count($eval_)) : 0;
+            foreach($eval_ as $e){
+                $f = $e;
+                $f['calificacion_indicador'] = $calificacionIndicador;
+                $eval[] = $f;
+            }
+            
             $datos[] = array('descripcion_estandar'=>$ind['descripcion_estandar'],  
                             'descripcion_indicador'=>$ind['descripcion'] ,
                             'codigo_indicador'=>$ind['codigo'] ,
@@ -126,7 +134,8 @@ class IndicadorRepository extends EntityRepository {
                             GROUP BY establecimiento
                     ) AS C ON (A.establecimiento = C.establecimiento)
                     INNER JOIN ctl_establecimiento_simmow ES ON (A.establecimiento = ES.id::text)                
-                ) AS F ORDER BY calificacion DESC
+                ) AS F
+                ORDER BY calificacion DESC
          ";
         return $em->getConnection()->executeQuery($sql)->fetchAll();
     }

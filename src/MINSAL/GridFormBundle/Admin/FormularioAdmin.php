@@ -23,6 +23,7 @@ class FormularioAdmin extends Admin
             ->add('nombre', null, array('label'=> $this->getTranslator()->trans('_nombre_')))
             ->add('descripcion', null, array('label'=> $this->getTranslator()->trans('_descripcion_')))
             ->add('columnasFijas', null, array('label'=> $this->getTranslator()->trans('_columnas_fijas_')))
+            ->add('posicion', null, array('label'=> $this->getTranslator()->trans('_posicion_listados_')))
             ->add('origenDatos', null, array('label'=> $this->getTranslator()->trans('_origen_formulario_')))
             ->add('areaCosteo', 'choice', array('label' => $this->getTranslator()->trans('_area_costeo_'),
                         'choices' => array('rrhh'=>$this->getTranslator()->trans('_rrhh_'),
@@ -35,7 +36,7 @@ class FormularioAdmin extends Admin
                             'calidad' => $this->getTranslator()->trans('_calidad_')
                             )
                         ))
-            ->add('meta', null, array('label'=> $this->getTranslator()->trans('_estandar_')))
+            ->add('meta', null, array('label'=> $this->getTranslator()->trans('_umbral_estandar_')))
             ->add('formaEvaluacion', 'choice', array('label' => $this->getTranslator()->trans('_forma_evaluacion_'),
                         'choices' => array(
                             'lista_chequeo'=>$this->getTranslator()->trans('_lista_chequeo_'),
@@ -59,6 +60,7 @@ class FormularioAdmin extends Admin
                                         ->orderBy('s.descripcion');
                             }))
             ->add('rutaManualUso', null, array('label'=> $this->getTranslator()->trans('_ruta_manual_uso_')))
+            ->add('evaluacionPorExpedientes', null, array('label'=> $this->getTranslator()->trans('_evaluacion_por_expedientes_')))
             ->add('ajustarAltoFila', null, array('label'=> $this->getTranslator()->trans('_ajustar_alto_fila_')))
             ->add('ocultarNumeroFila', null, array('label'=> $this->getTranslator()->trans('_ocultar_numero_fila_')))
             ->add('noOrdenarPorFila', null, array('label'=> $this->getTranslator()->trans('_no_ordenar_por_fila_')))

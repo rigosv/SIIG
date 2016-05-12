@@ -54,7 +54,7 @@ class Indicador
     /**
      * @var string $porcentajeAceptacion
      *
-     * @ORM\Column(name="porcentaje_aceptacion", type="float", nullable=false)
+     * @ORM\Column(name="porcentaje_aceptacion", type="float", nullable=true)
      */
     private $porcentajeAceptacion;
     
