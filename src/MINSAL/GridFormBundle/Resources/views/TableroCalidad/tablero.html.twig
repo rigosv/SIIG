@@ -109,12 +109,12 @@
 
     <script type="text/javascript" src="{{ asset('bundles/gridform/js/TableroCalidad/barchart.js') }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/gridform/js/TableroCalidad/radarchart.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('bundles/gridform/js/TableroCalidad/linechart.js') }}"></script>
+    
     <script type="text/javascript" src="{{ asset('bundles/gridform/js/TableroCalidad/app.js') }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/gridform/js/TableroCalidad/servicios.js') }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/gridform/js/TableroCalidad/barchartComponent.js') }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/gridform/js/TableroCalidad/radarchartComponent.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('bundles/gridform/js/TableroCalidad/linechartComponent.js') }}"></script>
+    
 
 {% endblock %}
 
@@ -167,7 +167,7 @@
                         <DIV id="info_establecimiento" ng-show="!mostrarListadoEstablecimientos" >
                             <span title="{{'_volver_listado_'|trans}}" style="float:right; cursor: pointer;" class="glyphicon glyphicon-th-list" aria-hidden="true" ng-click="mostrarListadoEstablecimientos = true"></span>
                             <table class="table table-hover" >
-                                <caption>[[establecimientoSeleccionado.nombre]] :: Evaluación de calidad: [[establecimientoSeleccionado.measure]]%</caption>
+                                <caption>[[establecimientoSeleccionado.nombre]] :: Evaluación de estándares de calidad: [[establecimientoSeleccionado.measure]]%</caption>
                                 <thead>
                                     <TR class="success">
                                         <TH>{{'_categoria_'|trans}}</TH>
@@ -227,7 +227,7 @@
                                 <TR class="success">
                                     <TH>{{'_estandar_'|trans}}</TH>
                                     <TH>{{'_calificacion_'|trans}}</TH>
-                                    <TH>{{'_valor_estandar_'|trans}}</TH>
+                                    <TH>{{'_umbral_estandar_'|trans}}</TH>
                                     <TH>{{'_brecha_'|trans}}</TH>
                                 </TR>
                             </thead>

@@ -82,12 +82,12 @@ class FormularioAdminController extends Controller
             $llave = $llave = $p->getPeriodo()->getAnio().$p->getUnidad()->getId().$p->getFormulario()->getId();
             $periodos[$llave] = array('id'=>'pu_'.$p->getId(),
                                                 'periodo_anio'=>$p->getPeriodo()->getAnio(),
-                                                'periodo_mes'=>$p->getPeriodo()->getMes(),
+                                                'periodo_mes'=>$p->getPeriodo()->getMesTexto(),
                                                 'unidad' => $p->getUnidad(),
                                                 'formulario' => $p->getFormulario()
                                             );
             if ($Frm == $p->getFormulario())
-                $meses[$p->getPeriodo()->getAnio()][] = $p->getPeriodo()->getMes();
+                $meses[$p->getPeriodo()->getAnio()][] = $p->getPeriodo()->getMesTexto();
         }
                 
         //Agrupar los periodos por unidad
@@ -96,7 +96,6 @@ class FormularioAdminController extends Controller
             $periodos_aux[$p['unidad']->getCodigo()]['unidad'] = $p['unidad'];
             $periodos_aux[$p['unidad']->getCodigo()]['datos'][] = $p;
         }
-        
         
         $parametrosPlantilla = array(
             'url' => 'get_grid_data',
@@ -111,7 +110,6 @@ class FormularioAdminController extends Controller
             'mostrar_resumen' => $mostrar_resumen,
             'cantidad_formularios' => 0,
             'pk' => $pk);
-        
         if ($periodo != '-1'){
             //$formularios = $Frm->getGrupoFormularios();
             $formularios = $em->getRepository('GridFormBundle:Formulario')->findBy(array('formularioSup'=>$Frm), array('codigo'=>'ASC'));

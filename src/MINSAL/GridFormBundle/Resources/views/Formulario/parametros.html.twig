@@ -4,7 +4,7 @@
     <div class="form-group" id="dependencia_f" style="width: 100%">
         <select id="periodo_estructura" name="periodo_estructura">
             <option value="-1" selected>{{'_elija_parametros_'|trans}}</option>
-            {% for pEstructura in periodos %}                            
+            {% for pEstructura in periodos %}
                 <optgroup label="{% if pEstructura.unidad.nivel == 1 %}
                                 {{pEstructura.unidad}}
                             {% elseif pEstructura.unidad.nivel == 2 %}
@@ -13,13 +13,13 @@
                                  {{pEstructura.unidad.parent.parent}} :: {{pEstructura.unidad.parent}} :: {{pEstructura.unidad}}
                             {% endif%}">
                     {% for periodo in pEstructura.datos %}
-                        {% if (periodo.formulario.periodoLecturaDatos == 'mensual') %}
+                        {% if (periodo.formulario.periodoLecturaDatos == 'mensual') %}                            
                             {% set periodo_ =  periodo.periodo_mes ~'/' ~periodo.periodo_anio %}
                         {% else %}
                             {% set periodo_ =  periodo.periodo_anio %}
                         {% endif %}
                         <option value="{{periodo.id}}" {% if periodo.id == parametros.periodo_estructura %}selected="selected"{% endif %} >
-                            {{periodo_}} - {{'_formulario_'|trans}}: {{periodo.formulario.nombre}}
+                            {{periodo_}} :: {{periodo.formulario.nombre}}
                         </option>
                     {% endfor %}
                 </optgroup>                            

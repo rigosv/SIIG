@@ -21,13 +21,30 @@ class TableroCalidadRESTController extends Controller {
         $resp = array();
 
         $em = $this->getDoctrine()->getManager();
-
+        
+        $meses = array(1=>'Ene.',
+                2=>'Feb.',
+                3=>'Mar.',
+                4=>'Abr.',
+                5=>'May.',
+                6=>'Jun.',
+                7=>'Jul.',
+                8=>'Ago.',
+                9=>'Sep.',
+                10=>'Oct.',
+                11=>'Nov.',
+                12=>'Dic.'
+        );
         $data = $em->getRepository('GridFormBundle:Formulario')->getPeriodosEvaluacion();
-
-        if (count($data) == 0) {
+        $data_ = array();
+        foreach ($data as $f){
+            $f['etiqueta'] = $meses[$f['mes']].'/'.$f['anio'];
+            $data_[]= $f;
+        }
+        if (count($data_) == 0) {
             $response->setContent('{"estado" : "error", "msj": "' . $this->get('translator')->trans('_no_datos_') . '"}');
         } else {
-            $response->setContent(json_encode($data));
+            $response->setContent(json_encode($data_));
         }
 
         return $response;

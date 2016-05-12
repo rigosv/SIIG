@@ -23,6 +23,7 @@ class ParametrosIngresoDatosAdmin extends Admin
             ->add('anio', null, array('label'=> $this->getTranslator()->trans('_anio_')))
             ->add('mes', null, array('label'=> $this->getTranslator()->trans('_mes_')))
             ->add('nombreResponsable', null, array('label'=> $this->getTranslator()->trans('_nombre_responsable_evaluacion_')))
+            ->add('cantidadExpedienteReportar', null, array('label'=> $this->getTranslator()->trans('_cantidad_expedientes_reportar_')))
             ->add('observaciones', null, array('label'=> $this->getTranslator()->trans('_observaciones_')))
         ;
     }

@@ -54,7 +54,7 @@
     <script type="text/javascript">
         $(document).ready(function () {
             $.jqx.theme = 'ui-redmond';
-
+            listSource = [];
             {% for Frm in Formularios %}
             var initGrid{{Frm.id}} = function () {
                 var url = Routing.generate('{{url}}', {id: {{Frm.id}}, periodo_ingreso: $('#periodo_estructura').val(),titulo_frm : '{{titulo}}', datos_frm: $('#frm_').serialize() });
@@ -664,8 +664,36 @@
                     $('#modal_msj').modal('show');
                 }
             });
+            $('#frmConf').on('submit', function(e) {
+                /*var firstName = $('#firstname');
+
+                // Check if there is an entered value
+                if(!firstName.val()) {
+                  // Add errors highlight
+                  firstName.closest('.form-group').removeClass('has-success').addClass('has-error');
+
+                  // Stop submission of the form
+
+                } else {
+                  // Remove the errors highlight
+                  firstName.closest('.form-group').removeClass('has-error').addClass('has-success');
+                }*/
+                alert(1);
+                e.preventDefault();
+            });
+            $("#fechaEvaluacion").jqxDateTimeInput({ width: '200px', height: '25px', culture: 'es-SV' });
+            $("#guardarConf").click(function () {
+                if (isNaN($('#cantidadExpedientes').val())){
+                    alert('Cantidad no valida');
+                } else {
+                    alert(listSource);
+                    //$("#jqxgrid{{Formularios[0].id}}").jqxGrid('hidecolumn', event.args.value);
+                }
+            })
 
         });
+        
+        
     </script>
     {% else %}
         <script type="text/javascript">
@@ -690,6 +718,13 @@
                                 <button class="btn btn-success" type="submit" name="cargar_datos" id="cargar_datos" ><span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>{{'_cargar_datos_'|trans}}</button>
                                 {#<button class="btn btn-danger" name="clear" id="clear" ><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>{{'_limpiar_'|trans}}</button>#}
                                 <button class="btn btn-warning" type="button" name="guardar" id="guardar" ><i class="fa fa-save" data-original-title="" title=""></i>{{'_guardar_'|trans}}</button>
+                                {% if periodoSeleccionado != null and parametros.periodo_estructura != '-1' %}
+                                    {% if Formularios[0].areaCosteo() == 'calidad' %}
+                                        <button class="btn btn-default" type="button" name="configurar" id="configurar" data-toggle="modal" data-target="#myModalConf" >
+                                            <span class="glyphicon glyphicon-cog" aria-hidden="true">{{'_conf_'|trans}}</span>
+                                        </button>
+                                    {% endif %}
+                                {% endif %}
                                 <button class="btn btn-instagram" type="button" name="exportar" id="exportar" ><i class="fa fa-archive" data-original-title="" title=""></i>{{'_exportar_'|trans}}</button>
                                 {% if periodoSeleccionado != null and parametros.periodo_estructura != '-1' and Frm.rutaManualUso != '' %}
                                     <a href="Frm.rutaManualUso" TARGET="_blank" class="btn btn-info" role="button"><i class="fa fa-question-circle" data-original-title="" title=""></i>{{'_manual_uso_'|trans}}</a>
@@ -751,4 +786,38 @@
             <div class="modal-content"></div>
         </div>
     </div>
+    
+    <div class="modal fade" id="myModalConf" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title" id="myModalLabel">{{'_configuracion_'|trans}}</h4>
+            </div>
+            <div class="modal-body">
+                <form id="frmConf">
+                    <div class="form-group">
+                      <label for="fechaEvaluacion">{{'_fecha_evaluacion_'|trans}}</label>
+                      <input type="date" class="form-control" id="fechaEvaluacion" >
+                    </div>
+                    <div class="form-group">
+                      <label for="nombreResponsable">{{'_nombre_responsable_evaluacion_'|trans}}</label>
+                      <input type="text" class="form-control" id="nombreResponsable" >
+                    </div>
+                    <div class="form-group">
+                      <label for="cantidadExpedientes">{{'_cantidad_expedientes_reportar_'|trans}}</label>
+                      <input type="integer" class="form-control" id="cantidadExpedientes">
+                    </div>
+                    <div class="form-group">
+                        <label for="observaciones">{{'_observaciones_'|trans}}</label>
+                        <textarea name="observaciones" class="form-control" id="observaciones"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id='guardarConf' class="btn btn-primary">{{'_guardar_'|trans}}</button>
+            </div>
+          </div>
+        </div>
+    </div>    
 {% endblock content %}
