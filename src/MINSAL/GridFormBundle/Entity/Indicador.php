@@ -37,7 +37,7 @@ class Indicador
      *
      * @ORM\Column(name="descripcion", type="text", nullable=true)
      */
-    private $descripcion;
+    private $descripcion;    
     
     /**
      * @ORM\ManyToOne(targetEntity="Formulario", inversedBy="indicadores")
@@ -238,5 +238,107 @@ class Indicador
     public function getPorcentajeAceptacion()
     {
         return $this->porcentajeAceptacion;
+    }
+
+    /**
+     * Set criterioAsignadoEsIndicador
+     *
+     * @param boolean $criterioAsignadoEsIndicador
+     * @return Indicador
+     */
+    public function setCriterioAsignadoEsIndicador($criterioAsignadoEsIndicador)
+    {
+        $this->criterioAsignadoEsIndicador = $criterioAsignadoEsIndicador;
+
+        return $this;
+    }
+
+    /**
+     * Get criterioAsignadoEsIndicador
+     *
+     * @return boolean 
+     */
+    public function getCriterioAsignadoEsIndicador()
+    {
+        return $this->criterioAsignadoEsIndicador;
+    }
+
+    /**
+     * Set areaIndicador
+     *
+     * @param \MINSAL\GridFormBundle\Entity\AreaIndicador $areaIndicador
+     * @return Indicador
+     */
+    public function setAreaIndicador(\MINSAL\GridFormBundle\Entity\AreaIndicador $areaIndicador = null)
+    {
+        $this->areaIndicador = $areaIndicador;
+
+        return $this;
+    }
+
+    /**
+     * Get areaIndicador
+     *
+     * @return \MINSAL\GridFormBundle\Entity\AreaIndicador 
+     */
+    public function getAreaIndicador()
+    {
+        return $this->areaIndicador;
+    }
+
+    /**
+     * Set indicadorPadre
+     *
+     * @param \MINSAL\GridFormBundle\Entity\Indicador $indicadorPadre
+     * @return Indicador
+     */
+    public function setIndicadorPadre(\MINSAL\GridFormBundle\Entity\Indicador $indicadorPadre = null)
+    {
+        $this->indicadorPadre = $indicadorPadre;
+
+        return $this;
+    }
+
+    /**
+     * Get indicadorPadre
+     *
+     * @return \MINSAL\GridFormBundle\Entity\Indicador 
+     */
+    public function getIndicadorPadre()
+    {
+        return $this->indicadorPadre;
+    }
+
+    /**
+     * Add indicadoresHijos
+     *
+     * @param \MINSAL\GridFormBundle\Entity\Indicador $indicadoresHijos
+     * @return Indicador
+     */
+    public function addIndicadoresHijo(\MINSAL\GridFormBundle\Entity\Indicador $indicadoresHijos)
+    {
+        $this->indicadoresHijos[] = $indicadoresHijos;
+
+        return $this;
+    }
+
+    /**
+     * Remove indicadoresHijos
+     *
+     * @param \MINSAL\GridFormBundle\Entity\Indicador $indicadoresHijos
+     */
+    public function removeIndicadoresHijo(\MINSAL\GridFormBundle\Entity\Indicador $indicadoresHijos)
+    {
+        $this->indicadoresHijos->removeElement($indicadoresHijos);
+    }
+
+    /**
+     * Get indicadoresHijos
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getIndicadoresHijos()
+    {
+        return $this->indicadoresHijos;
     }
 }

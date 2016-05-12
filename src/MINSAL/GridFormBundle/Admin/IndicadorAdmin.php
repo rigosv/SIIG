@@ -28,7 +28,7 @@ class IndicadorAdmin extends Admin
                             'cumplimiento_criterios'=>$this->getTranslator()->trans('_cumplimiento_criterios_'),
                             'promedio' => $this->getTranslator()->trans('_promedio_')
                             )
-                        ))
+                        ))            
             ->add('porcentajeAceptacion', null, array('label'=> $this->getTranslator()->trans('_porcentaje_aceptacion_')))
             ->add('criterios', null, 
                     array('label'=> $this->getTranslator()->trans('_criterios_'), 
@@ -42,6 +42,10 @@ class IndicadorAdmin extends Admin
                             }))
             ->add('criterios', null, array('label'=> $this->getTranslator()->trans('_criterios_')))
         ;
+        $formMapper
+            ->setHelps(array(
+                'estandar' => $this->getTranslator()->trans('_indicador_estandar_help_')                
+            ));
     }
 
     protected function configureDatagridFilters(DatagridMapper $datagridMapper)

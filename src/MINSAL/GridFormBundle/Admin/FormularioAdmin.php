@@ -36,6 +36,7 @@ class FormularioAdmin extends Admin
                             'calidad' => $this->getTranslator()->trans('_calidad_')
                             )
                         ))
+            ->add('areaEstandar', null, array('label'=> $this->getTranslator()->trans('_area_estandar_')))
             ->add('meta', null, array('label'=> $this->getTranslator()->trans('_umbral_estandar_')))
             ->add('formaEvaluacion', 'choice', array('label' => $this->getTranslator()->trans('_forma_evaluacion_'),
                         'choices' => array(

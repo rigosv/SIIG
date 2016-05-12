@@ -145,6 +145,11 @@ class Formulario
     private $calculoFilas;
     
     /**
+     * @ORM\ManyToOne(targetEntity="AreaEstandar")
+     * */
+    private $areaEstandar;
+    
+    /**
      * @var \Doctrine\Common\Collections\ArrayCollection
      *
      * @ORM\ManyToMany(targetEntity="Campo", inversedBy="formularios")
@@ -837,5 +842,28 @@ class Formulario
     public function getPosicion()
     {
         return $this->posicion;
+    }
+
+    /**
+     * Set areaEstandar
+     *
+     * @param \MINSAL\GridFormBundle\Entity\AreaEstandar $areaEstandar
+     * @return Formulario
+     */
+    public function setAreaEstandar(\MINSAL\GridFormBundle\Entity\AreaEstandar $areaEstandar = null)
+    {
+        $this->areaEstandar = $areaEstandar;
+
+        return $this;
+    }
+
+    /**
+     * Get areaEstandar
+     *
+     * @return \MINSAL\GridFormBundle\Entity\AreaEstandar 
+     */
+    public function getAreaEstandar()
+    {
+        return $this->areaEstandar;
     }
 }
