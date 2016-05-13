@@ -394,10 +394,11 @@ class FormularioRepository extends EntityRepository {
         $datos = array();
         
         //Obtener los establecimientos
-        $sql = "SELECT distinct on (datos->'establecimiento') datos->'establecimiento' AS id_establecimiento, C.descripcion
+        $sql = "SELECT distinct on (datos->'establecimiento') datos->'establecimiento' AS id_establecimiento, C.nombre, 
+                    COALESCE(C.nombre_corto, C.codigo) AS descripcion
                     FROM  almacen_datos.repositorio A
                         INNER JOIN costos.formulario B ON (A.id_formulario = B.id)
-                        INNER JOIN ctl_establecimiento_simmow C ON (A.datos->'establecimiento' = C.id::text)
+                        INNER JOIN costos.estructura C ON (A.datos->'establecimiento' = C.codigo::text)
                     WHERE B.area_costeo = 'calidad'
                         AND A.datos->'anio' = '$anio'
                         AND A.datos->'es_separador' != 'true'";
@@ -425,8 +426,8 @@ class FormularioRepository extends EntityRepository {
             }
             
             $datos_['id_establecimiento'] = $est['id_establecimiento'];
-            $datos_['category'] = $est['id_establecimiento'];
-            $datos_['nombre'] = $est['descripcion'];
+            $datos_['category'] = $est['descripcion'];
+            $datos_['nombre'] = $est['nombre'];
             //Obtener valores de evaluaciones externas, extraer la medición 
             //del último año ingresado para cada evaluación
             $sql = "SELECT C.descripcion AS categoria, B.descripcion AS tipo_evaluacion, 
