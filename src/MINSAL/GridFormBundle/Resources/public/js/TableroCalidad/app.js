@@ -79,6 +79,10 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['servicios'])
             };
            
             
+            $scope.mostrarEvaluacionesComplementarias = function(establecimiento) {
+                $scope.establecimientoEvalExt = establecimiento;
+                $('#modalEvaluacionesComplementarias').modal('show')
+            };
             $scope.getEvaluaciones = function(establecimientoSel) {
                 $scope.establecimientoSeleccionado = establecimientoSel;
                 $scope.mostrarListadoEstablecimientos = false;
@@ -86,21 +90,21 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['servicios'])
                 Evaluaciones.query({ establecimiento: establecimientoSel.id_establecimiento, periodo: $scope.periodoSeleccionado.periodo })
                     .$promise.then(
                         function (data) {                            
-                            $scope.evaluaciones = (data != '') ? data : [];
+                            $scope.evaluaciones = (data != '') ? data[0].datos : [];
                             var aux = [];
                                      
-                            $scope.calificaciones = $scope.evaluaciones
-                            var datos = JSON.stringify($scope.evaluaciones);
+                            $scope.calificaciones = data[0].datos_grafico2;
+                            var datos = JSON.stringify(data[0].datos_grafico2);
                             
                             datos = datos.replace(/"value":/g,'"valueant":');
                             $scope.metas = JSON.parse(datos.replace(/"meta":/g,'"value":'));
                             angular.forEach($scope.metas, function(value, key) {
                                     this.categoria = 'Meta';
                             }, $scope.metas);
-                            $scope.brechas = JSON.parse(datos.replace(/"brecha":/g,'"value":'));
+                            /*$scope.brechas = JSON.parse(datos.replace(/"brecha":/g,'"value":'));
                             angular.forEach($scope.brechas, function(value, key) {
                                     this.categoria = 'Brecha';
-                            }, $scope.brechas);
+                            }, $scope.brechas);*/
                             
                             aux.push($scope.calificaciones);
                             aux.push($scope.metas);

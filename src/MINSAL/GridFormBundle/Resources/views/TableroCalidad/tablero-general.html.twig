@@ -197,15 +197,15 @@
                                 <TD>[[ind.calificacion | number:2]]%</TD>
                             </TR>
                         </tbody>
-                        <tbody ng-show="filtroListadoIndicador == '+10'" ng-click="seleccionarIndicador(ind)">
-                            <TR  ng-repeat="ind in indicadoresTop10 " >
+                        <tbody ng-show="filtroListadoIndicador == '+10'" >
+                            <TR  ng-repeat="ind in indicadoresTop10 " ng-click="seleccionarIndicador(ind)">
                                 <TD >[[ind.descripcion_estandar]]</TD>
                                 <TD >[[ind.descripcion_indicador]]</TD>
                                 <TD>[[ind.calificacion | number:2]]%</TD>
                             </TR>
                         </tbody>
-                        <tbody ng-show="filtroListadoIndicador == '-10'" ng-click="seleccionarIndicador(ind)">
-                            <TR  ng-repeat="ind in indicadoresLess10 " >
+                        <tbody ng-show="filtroListadoIndicador == '-10'" >
+                            <TR  ng-repeat="ind in indicadoresLess10 " ng-click="seleccionarIndicador(ind)" >
                                 <TD >[[ind.descripcion_estandar]]</TD>
                                 <TD >[[ind.descripcion_indicador]]</TD>
                                 <TD>[[ind.calificacion | number:2]]%</TD>
@@ -232,7 +232,7 @@
             <div class="panel panel-info panel_" >
                 <div class="panel-heading">
                     <div class="form_row row">
-                        <DIV class="col-md-4"><strong>{{'_Establecimientos_'|trans}}</strong></div>
+                        <DIV class="col-md-4"><strong>{{'_establecimientos_'|trans}}</strong></div>
                         <DIV class="col-md-4">
                             <!--<div class="btn-group">
                                 <label class="btn btn-primary active" ng-model="filtroListadoIndicador" uib-btn-radio="'todos'" ng-change="cambiarGrafico1('todos')">
@@ -255,20 +255,21 @@
                         </div>
                     </div>
                 </div>
-                <div class="panel-body">                        
+                <div class="panel-body">
+                    <B>[[indicadorSeleccionado.descripcion_indicador]]</B>
                     <table class="table table-hover">
                         <thead>
                             <TR class="success">
                                 <TH>{{'_establecimiento_'|trans}}</TH>
                                 <TH>{{'_valor_indicador_'|trans}}</TH>
-                                <TH>{{'_valor_indicador_general_'|trans}}</TH>
+                                <!--<TH>{{'_valor_indicador_general_'|trans}}</TH> -->
                             </TR>
                         </thead>
                         <tbody >
                             <TR  ng-repeat="est in indicadorSeleccionado.evaluacion | filter : buscar_establecimientos" >
-                                <TD >[[est.establecimiento]]</TD>
+                                <TD >[[est.nombre_establecimiento]]</TD>
                                 <TD >[[est.calificacion]]</TD>
-                                <TD>[[indicadorSeleccionado.calificacion | number:2]]%</TD>
+                                <!-- <TD>[[indicadorSeleccionado.calificacion | number:2]]%</TD> -->
                             </TR>
                         </tbody>                        
                     </table>

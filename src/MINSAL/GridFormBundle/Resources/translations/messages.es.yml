@@ -53,11 +53,13 @@ _es_editable_: Editable
 _es_poblacion_: Mostrar al inicio de cuadrícula
 _especialidad_: Especialidad
 _establecimiento_: Establecimiento
+_establecimientos_: Establecimientos
 _estandar_: Estándar
 _estructura_organizativa_: Estructura organizativa
 _error_validation_: Error de validación
 _error_datos_no_guardados_: Sucedió un error al guardar los datos
 _evaluaciones_: Evaluaciones
+_evaluaciones_complementarias_: Evaluaciones complementarias
 _evaluacion_atencion_: Areas a evaluar
 _evaluacion_capacidad_especial_: Evaluación Capacidades Especiales
 _evaluacion_categoria_ : Evaluación complementaria categoría
@@ -153,6 +155,7 @@ _unidad_medida_: Unidad de medida
 _unidad_superior_: Unidad superior
 _valor_: Valor
 _valor_estandar_: Valor del estádar
+_valor_indicador_: Calificación
 _variable_captura_: Variables de captura
 _volver_listado_: Volver al listado
 _yellow_: Amarillo

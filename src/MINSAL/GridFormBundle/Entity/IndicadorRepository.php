@@ -21,8 +21,8 @@ class IndicadorRepository extends EntityRepository {
         
         //Recuperar los indicadores que no tienen asociado ningún criterio
         //Estos serán los que están cargados a todo el estándar
-        $sql = "SELECT A.codigo, A.descripcion, A.forma_evaluacion,  A.porcentaje_aceptacion,
-                    B.descripcion descripcion_estandar, B.periodo_lectura_datos, B.id as estandar_id,
+        $sql = "SELECT * FROM (SELECT B.posicion, A.codigo, A.descripcion, A.forma_evaluacion,  A.porcentaje_aceptacion, 'por_estandar' AS alcance_evaluacion,
+                    B.descripcion descripcion_estandar, B.periodo_lectura_datos, B.id as estandar_id, B.codigo as codigo_estandar, A.id AS indicador_id,
                     (SELECT COUNT(codigo)
                         FROM variable_captura
                         WHERE formulario_id = B.id
@@ -30,16 +30,18 @@ class IndicadorRepository extends EntityRepository {
                             AND es_poblacion = false
                     ) AS total_criterios
                     FROM indicador A
-                    INNER JOIN costos.formulario B ON (A.estandar_id = B.id)
+                    INNER JOIN costos.formulario B ON (A.estandar_id = B.id)                    
                     WHERE A.id NOT IN (SELECT indicador_id FROM indicador_variablecaptura)
-                    ORDER BY B.codigo, A.codigo
+                        AND B.forma_evaluacion = 'lista_chequeo'
+                    ) AS AA
+                    WHERE total_criterios > 0
+                    ORDER BY posicion, codigo_estandar, codigo
                     ";
         $indicadores = $em->getConnection()->executeQuery($sql)->fetchAll();
         
         foreach ($indicadores as $ind){
-            
             $Frm = $em->getRepository('GridFormBundle:Formulario')->find($ind['estandar_id']);
-            $eval_ = $this->getDatosEvaluacion($Frm, $periodo, $ind['total_criterios'], $ind['porcentaje_aceptacion'], $ind['forma_evaluacion'] );
+            $eval_ = $this->getDatosEvaluacion($Frm, $periodo, $ind);
             
             $calificacion = 0;
             $eval = array();
@@ -77,7 +79,12 @@ class IndicadorRepository extends EntityRepository {
         return $resp;
     }
     
-    protected function getDatosEvaluacion(Formulario $Frm, $periodo, $totalCriterios, $porcentajeAprobacion, $formaEvaluacion){
+    protected function getDatosEvaluacion(Formulario $Frm, $periodo, $datosIndicador){
+
+        $totalCriterios = $datosIndicador['total_criterios']; 
+        $porcentajeAprobacion = $datosIndicador['porcentaje_aceptacion']; 
+        $formaEvaluacion = $datosIndicador['forma_evaluacion'] ;
+        $alcance = $datosIndicador['alcance_evaluacion'] ;
         $em = $this->getEntityManager();
         list($anio, $mes) = explode('_', $periodo);
         
@@ -88,20 +95,31 @@ class IndicadorRepository extends EntityRepository {
         }
         
         $frmId = $Frm->getId();
+        $alcance_sql = "";
+        if ($alcance == 'por_estandar'){
+            $alcance_join = '';
+            $alcance_where = " AND id_formulario = '$frmId' ";
+        }elseif($alcance == 'por_indicador'){            
+            $alcance_join = " INNER JOIN variable_captura AB ON (A.datos->'codigo_variable = AB.codigo) 
+                                INNER JOIN indicador_variablecaptura AC ON (AB.id = AC.variablecaptura_id)";
+            $alcance_where = " AND AC.indicador_id = '$datosIndicador[indicador_id]' ";
+        }
+        
         //Sacar los datos sobre los que se harán los cálculos
         $datos = "SELECT $campos, A.datos->'establecimiento' as establecimiento
-                    FROM almacen_datos.repositorio A                         
-                     WHERE id_formulario = '$frmId'
-                        AND A.datos->'es_poblacion' = 'false'
+                    FROM almacen_datos.repositorio A
+                        $alcance_join
+                     WHERE A.datos->'es_poblacion' = 'false'
+                        $alcance_where
                         AND A.datos->'es_separador' = 'false'
                         AND A.datos->'anio' = '$anio'
-                        $periodo_lectura";
+                        $periodo_lectura";        
         if ($formaEvaluacion == 'cumplimiento_porcentaje_aceptacion'){
-            $evaluacion = " (COALESCE(B.total_cumplimiento, 0) / A.total_expedientes * 100)  AS calificacion ";
+          $evaluacion = " ROUND((COALESCE(B.total_cumplimiento, 0)::numeric / A.total_expedientes::numeric * 100),2)  AS calificacion ";
         }elseif ($formaEvaluacion == 'cumplimiento_criterios') {
-            $evaluacion = " (C.total_criterios_cumplidos / (A.total_expedientes * $totalCriterios) * 100) AS calificacion ";
+          $evaluacion = " ROUND((C.total_criterios_cumplidos::numeric / (A.total_expedientes::numeric * $totalCriterios) * 100),2) AS calificacion ";
         }
-        $sql = "SELECT * FROM 
+        $sql = "SELECT F.*, CE.nombre AS nombre_establecimiento FROM 
                 (   SELECT A.establecimiento, A.total_expedientes, COALESCE(B.total_cumplimiento, 0) AS expedientes_cumple,
                     $totalCriterios AS criterios_evaluados, C.total_criterios_cumplidos,
                     $evaluacion                    
@@ -135,6 +153,7 @@ class IndicadorRepository extends EntityRepository {
                     ) AS C ON (A.establecimiento = C.establecimiento)
                     INNER JOIN ctl_establecimiento_simmow ES ON (A.establecimiento = ES.id::text)                
                 ) AS F
+                    INNER JOIN costos.estructura CE ON (F.establecimiento = CE.codigo)
                 ORDER BY calificacion DESC
          ";
         return $em->getConnection()->executeQuery($sql)->fetchAll();

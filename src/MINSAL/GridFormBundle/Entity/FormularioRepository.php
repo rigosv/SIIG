@@ -477,6 +477,7 @@ class FormularioRepository extends EntityRepository {
                 
             }
             $datos_['codigo'] = $Frm->getCodigo();
+            $datos_['tipo_evaluacion'] = $Frm->getFormaEvaluacion();
             $datos_['nombre_evaluacion'] = $Frm->getNombre();
             $datos_['axis'] = $Frm->getNombre();
             $datos_['descripcion'] = $Frm->getDescripcion();
@@ -493,7 +494,15 @@ class FormularioRepository extends EntityRepository {
             
             $datos[] = $datos_;
         }
-        return $datos;
+        $datosGrafico2 = array();
+        foreach($datos as $f){
+            if ($f['tipo_evaluacion'] == 'lista_chequeo'){
+                $datosGrafico2[] = $f;
+            }
+        }
+        $resp[] = array('datos'=>$datos, 'datos_grafico2'=>$datosGrafico2);
+        
+        return $resp;
     }
     
     public function getListaCampos(Formulario $Frm, $array = true) {
@@ -530,13 +539,15 @@ class FormularioRepository extends EntityRepository {
     protected function getFormulariosEstablecimiento($establecimiento, $anio) {
         $em = $this->getEntityManager();
         $resp = array();
-        $sql = "SELECT DISTINCT ON (id_formulario) COALESCE(id_formulario_sup, id_formulario) AS id_formulario
+        $sql = "SELECT * FROM (SELECT DISTINCT ON (id_formulario) COALESCE(id_formulario_sup, id_formulario) AS id_formulario, B.posicion
                 FROM almacen_datos.repositorio A
                     INNER JOIN costos.formulario B ON (A.id_formulario = B.id)
                 WHERE area_costeo = 'calidad'
                     AND A.datos->'establecimiento' = '$establecimiento'
                     AND A.datos->'anio' = '$anio'
                     AND A.datos->'es_separador' != 'true'
+                ) AS AA
+                ORDER BY posicion    
                 ";
         
         $frms_ = $em->getConnection()->executeQuery($sql)->fetchAll();
@@ -607,7 +618,7 @@ class FormularioRepository extends EntityRepository {
                 FROM ( " . $sql . ") AS A";
         
             return array_pop($em->getConnection()->executeQuery($sql)->fetchAll());
-        } elseif ($Frm->getFormaEvaluacion() == 'rango_colores'){
+        } elseif ($Frm->getFormaEvaluacion() == '-rango_colores'){
             $cumplimientos= 0 ;
             $no_cumplimientos= 0 ;
             $rangos = array();
