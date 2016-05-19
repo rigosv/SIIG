@@ -87,7 +87,7 @@ class FormularioAdminController extends Controller
                                                 'formulario' => $p->getFormulario()
                                             );
             if ($Frm == $p->getFormulario())
-                $meses[$p->getPeriodo()->getAnio()][] = $p->getPeriodo()->getMesTexto();
+                $meses[$p->getPeriodo()->getAnio()][] = $p->getPeriodo()->getMes();
         }
                 
         //Agrupar los periodos por unidad
