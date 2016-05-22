@@ -390,3 +390,7 @@ _user_: Usuario
 _perfil_: Perfil
 _establecimiento_principal_ : Establecimiento principal
 _ayuda_establecimiento_principal_: Establecimiento sobre el cual ingresa datos en formularios de captura
+_listado_salas_: Listado salas
+_no_sala_seleccionada_: No ha elegido sala
+_ayuda_listado_salas_: Se mostrarán las salas que usted ha creado o que otro usuario ha compartido con usted
+_buscar_: Buscar

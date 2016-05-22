@@ -30,67 +30,82 @@
         </div>
         <div class="content tab-pane" id="opciones_sala">
             <div class="panel-group" id="accordion1">
-                <div class="input-group">
-                    <div class="input-group-btn">
-                        <a class='btn btn-success' role="button" href="#myModal" data-toggle="modal">
-                            <span class="glyphicon glyphicon-save"></span>
-                            {{'_guardar_sala_'|trans}}
-                        </a>
-                        <a class='btn btn-success' role="button" id="aCollapseOne" href="#" >
-                            <span class="glyphicon glyphicon-transfer"></span>
-                            {{'_ocultar/mostrar_menu_principal_'|trans}}
-                        </a>
-                    </div>
-                    <input  type="search" class="form-control" id='FiltroSala' placeholder="{{'_buscar_sala_'|trans}}...">
-                    <span class="glyphicon glyphicon-search form-control-feedback" ></span>
-                </div>                
-                <br/><br/>                                
-                <ul class='list-group'>
-                    {% for sala in salas %}
-                        <li class='salas list-group-item'>
-                            <A href="{{url('tablero_sala', {sala: sala.datos_sala.id, _sonata_admin: 'sonata.admin.ficha'})}}">
-                                <button class="btn btn-info btn-bg " type="button" title='{{'_reporte_sala_'|trans}}'>
-                                      <span class="glyphicon glyphicon-file"></span>                                                
-                                </button>
-                            </A>
-                            <A class='salas-id' sala-id='{{sala.datos_sala.id}}' sala-nombre='{{sala.datos_sala.nombre}}'  data="{{sala.indicadores_sala|json_encode()}}">{{sala.datos_sala.nombre}}</A>                            
-                        </li>
+                <div class="input-group-btn">
+                    <a class='btn btn-success' role="button" href="#myModal" data-toggle="modal">
+                        <span class="glyphicon glyphicon-save"></span>
+                        {{'_guardar_sala_'|trans}}
+                    </a>
+                    <a class='btn btn-success' role="button" id="aCollapseOne" href="#" >
+                        <span class="glyphicon glyphicon-transfer"></span>
+                        {{'_ocultar/mostrar_menu_principal_'|trans}}
+                    </a>
+                </div>
+                <br/><br/>
+                {{'_ayuda_listado_salas_'|trans}}
+                <table class="table table-hover" id="tabla_listado_salas">                    
+                    <THEAD>
+                        <TR>
+                            <TH>{{'_nombre_sala_'|trans}}</TH>
+                            <TH>{{'_acciones_'|trans}}</TH>
+                        </tr>
+                    </thead>
+                    <TBody>
+                        {% for sala in salas %}
+                        <TR class='salas'>                            
+                            <TD>
+                                <A class='salas-id' sala-id='{{sala.datos_sala.id}}' sala-nombre='{{sala.datos_sala.nombre}}'  data="{{sala.indicadores_sala|json_encode()}}">{{sala.datos_sala.nombre}}</A>
+                            </td>
+                            <TD>
+                                <A href="{{url('tablero_sala', {sala: sala.datos_sala.id, _sonata_admin: 'sonata.admin.ficha'})}}">
+                                    <button class="btn btn-info btn-bg " type="button" title='{{'_reporte_sala_'|trans}}'>
+                                          <span class="glyphicon glyphicon-file"></span>                                                
+                                    </button>
+                                </A>
+                            </TD>
+                        </TR>
                     {% endfor %}
-                </ul>
+                    </tbody>
+                </table>
             </div>
         </div>        
         {% include 'IndicadoresBundle:FichaTecnicaAdmin:listado_indicadores.html.twig'%}
         <div class="content tab-pane" id="social">
-            <div class="panel-group col-md-4" >
-                <div class="panel panel-default panel-info ">
-                    <div class="panel-heading">
-                        <h4 class="panel-title">{{'javascript._compartir_sala_'|trans}}</h4>
-                    </div>
-                    <div class="panel-body">                        
-                        <form id="compartir_frm">                            
-                            <div id="usuarios_sala"></div>
-                        </form> 
-                    </div>
-                </div> 
-            </div>
-            <div class="panel-group col-md-8" >
-                <div class="panel panel-default panel-info ">
-                    <div class="panel-heading">
-                        <h4 class="panel-title">{{'_comentarios_'|trans}}</h4>
-                    </div>
-                    <div class="panel-body">                        
-                        <div id="chat">                    
-                            <form id="chat-form">                            
-                                <textarea name="chat-mensaje" id="chat-form-mensaje" required="true"></textarea>
-                                <button type="submit" class="btn btn-primary">{{'_enviar_'|trans}}</button>
-                            </form>
-                            <div id="chat-mensajes"></div>
+            <div id="nosala-datos-social">{{'_no_sala_seleccionada_'|trans}}</div>
+            <div id="datos-social" style='display: none;'>
+                <div class="panel-group col-md-4" >
+                    <div class="panel panel-default panel-info ">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">{{'javascript._compartir_sala_'|trans}}</h4>
                         </div>
-                    </div>
-                </div> 
-            </div>            
+                        <div class="panel-body">                        
+                            <form id="compartir_frm">                            
+                                <div id="usuarios_sala"></div>
+                            </form> 
+                        </div>
+                    </div> 
+                </div>
+                <div class="panel-group col-md-8" >
+                    <div class="panel panel-default panel-info ">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">{{'_comentarios_'|trans}}</h4>
+                        </div>
+                        <div class="panel-body">                        
+                            <div id="chat">                    
+                                <form id="chat-form">                            
+                                    <textarea name="chat-mensaje" id="chat-form-mensaje" required="true"></textarea>
+                                    <button type="submit" class="btn btn-primary">{{'_enviar_'|trans}}</button>
+                                </form>
+                                <div id="chat-mensajes"></div>
+                            </div>
+                        </div>
+                    </div> 
+                </div>
+            </div>
         </div>
-        <div id="acciones_sala" class="content tab-pane" ></div>
+        <div id="acciones_sala_datos" class="content tab-pane">
+            <div id="nosala-acciones">{{'_no_sala_seleccionada_'|trans}}</div>
+            <div style='display: none;' id="acciones_sala"></div>
+        </div>
     </div>
 </div>
 <!-- Modal -->

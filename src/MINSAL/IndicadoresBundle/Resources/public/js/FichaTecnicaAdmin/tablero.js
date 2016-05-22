@@ -1,13 +1,6 @@
 $(document).ready(function() {
     //Variables de configuración de datables
-    sSwfPath = $('#directorio').val() + "/bundles/indicadores/js/DataTables/media/swf/copy_csv_xls_pdf.swf";   
-    oLanguage = {
-        "sLengthMenu": "Display _MENU_ records per page",
-        "sZeroRecords": trans.nada_encontrado,
-        "sInfo": trans.mostrando_n_de_n,
-        "sInfoEmpty": trans.mostrando_0,
-        "sInfoFiltered": trans.filtrados_dequ
-    }; 
+    sSwfPath = $('#directorio').val() + "/bundles/indicadores/js/DataTables/media/swf/copy_csv_xls_pdf.swf";
 $.fn.modal.Constructor.prototype.enforceFocus = function() {};
 
     $('body').on('show.bs.modal', function () {
@@ -231,6 +224,11 @@ $.fn.modal.Constructor.prototype.enforceFocus = function() {};
         }
 
         $('#sala').html('');
+        //Mostrar las opciones cuando la sala está cargada y ocultar los mensajes de no hay sala
+        $('#datos-social').show();
+        $('#acciones_sala').show();        
+        $('#nosala-datos-social').hide();
+        $('#nosala-acciones').hide();
 
         //var filas = Math.ceil(max_id / 3);
         var num_pag = 1;
@@ -414,5 +412,12 @@ $.fn.modal.Constructor.prototype.enforceFocus = function() {};
                 $('#info_accion').html('_error_guardar_sala_').addClass('error');
             }
         }, 'json');
+    });
+    
+    $('#tabla_listado_salas').dataTable({
+        "oTableTools": {
+            "aButtons": []
+        },
+        "oLanguage": oLanguage
     });
 });

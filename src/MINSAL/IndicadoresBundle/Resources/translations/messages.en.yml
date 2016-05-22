@@ -385,3 +385,7 @@ _user_: User
 _perfil_: Profile
 _establecimiento_principal_ : Main establishment
 _ayuda_establecimiento_principal_: Establishment on which enters data into data entry forms
+_listado_salas_: List of rooms
+_no_sala_seleccionada_: First choose a room
+_ayuda_listado_salas_: The rooms that you have created will be displayed or that another user has shared with you
+_buscar_: Search
