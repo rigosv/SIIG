@@ -62,7 +62,7 @@ class FormularioAdminController extends Controller
                         $llave = $p->getPeriodo()->getAnio().$this->getUser()->getEstablecimientoPrincipal()->getId().$p->getFormulario()->getId();
                         $periodos[$llave] = array('id'=>'pg_'.$p->getId(),
                                                 'periodo_anio'=>$p->getPeriodo()->getAnio(),
-                                                'periodo_mes'=>$p->getPeriodo()->getMes(),
+                                                'periodo_mes'=>$p->getPeriodo()->getMesTexto(),
                                                 'unidad' => $this->getUser()->getEstablecimientoPrincipal(),
                                                 'formulario' => $p->getFormulario()
                                             );

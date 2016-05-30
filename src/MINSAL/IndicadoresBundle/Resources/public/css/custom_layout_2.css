@@ -19,6 +19,13 @@
     margin-left: 0px !important;
     margin-top: 50px !important;
 }
-.input-group{
+.login-box .input-group{
     width: 100%;
+}
+.navbar-left li{
+    border-bottom: 3px solid red;
+    border-top: 2px solid red;
+}
+.navbar-left li:hover{
+    background-color: lightcoral;
 }
