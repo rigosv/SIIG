@@ -4,7 +4,7 @@ $(document).ready(function() {
     
     // Para arreglar la presentación de los checkbox
     var checkbox_label, checkbox_widget;
-    $('div.checkbox').each(function(i, nodo){        
+    $('DIV.sonata-ba-field:first-child .checkbox').each(function(i, nodo){        
         checkbox_widget = $(nodo).find('div');
         checkbox_label = $(nodo).find('label');
         

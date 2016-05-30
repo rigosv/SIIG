@@ -18,9 +18,21 @@ class AgenciaAdmin extends Admin
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
-            ->add('codigo', null, array('label'=> $this->getTranslator()->trans('codigo')))
-            ->add('nombre', null, array('label'=> $this->getTranslator()->trans('nombre')))            
+            ->with($this->getTranslator()->trans('_general_'), array('class' => 'col-md-6'))
+                ->add('codigo', null, array('label'=> $this->getTranslator()->trans('codigo')))
+                ->add('nombre', null, array('label'=> $this->getTranslator()->trans('nombre')))
+            ->end()
+            ->with($this->getTranslator()->trans('_accesos_'), array('class' => 'col-md-6'))
+                ->add('indicadores', null, 
+                        array(
+                            'label' => $this->getTranslator()->trans('indicadores'), 
+                            'expanded' => true
+                            )
+                    )
+            ->end()
         ;
+        
+        
     }
 
     protected function configureDatagridFilters(DatagridMapper $datagridMapper)

@@ -35,7 +35,17 @@ class Agencia
      *
      * @ORM\Column(name="nombre", type="string", length=200, nullable=false)
      */
-    private $nombre;    
+    private $nombre;
+    
+    /**
+     * @ORM\ManyToMany(targetEntity="FichaTecnica")
+     * @ORM\JoinTable(name="indicador_agencia",
+     *      joinColumns={@ORM\JoinColumn(name="id_agencia", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="id_indicador", referencedColumnName="id")}
+     *      )
+     * @ORM\OrderBy({"nombre" = "ASC"})
+     **/
+    protected $indicadores;
 
     
 
@@ -99,5 +109,45 @@ class Agencia
     public function getNombre()
     {
         return $this->nombre;
+    }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->indicadores = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add indicadores
+     *
+     * @param \MINSAL\IndicadoresBundle\Entity\FichaTecnica $indicadores
+     * @return Agencia
+     */
+    public function addIndicadore(\MINSAL\IndicadoresBundle\Entity\FichaTecnica $indicadores)
+    {
+        $this->indicadores[] = $indicadores;
+
+        return $this;
+    }
+
+    /**
+     * Remove indicadores
+     *
+     * @param \MINSAL\IndicadoresBundle\Entity\FichaTecnica $indicadores
+     */
+    public function removeIndicadore(\MINSAL\IndicadoresBundle\Entity\FichaTecnica $indicadores)
+    {
+        $this->indicadores->removeElement($indicadores);
+    }
+
+    /**
+     * Get indicadores
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getIndicadores()
+    {
+        return $this->indicadores;
     }
 }
