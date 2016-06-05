@@ -19,7 +19,7 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['servicios'])
             $scope.mes_ = '';
             $scope.titulo_grafico1 = 'Establecimientos vs porcentaje cumplimiento'
             
-            $scope.titulo = 'Evaluación de Calidad';
+            $scope.titulo = 'Monitoreo y Evaluación de Calidad';
             $scope.establecimientos = [];
             $scope.datosGrafico1 = [];
             $scope.datosGrafico2 =  [];

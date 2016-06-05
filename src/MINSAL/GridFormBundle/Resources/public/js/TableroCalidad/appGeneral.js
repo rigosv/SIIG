@@ -14,7 +14,7 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['serviciosGeneral',
             $scope.filtroIndicador = '';
             $scope.filtroListadoIndicador = '';
 
-            $scope.titulo = 'Gestión de la Calidad';
+            $scope.titulo = 'Monitoreo y Evaluación de la Calidad - Tablero General';
             $scope.periodoSeleccionado = [];
             $scope.indicadorSeleccionado = [];
             $scope.datosGrafico2 = [];
@@ -72,7 +72,7 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['serviciosGeneral',
 
             $scope.procesar = function () {
                 //$scope.mes_ = ($scope.periodoSeleccionado.mes < 10) ? '0' + $scope.periodoSeleccionado.mes : $scope.periodoSeleccionado.mes ;
-                Indicadores.query({ periodo: $scope.periodoSeleccionado.periodo })
+                Indicadores.query({ periodo: $scope.periodoSeleccionado.periodo, tipo:1 })
                     .$promise.then(
                             function (data) {
                                 $scope.indicadores = (data != '') ? data[0].datos : [];
@@ -81,6 +81,16 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['serviciosGeneral',
                                 $scope.filtroListadoIndicador = 'todos';
                                 
                                 $scope.datosGrafico1 = $scope.indicadores;
+                            },
+                            function (error) {
+                                alert(error);
+                            }
+                    );
+            
+                 Indicadores.query({ periodo: $scope.periodoSeleccionado.periodo, tipo:2 })
+                    .$promise.then(
+                            function (data) {
+                                $scope.indicadores2 = (data != '') ? data : [];
                             },
                             function (error) {
                                 alert(error);
