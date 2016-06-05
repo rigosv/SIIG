@@ -132,7 +132,7 @@ class FormularioAdminController extends Controller
             
                         
         }
-        
+
         return $this->render($plantilla, $parametrosPlantilla);
     }
     /**
