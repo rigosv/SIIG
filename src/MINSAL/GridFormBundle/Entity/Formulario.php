@@ -143,11 +143,7 @@ class Formulario
      * @ORM\Column(name="calculo_filas", type="text", nullable=true)
      */
     private $calculoFilas;
-    
-    /**
-     * @ORM\ManyToOne(targetEntity="AreaEstandar")
-     * */
-    private $areaEstandar;
+        
     
     /**
      * @var \Doctrine\Common\Collections\ArrayCollection
