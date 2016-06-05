@@ -110,3 +110,7 @@ div.no{
 .jqx-tabs-content-element{
     overflow: auto !important;
 }
+
+.oculto{
+    display: none;
+}

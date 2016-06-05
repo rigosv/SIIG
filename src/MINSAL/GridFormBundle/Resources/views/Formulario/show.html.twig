@@ -81,11 +81,28 @@
                     {% endif %}
                     return false;
                 }
-                rowbeginedit =  function (row, datafield, columntype, value) {
-                    {% if Frm.calculoFilas != ''%}
+                var rowbeginedit =  function (row, datafield, columntype, value) {
+                    {% if Frm.calculoFilas != '' %}
                         return  !(filaFormula(row, datafield));
                     {% endif %}
+                    
+                    var clase = cellclass(row, datafield, value);
+                    if (clase == 'oculto')
+                        return false;
                 };
+                
+                var cellclass = function (row, columnfield, value) {
+                    {% if Frm.areaCosteo() == 'calidad' %}
+                        var datarowExp = $("#jqxgrid{{Frm.id}}").jqxGrid('getrowdata', 0);
+                        var datarowAct = $("#jqxgrid{{Frm.id}}").jqxGrid('getrowdata', row);
+                        if (datarowExp.es_poblacion == 'true' && datarowAct.es_poblacion != 'true'){
+                            var num_exp = $("#jqxgrid{{Frm.id}}").jqxGrid('getcellvalue',0, columnfield);
+                            if (num_exp == ''){
+                                return 'oculto';
+                            }
+                        }
+                    {% endif %}
+                }
 
                 var error = false;
                 // prepare the data
@@ -166,7 +183,7 @@
                     ],
                     url: url,
                     root: 'data'
-                };
+                };                
                 var dataAdapter = new $.jqx.dataAdapter(source);
                 $("#jqxgrid{{Frm.id}}").jqxGrid(
                 {
@@ -253,6 +270,8 @@
                                 cellsalign: '{{campo.alineacion.codigo|default('left')}}',
                                 {% if not celda_editable %}
                                     cellclassname: 'celda_no_editable',
+                                {% else %}
+                                    cellclassname: cellclass,
                                 {% endif%}
                                 editable: {{ (celda_editable)? 'true' : 'false' }},
 
