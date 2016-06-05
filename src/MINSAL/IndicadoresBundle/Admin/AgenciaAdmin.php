@@ -17,18 +17,41 @@ class AgenciaAdmin extends Admin
 
     protected function configureFormFields(FormMapper $formMapper)
     {
+        
         $formMapper
-            ->with($this->getTranslator()->trans('_general_'), array('class' => 'col-md-6'))
-                ->add('codigo', null, array('label'=> $this->getTranslator()->trans('codigo')))
-                ->add('nombre', null, array('label'=> $this->getTranslator()->trans('nombre')))
+            ->tab($this->getTranslator()->trans('_general_'))
+                ->with('', array('class' => 'col-md-6'))
+                    ->add('codigo', null, array('label'=> $this->getTranslator()->trans('codigo')))
+                    ->add('nombre', null, array('label'=> $this->getTranslator()->trans('nombre')))
+                ->end()
             ->end()
-            ->with($this->getTranslator()->trans('_accesos_'), array('class' => 'col-md-6'))
-                ->add('indicadores', null, 
-                        array(
-                            'label' => $this->getTranslator()->trans('indicadores'), 
-                            'expanded' => true
-                            )
-                    )
+            ->tab($this->getTranslator()->trans('_accesos_'))
+                ->with($this->getTranslator()->trans(' '), array('class' => 'col-md-6'))
+                    ->add('indicadores', null, 
+                            array(
+                                'label' => $this->getTranslator()->trans('indicadores'), 
+                                'expanded' => false,
+                                'class' => 'IndicadoresBundle:FichaTecnica',
+                                'query_builder' => function ($repository) {
+                                    return $repository->createQueryBuilder('ft')
+                                            ->orderBy('ft.nombre');
+                                    }
+                                )
+                        )                    
+                ->end()
+                ->with($this->getTranslator()->trans(''), array('class' => 'col-md-6'))
+                    ->add('formularios', null, 
+                            array(
+                                'label' => $this->getTranslator()->trans('_formularios_'), 
+                                'expanded' => false,
+                                'class' => 'GridFormBundle:Formulario',
+                                'query_builder' => function ($repository) {
+                                    return $repository->createQueryBuilder('f')
+                                            ->orderBy('f.posicion, f.nombre');
+                                    }
+                                )
+                        )
+                ->end()
             ->end()
         ;
         

@@ -38,6 +38,16 @@ class Agencia
     private $nombre;
     
     /**
+     * @ORM\ManyToMany(targetEntity="MINSAL\GridFormBundle\Entity\Formulario")
+     * @ORM\JoinTable(name="indicador_formulario",
+     *      joinColumns={@ORM\JoinColumn(name="id_agencia", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="id_formulario", referencedColumnName="id")}
+     *      )
+     * @ORM\OrderBy({"nombre" = "ASC"})
+     **/
+    protected $formularios;
+    
+    /**
      * @ORM\ManyToMany(targetEntity="FichaTecnica")
      * @ORM\JoinTable(name="indicador_agencia",
      *      joinColumns={@ORM\JoinColumn(name="id_agencia", referencedColumnName="id")},
@@ -149,5 +159,38 @@ class Agencia
     public function getIndicadores()
     {
         return $this->indicadores;
+    }
+
+    /**
+     * Add formularios
+     *
+     * @param \MINSAL\GridFormBundle\Entity\Formulario $formularios
+     * @return Agencia
+     */
+    public function addFormulario(\MINSAL\GridFormBundle\Entity\Formulario $formularios)
+    {
+        $this->formularios[] = $formularios;
+
+        return $this;
+    }
+
+    /**
+     * Remove formularios
+     *
+     * @param \MINSAL\GridFormBundle\Entity\Formulario $formularios
+     */
+    public function removeFormulario(\MINSAL\GridFormBundle\Entity\Formulario $formularios)
+    {
+        $this->formularios->removeElement($formularios);
+    }
+
+    /**
+     * Get formularios
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getFormularios()
+    {
+        return $this->formularios;
     }
 }
