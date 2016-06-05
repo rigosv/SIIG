@@ -28,16 +28,16 @@
         "sonata-project/cache": "dev-master",
         "sonata-project/cache-bundle": "dev-master",
         "sonata-project/datagrid-bundle": "dev-master",
-        "sonata-project/core-bundle": "dev-master",
-        "sonata-project/admin-bundle": "dev-master",
-        "sonata-project/doctrine-orm-admin-bundle": "dev-master",
-        "sonata-project/block-bundle": "dev-master",
+        "sonata-project/core-bundle": "3.*",
+        "sonata-project/admin-bundle": "3.*",
+        "sonata-project/doctrine-orm-admin-bundle": "3.*",
+        "sonata-project/block-bundle": "3.*",
         "sonata-project/easy-extends-bundle": "dev-master",
         "sonata-project/user-bundle": "dev-master",
         
         	
         "simplethings/entity-audit-bundle": "v0.6",
-	"friendsofsymfony/user-bundle": "v1.3.3",
+	"friendsofsymfony/user-bundle": "v1.3.6",
         "friendsofsymfony/jsrouting-bundle": "v1.5.3",
         
         "os/excel-bundle": "v2.1",
