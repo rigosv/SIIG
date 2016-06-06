@@ -66,18 +66,18 @@ class GuardarRegistroOrigenDatoConsumer implements ConsumerInterface
 
             return true;
         } elseif ($msg['method'] == 'DELETE') {
-            $this->em->getConnection()->beginTransaction();
             $tabla = ($areaCosteo['area_costeo'] == '') ? 'origenes.fila_origen_dato_'.$msg['id_origen_dato'] : 'costos.fila_origen_dato_' . $areaCosteo['area_costeo'];
-            
             //verificar si la tabla existe
             if ($tabla == 'origenes.fila_origen_dato_'.$msg['id_origen_dato']){
                 try {
                     $this->em->getConnection()->query("select * from $tabla LIMIT 1");
                 } catch (\Doctrine\DBAL\DBALException $e) {
                     //Crear la tabla
-                    $this->em->getConnection()->exec("select * INTO $table from fila_origen_dato_aux $tabla ");
+                    $this->em->getConnection()->exec("select * INTO $tabla from fila_origen_dato_aux LIMIT 0 ");
                 }
             }
+            
+            $this->em->getConnection()->beginTransaction();
             
             if ($areaCosteo['area_costeo'] == 'rrhh'){
                 //Solo agregar los datos nuevos
