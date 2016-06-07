@@ -62,7 +62,7 @@ class FichaTecnicaRepository extends EntityRepository {
                     $sql .= ' ); ';
                     $sql .= " INSERT INTO od_$or_id
                     SELECT (populate_record(null::od_$or_id, datos)).*
-                    FROM origenes.origen_dato_$or_id
+                    FROM origenes.fila_origen_dato_$or_id
                     ;";
                 }
             }
@@ -124,7 +124,7 @@ class FichaTecnicaRepository extends EntityRepository {
                     $sql_origenes .= 
                     "
                         SELECT (populate_record(null::$tabla, datos)).*
-                        FROM origenes.origen_dato_$id_origen
+                        FROM origenes.fila_origen_dato_$id_origen
                     ";
                     $j++;
                 }
