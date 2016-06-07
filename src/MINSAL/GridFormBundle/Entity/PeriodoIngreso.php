@@ -86,8 +86,8 @@ class PeriodoIngreso
         return $this->mes;
     }
     
-    public function getMesTexto() {
-        return $this->meses[$this->mes];
+    public function getMesTexto() {        
+        return (array_key_exists($this->mes, $this->meses)) ?  $this->meses[$this->mes] : $this->mes;
     }
     
     public function __toString() {
