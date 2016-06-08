@@ -75,7 +75,7 @@ class ApiRESTController extends Controller {
     }
     
     /**
-     * Obtener los datos de los indicadores asignados a una agencia
+     * Obtener los datos de las fichas técnicas de los indicadores asignados a una agencia
      * @param string $cod_agencia
      * @Get("/api/{cod_agencia}/fichastecnicas", options={"expose"=true})
      * @Rest\View
@@ -121,6 +121,39 @@ class ApiRESTController extends Controller {
                     'variables' => $variables,
                     'alertas' => $alertas
                     );
+            } catch (Exception $exc) {
+                $respuesta = array('state'=>'fail', 'message'=>$exc->getTraceAsString());
+                $response->setContent(json_encode($respuesta));
+                return $response;
+            }
+        }
+        $respuesta['datos'] = $datos;
+        $response->setContent(json_encode($respuesta));
+        return $response;
+    }
+    
+    /**
+     * Obtener los datos de los formularios asignados a una agencia
+     * @param string $cod_agencia
+     * @Get("/api/{cod_agencia}/formularios/data", options={"expose"=true})
+     * @Rest\View
+     */
+    public function getFormulariosDataAction($cod_agencia) {
+        $em = $this->getDoctrine()->getManager();
+        
+        $agencia = $em->getRepository("IndicadoresBundle:Agencia")->findOneBy(array('codigo'=>$cod_agencia));
+        
+        $response = new Response();        
+        
+        $respuesta = array('state'=>'ok');
+        $datos = array();
+        $frmRepository = $em->getRepository('GridFormBundle:Formulario');
+        
+        foreach ($agencia->getFormularios() as $frm){
+            try {                
+                $datosFormulario = $frmRepository->getDatosRAW($frm);
+                $datos[] = array('formulario_id'=>$frm->getId(), 'formulario_codigo'=>$frm->getCodigo(), 
+                                    'nombre'=>$frm->getNombre(), 'datos_filas'=>$datosFormulario);
             } catch (Exception $exc) {
                 $respuesta = array('state'=>'fail', 'message'=>$exc->getTraceAsString());
                 $response->setContent(json_encode($respuesta));

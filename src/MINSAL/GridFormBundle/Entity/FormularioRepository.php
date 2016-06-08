@@ -74,6 +74,42 @@ class FormularioRepository extends EntityRepository {
         }
     }
     
+    public function getDatosRAW(Formulario $Frm) {
+        $em = $this->getEntityManager();
+        $this->area = $Frm->getAreaCosteo();        
+        
+        $this->origenes = $this->getOrigenes($Frm->getOrigenDatos());
+        $this->campo = 'id_origen_dato';
+        
+        /*if ($area == 'almacen_datos' or $area == 'calidad'){
+            $this->cargarDatos($Frm);
+        }*/
+        
+        //Cargar los campos del formulario para que estén disponibles por defecto
+        $campos_ = array("datos->'anio' AS anio");
+        foreach ($Frm->getCampos() as $c){
+            $codigo = $c->getSignificadoCampo()->getCodigo();
+            
+            $campos_revisar = (($c->getOrigenPivote() == '')) ? array($codigo) : $this->getPivotes($c->getOrigenPivote(), $codigo);
+            
+            foreach ($campos_revisar as $c){                
+                array_push($campos_, "datos->'".$c."' AS $c");
+            }
+        }
+        
+        $tabla =  ($this->area == 'almacen_datos' or $this->area == 'calidad') ? 'almacen_datos.repositorio' : 'costos.fila_origen_dato_'.strtolower($this->area);
+        $sql = "
+            SELECT ". implode(", ", $campos_) . " 
+            FROM  $tabla
+            WHERE id_formulario = '".$Frm->getId(). "'
+            ;";
+        try {
+            return $em->getConnection()->executeQuery($sql)->fetchAll();
+        } catch (\PDOException $e) {
+            return $e->getMessage();
+        }
+    }
+    
     /**
      * 
      * @param Formulario $Frm
