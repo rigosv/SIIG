@@ -487,11 +487,18 @@
                                         if ( (tipo_control == 'checkbox' || tipo_control == 'checkbox_3_states') && datafield != 'descripcion_variable' ){
                                             var element_aux = $('<div></div>')
                                             if (tipo_control == 'checkbox_3_states'){
-                                                var element = $('<div tabIndex=0 style="position: absolute; top: 50%; left: 50%; margin-top: -10px; margin-left: -10px;"></div>');
+                                                /*var element = $('<div tabIndex=0 style="position: absolute; top: 50%; left: 50%; margin-top: -10px; margin-left: -10px;"></div>');
                                                 element.jqxCheckBox({hasThreeStates: true, animationShowDelay: 0, animationHideDelay: 0, checked: cellValue.toString() == "true" });
                                                 if (cellValue.toString() != 'true' && cellValue.toString() != 'false'){
                                                     element.jqxCheckBox('indeterminate');
-                                                }
+                                                }*/
+                                                if (cellValue.toString() == 'true')
+                                                    estado_ = '<div class="si"><div class="sw_etiqueta">{{'_si_'|trans}}</div><div class="sw_separador"></div></div>';
+                                                else if (cellValue.toString() == 'false')
+                                                    estado_ = '<div class="no"><div class="sw_separador"></div><div class="sw_etiqueta">{{'_no_'|trans}}</div></div>';
+                                                else 
+                                                    estado_ = '<div class="na"><div class="sw_etiqueta">{{'_na_'|trans}}</div></div>';
+                                                var element = estado_;
                                             } else{
                                                 
                                                 var estado = (cellValue.toString() == 'true') ? true : false;

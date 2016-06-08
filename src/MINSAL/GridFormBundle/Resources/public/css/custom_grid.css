@@ -13,7 +13,7 @@
 .popover-content{
     background-color: orange;
 }
-div.si, div.no{
+div.si, div.no, div.na{
     width: 60px;
     height: 25px;
     font-size: 10pt;
@@ -25,6 +25,11 @@ div.sw_etiqueta{
     width: 60%;
     height: 100%;
     float: left;
+    text-align: center;
+}
+
+div.na div.sw_etiqueta{
+    width: 100%;
     text-align: center;
 }
 div.sw_separador{
@@ -50,7 +55,10 @@ div.si{
 }
 
 div.no{
-    background-color: #F2DEDE;
+    background-color: #FF5656;
+}
+div.na{
+    background-color: #F7B138;
 }
 .jqx-switchbutton-label{
     font-size: 10pt;
