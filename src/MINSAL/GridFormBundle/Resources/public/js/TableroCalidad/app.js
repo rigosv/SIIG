@@ -53,7 +53,7 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['servicios'])
             $scope.getExpedientes = function(criterio){
                 var expedientes = [];
                 angular.forEach(criterio, function(value, key) {
-                    if (key.search('num_expe_') !== -1 || key.search('cant_mensual') !== -1 || key.search('dias_mes') !== -1 )
+                    if (key.search('num_expe_') !== -1 || key.search('cant_mensual') !== -1 || key.search('dias_mes') !== -1 || key.search('mes_check') !== -1 )
                         this.push(key+":"+value);
                 }, expedientes);
                 
