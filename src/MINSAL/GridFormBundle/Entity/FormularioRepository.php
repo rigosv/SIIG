@@ -612,7 +612,8 @@ class FormularioRepository extends EntityRepository {
         $excluirCriterios = ($criteriosTodos) ? '': " AND A.datos->'es_separador' != 'true' ";
 
         $sql = "
-                SELECT $campos, $anio AS anio, $mes_ '$establecimiento' as establecimiento, A.datos->'es_poblacion' AS es_poblacion
+                SELECT $campos, $anio AS anio, $mes_ '$establecimiento' as establecimiento, A.datos->'es_poblacion' AS es_poblacion,
+                    A.datos->'codigo_tipo_control' AS tipo_control
                  INTO TEMP datos_tmp 
                  FROM almacen_datos.repositorio A
                  WHERE id_formulario = '$idFrm'
@@ -638,7 +639,6 @@ class FormularioRepository extends EntityRepository {
             $sql = "SELECT * FROM datos_tmp";
             return $em->getConnection()->executeQuery($sql);
         }
-        //$tablaTmp = ($crear_tabla) ? ' INTO TEMP datos_tmp ': '';
     }
     
     protected function getResultadoEvaluacion(Formulario $Frm, $establecimiento, $anio, $mes = null) {
@@ -649,7 +649,10 @@ class FormularioRepository extends EntityRepository {
         
         if ($Frm->getFormaEvaluacion() == 'lista_chequeo'){
             $sql = "SELECT CASE WHEN dato = 'true' THEN 1 ELSE 0 END AS cumplimiento, 
-                        CASE WHEN dato = 'false' OR dato = '' THEN 1 ELSE 0 END AS no_cumplimiento 
+                        CASE WHEN tipo_control = 'checkbox' AND dato != 'true' THEN 1 
+                             WHEN tipo_control = 'checkbox_3_states' AND dato = 'false' THEN 1
+                             ELSE 0 
+                        END AS no_cumplimiento 
                     FROM datos_tmp";
             $sql = "SELECT SUM(cumplimiento) AS total_cumplimiento, SUM(no_cumplimiento) AS total_no_cumplimiento
                 FROM ( " . $sql . ") AS A";

@@ -271,8 +271,17 @@
                                         <button class="btn btn-success" ng-if="getValorExpediente(exp)=='true'">
                                             <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
                                         </button>
-                                        <button class="btn btn-danger" ng-if="getValorExpediente(exp)=='false' || getValorExpediente(exp)==''">
+                                        <button class="btn btn-danger"
+                                                ng-if="criterio.codigo_tipo_control == 'checkbox' && (getValorExpediente(exp)=='false' || getValorExpediente(exp)=='')">
                                             <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                        </button>
+                                        <button class="btn btn-danger"
+                                                ng-if="criterio.codigo_tipo_control == 'checkbox_3_states' && getValorExpediente(exp)=='false' ">
+                                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                        </button>
+                                        <button class="btn btn-warning"
+                                                ng-if="criterio.codigo_tipo_control == 'checkbox_3_states' && getValorExpediente(exp) != 'false' && getValorExpediente(exp) != 'true'">
+                                            N/A
                                         </button>
                                         <span ng-if="getValorExpediente(exp) != 'false' && getValorExpediente(exp) != 'true'">[[getValorExpediente(exp)]]</span>
                                     </TD>
