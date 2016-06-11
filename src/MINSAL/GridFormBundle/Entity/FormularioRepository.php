@@ -484,7 +484,7 @@ class FormularioRepository extends EntityRepository {
             $datos_['total_cumplimiento'] = $total_evaluacion['cumplimiento'];
             $datos_['total_no_cumplimiento'] = $total_evaluacion['no_cumplimiento'];
             $datos_['total_aplicable'] = $total_evaluacion['cumplimiento'] + $total_evaluacion['no_cumplimiento'];
-            $datos_['measure'] = round($total_evaluacion['cumplimiento'] /  $datos_['total_aplicable'] * 100, 0 );
+            $datos_['measure'] = (($datos_['total_aplicable'] > 0)) ? round($total_evaluacion['cumplimiento'] /  $datos_['total_aplicable'] * 100, 0 ): 0;
             $datos[] = $datos_;
         }
         
