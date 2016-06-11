@@ -622,6 +622,7 @@ class FormularioRepository extends EntityRepository {
                     $excluirCriterios
                     $periodo_lectura
                  ";
+        
         $em->getConnection()->executeQuery($sql);
         
         if ($eliminar_vacios){
@@ -631,7 +632,35 @@ class FormularioRepository extends EntityRepository {
 
             if ($cons->rowCount() > 0){
                 //Quitar las columnas para las que no se ingresó número de expediente
-                $sql = "DELETE FROM datos_tmp WHERE nombre_pivote NOT IN (SELECT nombre_pivote FROM datos_tmp WHERE es_poblacion = 'true' AND dato is not null AND dato != '')";
+                $sql = "DELETE FROM datos_tmp 
+                            WHERE nombre_pivote 
+                                NOT IN 
+                                (SELECT nombre_pivote 
+                                    FROM datos_tmp 
+                                    WHERE es_poblacion = 'true' 
+                                        AND dato is not null 
+                                        AND dato != ''
+                                )";
+                $em->getConnection()->executeQuery($sql);
+            }
+            
+            //Verificar si tiene la variable mes_check para dejar solo el que 
+            // corresponde al mes que se está verificando
+            $sql = "SELECT codigo_variable FROM datos_tmp WHERE nombre_pivote ~* 'mes_check_'";
+            $cons = $em->getConnection()->executeQuery($sql);
+
+            if ($cons->rowCount() > 0){
+                //Quitar las columnas para las que no se ingresó número de expediente
+                $sql = "DELETE FROM datos_tmp 
+                            WHERE nombre_pivote 
+                                NOT IN 
+                                (SELECT nombre_pivote 
+                                    FROM datos_tmp 
+                                    WHERE 
+                                        (nombre_pivote = 'mes_check_$mes' OR nombre_pivote = 'mes_check_0$mes')
+                                        AND dato is not null 
+                                        AND dato != ''
+                                )";
                 $em->getConnection()->executeQuery($sql);
             }
         }
@@ -658,7 +687,8 @@ class FormularioRepository extends EntityRepository {
                 FROM ( " . $sql . ") AS A";
         
             return array_pop($em->getConnection()->executeQuery($sql)->fetchAll());
-        } elseif ($Frm->getFormaEvaluacion() == '-rango_colores'){
+        } 
+        /*elseif ($Frm->getFormaEvaluacion() == '-rango_colores'){
             $cumplimientos= 0 ;
             $no_cumplimientos= 0 ;
             $rangos = array();
@@ -694,7 +724,7 @@ class FormularioRepository extends EntityRepository {
                 }
             }
             return array('total_cumplimiento'=>$cumplimientos, 'total_no_cumplimiento'=>$no_cumplimientos);
-        }
+        }*/
         
         
     }

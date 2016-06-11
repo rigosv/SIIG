@@ -2,7 +2,7 @@ parameters:
     database_driver: pdo_pgsql
     database_host: localhost
     database_port: null
-    database_name: indicadores2
+    database_name: indicadores
     database_user: admin
     database_password: rodriguez
     mailer_transport: smtp
