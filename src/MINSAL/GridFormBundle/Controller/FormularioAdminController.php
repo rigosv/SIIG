@@ -79,7 +79,7 @@ class FormularioAdminController extends Controller
         }    
 
         foreach ($periodosEstructura as $p){
-            $llave = $llave = $p->getPeriodo()->getAnio().$p->getUnidad()->getId().$p->getFormulario()->getId();
+            $llave = $p->getPeriodo()->getAnio().$p->getUnidad()->getId().$p->getFormulario()->getId();
             $periodos[$llave] = array('id'=>'pu_'.$p->getId(),
                                                 'periodo_anio'=>$p->getPeriodo()->getAnio(),
                                                 'periodo_mes'=>$p->getPeriodo()->getMesTexto(),

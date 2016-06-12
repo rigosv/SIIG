@@ -100,12 +100,6 @@ class TableroCalidadRESTController extends Controller {
         $datos = $em->getRepository('GridFormBundle:Formulario')->getCriterios($establecimiento, $periodo, $formulario);
         $data_= '';
         
-        /*$ultimo = array_pop($datos);
-        foreach ($datos as $d){            
-            $data_ .= '{'.  str_replace('=>', ':', $d['datos']). '},';
-        }
-        $data_ .= '{'.  str_replace('=>', ':', $ultimo['datos']). '}';
-         */
         $data =  array();
         foreach ($datos as $d) {            
             $data[$d['codigo']]['descripcion'] = $d['descripcion'];

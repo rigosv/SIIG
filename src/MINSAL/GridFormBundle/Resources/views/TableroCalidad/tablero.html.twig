@@ -237,4 +237,8 @@
             </div>
         </div>
     </div>
+    <p id='loading' class="text-center text-muted" if-loading>
+        {#<span class="fa fa-spinner fa-spin fa-4x"></span>#}
+        <img src='{{ asset('bundles/gridform/images/loading.gif') }}' class='ajax-loader'>
+     </p>
 {% endblock content%}

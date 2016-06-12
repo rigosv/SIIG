@@ -92,3 +92,24 @@ DIV.row_tablero {
 .encabezado_tabla{
     background-color: #88B6D9;
 }
+#loading {  
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    z-index:1000;
+    background-color: white;
+    opacity: .9;
+    padding-top: 200px;
+ }
+ .ajax-loader {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-left: -50px; /* -1 * image width / 2 */
+    margin-top: -50px;  /* -1 * image height / 2 */
+    display: block;
+    width: 100px;
+    height: 100px;
+}

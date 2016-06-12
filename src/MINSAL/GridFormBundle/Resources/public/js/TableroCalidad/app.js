@@ -1,9 +1,29 @@
-var tableroCalidadApp = angular.module('tableroCalidadApp', ['servicios'])
+    function ifLoading($http) {
+      return {
+        restrict: 'A',
+        link: function(scope, elem) {
+            scope.isLoading = isLoading;
+
+            scope.$watch(scope.isLoading, toggleElement);
+
+            function toggleElement(loading) {
+              (loading) ? elem.show() : elem.hide();           
+            }
+
+            function isLoading() {
+              return $http.pendingRequests.length > 0;
+            }
+        }
+      };
+    }
+
+    ifLoading.$inject = ['$http'];
+    var tableroCalidadApp = angular.module('tableroCalidadApp', ['servicios'])
         .config(['$interpolateProvider', function ($interpolateProvider) {
                 $interpolateProvider.startSymbol('[[');
                 $interpolateProvider.endSymbol(']]');
             }])
-
+        .directive('ifLoading', ifLoading)
         .controller('mainCtrl', function AppCtrl ($scope, Periodos, Establecimientos, Evaluaciones, Criterios, HistorialEstablecimiento) {
             $scope.options = {width: 300, height: 250, 'bar': 'aaa'};
             $scope.data = [0];
@@ -101,10 +121,6 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['servicios'])
                             angular.forEach($scope.metas, function(value, key) {
                                     this.categoria = 'Meta';
                             }, $scope.metas);
-                            /*$scope.brechas = JSON.parse(datos.replace(/"brecha":/g,'"value":'));
-                            angular.forEach($scope.brechas, function(value, key) {
-                                    this.categoria = 'Brecha';
-                            }, $scope.brechas);*/
                             
                             aux.push($scope.calificaciones);
                             aux.push($scope.metas);
@@ -141,36 +157,11 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['servicios'])
                         });                
             };
             
-            /*$scope.toggleLabel = function(control, activo){
-                var aux = [];                
-                //var vacio = [];
-                //var aux_vacio = $scope.calificaciones[0];
-                var metas = $scope.metas;
-                var brechas = $scope.brechas;
-                
-                /*angular.forEach(aux_vacio, function(value, key) {
-                    this.value = 0;
-                }, aux_vacio);
-                vacio.push(aux_vacio);*/
-                /*
-                if (control == 'estandar'){
-                    metas = (activo == true ) ? metas : [];
-                }else if (control == 'brecha'){
-                    brechas = (activo == true ) ? brechas : [];
-                }
-                
-                aux.push($scope.calificaciones);
-                aux.push(metas);
-                
-                $scope.datosGrafico2 = aux;
-                $scope.$apply();
-            }*/
-            
             $('input').on('ifChecked', function(event){
                 $scope.toggleLabel($(this).val(), true);
             });
             $('input').on('ifUnchecked', function(event){
                 $scope.toggleLabel($(this).val(), false);
             });
-        })
+        })        
         ;
