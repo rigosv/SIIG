@@ -14,9 +14,10 @@ class ApiRESTController extends Controller {
      * Obtener los datos de los indicadores asignados a una agencia
      * @param string $cod_agencia
      * @Get("/api/{cod_agencia}/indicadores/data", options={"expose"=true})
+     * @Get("/api/{cod_agencia}/indicadores/{id}/data", options={"expose"=true})
      * @Rest\View
      */
-    public function getIndicadoresAction($cod_agencia) {
+    public function getIndicadoresAction($cod_agencia, $id = null) {
         $em = $this->getDoctrine()->getManager();
         
         $agencia = $em->getRepository("IndicadoresBundle:Agencia")->findOneBy(array('codigo'=>$cod_agencia));
@@ -26,12 +27,20 @@ class ApiRESTController extends Controller {
         $respuesta = array('state'=>'ok');
         $datos = array();
         $fichaRepository = $em->getRepository('IndicadoresBundle:FichaTecnica');
+        if ($id != null) {
+            $indicadores[] = $fichaRepository->find($id);
+        } else {
+            $indicadores = $agencia->getIndicadores();
+        }
         
-        foreach ($agencia->getIndicadores() as $ind){
+        foreach ($indicadores as $ind){
             try {
                 $fichaRepository->crearIndicador($ind);
                 $datosIndicador = $fichaRepository->getDatosIndicador($ind);
-                $datos[] = array('indicador_id'=>$ind->getId(), 'nombre'=>$ind->getNombre(), 'datos'=>$datosIndicador);
+                $datos[] = array('indicador_id'=>$ind->getId(), 'nombre'=>$ind->getNombre(), 
+                        'formula' => str_replace(array('{','}'), array('__', '__'), strtolower($ind->getFormula())), 
+                        'filas' => $datosIndicador
+                        );
             } catch (Exception $exc) {
                 $respuesta = array('state'=>'fail', 'message'=>$exc->getTraceAsString());
                 $response->setContent(json_encode($respuesta));
@@ -44,7 +53,7 @@ class ApiRESTController extends Controller {
     }
     
     /**
-     * Obtener los datos de los indicadores asignados a una agencia
+     * Obtener listado de fichas, id y nombre
      * @param string $cod_agencia
      * @Get("/api/{cod_agencia}/fichastecnicas/listado", options={"expose"=true})
      * @Rest\View
@@ -75,7 +84,7 @@ class ApiRESTController extends Controller {
     }
     
     /**
-     * Obtener los datos de las fichas técnicas de los indicadores asignados a una agencia
+     * Obtener campos descriptores de las fichas técnicas 
      * @param string $cod_agencia
      * @Get("/api/{cod_agencia}/fichastecnicas", options={"expose"=true})
      * @Rest\View
@@ -153,7 +162,7 @@ class ApiRESTController extends Controller {
             try {                
                 $datosFormulario = $frmRepository->getDatosRAW($frm);
                 $datos[] = array('formulario_id'=>$frm->getId(), 'formulario_codigo'=>$frm->getCodigo(), 
-                                    'nombre'=>$frm->getNombre(), 'datos_filas'=>$datosFormulario);
+                                    'nombre'=>$frm->getNombre(), 'filas'=>$datosFormulario);
             } catch (Exception $exc) {
                 $respuesta = array('state'=>'fail', 'message'=>$exc->getTraceAsString());
                 $response->setContent(json_encode($respuesta));
