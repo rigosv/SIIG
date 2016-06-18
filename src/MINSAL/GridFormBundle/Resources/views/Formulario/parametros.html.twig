@@ -1,6 +1,7 @@
 {% extends 'GridFormBundle:Formulario:show.html.twig' %}
 {% block frm_opciones %}    
     {% set establecimiento_ = '' %}
+    {% set establecimientoSel_ = '' %}
     <!-- Modal -->
     <div class="modal fade" id="ModalParametros" tabindex="-1" role="dialog" aria-labelledby="ModalParametrosLabel">
       <div class="modal-dialog" role="document">
@@ -36,7 +37,14 @@
                         {% else %}
                             {% set periodo_ =  periodo.periodo_anio %}
                         {% endif %}
-                        <a href="?periodo_estructura={{periodo.id}}" class="formulario list-group-item {% if periodo.id == parametros.periodo_estructura %} list-group-item-success {% endif %}">
+                        <a href="?periodo_estructura={{periodo.id}}" 
+                            class="formulario list-group-item 
+                                    {% if periodo.id == parametros.periodo_estructura %} 
+                                        {{'list-group-item-success'}}
+                                        {% set establecimientoSel_ =  establecimiento_ %}
+                                    {% endif %}
+                                    "
+                        >
                             {{periodo_}} :: {{periodo.formulario.nombre}}
                         </a>
                     {% endfor %}
@@ -49,5 +57,5 @@
         </div>
       </div>
     </div>
-    <h4><B>{{establecimiento_}}</B></h4>
+    <h4><B>{{establecimientoSel_}}</B></h4>
 {% endblock %}
