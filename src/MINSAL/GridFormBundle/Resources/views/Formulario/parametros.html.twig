@@ -1,46 +1,53 @@
 {% extends 'GridFormBundle:Formulario:show.html.twig' %}
-{% block frm_opciones %}
-    <div class="form-group" id="mes_anio_f"></div>
-    <div class="form-group" id="dependencia_f" style="width: 100%">
-        <select id="periodo_estructura" name="periodo_estructura">
-            <option value="-1" selected>{{'_elija_parametros_'|trans}}</option>
-            {% for pEstructura in periodos %}
-                <optgroup label="{% if pEstructura.unidad.nivel == 1 %}
-                                {{pEstructura.unidad}}
-                            {% elseif pEstructura.unidad.nivel == 2 %}
-                                {{pEstructura.unidad.parent}}::{{pEstructura.unidad}}
-                            {% elseif pEstructura.unidad.nivel == 3 %}
-                                 {{pEstructura.unidad.parent.parent}} :: {{pEstructura.unidad.parent}} :: {{pEstructura.unidad}}
-                            {% endif%}">
+{% block frm_opciones %}    
+    {% set establecimiento_ = '' %}
+    <!-- Modal -->
+    <div class="modal fade" id="ModalParametros" tabindex="-1" role="dialog" aria-labelledby="ModalParametrosLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="ModalParametrosLabel">{{'_listado_frms_'|trans}}</h4>
+          </div>
+          <div class="modal-body">
+            <div class="alert" id="ayuda_listado_formulario" role="alert">{{'_seleccione_frm_ayuda_'|trans}}</div>
+            <div class="input-group-addon"><span class="glyphicon glyphicon-search"></span>
+            <input class="form-control" type="search" id='FiltroListadoFormularios' placeholder="{{'_buscar_formulario_'|trans}}..."></div>
+            <div class="form-group" id="mes_anio_f"></div>
+            <div class="list-group">                
+                {% for pEstructura in periodos %}
+                    <a href="#" class="list-group-item disabled">
+                        <B>{{'_establecimiento_'|trans}}:
+                        {% if pEstructura.unidad.nivel == 1 %}
+                            {% set establecimiento_ = pEstructura.unidad %}
+                            {{pEstructura.unidad}}
+                        {% elseif pEstructura.unidad.nivel == 2 %}
+                            {% set establecimiento_ = pEstructura.unidad.parent ~ '::'~pEstructura.unidad %}
+                            {{pEstructura.unidad.parent}}::{{pEstructura.unidad}}
+                        {% elseif pEstructura.unidad.nivel == 3 %}
+                            {% set establecimiento_ = pEstructura.unidad.parent.parent ~ '::' ~ pEstructura.unidad.parent ~ '::'~pEstructura.unidad %}
+                            {{pEstructura.unidad.parent.parent}} :: {{pEstructura.unidad.parent}} :: {{pEstructura.unidad}}
+                        {% endif%}
+                        </B>
+                    </a>
                     {% for periodo in pEstructura.datos %}
                         {% if (periodo.formulario.periodoLecturaDatos == 'mensual') %}                            
                             {% set periodo_ =  periodo.periodo_mes ~'/' ~periodo.periodo_anio %}
                         {% else %}
                             {% set periodo_ =  periodo.periodo_anio %}
                         {% endif %}
-                        <option value="{{periodo.id}}" {% if periodo.id == parametros.periodo_estructura %}selected="selected"{% endif %} >
+                        <a href="?periodo_estructura={{periodo.id}}" class="formulario list-group-item {% if periodo.id == parametros.periodo_estructura %} list-group-item-success {% endif %}">
                             {{periodo_}} :: {{periodo.formulario.nombre}}
-                        </option>
+                        </a>
                     {% endfor %}
-                </optgroup>                            
-            {% endfor %}
-        </select>
-        
-        {% if (periodoSeleccionado == null or parametros.periodo_estructura == '-1') and numero_carga == 2 %}
-            <center>
-                <button type="button" class="btn btn-xs btn-danger" data-toggle="popover" 
-                        data-content="{{'_elija_un_formulario_'|trans}}"
-                        data-placement="bottom"
-                        animation = 'true'
-                        >
-                    <span class="glyphicon glyphicon-chevron-up" aria-hidden="true" style="float: left;"></span>
-                </button>
-            </center>
-            <script type="text/javascript">
-                $(document).ready(function () {                            
-                    $('#modal_msj_solo_fondo').modal('show');
-                });
-            </script>
-        {% endif %}
+                {% endfor %}
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">{{'_cerrar_'|trans}}</button>
+          </div>
+        </div>
+      </div>
     </div>
+    <h4><B>{{establecimiento_}}</B></h4>
 {% endblock %}

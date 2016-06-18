@@ -75,21 +75,26 @@ class FormularioAdminController extends Controller
             $Frm = $em->getRepository('GridFormBundle:Formulario')->findOneBy(array('codigo'=>$codigoFrm));
             $periodosEstructura = $em->getRepository("GridFormBundle:PeriodoIngresoDatosFormulario")
                 ->findBy(array('usuario' => $this->getUser(), 'formulario'=>$Frm), 
-                        array('periodo' => 'ASC', 'unidad'=>'ASC'));
+                        array('periodo' => 'ASC', 'unidad'=>'ASC', 'formulario'=>'ASC'));
         }    
-
+        $i=0;
         foreach ($periodosEstructura as $p){
-            $llave = $p->getPeriodo()->getAnio().$p->getUnidad()->getId().$p->getFormulario()->getId();
+            $mes = ($p->getFormulario()->getPeriodoLecturaDatos() == 'mensual') ? $p->getPeriodo()->getMes() : '';
+            
+            $llave = $p->getPeriodo()->getAnio().$mes.$p->getUnidad()->getId().$p->getFormulario()->getId();
+            $orden = $p->getUnidad()->getId() .$p->getPeriodo()->getAnio() . $p->getFormulario()->getPosicion();
             $periodos[$llave] = array('id'=>'pu_'.$p->getId(),
                                                 'periodo_anio'=>$p->getPeriodo()->getAnio(),
                                                 'periodo_mes'=>$p->getPeriodo()->getMesTexto(),
                                                 'unidad' => $p->getUnidad(),
-                                                'formulario' => $p->getFormulario()
+                                                'formulario' => $p->getFormulario(),
+                                                'orden'=>$orden
                                             );
+            $orden_[$llave] = (float)$orden;
             if ($Frm == $p->getFormulario())
                 $meses[$p->getPeriodo()->getAnio()][] = $p->getPeriodo()->getMes();
         }
-                
+        array_multisort($orden_, SORT_ASC, $periodos);        
         //Agrupar los periodos por unidad
         $periodos_aux = array();
         foreach($periodos as $p){

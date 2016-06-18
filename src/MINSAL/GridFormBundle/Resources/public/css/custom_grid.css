@@ -85,10 +85,7 @@ div.na{
 }
 .jqx-checkbox-default {
     background-color: #F99090 !important;
-    //background: transparent url("/bundles/gridform/images/checkbox_green2.png") no-repeat scroll center center;
-    background-size: 20px 20px;
-    //border: none !important;
-    //margin-top: 0px !important;    
+    background-size: 20px 20px;    
 }
 .jqx-checkbox-default > div, .jqx-checkbox-default > div > span {
     width: 20px !important;
@@ -121,4 +118,14 @@ div.na{
 
 .oculto{
     display: none;
+}
+.modal-header{
+    background-color: #337AB7;
+}
+.modal{
+    z-index: 2050;
+}
+
+#ayuda_listado_formulario{
+    color: black !important;
 }
