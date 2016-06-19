@@ -89,21 +89,25 @@
                     {% endif %}
                     
                     var clase = cellclass(row, datafield, value);
-                    if (clase == 'oculto')
+                    var patt = new RegExp("oculto");
+                    if (patt.test(clase))
                         return false;
                 };
                 
                 var cellclass = function (row, columnfield, value) {
+                    var editable = $("#jqxgrid{{Frm.id}}").jqxGrid('getcolumnproperty', columnfield, 'editable');
+                    var no_edit_class = (editable == false) ? 'celda_no_editable' : '';
+                    var oculto_class = ''
                     {% if Frm.areaCosteo() == 'calidad' %}
                         var datarowExp = $("#jqxgrid{{Frm.id}}").jqxGrid('getrowdata', 0);
                         var datarowAct = $("#jqxgrid{{Frm.id}}").jqxGrid('getrowdata', row);
                         if (datarowExp.es_poblacion == 'true' && datarowAct.es_poblacion != 'true'){
                             var num_exp = $("#jqxgrid{{Frm.id}}").jqxGrid('getcellvalue',0, columnfield);
-                            if (num_exp == ''){
-                                return 'oculto';
-                            }
+                            oculto_class = (num_exp == '') ? 'oculto': ''
+                            
                         }
                     {% endif %}
+                    return no_edit_class + ' ' + oculto_class;
                 }
 
                 var error = false;
@@ -271,7 +275,7 @@
                                 {% endif %}
                                 cellsalign: '{{campo.alineacion.codigo|default('left')}}',
                                 {% if not celda_editable %}
-                                    cellclassname: 'celda_no_editable',
+                                    cellclassname: cellclass,
                                 {% else %}
                                     cellclassname: cellclass,
                                 {% endif%}
@@ -691,24 +695,7 @@
                     $('#modal_msj_content').html('<div class="alert alert-success" role="alert">{{'_datos_guardados_'|trans}}</div>');
                     $('#modal_msj').modal('show');
                 }
-            });
-            $('#frmConf').on('submit', function(e) {
-                /*var firstName = $('#firstname');
-
-                // Check if there is an entered value
-                if(!firstName.val()) {
-                  // Add errors highlight
-                  firstName.closest('.form-group').removeClass('has-success').addClass('has-error');
-
-                  // Stop submission of the form
-
-                } else {
-                  // Remove the errors highlight
-                  firstName.closest('.form-group').removeClass('has-error').addClass('has-success');
-                }*/
-                alert(1);
-                e.preventDefault();
-            });
+            });            
             $("#fechaEvaluacion").jqxDateTimeInput({ width: '200px', height: '25px', culture: 'es-SV' });
             $("#guardarConf").click(function () {
                 if (isNaN($('#cantidadExpedientes').val())){
