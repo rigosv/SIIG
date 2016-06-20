@@ -101,7 +101,7 @@ class FormularioAdminController extends Controller
             $periodos_aux[$p['unidad']->getCodigo()]['unidad'] = $p['unidad'];
             $periodos_aux[$p['unidad']->getCodigo()]['datos'][] = $p;
         }
-        
+
         $parametrosPlantilla = array(
             'url' => 'get_grid_data',
             'url_save' => 'set_grid_data',

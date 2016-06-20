@@ -113,3 +113,7 @@ DIV.row_tablero {
     width: 100px;
     height: 100px;
 }
+
+.x-axis-group text {
+  font: 10px sans-serif;
+}

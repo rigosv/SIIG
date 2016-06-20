@@ -1,9 +1,9 @@
 d3.custom = {};
 
 d3.custom.barChart = function module() {
-    var margin = {top: 20, right: 20, bottom: 40, left: 40},
-        width = 600,
-        height = 300,
+    var margin = {top: 20, right: 20, bottom: 55, left: 40},
+        width = 700,
+        height = 290,
         gap = 0,
         ease = 'cubic-in-out';
     var svg, duration = 500;
@@ -19,7 +19,7 @@ d3.custom.barChart = function module() {
 
             var x1 = d3.scale.ordinal()
                 .domain(_data.map(function(d, i){ return d.category; }))
-                .rangeRoundBands([0, chartW], .1);
+                .rangeRoundBands([0, chartW], .3);
 
             var y1 = d3.scale.linear()
                 .domain([0, d3.max(_data, function(d, i){ return d.measure; })])
@@ -36,7 +36,7 @@ d3.custom.barChart = function module() {
                 .attr('class', 'd3-tip')
                 .offset([-10, 0])
                 .html(function(d) {
-                  return "<strong>Porcentaje cumplimiento:</strong> <span style='color:red'>" + d.measure + "</span>";
+                  return "<strong>" + d.category + ":</strong> <span style='color:red'>" + d.measure + "</span>";
                 });
 
             var barW = chartW / _data.length;
@@ -60,7 +60,13 @@ d3.custom.barChart = function module() {
                 .duration(duration)
                 .ease(ease)
                 .attr({transform: 'translate(0,' + (chartH) + ')'})
-                .call(xAxis);
+                .call(xAxis)
+                .selectAll("text")
+                .attr("y", 0)
+                .attr("x", 0)
+                .attr("dy", "1.55em")
+                .attr("transform", "rotate(15)")
+                .style("text-anchor", "start");
 
             svg.select('.y-axis-group.axis')
                 .transition()

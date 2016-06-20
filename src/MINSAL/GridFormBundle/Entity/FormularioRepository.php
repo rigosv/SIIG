@@ -431,7 +431,7 @@ class FormularioRepository extends EntityRepository {
         
         //Obtener los establecimientos
         $sql = "SELECT distinct on (datos->'establecimiento') datos->'establecimiento' AS id_establecimiento, C.nombre, 
-                    COALESCE(C.nombre_corto, C.codigo) AS descripcion
+                    COALESCE(C.nombre_corto, C.nombre) AS descripcion
                     FROM  almacen_datos.repositorio A
                         INNER JOIN costos.formulario B ON (A.id_formulario = B.id)
                         INNER JOIN costos.estructura C ON (A.datos->'establecimiento' = C.codigo::text)
