@@ -172,6 +172,7 @@
                                     </TD>                                    
                                     <TD ng-if="criterio.es_separador != 'true' "
                                         ng-repeat="exp in getExpedientes(criterio)"
+                                        style="[[getAlertas(criterio, getValorExpediente(exp))]]"
                                         >
                                         <button class="btn btn-success" ng-if="getValorExpediente(exp)=='true'">
                                             <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>

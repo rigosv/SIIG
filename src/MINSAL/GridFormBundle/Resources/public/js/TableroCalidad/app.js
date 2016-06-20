@@ -58,6 +58,33 @@
                 return criterio['mes_check_'+$scope.mes_];
             };
             
+            $scope.getAlertas =  function(criterio, cellValue){
+                var estilo='';
+                if (criterio.alertas != ''){
+                    var tipo_control = criterio.codigo_tipo_control;
+                    // Si es tiempo pasarlo a minutos
+                    if (tipo_control == 'time'){
+                        partes = cellValue.split(':');
+                        valor = parseInt(partes[0]) * 60 + parseInt(partes[1]);
+                    }
+                    var rangos = criterio.alertas.split(',');
+                    rangos.forEach(function(nodo, index){
+                        var limites = nodo.split('-');
+                        //Si no existe alguno de los límites del rango ponerle valores 
+                        // muy grandes (si falta lim sup) o muy pequeño( si falta el lim inf)
+                        limites[0] = (limites[0]=='') ? -1000000 : limites[0]; 
+                        limites[1] = (limites[1]=='') ? 1000000 : limites[1];
+                        if (!(isNaN(valor))){
+                            if (valor >= parseFloat(limites[0]) && parseFloat(valor) <= parseFloat(limites[1])){                                                    
+                                estilo = "border-style: solid; border-color:"+limites[2]+ " white ; color: " +limites[2]+" ; font-size:14pt; font-weight: bold; ";
+                                criterio.rango = limites[2];
+                            }
+                        }
+                    });
+                }
+                return estilo;
+            };
+            
             $scope.getValorExpediente = function(exp){
                 var respuesta='';
                 if (exp.search(':') !== -1){
@@ -67,7 +94,7 @@
                 } else {
                     respuesta = exp.trim();
                 }
-                return (respuesta == 'NaN') ? 0: respuesta;
+                return (respuesta == 'NaN') ? '': respuesta;
             };
             
             $scope.getExpedientes = function(criterio){

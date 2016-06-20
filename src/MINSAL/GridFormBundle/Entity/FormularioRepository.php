@@ -160,24 +160,16 @@ class FormularioRepository extends EntityRepository {
                         AND A.formulario_id =  ".$Frm->getId()."
                 )";
         $this->orden = "ORDER BY datos->'es_poblacion' DESC, COALESCE(NULLIF(datos->'posicion', ''), '100000000')::numeric, datos->'descripcion_categoria_variable', datos->'descripcion_variable'";
-        $em->getConnection()->executeQuery($sql);
+        $em->getConnection()->executeQuery($sql);                
         
-        //Los rangos de alertas
-        $sql = "SELECT DISTINCT ON (variablecaptura_id) variablecaptura_id, 
-                    (select array_to_string(
-                                array(
-                                    SELECT COALESCE(limite_inferior::varchar,'')||'-'||COALESCE(limite_superior::varchar, '')||'-'||color  
-                                        FROM variablecaptura_rangoalerta A 
-                                            INNER JOIN rango_alerta B ON (A.rangoalerta_id = B.id) 
-                                        WHERE A.variablecaptura_id = AA.variablecaptura_id
-                                    ), ','
-                                ) AS alertas
-                    ) AS alertas 
-                INTO TEMP rangos_alertas
-                FROM variablecaptura_rangoalerta AA 
-                    INNER JOIN variable_captura BB ON (AA.variablecaptura_id = BB.id) 
-                WHERE formulario_id= ".$Frm->getId();
-        $em->getConnection()->executeQuery($sql);
+        $this->actualizarVariables($Frm->getId());
+              
+    }
+    
+    protected function actualizarVariables($frm_id){
+        $em = $this->getEntityManager();
+        
+        $this->crearRangosAlertas($frm_id);
         
         //Actualizar los datos de las variables ya existentes
         $sql = " UPDATE almacen_datos.repositorio 
@@ -197,9 +189,32 @@ class FormularioRepository extends EntityRepository {
                         FROM variable_captura ) AS A
                         INNER JOIN categoria_variable_captura B ON (A.id_categoria_captura = B.id)
                         LEFT JOIN costos.tipo_control C ON (A.id_tipo_control = C.id)
-                        LEFT JOIN rangos_alertas D ON (A.id = D.variablecaptura_id)
-                    WHERE almacen_datos.repositorio.datos->'codigo_variable' = A.codigo";        
-        $em->getConnection()->executeQuery($sql);      
+                        LEFT JOIN rangos_alertas_tmp D ON (A.id = D.variablecaptura_id)
+                    WHERE almacen_datos.repositorio.datos->'codigo_variable' = A.codigo
+                            AND almacen_datos.repositorio.id_formulario = $frm_id ";        
+        $em->getConnection()->executeQuery($sql);
+    }
+    protected function crearRangosAlertas($frm_id){
+        $em = $this->getEntityManager();
+        //Los rangos de alertas
+        $sql = "DROP TABLE IF EXISTS rangos_alertas_tmp";
+        $em->getConnection()->executeQuery($sql);
+        
+        $sql = "SELECT DISTINCT ON (variablecaptura_id) variablecaptura_id, 
+                    (select array_to_string(
+                                array(
+                                    SELECT COALESCE(limite_inferior::varchar,'')||'-'||COALESCE(limite_superior::varchar, '')||'-'||color  
+                                        FROM variablecaptura_rangoalerta A 
+                                            INNER JOIN rango_alerta B ON (A.rangoalerta_id = B.id) 
+                                        WHERE A.variablecaptura_id = AA.variablecaptura_id
+                                    ), ','
+                                ) AS alertas
+                    ) AS alertas 
+                INTO TEMP rangos_alertas_tmp
+                FROM variablecaptura_rangoalerta AA 
+                    INNER JOIN variable_captura BB ON (AA.variablecaptura_id = BB.id) 
+                WHERE formulario_id= $frm_id ";
+        $em->getConnection()->executeQuery($sql);
     }
     /**
      * 
@@ -687,44 +702,7 @@ class FormularioRepository extends EntityRepository {
                 FROM ( " . $sql . ") AS A";
         
             return array_pop($em->getConnection()->executeQuery($sql)->fetchAll());
-        } 
-        /*elseif ($Frm->getFormaEvaluacion() == '-rango_colores'){
-            $cumplimientos= 0 ;
-            $no_cumplimientos= 0 ;
-            $rangos = array();
-            $sql = "SELECT CASE WHEN dato = 'green' THEN 1 ELSE 0 END AS cumplimiento, 
-                        CASE WHEN dato != 'green' AND dato != '' THEN 1 ELSE 0 END AS no_cumplimiento
-                    FROM datos_tmp";
-            $sql = "SELECT B.codigo, C.limite_inferior, C.limite_superior
-                    FROM variablecaptura_rangoalerta A
-                        INNER JOIN variable_captura B ON (A.variablecaptura_id = B.id)
-                        INNER JOIN rango_alerta C ON (A.rangoalerta_id = C.id)
-                    WHERE C.color = 'green' 
-                        AND B.formulario_id = '$idFrm' ";
-            foreach ($em->getConnection()->executeQuery($sql)->fetchAll() as $r){
-                $rangos[$r['codigo']] = array ('li'=>$r['limite_inferior'], 'ls'=>$r['limite_superior']);
-            }
-            
-            $sql = "SELECT A.codigo_variable, dato, C.codigo AS codigo_tipo_control
-                        FROM datos_tmp A 
-                            INNER JOIN variable_captura B ON (A.codigo_variable = B.codigo)
-                            INNER JOIN costos.tipo_control C ON (B.id_tipo_control = C.id)
-                ";
-            foreach ($em->getConnection()->executeQuery($sql)->fetchAll() as $c){
-                if (array_key_exists($c['codigo_variable'], $rangos) and $c['dato'] != ''){
-                    if ($c['codigo_tipo_control'] == 'time'){
-                        $hora =  split($c['dato'], ':');
-                        $valor = $hora[0] * 60 + $hora[1];
-                    } else{
-                        $valor = $c['dato'];
-                    }
-                    if ($valor >= $rangos[$c['codigo_variable']]['li'] and $valor <= $rangos[$c['codigo_variable']]['ls']){
-                        $cumplimientos++;
-                    } else $no_cumplimientos++;
-                }
-            }
-            return array('total_cumplimiento'=>$cumplimientos, 'total_no_cumplimiento'=>$no_cumplimientos);
-        }*/
+        }         
         
         
     }
@@ -757,7 +735,7 @@ class FormularioRepository extends EntityRepository {
                 foreach ($pivotes_borrar as $c){
                     $piv_[] = $c['nombre_pivote'];
                 }
-                //var_dump(implode("','", $pivotes_borrar)); exit;
+
                 $pivotes_borrar = "'".implode("','", $piv_)."'";
                 $datos = "delete(datos, ARRAY[$pivotes_borrar]) AS datos";
             }
@@ -765,11 +743,14 @@ class FormularioRepository extends EntityRepository {
             $frmId = $ff->getId();
             $mes_cadena = ($periodo_mensual) ? " AND (A.datos->'mes')::integer = '$mes' " : '';
             
+            $this->ActualizarVariables($Frm->getId());
+            
             $sql_forms .= "
-                SELECT $datos, B.id, B.codigo, B.descripcion, B.forma_evaluacion                        
+                SELECT $datos, B.id, B.codigo, B.descripcion, B.forma_evaluacion
                     FROM  almacen_datos.repositorio A
                         INNER JOIN costos.formulario B ON (A.id_formulario = B.id)
                         INNER JOIN ctl_establecimiento_simmow C ON (A.datos->'establecimiento' = C.id::text)
+                        INNER JOIN variable_captura D ON (A.datos->'codigo_variable' = D.codigo)
                     WHERE area_costeo = 'calidad'
                         AND A.datos->'anio' = '$anio'
                         $mes_cadena
@@ -778,11 +759,7 @@ class FormularioRepository extends EntityRepository {
                             
                     UNION ALL ";
         }
-        $sql_forms = trim($sql_forms, 'UNION ALL ');
-        //if ($Frm->getFormaEvaluacion() == 'lista_chequeo'){
-            
-        //}
-        
+        $sql_forms = trim($sql_forms, 'UNION ALL ');        
         
        
         $sql = "SELECT AA.id, AA.codigo, AA.descripcion, AA.forma_evaluacion , AA.datos
