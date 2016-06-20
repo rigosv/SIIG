@@ -100,7 +100,7 @@
             <tag name="sonata.admin" manager_type="orm" group="_calidad_" label="_indicador_"/>
             <argument />
             <argument>MINSAL\GridFormBundle\Entity\Indicador</argument>
-            <argument />            
+            <argument>GridFormBundle:IndicadorAdmin</argument>
         </service>
         <service id="sonata.gridform.admin.evaluacion_externa_tipo" class="MINSAL\GridFormBundle\Admin\EvaluacionExternaTipoAdmin">
             <tag name="sonata.admin" manager_type="orm" group="_calidad_" label="_evaluacion_externa_tipo_"/>

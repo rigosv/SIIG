@@ -6,6 +6,7 @@ use Sonata\AdminBundle\Admin\Admin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Form\FormMapper;
+use Sonata\AdminBundle\Route\RouteCollection;
 
 class IndicadorAdmin extends Admin
 {
@@ -83,5 +84,12 @@ class IndicadorAdmin extends Admin
                 return parent::getTemplate($name);
                 break;
         }
+    }
+    
+    protected function configureRoutes(RouteCollection $collection)
+    {
+        $collection->add('tableroCalidad');
+        $collection->add('tableroGeneralCalidad');
+
     }
 }

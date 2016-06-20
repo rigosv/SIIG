@@ -328,9 +328,6 @@ class FichaTecnicaAdmin extends Admin
     {
         $collection->add('tablero');
         $collection->add('pivotTable');
-        $collection->add('tableroCalidad');
-        $collection->add('tableroGeneralCalidad');
-
     }
 
     public function getTemplate($name)
