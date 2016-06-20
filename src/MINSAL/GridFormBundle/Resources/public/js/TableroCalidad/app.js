@@ -67,7 +67,7 @@
                 } else {
                     respuesta = exp.trim();
                 }
-                return respuesta;
+                return (respuesta == 'NaN') ? 0: respuesta;
             };
             
             $scope.getExpedientes = function(criterio){
