@@ -486,13 +486,13 @@ class FormularioRepository extends EntityRepository {
                         FROM evaluacion_externa A
                         INNER JOIN evaluacion_externa_tipo B ON (A.tipoevaluacion_id = B.id)
                         INNER JOIN evaluacion_categoria C ON (B.categoriaevaluacion_id = C.id)
-                        WHERE ($establecimiento, tipoevaluacion_id, anio) 
+                        WHERE ((SELECT id FROM costos.estructura WHERE codigo='$establecimiento'), tipoevaluacion_id, anio) 
                             IN 
                             (SELECT establecimiento_id, tipoevaluacion_id, MAX(anio) AS anio 
                                 FROM evaluacion_externa 
                                 GROUP BY establecimiento_id, tipoevaluacion_id
                             ) 
-                        ORDER BY C.id, B.id, A.anio, A.valor";
+                        ORDER BY C.id, B.id, A.anio, A.valor";            
             $evaluaciones = $em->getConnection()->executeQuery($sql)->fetchAll();
             $datos_['evaluaciones_externas'] = ( $evaluaciones);
             
