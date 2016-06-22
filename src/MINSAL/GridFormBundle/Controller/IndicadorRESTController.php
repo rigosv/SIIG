@@ -12,15 +12,18 @@ class IndicadorRESTController extends Controller
 {
     /**
      * Obtener los datos del formulario
-     * @Get("/rest-service/calidad/indicadores/{periodo}", options={"expose"=true})
+     * @Get("/rest-service/calidad/indicadores/{periodo}/{tipo}", options={"expose"=true})
      * @Rest\View
      */
-    public function getIndicadoresCalidadEvaluadosAction($periodo) {
+    public function getIndicadoresCalidadEvaluadosAction($periodo, $tipo) {
         
         $response = new Response();
         $em = $this->getDoctrine()->getManager();
 
-        $data = $em->getRepository('GridFormBundle:Indicador')->getIndicadoresEvaluados($periodo);
+        if ($tipo == 2)
+            $data = $em->getRepository('GridFormBundle:Indicador')->getIndicadoresEvaluadosNumericos($periodo);
+        else
+            $data = $em->getRepository('GridFormBundle:Indicador')->getIndicadoresEvaluadosListaChequeo($periodo);
         
         $resp = (count($data) == 0)? array(): $data;
         

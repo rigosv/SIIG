@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityRepository;
 use Symfony\Component\HttpFoundation\Request;
 use MINSAL\GridFormBundle\Entity\FormularioRepository;
 use MINSAL\GridFormBundle\Entity\Formulario;
+use MINSAL\GridFormBundle\Entity\Indicador;
 
 /**
  * IndicadorRepository
@@ -13,7 +14,28 @@ use MINSAL\GridFormBundle\Entity\Formulario;
  */
 class IndicadorRepository extends EntityRepository {
 
-    public function getIndicadoresEvaluados($periodo) {
+    protected $meses = array(
+                1=>'Ene',
+                2=>'Feb',
+                3=>'Mar',
+                4=>'Abr',
+                5=>'May',
+                6=>'Jun',
+                7=>'Jul',
+                8=>'Ago',
+                9=>'Sep',
+                10=>'Oct',
+                11=>'Nov',
+                12=>'Dic'
+                );
+    /**
+     * 
+     * @param type $periodo
+     * @return type
+     * Recupera los indicadores que son por lista de chequeo
+     * 
+     */
+    public function getIndicadoresEvaluadosListaChequeo($periodo) {
         $em = $this->getEntityManager();
         list($anio, $mes) = explode('_', $periodo);
         $datos = array();
@@ -37,11 +59,37 @@ class IndicadorRepository extends EntityRepository {
                     WHERE total_criterios > 0
                     ORDER BY posicion, codigo_estandar, codigo
                     ";
+        /*$sql = "SELECT * FROM (SELECT B.posicion, A.codigo, A.descripcion, A.forma_evaluacion, A.porcentaje_aceptacion, 'por_estandar' AS alcance_evaluacion, 
+                    B.descripcion descripcion_estandar, B.periodo_lectura_datos, B.id as estandar_id, B.codigo as codigo_estandar, A.id AS indicador_id, 
+                    (SELECT COUNT(codigo) 
+                        FROM variable_captura 
+                        WHERE formulario_id = B.id 
+                            AND es_separador = false 
+                            AND es_poblacion = false 
+                    ) AS total_criterios 
+                    FROM indicador A 
+                        INNER JOIN costos.formulario B ON (A.estandar_id = B.id) 
+                        WHERE A.id NOT IN (SELECT indicador_id FROM indicador_variablecaptura)  
+                    
+                    UNION 
+                    SELECT B.posicion, A.codigo, A.descripcion, A.forma_evaluacion, A.porcentaje_aceptacion, 'por_indicador' AS alcance_evaluacion, 
+                    B.descripcion descripcion_estandar, B.periodo_lectura_datos, B.id as estandar_id, B.codigo as codigo_estandar, A.id AS indicador_id, 
+                    (SELECT COUNT(indicador_id) 
+                        FROM indicador_variablecaptura 
+                        WHERE indicador_id = A.id 
+                    ) AS total_criterios 
+                    FROM indicador A 
+                        INNER JOIN costos.formulario B ON (A.estandar_id = B.id) 
+                        WHERE A.id IN (SELECT indicador_id FROM indicador_variablecaptura) 
+                    ) AS AA 
+                    WHERE total_criterios > 0 
+                    ORDER BY posicion, codigo_estandar, codigo";*/
+        
         $indicadores = $em->getConnection()->executeQuery($sql)->fetchAll();
         
         foreach ($indicadores as $ind){
             $Frm = $em->getRepository('GridFormBundle:Formulario')->find($ind['estandar_id']);
-            $eval_ = $this->getDatosEvaluacion($Frm, $periodo, $ind);
+            $eval_ = $this->getDatosEvaluacionListaChequeo($Frm, $periodo, $ind);
             
             $calificacion = 0;
             $eval = array();
@@ -79,7 +127,101 @@ class IndicadorRepository extends EntityRepository {
         return $resp;
     }
     
-    protected function getDatosEvaluacion(Formulario $Frm, $periodo, $datosIndicador){
+    /**
+     * 
+     * @param type $periodo
+     * @return type
+     * Recupera los indicadores que tienen indicadores hijos asociados
+     * datos numéricos
+     */
+    public function getIndicadoresEvaluadosNumericos($periodo) {
+        $em = $this->getEntityManager();
+        list($anio, $mes) = explode('_', $periodo);
+        $datos = array();
+        $calificaciones = array();
+        
+        //Recuperar los indicadores que no tienen asociado ningún criterio
+        //Estos serán los que están cargados a todo el estándar
+        $sql = "SELECT id, estandar_id, codigo, descripcion, forma_evaluacion, indicadorpadre_id
+                    FROM indicador A                    
+                    WHERE A.forma_evaluacion = 'promedio'
+                        AND id = 50
+                        AND indicadorpadre_id is null
+                    ";
+        $indicadores = $em->getConnection()->executeQuery($sql)->fetchAll();
+        
+        foreach ($indicadores as $ind){
+            //Verificar si tiene hijos
+            $Indicador = $em->getRepository('GridFormBundle:Indicador')->find($ind['id']);
+            
+            $indHijos = $Indicador->getIndicadoresHijos();
+            
+            $indicadoresRecorrer = (count($indHijos) > 0) ? $indHijos : array(0=>$Indicador);
+            $datosArea = array();
+            $valorIndPrincipal = 0;
+            foreach($indicadoresRecorrer as $f){
+                $Frm = $f->getEstandar(); 
+                $datosEval_ = array();
+                $valor = 0;
+                if ($Frm != null)
+                    $datosEval_ = $this->getDatosEvaluacionNumerica($Frm, $periodo, $f);
+                foreach ($datosEval_ as $r){
+                    $valor = $r[$this->meses[$mes]];
+                }
+                $datosArea[] = array('nombre_area' => $f->getDescripcion(),
+                            'valor'=> $valor
+                        );
+                $valorIndPrincipal  += $valor;
+            }
+            $valorIndPrincipal = $valorIndPrincipal / count($indicadoresRecorrer);
+            $datos[] = array ('nombre_indicador' => $Indicador->getDescripcion(),
+                             'valor'=> $valorIndPrincipal,
+                            'datos_area'=> $datosArea);
+            
+        }
+        return $datos;
+    }
+    
+    protected function getDatosEvaluacionNumerica(Formulario $Frm, $periodo, Indicador $datosIndicador){
+        $em = $this->getEntityManager();
+        list($anio, $mes) = explode('_', $periodo);
+        
+        $campos = $em->getRepository('GridFormBundle:Formulario')->getListaCampos($Frm, false);
+        $periodo_lectura = '';        
+        
+        $criterio = $datosIndicador->getCriterios();
+        $codCriterio = $criterio[0]->getCodigo();
+        $frmId = $Frm->getId();
+        
+        if ($Frm->getPeriodoLecturaDatos() == 'mensual' and $mes != null){
+            $periodo_lectura = " AND (A.datos->'mes')::integer = '$mes' ";
+            $mes_ = '';
+            $where_ = '';
+        } else {
+            
+            $mes_ = ' "'.$this->meses[$mes].'" AS dato, '; 
+            $where_ = " WHERE dato is not null AND dato != '' "; 
+            
+        }
+        //Sacar los datos sobre los que se harán los cálculos
+            $datos = "SELECT * FROM (SELECT $mes_ *
+                    FROM 
+                    (SELECT $campos, A.datos->'establecimiento' as establecimiento
+                        FROM almacen_datos.repositorio A
+                        WHERE A.datos->'es_poblacion' = 'false'
+                            AND id_formulario = '$frmId'                        
+                            AND A.datos->'es_separador' = 'false'
+                            AND A.datos->'anio' = '$anio'
+                            AND datos->'codigo_variable' = '$codCriterio'
+                            $periodo_lectura
+                    ) AS AA 
+                    ) AS BB
+                    $where_
+                    "
+                ;
+        return $em->getConnection()->executeQuery($datos)->fetchAll();
+    }
+    protected function getDatosEvaluacionListaChequeo(Formulario $Frm, $periodo, $datosIndicador){
 
         $totalCriterios = $datosIndicador['total_criterios']; 
         $porcentajeAprobacion = $datosIndicador['porcentaje_aceptacion']; 
@@ -113,13 +255,13 @@ class IndicadorRepository extends EntityRepository {
                         $alcance_where
                         AND A.datos->'es_separador' = 'false'
                         AND A.datos->'anio' = '$anio'
-                        $periodo_lectura";        
+                        $periodo_lectura";
         if ($formaEvaluacion == 'cumplimiento_porcentaje_aceptacion'){
           $evaluacion = " ROUND((COALESCE(B.total_cumplimiento, 0)::numeric / A.total_expedientes::numeric * 100),2)  AS calificacion ";
         }elseif ($formaEvaluacion == 'cumplimiento_criterios') {
           $evaluacion = " ROUND((C.total_criterios_cumplidos::numeric / (A.total_expedientes::numeric * $totalCriterios) * 100),2) AS calificacion ";
         }
-        $sql = "SELECT F.*, CE.nombre AS nombre_establecimiento FROM 
+        $sql = "SELECT F.*, CE.nombre AS nombre_establecimiento, COALESCE(CE.nombre_corto, CE.nombre) AS nombre_corto FROM 
                 (   SELECT A.establecimiento, A.total_expedientes, COALESCE(B.total_cumplimiento, 0) AS expedientes_cumple,
                     $totalCriterios AS criterios_evaluados, C.total_criterios_cumplidos,
                     $evaluacion                    
