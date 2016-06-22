@@ -139,13 +139,10 @@ class IndicadorRepository extends EntityRepository {
         list($anio, $mes) = explode('_', $periodo);
         $datos = array();
         $calificaciones = array();
-        
-        //Recuperar los indicadores que no tienen asociado ningún criterio
-        //Estos serán los que están cargados a todo el estándar
+                
         $sql = "SELECT id, estandar_id, codigo, descripcion, forma_evaluacion, indicadorpadre_id
                     FROM indicador A                    
                     WHERE A.forma_evaluacion = 'promedio'
-                        AND id = 50
                         AND indicadorpadre_id is null
                     ";
         $indicadores = $em->getConnection()->executeQuery($sql)->fetchAll();
@@ -166,7 +163,7 @@ class IndicadorRepository extends EntityRepository {
                 if ($Frm != null)
                     $datosEval_ = $this->getDatosEvaluacionNumerica($Frm, $periodo, $f);
                 foreach ($datosEval_ as $r){
-                    $valor = $r[$this->meses[$mes]];
+                    $valor = array_key_exists($this->meses[$mes], $r) ? $r[$this->meses[$mes]] : 0;
                 }
                 $datosArea[] = array('nombre_area' => $f->getDescripcion(),
                             'valor'=> $valor
@@ -187,6 +184,7 @@ class IndicadorRepository extends EntityRepository {
         list($anio, $mes) = explode('_', $periodo);
         
         $campos = $em->getRepository('GridFormBundle:Formulario')->getListaCampos($Frm, false);
+        if ($campos == '') return array();
         $periodo_lectura = '';        
         
         $criterio = $datosIndicador->getCriterios();
