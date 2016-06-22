@@ -14,7 +14,8 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['serviciosGeneral',
             $scope.filtroIndicador = '';
             $scope.filtroListadoIndicador = '';
 
-            $scope.titulo = 'Monitoreo y Evaluación de la Calidad - Tablero General';
+            $scope.titulo_ini = 'Monitoreo y Evaluación de la Calidad - Tablero General';
+            $scope.titulo = $scope.titulo_ini;
             $scope.periodoSeleccionado = [];
             $scope.indicadorSeleccionado = [];
             $scope.datosGrafico2 = [];
@@ -29,12 +30,16 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['serviciosGeneral',
 
                         if (data.length > 0){
                             $scope.periodoSeleccionado = $scope.periodos[0];
-                            $scope.titulo = $scope.titulo + ' :: Periodo ' + $scope.periodoSeleccionado.mes + '/' + $scope.periodoSeleccionado.anio;
+                            $scope.titulo = $scope.titulo_ini + ' :: Periodo ' + $scope.periodoSeleccionado.mes + '/' + $scope.periodoSeleccionado.anio;
                             //$('#selectPeriodo').val(data[0].periodo).trigger("change");;
                         }
                     }
                 );
-
+            $scope.cambiar_periodo = function(){
+                $scope.titulo = $scope.titulo_ini + ' :: Periodo ' + $scope.periodoSeleccionado.mes + '/' + $scope.periodoSeleccionado.anio;
+                $scope.procesar();
+            };
+            
             $scope.procesar = function () {
                 //$scope.mes_ = ($scope.periodoSeleccionado.mes < 10) ? '0' + $scope.periodoSeleccionado.mes : $scope.periodoSeleccionado.mes ;
                 Indicadores.query({ periodo: $scope.periodoSeleccionado.periodo, tipo:1 })
@@ -107,9 +112,8 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['serviciosGeneral',
                 });
                 
                 $scope.labels = labels;
-                $scope.datosGrafico2.push(valorEstandar); 
                 $scope.datosGrafico2.push(valorEstablecimiento);
-                        
+                $scope.datosGrafico2.push(valorEstandar); 
                 
             };
         });

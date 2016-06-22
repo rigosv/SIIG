@@ -341,7 +341,8 @@
                     <strong>{{'_periodo_evaluacion_'|trans}}</strong>
                     <select class="form-control"
                             data-ng-options="periodo as periodo.etiqueta for periodo in periodos track by periodo.periodo"
-                            ng-model="periodoSeleccionado" required id='selectPeriodo'>
+                            ng-model="periodoSeleccionado" required id='selectPeriodo'
+                            ng-change="cambiar_periodo()">
                     </select>
                 </div>
                 <div class="modal-footer">
