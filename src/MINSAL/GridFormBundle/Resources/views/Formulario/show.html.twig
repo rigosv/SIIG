@@ -457,7 +457,8 @@
                                 cellsrenderer: function (index, datafield, cellValue, defaultvalue, column, datarow, width, height) {
                                     nivel = (datafield == 'descripcion_variable') ? datarow.nivel_indentacion : 0.3;
                                     estilo = (datarow.es_poblacion == 'true') ? "style='color: blue; margin-left:"+(parseFloat(nivel) * 20)+"px '" :  "style = 'margin-left:"+(parseFloat(nivel) * 20)+"px' ";
-                                    estilo = (filaFormula(index, datafield)) ? "style='color: black; font-weight: bold; margin-left:"+(parseFloat(nivel) * 20)+"px '" : estilo;
+                                    var esFormula = filaFormula(index, datafield);
+                                    estilo = (esFormula) ? "style='color: black; font-weight: bold; margin-left:"+(parseFloat(nivel) * 20)+"px '" : estilo;
                                     var tipo_control = (datarow.codigo_tipo_control == undefined) ?  '{{campo.tipoControl.codigo}}' : datarow.codigo_tipo_control;
                                     var valor = cellValue;
                                     // Si es tiempo pasarlo a minutos
@@ -518,7 +519,9 @@
                                             element_aux.append(element);
                                             return element_aux.html();
                                         } else {                                            
-                                            return "<div class='jqx-{{campo.alineacion.codigo|default('left')}}-align nivel_"+0+"' "+ estilo + " title='"+datarow.ayuda+"'  >" + cellValue +"</div>";
+                                            valor =  (esFormula) ? parseFloat(cellValue).toFixed(2) : cellValue;
+                                            valor = (valor == 'NaN') ? '': valor;
+                                            return "<div class='jqx-{{campo.alineacion.codigo|default('left')}}-align nivel_"+0+"' "+ estilo + " title='"+datarow.ayuda+"'  >" + valor +"</div>";
                                         }    
                                     {% else %}
                                         return "<div class='jqx-{{campo.alineacion.codigo|default('left')}}-align nivel_"+datarow.nivel_indentacion+"' "+ estilo + " title='"+datarow.ayuda+"'  data-placement= 'top' >" + cellValue +"</div>";
@@ -631,7 +634,7 @@
                                             minutos = ( minutos >= 0 && minutos < 10 ) ? '0'+Math.abs(minutos) : Math.abs(minutos);
                                             result =  horas+ ':' + minutos;
                                         } else {
-                                            result = result.toFixed(0);
+                                            result = result.toFixed(2);
                                         }
                                         $("#jqxgrid{{Frm.id}}").jqxGrid('setcellvalue', fila_destino, columna, result);
                                     }
