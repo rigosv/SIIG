@@ -121,6 +121,7 @@ class OrigenDatosAdmin extends Admin
     {
         $datagridMapper
                 ->add('nombre', null, array('label' => $this->getTranslator()->trans('nombre')))
+                ->add('sentenciaSql', null, array('label' => $this->getTranslator()->trans('sentencia_sql')))
         ;
     }
 
