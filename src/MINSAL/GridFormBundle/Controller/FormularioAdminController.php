@@ -57,7 +57,7 @@ class FormularioAdminController extends Controller
             if ($this->getUser()->getEstablecimientoPrincipal() != null) {
                 foreach($this->getUser()->getGroups() as $g){
                     $aux_ = $em->getRepository("GridFormBundle:PeriodoIngresoGrupoUsuarios")
-                    ->findBy(array('grupoUsuario' => $g , 'formulario'=>$Frm), 
+                    ->findBy(array('grupoUsuario' => $g), 
                             array('formulario' => 'ASC', 'periodo' => 'ASC'));
                     foreach($aux_ as $p){
                         $llave = $p->getPeriodo()->getAnio().$this->getUser()->getEstablecimientoPrincipal()->getId().$p->getFormulario()->getId();
