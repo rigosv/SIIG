@@ -31,6 +31,7 @@ class FormularioAdminController extends Controller
         
         $parametros['tipo_periodo'] = $tipo_periodo;
         $periodos= array();
+        $orden_ = array();
 
         // Si es el código de formulario de captura de datos, 
         // pueden haber varios formularios para el usuario
@@ -60,12 +61,14 @@ class FormularioAdminController extends Controller
                             array('formulario' => 'ASC', 'periodo' => 'ASC'));
                     foreach($aux_ as $p){
                         $llave = $p->getPeriodo()->getAnio().$this->getUser()->getEstablecimientoPrincipal()->getId().$p->getFormulario()->getId();
+                        $orden = $this->getUser()->getEstablecimientoPrincipal()->getId() .$p->getPeriodo()->getAnio() . $p->getFormulario()->getPosicion();
                         $periodos[$llave] = array('id'=>'pg_'.$p->getId(),
                                                 'periodo_anio'=>$p->getPeriodo()->getAnio(),
                                                 'periodo_mes'=>$p->getPeriodo()->getMesTexto(),
                                                 'unidad' => $this->getUser()->getEstablecimientoPrincipal(),
                                                 'formulario' => $p->getFormulario()
                                             );
+                        $orden_[$llave] = (float)$orden;
                         $meses[$p->getPeriodo()->getAnio()][] = $p->getPeriodo()->getMes();
                     }
                 }
