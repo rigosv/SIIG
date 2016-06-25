@@ -14,7 +14,7 @@ debe ser ejecutado como usuario root y "$" que debe ser ejecutado como un usuari
 
 ~~~
 # apt-get update
-# apt-get install php5 php5-pgsql php5-sqlite sqlite php5-xdebug  php-apc php5-cli php5-xsl php5-intl php5-mcrypt apache2 postgresql acl git-core curl postgresql-contrib php5-ldap php5-mysql php5-sybase php5-json postgresql-contrib redis-server
+# apt-get install php5 php5-pgsql php5-sqlite sqlite php-apc php5-cli php5-xsl php5-intl php5-mcrypt apache2 postgresql acl git-core curl postgresql-contrib php5-ldap php5-mysql php5-sybase php5-json postgresql-contrib redis-server
 # php5enmod mcrypt
 ~~~
 
@@ -168,19 +168,6 @@ create extension hstore;
 - Crear la estructura de la base de datos
 ~~~
 $ app/console doctrine:schema:update --force
-~~~
-
-
-- Crear la tabla especial que no se manejará con el ORM, hacerlo con el usuario dueño de la base de datos 
-- (no con el usuario postrgres, a menos que este mismo sea el dueño de la base de datos)
-~~~
-CREATE TABLE fila_origen_dato(
-    id_origen_dato integer,
-    datos hstore,
-    ultima_lectura timestamp,
-
-    FOREIGN KEY (id_origen_dato) REFERENCES origen_datos(id) on update CASCADE on delete CASCADE
-);
 ~~~
 
 - Ejecutar dentro de la base de datos, con el usuario dueño de la base
