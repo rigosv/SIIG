@@ -181,9 +181,9 @@
                         { establecimiento: $scope.establecimientoSeleccionado.id_establecimiento, 
                             periodo: $scope.periodoSeleccionado.periodo,
                             evaluacion: evaluacionSel.codigo
-                        });                
-            };
-            
+                        });
+            };                        
+
             $('input').on('ifChecked', function(event){
                 $scope.toggleLabel($(this).val(), true);
             });

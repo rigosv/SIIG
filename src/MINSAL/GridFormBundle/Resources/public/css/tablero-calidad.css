@@ -117,3 +117,29 @@ DIV.row_tablero {
 .x-axis-group text {
   font: 10px sans-serif;
 }
+
+.criterios_cumplidos{
+    color: green;
+    font-size: 12pt;
+    font-weight: bold;
+    text-align: center;
+}
+.criterios_no_cumplidos{
+    color: red;
+    font-size: 12pt;
+    font-weight: bold;
+    text-align: center;
+}
+.porc_cumplimiento{
+    font-size: 14pt;
+    font-weight: bold;
+    text-align: center;
+}
+.cumplimiento_100_porc{
+    font-size: 18pt;
+    font-weight: bold;
+    background-color: white;
+}
+.resumen{
+    background-color: #D9EDF7;
+}
