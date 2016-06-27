@@ -530,7 +530,11 @@
                                             }
                                             element_aux.append(element);
                                             return element_aux.html();
-                                        } else {                                            
+                                        } else if(tipo_control == 'datetimeinput'){
+                                            fecha = moment(cellValue, "DD/MM/YYYY HH:mm");
+                                            valorCelda = (fecha.isValid()) ? fecha.format("DD/MM/YYYY HH:mm"): cellValue
+                                            return "<div class='"+clase_poblacion+" jqx-{{campo.alineacion.codigo|default('left')}}-align nivel_"+0+"' "+ estilo + " title='"+datarow.ayuda+"'  >" + valorCelda +"</div>";
+                                        } else {
                                             valor = (isNaN(cellValue)) ? ((cellValue == 'NaN') ? '' : cellValue) : ( (esFormula) ? parseFloat(cellValue).toFixed(2)  : cellValue);                                            
                                             return "<div class='"+clase_poblacion+" jqx-{{campo.alineacion.codigo|default('left')}}-align nivel_"+0+"' "+ estilo + " title='"+datarow.ayuda+"'  >" + valor +"</div>";
                                         }    
