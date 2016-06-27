@@ -531,8 +531,7 @@
                                             element_aux.append(element);
                                             return element_aux.html();
                                         } else {                                            
-                                            valor =  (esFormula) ? parseFloat(cellValue).toFixed(2) : cellValue;
-                                            valor = (valor == 'NaN') ? '': valor;
+                                            valor = (isNaN(cellValue)) ? ((cellValue == 'NaN') ? '' : cellValue) : ( (esFormula) ? parseFloat(cellValue).toFixed(2)  : cellValue);                                            
                                             return "<div class='"+clase_poblacion+" jqx-{{campo.alineacion.codigo|default('left')}}-align nivel_"+0+"' "+ estilo + " title='"+datarow.ayuda+"'  >" + valor +"</div>";
                                         }    
                                     {% else %}
