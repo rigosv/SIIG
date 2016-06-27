@@ -641,7 +641,7 @@
                                                 horas = ~~(horas_);
                                                 horas = ( horas >=0 && horas < 10 ) ? '0'+horas : horas;
 
-                                                minutos = (horas_ - horas) * 60;
+                                                minutos = parseInt((horas_ - horas) * 60);
                                                 minutos = ( minutos >= 0 && minutos < 10 ) ? '0'+Math.abs(minutos) : Math.abs(minutos);
                                                 result =  horas+ ':' + minutos;
                                             } else {
