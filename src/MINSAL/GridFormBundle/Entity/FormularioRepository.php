@@ -630,7 +630,7 @@ class FormularioRepository extends EntityRepository {
 
         $sql = "
                 SELECT $campos, $anio AS anio, $mes_ '$establecimiento' as establecimiento, A.datos->'es_poblacion' AS es_poblacion,
-                    A.datos->'codigo_tipo_control' AS tipo_control
+                    A.datos->'codigo_tipo_control' AS tipo_control, A.datos->'es_separador' AS es_separador
                  INTO TEMP datos_tmp 
                  FROM almacen_datos.repositorio A
                  WHERE id_formulario = '$idFrm'
@@ -799,7 +799,9 @@ class FormularioRepository extends EntityRepository {
                             WHEN tipo_control = 'checkbox_3_states' AND dato = 'false' THEN 1
                             ELSE 0 
                         END AS no_cumplimiento 
-                        FROM datos_tmp WHERE es_poblacion='false'
+                        FROM datos_tmp 
+                        WHERE es_poblacion='false'
+                            AND es_separador != 'true'
                     ) AS A 
                 GROUP BY pivote 
                 ORDER BY pivote::numeric";
