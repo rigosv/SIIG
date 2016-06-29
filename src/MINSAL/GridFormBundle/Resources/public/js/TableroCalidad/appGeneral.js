@@ -110,7 +110,7 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['serviciosGeneral',
                     valorEstandar.push(indicadorSel.calificacion);
                     valorEstablecimiento.push(nodo.calificacion);
                 });
-                
+                $scope.datosGrafico2 = [];
                 $scope.labels = labels;
                 $scope.datosGrafico2.push(valorEstablecimiento);
                 $scope.datosGrafico2.push(valorEstandar); 
