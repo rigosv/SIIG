@@ -629,8 +629,9 @@ class FormularioRepository extends EntityRepository {
         $excluirCriterios = ($criteriosTodos) ? '': " AND A.datos->'es_separador' != 'true' ";
 
         $sql = "
-                SELECT $campos, $anio AS anio, $mes_ '$establecimiento' as establecimiento, A.datos->'es_poblacion' AS es_poblacion,
-                    A.datos->'codigo_tipo_control' AS tipo_control, A.datos->'es_separador' AS es_separador
+                SELECT $campos, $anio AS anio, $mes_ '$establecimiento' as establecimiento, 
+                    A.datos->'es_poblacion' AS es_poblacion, A.datos->'codigo_tipo_control' AS tipo_control, 
+                    A.datos->'es_separador' AS es_separador, A.datos->'posicion' AS posicion
                  INTO TEMP datos_tmp 
                  FROM almacen_datos.repositorio A
                  WHERE id_formulario = '$idFrm'
@@ -777,7 +778,16 @@ class FormularioRepository extends EntityRepository {
                 ;";
         try {
             $resp['datos'] =  $em->getConnection()->executeQuery($sql)->fetchAll();
-            $resp['resumen'] = ($Frm->getFormaEvaluacion() == 'lista_chequeo' ) ? $this->getResumenEvaluacionCriterios($mes) : array();
+            if ($Frm->getFormaEvaluacion() == 'lista_chequeo' ) { 
+                $resumen = $this->getResumenEvaluacionCriterios($mes);
+                $resp['resumen_expedientes'] = $resumen['pivote'];
+                $resp['resumen_criterios'] = $resumen['codigo_variable'];
+            }
+            else{
+                $resp['resumen_expedientes'] = array();
+                $resp['resumen_criterios'] = array();
+            }
+            
             return $resp;
         } catch (\PDOException $e) {
             return $e->getMessage();
@@ -789,11 +799,23 @@ class FormularioRepository extends EntityRepository {
         
         $this->borrarVacios($mes);
         
-        $sql = "SELECT pivote, SUM(cumplimiento) as cumplimiento, 
+        $condicion = " HAVING (SUM(cumplimiento)::numeric + SUM(no_cumplimiento)::numeric) > 0 ";
+        $opciones = array ('pivote'=> array('grupo'=> "GROUP BY pivote $condicion ORDER BY pivote::numeric", 
+                                                'campo'=> "substring(nombre_pivote, '[0-9]{1,}')as pivote",
+                                                'campo2'=> "pivote"
+                                            ), 
+                            'codigo_variable'=>array('grupo'=> "GROUP BY codigo_variable, descripcion_variable $condicion ", 
+                                                'campo'=>'codigo_variable, descripcion_variable',
+                                                'campo2'=>'codigo_variable, descripcion_variable'
+                                                )
+                            );
+        $resp = array();
+        foreach ($opciones as $campo => $opc){
+            $sql = "SELECT $opc[campo2], SUM(cumplimiento) as cumplimiento, 
                     SUM(no_cumplimiento) AS no_cumplimiento, 
                     ROUND((SUM(cumplimiento)::numeric / ( SUM(cumplimiento)::numeric + SUM(no_cumplimiento)::numeric ) * 100),0) AS porc_cumplimiento 
                 FROM (
-                    SELECT substring(nombre_pivote, '[0-9]{1,}')as pivote, 
+                    SELECT $opc[campo], 
                         CASE WHEN dato = 'true' THEN 1 ELSE 0 END AS cumplimiento, 
                         CASE WHEN tipo_control = 'checkbox' AND dato != 'true' THEN 1 
                             WHEN tipo_control = 'checkbox_3_states' AND dato = 'false' THEN 1
@@ -803,9 +825,10 @@ class FormularioRepository extends EntityRepository {
                         WHERE es_poblacion='false'
                             AND es_separador != 'true'
                     ) AS A 
-                GROUP BY pivote 
-                ORDER BY pivote::numeric";
-        return $em->getConnection()->executeQuery($sql)->fetchAll();
+                $opc[grupo]";
+            $resp[$campo] =  $em->getConnection()->executeQuery($sql)->fetchAll();
+        }
+        return $resp;
     }
     
     public function getHistorialEstablecimiento($establecimiento, $periodo) {

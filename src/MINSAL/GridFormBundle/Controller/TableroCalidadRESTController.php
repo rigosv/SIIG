@@ -111,7 +111,8 @@ class TableroCalidadRESTController extends Controller {
         foreach ($data as $d){
             $data_[] = array('descripcion'=>$d['descripcion'], 'forma_evaluacion'=>$d['forma_evaluacion'], 
                             'criterios'=>$d['criterios'],
-                            'resumen' => $datos_resumen['resumen']
+                            'resumen_expedientes' => $datos_resumen['resumen_expedientes'],
+                            'resumen_criterios' => $datos_resumen['resumen_criterios'],
                         );
         }
         $resp = json_encode($data_); 

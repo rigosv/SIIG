@@ -143,3 +143,7 @@ DIV.row_tablero {
 .resumen{
     background-color: #D9EDF7;
 }
+.porc_cumplimiento_criterio{
+    font-size: 16pt;
+    font-weight: bold;
+}

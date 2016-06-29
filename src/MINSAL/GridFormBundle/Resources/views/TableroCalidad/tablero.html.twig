@@ -162,6 +162,11 @@
                                 <tr class="encabezado_tabla"><td>[[Formulario.descripcion]]</TD></tr>
                             </thead>
                             <TBODY>
+                                <TR class="success" >
+                                    <Th style="text-align: center;">Criterios</Th>
+                                    <Th colspan="[[Formulario.resumen_expedientes.length]]" style="text-align: center;">Elementos evaluados</Th>
+                                    <Th style="text-align: center;" ng-if="Formulario.resumen_criterios.length > 0">Resumen evaluación por criterio</Th>
+                                </tr>
                                 <TR  class="fila_criterios" ng-repeat="criterio in Formulario.criterios | filter : buscar_criterios" >
                                     <TD class="separador indentacion_[[criterio.nivel_indentacion]]"
                                         ng-if="criterio.es_separador == 'true'" colspan="20" >
@@ -191,14 +196,17 @@
                                         </button>
                                         <span ng-if="getValorExpediente(exp) != 'false' && getValorExpediente(exp) != 'true'">[[getValorExpediente(exp)]]</span>
                                     </TD>
+                                    <TD ng-repeat="resumen_criterio in Formulario.resumen_criterios | filter:{codigo_variable:criterio.codigo_variable}" >
+                                        <span class="porc_cumplimiento_criterio">[[resumen_criterio.porc_cumplimiento]]% </span>([[resumen_criterio.cumplimiento]]/[[resumen_criterio.cumplimiento + resumen_criterio.no_cumplimiento]])
+                                    </TD>
                                 </TR>
                             </tbody>
-                            <Tfoot class="resumen" ng-if="Formulario.resumen.length > 0">
+                            <Tfoot class="resumen" ng-if="Formulario.resumen_expedientes.length > 0">
                                 <TR class="criterios_cumplidos">
                                     <TD style="text-align: right;">
                                         Criterios cumplidos
                                     </TD>
-                                    <TD ng-repeat="resumen in Formulario.resumen">
+                                    <TD ng-repeat="resumen in Formulario.resumen_expedientes">
                                         [[resumen.cumplimiento]]
                                     </TD>
                                 </TR>
@@ -206,7 +214,7 @@
                                     <TD style="text-align: right;">
                                         Criterios no  cumplidos
                                     </TD>
-                                    <TD ng-repeat="resumen in Formulario.resumen">
+                                    <TD ng-repeat="resumen in Formulario.resumen_expedientes">
                                         [[resumen.no_cumplimiento]]
                                     </TD>
                                 </TR>
@@ -214,7 +222,7 @@
                                     <TD style="text-align: right;">
                                         Porcentaje de cumplimiento
                                     </TD>
-                                    <TD ng-repeat="resumen in Formulario.resumen">
+                                    <TD ng-repeat="resumen in Formulario.resumen_expedientes">
                                         [[resumen.porc_cumplimiento]]%
                                     </TD>
                                 </TR>
@@ -222,16 +230,16 @@
                                     <TD style="text-align: right;">
                                         Cantidad de expedientes evaluados
                                     </TD>
-                                    <TD colspan="[[Formulario.resumen.length]]">
-                                        [[Formulario.resumen.length]]
+                                    <TD colspan="[[Formulario.resumen_expedientes.length]]">
+                                        [[Formulario.resumen_expedientes.length]]
                                     </TD>
                                 </TR>
                                 <TR class="cumplimiento_100_porc">
                                     <TD style="text-align: right;">
                                        Expedientes que cumplen todos los criterios
                                     </TD>
-                                    <TD colspan="[[Formulario.resumen.length]]">
-                                        [[(Formulario.resumen|filter:{porc_cumplimiento:100}).length]] ([[ (((Formulario.resumen|filter:{porc_cumplimiento:100}).length ) / Formulario.resumen.length * 100 )| number : 1 ]]%)
+                                    <TD colspan="[[Formulario.resumen_expedientes.length]]">
+                                        [[(Formulario.resumen_expedientes|filter:{porc_cumplimiento:100}).length]] ([[ (((Formulario.resumen_expedientes|filter:{porc_cumplimiento:100}).length ) / Formulario.resumen_expedientes.length * 100 )| number : 1 ]]%)
                                     </TD>
                                 </TR>
                             </tfoot>
