@@ -486,15 +486,17 @@ class FormularioRepository extends EntityRepository {
                         FROM evaluacion_externa A
                         INNER JOIN evaluacion_externa_tipo B ON (A.tipoevaluacion_id = B.id)
                         INNER JOIN evaluacion_categoria C ON (B.categoriaevaluacion_id = C.id)
-                        WHERE ((SELECT id FROM costos.estructura WHERE codigo='$establecimiento'), tipoevaluacion_id, anio) 
+                        INNER JOIN costos.estructura D ON (A.establecimiento_id = D.id)
+                        WHERE (D.id, tipoevaluacion_id, anio) 
                             IN 
                             (SELECT establecimiento_id, tipoevaluacion_id, MAX(anio) AS anio 
                                 FROM evaluacion_externa 
                                 GROUP BY establecimiento_id, tipoevaluacion_id
                             ) 
-                        ORDER BY C.id, B.id, A.anio, A.valor";            
+                            AND D.codigo = '$establecimiento'
+                        ORDER BY C.id, B.id, A.anio, A.valor";       
             $evaluaciones = $em->getConnection()->executeQuery($sql)->fetchAll();
-            $datos_['evaluaciones_externas'] = ( $evaluaciones);
+            $datos_['evaluaciones_externas'] = $evaluaciones;
             
             $datos_['total_cumplimiento'] = $total_evaluacion['cumplimiento'];
             $datos_['total_no_cumplimiento'] = $total_evaluacion['no_cumplimiento'];
@@ -641,43 +643,7 @@ class FormularioRepository extends EntityRepository {
         $em->getConnection()->executeQuery($sql);
         
         if ($eliminar_vacios){
-            //Verificar si tiene la variable num_exp para obtener qué expedientes se ingresaron
-            $sql = "SELECT codigo_variable FROM datos_tmp WHERE es_poblacion = 'true'";
-            $cons = $em->getConnection()->executeQuery($sql);
-
-            if ($cons->rowCount() > 0){
-                //Quitar las columnas para las que no se ingresó número de expediente
-                $sql = "DELETE FROM datos_tmp 
-                            WHERE nombre_pivote 
-                                NOT IN 
-                                (SELECT nombre_pivote 
-                                    FROM datos_tmp 
-                                    WHERE es_poblacion = 'true' 
-                                        AND dato is not null 
-                                        AND dato != ''
-                                )";
-                $em->getConnection()->executeQuery($sql);
-            }
-            
-            //Verificar si tiene la variable mes_check para dejar solo el que 
-            // corresponde al mes que se está verificando
-            $sql = "SELECT codigo_variable FROM datos_tmp WHERE nombre_pivote ~* 'mes_check_'";
-            $cons = $em->getConnection()->executeQuery($sql);
-
-            if ($cons->rowCount() > 0){
-                //Quitar las columnas para las que no se ingresó número de expediente
-                $sql = "DELETE FROM datos_tmp 
-                            WHERE nombre_pivote 
-                                NOT IN 
-                                (SELECT nombre_pivote 
-                                    FROM datos_tmp 
-                                    WHERE 
-                                        (nombre_pivote = 'mes_check_$mes' OR nombre_pivote = 'mes_check_0$mes')
-                                        AND dato is not null 
-                                        AND dato != ''
-                                )";
-                $em->getConnection()->executeQuery($sql);
-            }
+            $this->borrarVacios($mes);
         }
         if (!$crear_tabla){
             $sql = "SELECT * FROM datos_tmp";
@@ -685,11 +651,52 @@ class FormularioRepository extends EntityRepository {
         }
     }
     
+    private function borrarVacios($mes) {
+        $em = $this->getEntityManager();
+        
+        //Verificar si tiene la variable num_exp para obtener qué expedientes se ingresaron
+        $sql = "SELECT codigo_variable FROM datos_tmp WHERE es_poblacion = 'true'";
+        $cons = $em->getConnection()->executeQuery($sql);
+
+        if ($cons->rowCount() > 0){
+            //Quitar las columnas para las que no se ingresó número de expediente
+            $sql = "DELETE FROM datos_tmp 
+                    WHERE nombre_pivote 
+                        NOT IN 
+                        (SELECT nombre_pivote 
+                            FROM datos_tmp 
+                            WHERE es_poblacion = 'true' 
+                                AND dato is not null 
+                                AND dato != ''
+                        )";
+            $em->getConnection()->executeQuery($sql);
+        }
+
+        //Verificar si tiene la variable mes_check para dejar solo el que 
+        // corresponde al mes que se está verificando
+        $sql = "SELECT codigo_variable FROM datos_tmp WHERE nombre_pivote ~* 'mes_check_'";
+        $cons = $em->getConnection()->executeQuery($sql);
+
+        if ($cons->rowCount() > 0){
+            //Quitar las columnas para las que no se ingresó número de expediente
+            $sql = "DELETE FROM datos_tmp 
+                    WHERE nombre_pivote 
+                        NOT IN 
+                        (SELECT nombre_pivote 
+                            FROM datos_tmp 
+                            WHERE 
+                                (nombre_pivote = 'mes_check_$mes' OR nombre_pivote = 'mes_check_0$mes')
+                                AND dato is not null 
+                                AND dato != ''
+                        )";
+            $em->getConnection()->executeQuery($sql);
+        }
+    }
+    
     protected function getResultadoEvaluacion(Formulario $Frm, $establecimiento, $anio, $mes = null) {
         $em = $this->getEntityManager();
         
         $this->getDatosEvaluacion($Frm, $establecimiento, $anio, $mes);
-        $idFrm = $Frm->getId();
         
         if ($Frm->getFormaEvaluacion() == 'lista_chequeo'){
             $sql = "SELECT CASE WHEN dato = 'true' THEN 1 ELSE 0 END AS cumplimiento, 
@@ -769,12 +776,35 @@ class FormularioRepository extends EntityRepository {
                 ORDER BY codigo, datos->'es_poblacion' DESC, COALESCE(NULLIF(datos->'posicion', ''), '100000000')::numeric, datos->'descripcion_categoria_variable', datos->'descripcion_variable'
                 ;";
         try {
-            return $em->getConnection()->executeQuery($sql)->fetchAll();
+            $resp['datos'] =  $em->getConnection()->executeQuery($sql)->fetchAll();
+            $resp['resumen'] = ($Frm->getFormaEvaluacion() == 'lista_chequeo' ) ? $this->getResumenEvaluacionCriterios($mes) : array();
+            return $resp;
         } catch (\PDOException $e) {
             return $e->getMessage();
         }
     }
     
+    public function getResumenEvaluacionCriterios($mes) {
+        $em = $this->getEntityManager();
+        
+        $this->borrarVacios($mes);
+        
+        $sql = "SELECT pivote, SUM(cumplimiento) as cumplimiento, 
+                    SUM(no_cumplimiento) AS no_cumplimiento, 
+                    ROUND((SUM(cumplimiento)::numeric / ( SUM(cumplimiento)::numeric + SUM(no_cumplimiento)::numeric ) * 100),0) AS porc_cumplimiento 
+                FROM (
+                    SELECT substring(nombre_pivote, '[0-9]{1,}')as pivote, 
+                        CASE WHEN dato = 'true' THEN 1 ELSE 0 END AS cumplimiento, 
+                        CASE WHEN tipo_control = 'checkbox' AND dato != 'true' THEN 1 
+                            WHEN tipo_control = 'checkbox_3_states' AND dato = 'false' THEN 1
+                            ELSE 0 
+                        END AS no_cumplimiento 
+                        FROM datos_tmp WHERE es_poblacion='false'
+                    ) AS A 
+                GROUP BY pivote 
+                ORDER BY pivote::numeric";
+        return $em->getConnection()->executeQuery($sql)->fetchAll();
+    }
     
     public function getHistorialEstablecimiento($establecimiento, $periodo) {
         $em = $this->getEntityManager();

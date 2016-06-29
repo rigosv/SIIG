@@ -97,7 +97,8 @@ class TableroCalidadRESTController extends Controller {
         $em = $this->getDoctrine()->getManager();
         //$resp = array();
         
-        $datos = $em->getRepository('GridFormBundle:Formulario')->getCriterios($establecimiento, $periodo, $formulario);
+        $datos_resumen = $em->getRepository('GridFormBundle:Formulario')->getCriterios($establecimiento, $periodo, $formulario);
+        $datos = $datos_resumen['datos'];
         $data_= '';
         
         $data =  array();
@@ -108,7 +109,10 @@ class TableroCalidadRESTController extends Controller {
         }
         $data_ = array();
         foreach ($data as $d){
-            $data_[] = array('descripcion'=>$d['descripcion'], 'forma_evaluacion'=>$d['forma_evaluacion'], 'criterios'=>$d['criterios']);
+            $data_[] = array('descripcion'=>$d['descripcion'], 'forma_evaluacion'=>$d['forma_evaluacion'], 
+                            'criterios'=>$d['criterios'],
+                            'resumen' => $datos_resumen['resumen']
+                        );
         }
         $resp = json_encode($data_); 
         

@@ -129,3 +129,8 @@ div.na{
 #ayuda_listado_formulario{
     color: black !important;
 }
+
+.modal-alert .modal-header, .modal-alert .modal-content{
+    background-color: transparent !important;
+    border: none;
+}

@@ -84,6 +84,22 @@
                     return false;
                 }
                 var rowbeginedit =  function (row, datafield, columntype, value) {
+                    var datarow = $("#jqxgrid{{Frm.id}}").jqxGrid('getrowdata', row);
+                    if (datarow.es_poblacion == 'true'){                        
+                        var celdas = $(".jqx-grid-cell:not('.oculto'):not('.celda_no_editable') .sw_etiqueta");
+                        var no_completado;
+                        celdas.each(function(index, item){
+                            if ($(item).html().trim() == ''){                                
+                                no_completado = true;
+                            }
+                        });
+                        if (no_completado && value=='') {
+                            $('#msj').html('<div class="alert alert-danger" role="alert">Complete todos los criterios antes de agregar otro expediente</div>');
+                            $('#msjModal').modal('show');
+                            return false;
+                        };
+                        
+                    }
                     {% if Frm.calculoFilas != '' %}
                         return  !(filaFormula(row, datafield));
                     {% endif %}
@@ -457,6 +473,7 @@
                                 cellsrenderer: function (index, datafield, cellValue, defaultvalue, column, datarow, width, height) {
                                     nivel = (datafield == 'descripcion_variable') ? datarow.nivel_indentacion : 0.3;
                                     estilo = (datarow.es_poblacion == 'true') ? "style='color: blue; margin-left:"+(parseFloat(nivel) * 20)+"px '" :  "style = 'margin-left:"+(parseFloat(nivel) * 20)+"px' ";
+                                    clase_poblacion = (datarow.es_poblacion == 'true') ? "poblacion" : "";
                                     var esFormula = filaFormula(index, datafield);
                                     estilo = (esFormula) ? "style='color: black; font-weight: bold; margin-left:"+(parseFloat(nivel) * 20)+"px '" : estilo;
                                     var tipo_control = (datarow.codigo_tipo_control == undefined) ?  '{{campo.tipoControl.codigo}}' : datarow.codigo_tipo_control;
@@ -493,12 +510,7 @@
                                     {% if tipos_datos_por_filas[Frm.id]  %}
                                         if ( (tipo_control == 'checkbox' || tipo_control == 'checkbox_3_states') && datafield != 'descripcion_variable' ){
                                             var element_aux = $('<div></div>')
-                                            if (tipo_control == 'checkbox_3_states'){
-                                                /*var element = $('<div tabIndex=0 style="position: absolute; top: 50%; left: 50%; margin-top: -10px; margin-left: -10px;"></div>');
-                                                element.jqxCheckBox({hasThreeStates: true, animationShowDelay: 0, animationHideDelay: 0, checked: cellValue.toString() == "true" });
-                                                if (cellValue.toString() != 'true' && cellValue.toString() != 'false'){
-                                                    element.jqxCheckBox('indeterminate');
-                                                }*/
+                                            if (tipo_control == 'checkbox_3_states'){                                                
                                                 if (cellValue.toString() == 'true')
                                                     estado_ = '<div class="si"><div class="sw_etiqueta">{{'_si_'|trans}}</div><div class="sw_separador"></div></div>';
                                                 else if (cellValue.toString() == 'false')
@@ -507,21 +519,24 @@
                                                     estado_ = '<div class="na"><div class="sw_etiqueta">{{'_na_'|trans}}</div></div>';
                                                 var element = estado_;
                                             } else{
-                                                
-                                                var estado = (cellValue.toString() == 'true') ? true : false;
-                                                estado_ = (estado) ? '<div class="si"><div class="sw_etiqueta">{{'_si_'|trans}}</div><div class="sw_separador"></div></div>'
-                                                                : '<div class="no"><div class="sw_separador"></div><div class="sw_etiqueta">{{'_no_'|trans}}</div></div>';
-                                                //var element = $('<div tabIndex=0 style="position: absolute;">'+estado_+'</div>');
+                                                if (cellValue.toString() == 'true'){
+                                                    estado_ =  '<div class="si"><div class="sw_etiqueta">{{'_si_'|trans}}</div><div class="sw_separador"></div></div>';
+                                                } else if (cellValue.toString() == 'false'){
+                                                    estado_ = '<div class="no"><div class="sw_separador"></div><div class="sw_etiqueta">{{'_no_'|trans}}</div></div>';
+                                                } else {
+                                                    estado_ = '<div ><div class="sw_separador"></div><div class="sw_etiqueta"></div></div>';
+                                                }
                                                 var element = estado_;
-                                                //element.jqxSwitchButton({onLabel:'SÍ', offLabel:'NO', checked:estado, width:60, height:25});
                                             }
-                                                //element.jqxCheckBox({animationShowDelay: 0, animationHideDelay: 0, checked: cellValue.toString() == "true" });
                                             element_aux.append(element);
                                             return element_aux.html();
-                                        } else {                                            
-                                            valor =  (esFormula) ? parseFloat(cellValue).toFixed(2) : cellValue;
-                                            valor = (valor == 'NaN') ? '': valor;
-                                            return "<div class='jqx-{{campo.alineacion.codigo|default('left')}}-align nivel_"+0+"' "+ estilo + " title='"+datarow.ayuda+"'  >" + valor +"</div>";
+                                        } else if(tipo_control == 'datetimeinput'){
+                                            fecha = moment(cellValue, "DD/MM/YYYY HH:mm");
+                                            valorCelda = (fecha.isValid()) ? fecha.format("DD/MM/YYYY HH:mm"): cellValue
+                                            return "<div class='"+clase_poblacion+" jqx-{{campo.alineacion.codigo|default('left')}}-align nivel_"+0+"' "+ estilo + " title='"+datarow.ayuda+"'  >" + valorCelda +"</div>";
+                                        } else {
+                                            valor = (isNaN(cellValue)) ? ((cellValue == 'NaN') ? '' : cellValue) : ( (esFormula) ? parseFloat(cellValue).toFixed(2)  : cellValue);                                            
+                                            return "<div class='"+clase_poblacion+" jqx-{{campo.alineacion.codigo|default('left')}}-align nivel_"+0+"' "+ estilo + " title='"+datarow.ayuda+"'  >" + valor +"</div>";
                                         }    
                                     {% else %}
                                         return "<div class='jqx-{{campo.alineacion.codigo|default('left')}}-align nivel_"+datarow.nivel_indentacion+"' "+ estilo + " title='"+datarow.ayuda+"'  data-placement= 'top' >" + cellValue +"</div>";
@@ -582,69 +597,69 @@
                         var operaciones = '';
                         var datarow = $("#jqxgrid{{Frm.id}}").jqxGrid('getrowdata', fila);
                         
-                        var campos = '{{Frm.calculoFilas}}'.split(',');
-                        var formula = [];
-                        //se espera el formato codigoColumna: {F2} = {F0}/{F1} * 100
-                        // Primero se separa por : para obtener el nombre de la columna y la formula
-                        // Luego se separa por = para obtener los dos lados de la ecuación
-                        // Luego se sustituyen los valores por el dato de la fila correspondiente
-                        // y se hace el cálculo 
-                        campos.forEach(function(nodo, index){
-                            formula = nodo.split(':');
-                            //Procesar solamente las fórmulas donde la celda actual aparece
-                            if (formula[1].toString().indexOf('{F'+fila+'}') != -1){
-                                var campo= new RegExp(formula[0].toString().trim());
-                                if (campo.test(columna)){
-                                    filasp = /\{F[0-9]{1,2}\}/g;
-                                    lados_formula = formula[1].split('=');
-                                    fila_destino = filasp.exec(lados_formula[0]).toString().replace(/\{|\}|F/gi,'');
-                                    operaciones = lados_formula[1];
-                                    operadores = operaciones.toString().match(/\{F[0-9]{1,2}\}/g);
-                                    operadores.forEach(function(nodo2, index){
-                                        fil = nodo2.toString().replace(/\{|\}|F/gi,'');
-                                        valor_oper = (fil == fila) ? valor_celda_actual :  $('#jqxgrid{{Frm.id}}').jqxGrid('getcellvalue', fil, columna);
-                                        if (datarow.codigo_tipo_control == 'time'){
-                                            hora =  valor_oper.split(':');
-                                            valor_oper =  parseInt(hora[0]) * 60 + parseInt(hora[1]);
-                                        } else if (datarow.codigo_tipo_control == 'datetimeinput'){
-                                            fecha = moment(valor_oper, "DD/MM/YYYY HH:mm")
-                                            //valor de la fecha en milisegundos
-                                            valor_oper =  fecha.valueOf();
+                            var campos = '{{Frm.calculoFilas}}'.split(',');
+                            var formula = [];
+                            //se espera el formato codigoColumna: {F2} = {F0}/{F1} * 100
+                            // Primero se separa por : para obtener el nombre de la columna y la formula
+                            // Luego se separa por = para obtener los dos lados de la ecuación
+                            // Luego se sustituyen los valores por el dato de la fila correspondiente
+                            // y se hace el cálculo 
+                            campos.forEach(function(nodo, index){
+                                formula = nodo.split(':');
+                                //Procesar solamente las fórmulas donde la celda actual aparece
+                                if (formula[1].toString().indexOf('{F'+fila+'}') != -1){
+                                    var campo= new RegExp(formula[0].toString().trim());
+                                    if (campo.test(columna)){
+                                        filasp = /\{F[0-9]{1,2}\}/g;
+                                        lados_formula = formula[1].split('=');
+                                        fila_destino = filasp.exec(lados_formula[0]).toString().replace(/\{|\}|F/gi,'');
+                                        operaciones = lados_formula[1];
+                                        operadores = operaciones.toString().match(/\{F[0-9]{1,2}\}/g);
+                                        operadores.forEach(function(nodo2, index){
+                                            fil = nodo2.toString().replace(/\{|\}|F/gi,'');
+                                            valor_oper = (fil == fila) ? valor_celda_actual :  $('#jqxgrid{{Frm.id}}').jqxGrid('getcellvalue', fil, columna);
+                                            if (datarow.codigo_tipo_control == 'time'){
+                                                hora =  valor_oper.split(':');
+                                                valor_oper =  parseInt(hora[0]) * 60 + parseInt(hora[1]);
+                                            } else if (datarow.codigo_tipo_control == 'datetimeinput'){
+                                                fecha = moment(valor_oper, "DD/MM/YYYY HH:mm")
+                                                //valor de la fecha en milisegundos
+                                                valor_oper =  fecha.valueOf();
+                                            }
+                                            operaciones = operaciones.replace(nodo2.toString(), valor_oper);
+                                        });
+                                        try {
+                                            result =  eval(operaciones);
+                                            if (datarow.codigo_tipo_control == 'time'){
+
+                                                horas = ~~(parseInt(result) / 60);
+                                                horas = ( horas >=0 && horas < 10 ) ? '0'+horas : horas;
+
+                                                minutos = (parseInt(result) % 60)
+                                                minutos = ( minutos >= 0 && minutos < 10 ) ? '0'+Math.abs(minutos) : Math.abs(minutos);
+
+                                                result =  horas+ ':' + minutos;
+                                            } else if (datarow.codigo_tipo_control == 'datetimeinput'){
+                                                //El resultado está en milisegundos, pasarlo a formato hora:minutos                                        
+                                                horas_ = result / 1000 / 60 / 60 ;
+                                                horas = ~~(horas_);
+                                                horas = ( horas >=0 && horas < 10 ) ? '0'+horas : horas;
+
+                                                minutos = parseInt((horas_ - horas) * 60);
+                                                minutos = ( minutos >= 0 && minutos < 10 ) ? '0'+Math.abs(minutos) : Math.abs(minutos);
+                                                result =  horas+ ':' + minutos;
+                                            } else {
+                                                result = result.toFixed(2);
+                                            }
+                                            $("#jqxgrid{{Frm.id}}").jqxGrid('setcellvalue', fila_destino, columna, result);
                                         }
-                                        operaciones = operaciones.replace(nodo2.toString(), valor_oper);
-                                    });
-                                    try {
-                                        result =  eval(operaciones);
-                                        if (datarow.codigo_tipo_control == 'time'){
-
-                                            horas = ~~(parseInt(result) / 60);
-                                            horas = ( horas >=0 && horas < 10 ) ? '0'+horas : horas;
-
-                                            minutos = (parseInt(result) % 60)
-                                            minutos = ( minutos >= 0 && minutos < 10 ) ? '0'+Math.abs(minutos) : Math.abs(minutos);
-
-                                            result =  horas+ ':' + minutos;
-                                        } else if (datarow.codigo_tipo_control == 'datetimeinput'){
-                                            //El resultado está en milisegundos, pasarlo a formato hora:minutos                                        
-                                            horas_ = result / 1000 / 60 / 60 ;
-                                            horas = ~~(horas_);
-                                            horas = ( horas >=0 && horas < 10 ) ? '0'+horas : horas;
-
-                                            minutos = (horas_ - horas) * 60;
-                                            minutos = ( minutos >= 0 && minutos < 10 ) ? '0'+Math.abs(minutos) : Math.abs(minutos);
-                                            result =  horas+ ':' + minutos;
-                                        } else {
-                                            result = result.toFixed(2);
+                                        catch(err) {
+                                            return
                                         }
-                                        $("#jqxgrid{{Frm.id}}").jqxGrid('setcellvalue', fila_destino, columna, result);
-                                    }
-                                    catch(err) {
-                                        return
-                                    }
 
+                                    }
                                 }
-                            }
-                        });
+                            });
                     });
 
                     {% endif %}
@@ -841,5 +856,17 @@
             </div>
           </div>
         </div>
-    </div>    
+    </div>
+    
+    <!-- mensajitos de alerta -->    
+    <div class="modal modal-alert fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" id="msjModal" >
+        <div class="modal-dialog modal-sm" >
+            <div class="modal-content" >
+              <div class="modal-header" >
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="msj"></h4>
+              </div>              
+            </div>
+        </div>
+    </div>
 {% endblock content %}
