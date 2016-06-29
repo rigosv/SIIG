@@ -804,7 +804,7 @@ class FormularioRepository extends EntityRepository {
                                                 'campo'=> "substring(nombre_pivote, '[0-9]{1,}')as pivote",
                                                 'campo2'=> "pivote"
                                             ), 
-                            'codigo_variable'=>array('grupo'=> "GROUP BY codigo_variable, descripcion_variable $condicion ", 
+                            'codigo_variable'=>array('grupo'=> "GROUP BY codigo_variable, descripcion_variable $condicion ORDER BY ROUND((SUM(cumplimiento)::numeric / ( SUM(cumplimiento)::numeric + SUM(no_cumplimiento)::numeric ) * 100),0) ", 
                                                 'campo'=>'codigo_variable, descripcion_variable',
                                                 'campo2'=>'codigo_variable, descripcion_variable'
                                                 )
