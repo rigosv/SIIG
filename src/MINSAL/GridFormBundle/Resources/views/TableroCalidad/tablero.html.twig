@@ -253,10 +253,12 @@
             </div>
         </div>
         <div class="row" ng-if="data_rec.length > 0">
-            <div class="col-md-8" style="max-height: 500px">
+            <div class="col-md-8" style="max-height: 800px">
                 <center><h3>Porcentaje de cumplimiento por criterio</h3></center>
                 <canvas id="resumen-eval-criterios" class="chart-horizontal-bar"
-                  chart-data="data_rec" chart-labels="labels_rec" chart-options="options_rec" chart-series="series_rec">
+                  chart-data="data_rec" chart-labels="labels_rec" chart-options="options_rec" 
+                  chart-dataset-override="datasetOverride_rec"
+                  chart-series="series_rec">
                 </canvas>
             </div>
         </div>

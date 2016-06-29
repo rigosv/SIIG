@@ -188,15 +188,31 @@
                             $scope.labels_rec = [];
                             $scope.data_rec = [];
                             $scope.series_rec = ['Series A'];
+                            $scope.datasetOverride_rec = [{ xAxisID: 'x-axis-1' }, { xAxisID: 'x-axis-2' }];
                             $scope.options_rec = {
-                              scales: {
-                                    xAxes: [{
-                                        ticks: {
-                                            beginAtZero:true,
-                                            min: 0,
-                                            max: 100
+                              scales: {                                    
+                                    xAxes: [
+                                        {
+                                          id: 'x-axis-1',
+                                          type: 'linear',
+                                          display: true,
+                                          position: 'top',
+                                          ticks: {
+                                                    min: 0,
+                                                    max: 100
+                                                }
+                                        },
+                                        {
+                                          id: 'x-axis-2',
+                                          type: 'linear',
+                                          display: true,
+                                          position: 'bottom',
+                                          ticks: {
+                                                    min: 0,
+                                                    max: 100
+                                                }
                                         }
-                                    }]                                   
+                                    ]
                                 }
                             };
                             angular.forEach(data[0].resumen_criterios, function(value, key) {
