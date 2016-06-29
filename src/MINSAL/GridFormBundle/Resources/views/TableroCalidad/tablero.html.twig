@@ -19,6 +19,8 @@
     <script type="text/javascript" src="{{ asset('bundles/gridform/js/TableroCalidad/servicios.js') }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/gridform/js/TableroCalidad/barchartComponent.js') }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/gridform/js/TableroCalidad/radarchartComponent.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/gridform/js/TableroCalidad/Chart.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/gridform/js/TableroCalidad/angular-chart.min.js') }}"></script>
     
 
 {% endblock %}
@@ -196,7 +198,7 @@
                                         </button>
                                         <span ng-if="getValorExpediente(exp) != 'false' && getValorExpediente(exp) != 'true'">[[getValorExpediente(exp)]]</span>
                                     </TD>
-                                    <TD ng-repeat="resumen_criterio in Formulario.resumen_criterios | filter:{codigo_variable:criterio.codigo_variable}" >
+                                    <TD align=center ng-if="criterio.es_separador == 'false' && criterio.es_poblacion == 'false' " ng-repeat="resumen_criterio in Formulario.resumen_criterios | filter:{codigo_variable:criterio.codigo_variable}" >
                                         <span class="porc_cumplimiento_criterio">[[resumen_criterio.porc_cumplimiento]]% </span>([[resumen_criterio.cumplimiento]]/[[resumen_criterio.cumplimiento + resumen_criterio.no_cumplimiento]])
                                     </TD>
                                 </TR>
@@ -248,6 +250,14 @@
 
 
                 </div>
+            </div>
+        </div>
+        <div class="row" ng-if="data_rec.length > 0">
+            <div class="col-md-8" style="max-height: 500px">
+                <center><h3>Porcentaje de cumplimiento por criterio</h3></center>
+                <canvas id="resumen-eval-criterios" class="chart-horizontal-bar"
+                  chart-data="data_rec" chart-labels="labels_rec" chart-options="options_rec" chart-series="series_rec">
+                </canvas>
             </div>
         </div>
         <!-- Modal Configuración -->

@@ -18,7 +18,7 @@
     }
 
     ifLoading.$inject = ['$http'];
-    var tableroCalidadApp = angular.module('tableroCalidadApp', ['servicios'])
+    var tableroCalidadApp = angular.module('tableroCalidadApp', ['servicios', "chart.js"])
         .config(['$interpolateProvider', function ($interpolateProvider) {
                 $interpolateProvider.startSymbol('[[');
                 $interpolateProvider.endSymbol(']]');
@@ -177,18 +177,46 @@
             
             $scope.getCriterios = function(evaluacionSel) {
                 $scope.evaluacionSeleccionada = evaluacionSel;
-                $scope.criterios = Criterios.query(
+                Criterios.query(
                         { establecimiento: $scope.establecimientoSeleccionado.id_establecimiento, 
                             periodo: $scope.periodoSeleccionado.periodo,
                             evaluacion: evaluacionSel.codigo
-                        });
+                        })
+                        .$promise.then(
+                        function (data) {                            
+                            $scope.criterios = data;
+                            $scope.labels_rec = [];
+                            $scope.data_rec = [];
+                            $scope.series_rec = ['Series A'];
+                            $scope.options_rec = {
+                              scales: {
+                                    xAxes: [{
+                                        ticks: {
+                                            beginAtZero:true,
+                                            min: 0,
+                                            max: 100
+                                        }
+                                    }]                                   
+                                }
+                            };
+                            angular.forEach(data[0].resumen_criterios, function(value, key) {
+                                    this.push(value.descripcion_variable);
+                                    $scope.data_rec.push(value.porc_cumplimiento);
+                            }, $scope.labels_rec);
+                            
+                        },
+                        function (error) {
+                            alert(error);
+                        }
+                    );
             };                        
 
-            $('input').on('ifChecked', function(event){
+            /*$('input').on('ifChecked', function(event){
                 $scope.toggleLabel($(this).val(), true);
             });
             $('input').on('ifUnchecked', function(event){
                 $scope.toggleLabel($(this).val(), false);
-            });
+            });*/
+            
         })        
         ;
