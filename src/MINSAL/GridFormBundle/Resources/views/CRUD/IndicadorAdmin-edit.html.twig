@@ -4,12 +4,18 @@
     {{ parent() }}    
     <script type="text/javascript">
         $(document).ready(function () {                        
-            $('select[id$="_estandar"]').select2({ width: 'resolve' }).on('change', function () {
+            /*$('select[id$="_estandar"]').select2({ width: 'resolve' }).on('change', function () {
                 var estandar = $('select[id$="_estandar"]').val();
                 var url = Routing.generate('get_criterios_estandar', {id: estandar });
                 $.post(url, function( data ) {
-                    alert(data);
+                    $('select[id$="_criterios"]').select2({                        
+                        data
+                    });
                 });
+            });*/
+            $('select[id$="_criterios"]').select2({
+                closeOnSelect:false,
+                width: '100%'
             });
         });
     </script>

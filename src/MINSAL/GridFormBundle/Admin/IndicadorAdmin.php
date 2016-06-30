@@ -33,13 +33,17 @@ class IndicadorAdmin extends Admin
             ->add('IndicadorPadre', null, array('label'=> $this->getTranslator()->trans('_indicador_padre_')))
             ->add('criterios', null, 
                     array('label'=> $this->getTranslator()->trans('_criterios_'), 
-                        'expanded' => false, 
+                        'expanded' => false,
+                        'group_by'=> 'formulario',
                         'multiple' => true,
                         'by_reference' => false,
                         'class' => 'GridFormBundle:VariableCaptura',
                             'query_builder' => function ($repository) {
                                 return $repository->createQueryBuilder('c')
-                                        ->orderBy('c.formulario, c.posicion');
+                                        ->join('c.formulario', 'f')
+                                        ->where("f.areaCosteo = 'calidad'")
+                                        ->orderBy('f.posicion, c.posicion')
+                                        ;
                             }))
             
         ;
