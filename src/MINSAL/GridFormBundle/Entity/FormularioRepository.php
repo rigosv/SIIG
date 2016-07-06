@@ -439,6 +439,38 @@ class FormularioRepository extends EntityRepository {
         }
     }
     
+    public function getEvaluacionesComplementarias($codigo_establecimiento = null) {
+        $em = $this->getEntityManager();
+        $resp = array();
+        
+        $cond = '';
+        if ($codigo_establecimiento != null){
+            $cond = " AND D.codigo = '$codigo_establecimiento' ";
+        }
+
+        //Obtener valores de evaluaciones externas, extraer la medición 
+        //del último año ingresado para cada evaluación
+        $sql = "SELECT D.codigo as establecimiento, D.id AS id_estructura, 
+                        C.descripcion AS categoria, B.descripcion AS tipo_evaluacion, 
+                       A.anio, A.valor, B.unidad_medida
+                    FROM evaluacion_externa A
+                    INNER JOIN evaluacion_externa_tipo B ON (A.tipoevaluacion_id = B.id)
+                    INNER JOIN evaluacion_categoria C ON (B.categoriaevaluacion_id = C.id)
+                    INNER JOIN costos.estructura D ON (A.establecimiento_id = D.id)
+                    WHERE (D.id, tipoevaluacion_id, anio) 
+                        IN 
+                        (SELECT establecimiento_id, tipoevaluacion_id, MAX(anio) AS anio 
+                            FROM evaluacion_externa 
+                            GROUP BY establecimiento_id, tipoevaluacion_id
+                        )
+                        $cond
+                    ORDER BY C.id, B.id, A.anio, A.valor";       
+        
+        foreach ($em->getConnection()->executeQuery($sql)->fetchAll() as $f){
+            $resp[$f['establecimiento']][] = $f;
+        }
+        return $resp;
+    }
     public function getEstablecimientosEvaluados($periodo) {
         $em = $this->getEntityManager();
         list($anio, $mes) = explode('_', $periodo);
@@ -479,25 +511,9 @@ class FormularioRepository extends EntityRepository {
             $datos_['id_establecimiento'] = $est['id_establecimiento'];
             $datos_['category'] = $est['descripcion'];
             $datos_['nombre'] = $est['nombre'];
-            //Obtener valores de evaluaciones externas, extraer la medición 
-            //del último año ingresado para cada evaluación
-            $sql = "SELECT C.descripcion AS categoria, B.descripcion AS tipo_evaluacion, 
-                           A.anio, A.valor, B.unidad_medida
-                        FROM evaluacion_externa A
-                        INNER JOIN evaluacion_externa_tipo B ON (A.tipoevaluacion_id = B.id)
-                        INNER JOIN evaluacion_categoria C ON (B.categoriaevaluacion_id = C.id)
-                        INNER JOIN costos.estructura D ON (A.establecimiento_id = D.id)
-                        WHERE (D.id, tipoevaluacion_id, anio) 
-                            IN 
-                            (SELECT establecimiento_id, tipoevaluacion_id, MAX(anio) AS anio 
-                                FROM evaluacion_externa 
-                                GROUP BY establecimiento_id, tipoevaluacion_id
-                            ) 
-                            AND D.codigo = '$establecimiento'
-                        ORDER BY C.id, B.id, A.anio, A.valor";       
-            $evaluaciones = $em->getConnection()->executeQuery($sql)->fetchAll();
-            $datos_['evaluaciones_externas'] = $evaluaciones;
             
+            $eval_compl = $this->getEvaluacionesComplementarias($est['id_establecimiento']);            
+            $datos_['evaluaciones_externas'] = (count($eval_compl) > 0) ? array_shift($eval_compl) :  array();
             $datos_['total_cumplimiento'] = $total_evaluacion['cumplimiento'];
             $datos_['total_no_cumplimiento'] = $total_evaluacion['no_cumplimiento'];
             $datos_['total_aplicable'] = $total_evaluacion['cumplimiento'] + $total_evaluacion['no_cumplimiento'];
