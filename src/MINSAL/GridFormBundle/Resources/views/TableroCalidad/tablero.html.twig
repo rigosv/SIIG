@@ -252,7 +252,7 @@
                 </div>
             </div>
         </div>
-        <div class="row" ng-if="data_rec.length > 0">
+        <div class="row" ng-if="data_rec.length > 0 " ng-show="criterios.length">
             <div class="col-md-8" style="max-height: 800px">
                 <center><h3>Porcentaje de cumplimiento por criterio</h3></center>
                 <canvas id="resumen-eval-criterios" class="chart-horizontal-bar"
