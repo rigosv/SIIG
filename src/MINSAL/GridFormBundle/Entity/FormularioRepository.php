@@ -437,143 +437,7 @@ class FormularioRepository extends EntityRepository {
         } catch (\PDOException $e) {
             return $e->getMessage();
         }
-    }
-    
-    public function getEvaluacionesComplementarias($codigo_establecimiento = null) {
-        $em = $this->getEntityManager();
-        $resp = array();
-        
-        $cond = '';
-        if ($codigo_establecimiento != null){
-            $cond = " AND D.codigo = '$codigo_establecimiento' ";
-        }
-
-        //Obtener valores de evaluaciones externas, extraer la medición 
-        //del último año ingresado para cada evaluación
-        $sql = "SELECT D.codigo as establecimiento, D.id AS id_estructura, 
-                        C.descripcion AS categoria, B.descripcion AS tipo_evaluacion, 
-                       A.anio, A.valor, B.unidad_medida
-                    FROM evaluacion_externa A
-                    INNER JOIN evaluacion_externa_tipo B ON (A.tipoevaluacion_id = B.id)
-                    INNER JOIN evaluacion_categoria C ON (B.categoriaevaluacion_id = C.id)
-                    INNER JOIN costos.estructura D ON (A.establecimiento_id = D.id)
-                    WHERE (D.id, tipoevaluacion_id, anio) 
-                        IN 
-                        (SELECT establecimiento_id, tipoevaluacion_id, MAX(anio) AS anio 
-                            FROM evaluacion_externa 
-                            GROUP BY establecimiento_id, tipoevaluacion_id
-                        )
-                        $cond
-                    ORDER BY C.id, B.id, A.anio, A.valor";       
-        
-        foreach ($em->getConnection()->executeQuery($sql)->fetchAll() as $f){
-            $resp[$f['establecimiento']][] = $f;
-        }
-        return $resp;
-    }
-    public function getEstablecimientosEvaluados($periodo) {
-        $em = $this->getEntityManager();
-        list($anio, $mes) = explode('_', $periodo);
-        $datos = array();
-        
-        //Obtener los establecimientos
-        $sql = "SELECT distinct on (datos->'establecimiento') datos->'establecimiento' AS id_establecimiento, C.nombre, 
-                    COALESCE(C.nombre_corto, C.nombre) AS descripcion
-                    FROM  almacen_datos.repositorio A
-                        INNER JOIN costos.formulario B ON (A.id_formulario = B.id)
-                        INNER JOIN costos.estructura C ON (A.datos->'establecimiento' = C.codigo::text)
-                    WHERE B.area_costeo = 'calidad'
-                        AND A.datos->'anio' = '$anio'
-                        AND A.datos->'es_separador' != 'true'";
-        $establecimientos = $em->getConnection()->executeQuery($sql)->fetchAll();
-        
-        foreach ($establecimientos as $est){
-            $establecimiento = $est['id_establecimiento'];
-            
-            $frms = $this->getFormulariosEstablecimiento($establecimiento, $anio);
-            $total_evaluacion = array('cumplimiento'=>0, 'no_cumplimiento'=>0);
-            
-            $formularios = array();
-            foreach ($frms as $f) {
-                $Frm = $em->getRepository('GridFormBundle:Formulario')->find($f);
-                $formularios[$Frm->getId()]['form'] = $Frm;
-                $grupos = $Frm->getGrupoFormularios();
-                $datos_frm = (count($grupos) > 0 ) ? $grupos : array($Frm);
-
-                foreach ($datos_frm as $ff){
-                    $result = $this->getResultadoEvaluacion($ff, $establecimiento, $anio, $mes);
-                    $total_evaluacion['cumplimiento'] = $total_evaluacion['cumplimiento'] + $result['total_cumplimiento'];
-                    $total_evaluacion['no_cumplimiento'] = $total_evaluacion['no_cumplimiento'] + $result['total_no_cumplimiento'];
-                }
-                
-            }
-            
-            $datos_['id_establecimiento'] = $est['id_establecimiento'];
-            $datos_['category'] = $est['descripcion'];
-            $datos_['nombre'] = $est['nombre'];
-            
-            $eval_compl = $this->getEvaluacionesComplementarias($est['id_establecimiento']);            
-            $datos_['evaluaciones_externas'] = (count($eval_compl) > 0) ? array_shift($eval_compl) :  array();
-            $datos_['total_cumplimiento'] = $total_evaluacion['cumplimiento'];
-            $datos_['total_no_cumplimiento'] = $total_evaluacion['no_cumplimiento'];
-            $datos_['total_aplicable'] = $total_evaluacion['cumplimiento'] + $total_evaluacion['no_cumplimiento'];
-            $datos_['measure'] = (($datos_['total_aplicable'] > 0)) ? round($total_evaluacion['cumplimiento'] /  $datos_['total_aplicable'] * 100, 0 ): 0;
-            $datos[] = $datos_;
-        }
-        
-        return $datos;
-    }
-    
-    public function getEvaluaciones($establecimiento, $periodo) {
-        $em = $this->getEntityManager();
-        $datos = array();
-        $datos_ = array();
-        list($anio, $mes) = explode('_', $periodo);
-        
-        $frms = $this->getFormulariosEstablecimiento($establecimiento, $anio);
-        
-        $formularios = array();
-        foreach ($frms as $f) {
-            $Frm = $em->getRepository('GridFormBundle:Formulario')->find($f);
-            $total_evaluacion = array('cumplimiento'=>0, 'no_cumplimiento'=>0);
-            $formularios[$Frm->getId()]['form'] = $Frm;
-            $grupos = $Frm->getGrupoFormularios();
-            $datos_frm = (count($grupos) > 0 ) ? $grupos : array($Frm);
-            
-            foreach ($datos_frm as $ff){
-                $result = $this->getResultadoEvaluacion($ff, $establecimiento, $anio, $mes);
-                $total_evaluacion['cumplimiento'] = $total_evaluacion['cumplimiento'] + $result['total_cumplimiento'];
-                $total_evaluacion['no_cumplimiento'] = $total_evaluacion['no_cumplimiento'] + $result['total_no_cumplimiento'];
-                
-            }
-            $datos_['codigo'] = $Frm->getCodigo();
-            $datos_['tipo_evaluacion'] = $Frm->getFormaEvaluacion();
-            $datos_['nombre_evaluacion'] = $Frm->getNombre();
-            $datos_['axis'] = $Frm->getNombre();
-            $datos_['descripcion'] = $Frm->getDescripcion();
-            $datos_['descripcion'] = $Frm->getDescripcion();
-            $datos_['meta'] = ($Frm->getMeta() > 0) ? number_format($Frm->getMeta()/100, 1) : 0;
-            $datos_['periodo_lectura_datos'] = $Frm->getPeriodoLecturaDatos();
-            $datos_['total_cumplimiento'] = $total_evaluacion['cumplimiento'];
-            $datos_['total_no_cumplimiento'] = $total_evaluacion['no_cumplimiento'];
-            $datos_['total_aplicable'] = $total_evaluacion['cumplimiento'] + $total_evaluacion['no_cumplimiento'];
-            
-            $datos_['measure'] = ($datos_['total_aplicable'] > 0)  ? round($total_evaluacion['cumplimiento'] /  $datos_['total_aplicable'] * 100, 0 ) : 0;
-            $datos_['value'] = ($datos_['total_aplicable'] > 0 ) ? round($total_evaluacion['cumplimiento'] /  $datos_['total_aplicable'], 1 ) : 0;
-            $datos_['brecha'] = ($datos_['meta'] > 0) ? ($datos_['meta'] * 100 - $datos_['measure'])/100 : 0;
-            
-            $datos[] = $datos_;
-        }
-        $datosGrafico2 = array();
-        foreach($datos as $f){
-            if ($f['tipo_evaluacion'] == 'lista_chequeo'){
-                $datosGrafico2[] = $f;
-            }
-        }
-        $resp[] = array('datos'=>$datos, 'datos_grafico2'=>$datosGrafico2);
-        
-        return $resp;
-    }
+    }   
     
     public function getListaCampos(Formulario $Frm, $array = true) {
         $campos = '';
@@ -604,28 +468,6 @@ class FormularioRepository extends EntityRepository {
             }
         }
         return trim($campos, ', ');
-    }
-    
-    protected function getFormulariosEstablecimiento($establecimiento, $anio) {
-        $em = $this->getEntityManager();
-        $resp = array();
-        $sql = "SELECT * FROM (SELECT DISTINCT ON (id_formulario) COALESCE(id_formulario_sup, id_formulario) AS id_formulario, B.posicion
-                FROM almacen_datos.repositorio A
-                    INNER JOIN costos.formulario B ON (A.id_formulario = B.id)
-                WHERE area_costeo = 'calidad'
-                    AND A.datos->'establecimiento' = '$establecimiento'
-                    AND A.datos->'anio' = '$anio'
-                    AND A.datos->'es_separador' != 'true'
-                ) AS AA
-                ORDER BY posicion    
-                ";
-        
-        $frms_ = $em->getConnection()->executeQuery($sql)->fetchAll();
-        foreach ($frms_ as $f){
-            $resp[$f['id_formulario']] = $f['id_formulario'];
-        }
-        
-        return $resp;
     }
     
     protected function getDatosEvaluacion(Formulario $Frm, $establecimiento, $anio, $mes, $arreglo=true, $crear_tabla = true, $criteriosTodos = false, $eliminar_vacios = true) {
@@ -660,53 +502,11 @@ class FormularioRepository extends EntityRepository {
         $em->getConnection()->executeQuery($sql);
         
         if ($eliminar_vacios){
-            $this->borrarVacios($mes);
+            $em->getRepository('GridFormBundle:Indicador')->borrarVacios($mes);
         }
         if (!$crear_tabla){
             $sql = "SELECT * FROM datos_tmp";
             return $em->getConnection()->executeQuery($sql);
-        }
-    }
-    
-    private function borrarVacios($mes) {
-        $em = $this->getEntityManager();
-        
-        //Verificar si tiene la variable num_exp para obtener qué expedientes se ingresaron
-        $sql = "SELECT codigo_variable FROM datos_tmp WHERE es_poblacion = 'true'";
-        $cons = $em->getConnection()->executeQuery($sql);
-
-        if ($cons->rowCount() > 0){
-            //Quitar las columnas para las que no se ingresó número de expediente
-            $sql = "DELETE FROM datos_tmp 
-                    WHERE nombre_pivote 
-                        NOT IN 
-                        (SELECT nombre_pivote 
-                            FROM datos_tmp 
-                            WHERE es_poblacion = 'true' 
-                                AND dato is not null 
-                                AND dato != ''
-                        )";
-            $em->getConnection()->executeQuery($sql);
-        }
-
-        //Verificar si tiene la variable mes_check para dejar solo el que 
-        // corresponde al mes que se está verificando
-        $sql = "SELECT codigo_variable FROM datos_tmp WHERE nombre_pivote ~* 'mes_check_'";
-        $cons = $em->getConnection()->executeQuery($sql);
-
-        if ($cons->rowCount() > 0){
-            //Quitar las columnas para las que no se ingresó número de expediente
-            $sql = "DELETE FROM datos_tmp 
-                    WHERE nombre_pivote 
-                        NOT IN 
-                        (SELECT nombre_pivote 
-                            FROM datos_tmp 
-                            WHERE 
-                                (nombre_pivote = 'mes_check_$mes' OR nombre_pivote = 'mes_check_0$mes')
-                                AND dato is not null 
-                                AND dato != ''
-                        )";
-            $em->getConnection()->executeQuery($sql);
         }
     }
     
@@ -813,7 +613,7 @@ class FormularioRepository extends EntityRepository {
     public function getResumenEvaluacionCriterios($mes) {
         $em = $this->getEntityManager();
         
-        $this->borrarVacios($mes);
+        $em->getRepository('GridFormBundle:Indicador')->borrarVacios($mes);
         
         $condicion = " HAVING (SUM(cumplimiento)::numeric + SUM(no_cumplimiento)::numeric) > 0 ";
         $opciones = array ('pivote'=> array('grupo'=> "GROUP BY pivote $condicion ORDER BY pivote::numeric", 
@@ -847,47 +647,5 @@ class FormularioRepository extends EntityRepository {
         return $resp;
     }
     
-    public function getHistorialEstablecimiento($establecimiento, $periodo) {
-        $em = $this->getEntityManager();
-        list($anio, $mes) = explode('_', $periodo);
-        $datos = array();
-        $dato_ = array();
-        
-        //Obtener el puntaje de la evaluacion para cada mes
-        
-        //Todos los formularios posibles para el establecimiento
-        $frms = $this->getFormulariosEstablecimiento($establecimiento, $anio);
-        for($mes_i = 1; $mes_i<=$mes; $mes_i++){
-            $formularios = array();
-            $total_evaluacion = array('cumplimiento'=>0, 'no_cumplimiento'=>0);
-            
-            //Recorrer cada formulario
-            foreach ($frms as $f) {
-                $Frm = $em->getRepository('GridFormBundle:Formulario')->find($f);                
-                $formularios[$Frm->getId()]['form'] = $Frm;
-                $grupos = $Frm->getGrupoFormularios();
-                $datos_frm = (count($grupos) > 0 ) ? $grupos : array($Frm);
-                
-                // Si tiene subformularios recorrer estos
-                foreach ($datos_frm as $ff){
-                    $result = $this->getResultadoEvaluacion($ff, $establecimiento, $anio, $mes_i);
-                    $total_evaluacion['cumplimiento'] = $total_evaluacion['cumplimiento'] + $result['total_cumplimiento'];
-                    $total_evaluacion['no_cumplimiento'] = $total_evaluacion['no_cumplimiento'] + $result['total_no_cumplimiento'];
-                }                
-            }
-            $datos_['anio'] = $anio;
-            $datos_['mes'] = $mes_i;
-            $datos_['category'] = $mes_i.'/'.$anio;            
-            $datos_['label'] = $datos_['category'];
-            $datos_['date'] = $anio.'-'.$mes_i.'-'.'1';
-            $datos_['total_cumplimiento'] = $total_evaluacion['cumplimiento'];
-            $datos_['total_no_cumplimiento'] = $total_evaluacion['no_cumplimiento'];
-            $datos_['total_aplicable'] = $total_evaluacion['cumplimiento'] + $total_evaluacion['no_cumplimiento'];
-            $datos_['measure'] = ($datos_['total_aplicable'] > 0)  ? round($total_evaluacion['cumplimiento'] /  $datos_['total_aplicable'] * 100, 0 ) : 0;
-            $datos_['value'] = ($datos_['total_aplicable'] > 0 ) ? round($total_evaluacion['cumplimiento'] /  $datos_['total_aplicable'], 0 ) : 0;            
-            
-            $datos[] = $datos_;
-        }        
-        return $datos;        
-    }
+    
 }

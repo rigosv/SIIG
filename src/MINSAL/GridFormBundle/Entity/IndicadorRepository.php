@@ -43,50 +43,19 @@ class IndicadorRepository extends EntityRepository {
         
         //Recuperar los indicadores que no tienen asociado ningún criterio
         //Estos serán los que están cargados a todo el estándar
-        $sql = "SELECT * FROM (SELECT B.posicion, A.codigo, A.descripcion, A.forma_evaluacion,  A.porcentaje_aceptacion, 'por_estandar' AS alcance_evaluacion,
-                    B.descripcion descripcion_estandar, B.periodo_lectura_datos, B.id as estandar_id, B.codigo as codigo_estandar, A.id AS indicador_id,
-                    (SELECT COUNT(codigo)
-                        FROM variable_captura
-                        WHERE formulario_id = B.id
-                            AND es_separador = false
-                            AND es_poblacion = false
-                    ) AS total_criterios
+        $sql = "SELECT B.posicion, A.codigo, A.descripcion, A.forma_evaluacion,  
+                                A.porcentaje_aceptacion, 
+                                B.descripcion descripcion_estandar, B.periodo_lectura_datos, 
+                                B.id as estandar_id, B.codigo as codigo_estandar, A.id AS indicador_id,
+                                B.forma_evaluacion AS tipo_evaluacion, B.nombre AS nombre_evaluacion, 
+                                B.meta, B.periodo_lectura_datos, B.posicion
                     FROM indicador A
-                    INNER JOIN costos.formulario B ON (A.estandar_id = B.id)                    
-                    WHERE A.id NOT IN (SELECT indicador_id FROM indicador_variablecaptura)
-                        AND B.forma_evaluacion = 'lista_chequeo'
-                    ) AS AA
-                    WHERE total_criterios > 0
+                        INNER JOIN costos.formulario B ON (A.estandar_id = B.id)
+                    WHERE B.forma_evaluacion = 'lista_chequeo'
                     ORDER BY posicion, codigo_estandar, codigo
                     ";
-        /*$sql = "SELECT * FROM (SELECT B.posicion, A.codigo, A.descripcion, A.forma_evaluacion, A.porcentaje_aceptacion, 'por_estandar' AS alcance_evaluacion, 
-                    B.descripcion descripcion_estandar, B.periodo_lectura_datos, B.id as estandar_id, B.codigo as codigo_estandar, A.id AS indicador_id, 
-                    (SELECT COUNT(codigo) 
-                        FROM variable_captura 
-                        WHERE formulario_id = B.id 
-                            AND es_separador = false 
-                            AND es_poblacion = false 
-                    ) AS total_criterios 
-                    FROM indicador A 
-                        INNER JOIN costos.formulario B ON (A.estandar_id = B.id) 
-                        WHERE A.id NOT IN (SELECT indicador_id FROM indicador_variablecaptura)  
-                    
-                    UNION 
-                    SELECT B.posicion, A.codigo, A.descripcion, A.forma_evaluacion, A.porcentaje_aceptacion, 'por_indicador' AS alcance_evaluacion, 
-                    B.descripcion descripcion_estandar, B.periodo_lectura_datos, B.id as estandar_id, B.codigo as codigo_estandar, A.id AS indicador_id, 
-                    (SELECT COUNT(indicador_id) 
-                        FROM indicador_variablecaptura 
-                        WHERE indicador_id = A.id 
-                    ) AS total_criterios 
-                    FROM indicador A 
-                        INNER JOIN costos.formulario B ON (A.estandar_id = B.id) 
-                        WHERE A.id IN (SELECT indicador_id FROM indicador_variablecaptura) 
-                    ) AS AA 
-                    WHERE total_criterios > 0 
-                    ORDER BY posicion, codigo_estandar, codigo";*/
         
         $indicadores = $em->getConnection()->executeQuery($sql)->fetchAll();
-        
         foreach ($indicadores as $ind){
             $Frm = $em->getRepository('GridFormBundle:Formulario')->find($ind['estandar_id']);
             $eval_ = $this->getDatosEvaluacionListaChequeo($Frm, $periodo, $ind);
@@ -105,6 +74,11 @@ class IndicadorRepository extends EntityRepository {
             
             $datos[] = array('descripcion_estandar'=>$ind['descripcion_estandar'],  
                             'descripcion_indicador'=>$ind['descripcion'] ,
+                            'codigo_estandar' => $ind['codigo_estandar'],
+                            'tipo_evaluacion' => $ind['tipo_evaluacion'],
+                            'nombre_evaluacion' => $ind['nombre_evaluacion'],
+                            'meta' => $ind['meta'],
+                            'periodo_lectura_datos' => $ind['periodo_lectura_datos'],
                             'codigo_indicador'=>$ind['codigo'] ,
                             'calificacion' => $calificacionIndicador,
                             'evaluacion' => $eval,
@@ -221,81 +195,292 @@ class IndicadorRepository extends EntityRepository {
     }
     protected function getDatosEvaluacionListaChequeo(Formulario $Frm, $periodo, $datosIndicador){
 
-        $totalCriterios = $datosIndicador['total_criterios']; 
         $porcentajeAprobacion = $datosIndicador['porcentaje_aceptacion']; 
         $formaEvaluacion = $datosIndicador['forma_evaluacion'] ;
-        $alcance = $datosIndicador['alcance_evaluacion'] ;
+        list($anio, $mes) = explode('_', $periodo);
+        $em = $this->getEntityManager();
+        
+        $this->datos($Frm, $periodo, $datosIndicador);
+        
+        if ($formaEvaluacion == 'cumplimiento_porcentaje_aceptacion'){
+          $evaluacion = " ROUND((COALESCE(B.expedientes_cumplimiento, 0)::numeric / A.total_expedientes::numeric * 100),2)  AS calificacion ";
+        }elseif ($formaEvaluacion == 'cumplimiento_criterios') {
+          $evaluacion = " ROUND((A.criterios_cumplidos::numeric / (A.criterios_aplicables::numeric) * 100),2) AS calificacion ";
+        }
+        
+        $this->prepararTabla($datosIndicador['codigo_estandar'], $datosIndicador['codigo'], $anio, $mes);
+        
+        
+        $sql = "DROP TABLE IF EXISTS auxiliar_tmp";
+        $em->getConnection()->executeQuery($sql)->fetchAll();
+        $sql = "SELECT F.*, 
+                CE.nombre AS nombre_establecimiento, COALESCE(CE.nombre_corto, CE.nombre) AS nombre_corto,
+                $anio AS anio, '$mes' AS mes, '$datosIndicador[codigo_estandar]' AS codigo_estandar, '$datosIndicador[descripcion_estandar]' AS descripcion_estandar,
+                 '$datosIndicador[codigo]' AS codigo_indicador, '$datosIndicador[descripcion]' AS descripcion_indicador,
+                 '$datosIndicador[tipo_evaluacion]' AS tipo_evaluacion, '$datosIndicador[meta]' AS meta, '$datosIndicador[posicion]' AS posicion   
+                INTO TEMP auxiliar_tmp
+                FROM 
+                (   SELECT A.establecimiento, A.total_expedientes, COALESCE(B.expedientes_cumplimiento, 0) AS expedientes_cumplimiento,
+                    A.criterios_aplicables, A.criterios_cumplidos, A.criterios_no_cumplidos, 
+                    $evaluacion
+                    FROM 
+                        (
+                        SELECT establecimiento, COUNT(expediente) AS total_expedientes, SUM(cumplimiento) AS criterios_cumplidos,
+                            SUM(no_cumplimiento) AS criterios_no_cumplidos, SUM(aplicable) AS criterios_aplicables
+                            FROM  evaluacion_expediente_tmp    
+                            GROUP BY establecimiento
+                        ) AS A
+                    LEFT JOIN 
+                        (   
+                            SELECT  establecimiento, COUNT(expediente) AS expedientes_cumplimiento
+                            FROM evaluacion_expediente_tmp
+                            WHERE porc_cumplimiento >= $porcentajeAprobacion
+                            GROUP BY establecimiento
+                        ) AS B 
+                        ON (A.establecimiento = B.establecimiento)                    
+                    INNER JOIN ctl_establecimiento_simmow ES ON (A.establecimiento = ES.id::text)                
+                ) AS F
+                    INNER JOIN costos.estructura CE ON (F.establecimiento = CE.codigo)                    
+                ORDER BY calificacion DESC
+         ";
+        
+        $em->getConnection()->executeQuery($sql);
+        
+        $sql = "INSERT INTO datos_evaluacion_calidad(codigo_estandar, codigo_indicador, anio, mes,
+                         descripcion_indicador, calificacion, nombre_establecimiento, nombre_corto, 
+                        establecimiento, total_expedientes, expedientes_cumplimiento, criterios_aplicables, 
+                        criterios_cumplidos, criterios_no_cumplidos) 
+                    SELECT codigo_estandar, codigo_indicador, anio, mes,
+                            descripcion_indicador, calificacion, nombre_establecimiento, nombre_corto, 
+                            establecimiento, total_expedientes, expedientes_cumplimiento, criterios_aplicables, 
+                            criterios_cumplidos, criterios_no_cumplidos
+                    FROM auxiliar_tmp
+                " ;
+        $em->getConnection()->executeQuery($sql);
+        
+        $sql = "SELECT * FROM auxiliar_tmp";
+        return $em->getConnection()->executeQuery($sql)->fetchAll();
+        
+        
+    }
+    
+    private function prepararTabla($codigo_estandar, $codigo_indicador, $anio, $mes) {
+        $em = $this->getEntityManager();
+        
+        $this->crearTabla();
+        
+        //Borrar los datos antiguos de la evaluación y actualizarla con los nuevos
+        $sql = "DELETE FROM datos_evaluacion_calidad
+                 WHERE codigo_estandar = '$codigo_estandar'
+                    AND codigo_indicador = '$codigo_indicador'
+                    AND anio = $anio
+                    AND mes = '$mes'
+                    ";
+        $em->getConnection()->executeQuery($sql);
+    }
+    
+    private function crearTabla() {
+        $em = $this->getEntityManager();
+        
+        //Verificar si existe la tabla, sino crearla
+        $sql = "CREATE TABLE IF NOT EXISTS datos_evaluacion_calidad(
+                    codigo_estandar     varchar(40),
+                    codigo_indicador    varchar(60),
+                    anio                integer,
+                    mes                 varchar(5),
+                    descripcion_indicador text,
+                    calificacion        float,
+                    nombre_establecimiento text,
+                    nombre_corto        varchar(30),
+                    establecimiento     varchar (20),
+                    total_expedientes   integer,
+                    expedientes_cumplimiento integer,
+                    criterios_aplicables   integer,
+                    criterios_cumplidos     integer,
+                    criterios_no_cumplidos  integer
+                 )";
+        
+        $em->getConnection()->executeQuery($sql);
+    }
+    
+    private function datos(Formulario $Frm, $periodo, $datosIndicador) {
         $em = $this->getEntityManager();
         list($anio, $mes) = explode('_', $periodo);
         
         $campos = $em->getRepository('GridFormBundle:Formulario')->getListaCampos($Frm);
+        //$alcance = $datosIndicador['alcance_evaluacion'] ;
+        
         $periodo_lectura = '';
         if ($Frm->getPeriodoLecturaDatos() == 'mensual' and $mes != null){
             $periodo_lectura = " AND (A.datos->'mes')::integer = '$mes' ";
         }
+               
+        $sql = "DROP TABLE IF EXISTS datos_tmp";
+        $em->getConnection()->executeQuery($sql);
         
-        $frmId = $Frm->getId();
-        $alcance_sql = "";
-        if ($alcance == 'por_estandar'){
-            $alcance_join = '';
-            $alcance_where = " AND id_formulario = '$frmId' ";
-        }elseif($alcance == 'por_indicador'){            
-            $alcance_join = " INNER JOIN variable_captura AB ON (A.datos->'codigo_variable = AB.codigo) 
-                                INNER JOIN indicador_variablecaptura AC ON (AB.id = AC.variablecaptura_id)";
-            $alcance_where = " AND AC.indicador_id = '$datosIndicador[indicador_id]' ";
-        }
+        $sql = "            
+                SELECT $campos, A.datos->'establecimiento' as establecimiento, AC.indicador_id,
+                    A.datos->'es_poblacion' AS es_poblacion, A.datos->'codigo_tipo_control' AS tipo_control, 
+                    A.datos->'es_separador' AS es_separador, A.datos->'posicion' AS posicion
+                INTO TEMP datos_tmp 
+                FROM almacen_datos.repositorio A
+                    INNER JOIN variable_captura AB ON (A.datos->'codigo_variable' = AB.codigo) 
+                    INNER JOIN indicador_variablecaptura AC ON (AB.id = AC.variablecaptura_id)
+                 WHERE A.datos->'es_separador' != 'true'
+                    AND A.datos->'anio' = '$anio'        
+                    AND AC.indicador_id = '$datosIndicador[indicador_id]' 
+                    $periodo_lectura                
+                 ";
+       
+        $em->getConnection()->executeQuery($sql);
         
-        //Sacar los datos sobre los que se harán los cálculos
-        $datos = "SELECT $campos, A.datos->'establecimiento' as establecimiento
-                    FROM almacen_datos.repositorio A
-                        $alcance_join
-                     WHERE A.datos->'es_poblacion' = 'false'
-                        $alcance_where
-                        AND A.datos->'es_separador' = 'false'
-                        AND A.datos->'anio' = '$anio'
-                        $periodo_lectura";
-        if ($formaEvaluacion == 'cumplimiento_porcentaje_aceptacion'){
-          $evaluacion = " ROUND((COALESCE(B.total_cumplimiento, 0)::numeric / A.total_expedientes::numeric * 100),2)  AS calificacion ";
-        }elseif ($formaEvaluacion == 'cumplimiento_criterios') {
-          $evaluacion = " ROUND((C.total_criterios_cumplidos::numeric / (A.total_expedientes::numeric * $totalCriterios) * 100),2) AS calificacion ";
+        $this->borrarVacios($mes);
+        
+        $sql = "DROP TABLE IF EXISTS evaluacion_expediente_tmp";
+        $em->getConnection()->executeQuery($sql);
+        // Resultado de la evaluación de cada expediente
+        $condicion = " HAVING (SUM(cumplimiento)::numeric + SUM(no_cumplimiento)::numeric) > 0 ";
+        $opc = array('grupo'=> "GROUP BY establecimiento, pivote $condicion ORDER BY pivote::numeric", 
+                                                'campo'=> "establecimiento, substring(nombre_pivote, '[0-9]{1,}') as pivote",
+                                                'campo2'=> "establecimiento, pivote"
+                        );
+        $sql = "SELECT establecimiento, pivote AS expediente, SUM(cumplimiento) as cumplimiento, 
+                    SUM(no_cumplimiento) AS no_cumplimiento,
+                    SUM(cumplimiento) + SUM(no_cumplimiento) AS aplicable,
+                    ROUND( (SUM(cumplimiento)::numeric / ( SUM(cumplimiento)::numeric + SUM(no_cumplimiento)::numeric ) * 100),0) AS porc_cumplimiento 
+                INTO evaluacion_expediente_tmp
+                FROM (
+                    SELECT $opc[campo], 
+                        CASE WHEN dato = 'true' THEN 1 ELSE 0 END AS cumplimiento, 
+                        CASE WHEN tipo_control = 'checkbox' AND dato != 'true' THEN 1 
+                            WHEN tipo_control = 'checkbox_3_states' AND dato = 'false' THEN 1
+                            ELSE 0 
+                        END AS no_cumplimiento 
+                        FROM datos_tmp 
+                        WHERE es_poblacion='false'
+                            AND es_separador != 'true'
+                    ) AS A 
+                $opc[grupo]";
+        $em->getConnection()->executeQuery($sql); //->fetchAll();
+    }
+    
+    public function borrarVacios($mes) {
+        $em = $this->getEntityManager();
+        
+        //Verificar si tiene la variable num_exp para obtener qué expedientes se ingresaron
+        $sql = "SELECT codigo_variable FROM datos_tmp WHERE es_poblacion = 'true'";
+        $cons = $em->getConnection()->executeQuery($sql);
+
+        if ($cons->rowCount() > 0){
+            //Quitar las columnas para las que no se ingresó número de expediente
+            $sql = "DELETE FROM datos_tmp 
+                    WHERE (establecimiento::text, nombre_pivote::text)
+                        NOT IN 
+                        (SELECT establecimiento::text, nombre_pivote::text 
+                            FROM datos_tmp 
+                            WHERE es_poblacion::text = 'true' 
+                                AND dato is not null 
+                                AND trim(dato::text) != ''
+                        )";
+            $em->getConnection()->executeQuery($sql);
         }
-        $sql = "SELECT F.*, CE.nombre AS nombre_establecimiento, COALESCE(CE.nombre_corto, CE.nombre) AS nombre_corto FROM 
-                (   SELECT A.establecimiento, A.total_expedientes, COALESCE(B.total_cumplimiento, 0) AS expedientes_cumple,
-                    $totalCriterios AS criterios_evaluados, C.total_criterios_cumplidos,
-                    $evaluacion                    
-                    FROM 
-                        (SELECT AA.establecimiento, COUNT(AA.nombre_pivote) AS total_expedientes
-                            FROM (
-                                SELECT establecimiento, nombre_pivote
-                                FROM ($datos) AS D 
-                                WHERE dato = 'true'
-                                GROUP BY establecimiento, nombre_pivote
-                            ) AS AA
-                            GROUP BY AA.establecimiento
-                        ) AS A
-                    LEFT JOIN 
-                        (   SELECT establecimiento, count(total_cumplimiento) AS total_cumplimiento
-                            FROM (
-                                SELECT establecimiento, COUNT(codigo_variable) AS total_cumplimiento
-                                FROM ($datos) AS D
-                                WHERE dato = 'true'
-                                GROUP BY establecimiento, nombre_pivote
-                                HAVING (COUNT(codigo_variable)/$totalCriterios * 100) >= $porcentajeAprobacion
-                            ) AS BB
-                            GROUP BY BB.establecimiento
-                        ) AS B 
-                        ON (A.establecimiento = B.establecimiento)
-                    LEFT JOIN (
-                        SELECT establecimiento, COUNT(codigo_variable) AS total_criterios_cumplidos
-                            FROM ($datos) AS D
-                            WHERE dato = 'true'
-                            GROUP BY establecimiento
-                    ) AS C ON (A.establecimiento = C.establecimiento)
-                    INNER JOIN ctl_establecimiento_simmow ES ON (A.establecimiento = ES.id::text)                
-                ) AS F
-                    INNER JOIN costos.estructura CE ON (F.establecimiento = CE.codigo)
-                ORDER BY calificacion DESC
-         ";
+
+        //Verificar si tiene la variable mes_check para dejar solo el que 
+        // corresponde al mes que se está verificando
+        $sql = "SELECT codigo_variable FROM datos_tmp WHERE nombre_pivote ~* 'mes_check_'";
+        $cons = $em->getConnection()->executeQuery($sql);
+
+        if ($cons->rowCount() > 0){
+            //Quitar las columnas para las que no se ingresó número de expediente
+            $sql = "DELETE FROM datos_tmp 
+                    WHERE (establecimiento, nombre_pivote)
+                        NOT IN 
+                        (SELECT establecimiento, nombre_pivote 
+                            FROM datos_tmp 
+                            WHERE 
+                                (nombre_pivote::text = 'mes_check_$mes' OR nombre_pivote::text = 'mes_check_0$mes')
+                                AND dato is not null 
+                                AND dato::text != ''
+                        )";
+            $em->getConnection()->executeQuery($sql);
+        }
+    }
+    
+    public function getEvaluacionesComplementarias($codigo_establecimiento = null) {
+        $em = $this->getEntityManager();
+        $resp = array();
+        
+        $cond = '';
+        if ($codigo_establecimiento != null){
+            $cond = " AND D.codigo = '$codigo_establecimiento' ";
+        }
+
+        //Obtener valores de evaluaciones externas, extraer la medición 
+        //del último año ingresado para cada evaluación
+        $sql = "SELECT D.codigo as establecimiento, D.id AS id_estructura, 
+                        C.descripcion AS categoria, B.descripcion AS tipo_evaluacion, 
+                       A.anio, A.valor, B.unidad_medida
+                    FROM evaluacion_externa A
+                    INNER JOIN evaluacion_externa_tipo B ON (A.tipoevaluacion_id = B.id)
+                    INNER JOIN evaluacion_categoria C ON (B.categoriaevaluacion_id = C.id)
+                    INNER JOIN costos.estructura D ON (A.establecimiento_id = D.id)
+                    WHERE (D.id, tipoevaluacion_id, anio) 
+                        IN 
+                        (SELECT establecimiento_id, tipoevaluacion_id, MAX(anio) AS anio 
+                            FROM evaluacion_externa 
+                            GROUP BY establecimiento_id, tipoevaluacion_id
+                        )
+                        $cond
+                    ORDER BY C.id, B.id, A.anio, A.valor";       
+        
+        foreach ($em->getConnection()->executeQuery($sql)->fetchAll() as $f){
+            $resp[$f['establecimiento']][] = $f;
+        }
+        return $resp;
+    }
+    
+    public function getEvaluacionEstablecimiento($periodo) {
+        $em = $this->getEntityManager();
+        list($anio, $mes) = explode('_', $periodo);
+        
+        $sql = "SELECT establecimiento, nombre_corto, nombre_establecimiento, avg(calificacion) AS calificacion 
+                    FROM datos_evaluacion_calidad 
+                    WHERE anio=$anio AND mes = '$mes'
+                    GROUP BY establecimiento, nombre_corto, nombre_establecimiento
+                     ";
         return $em->getConnection()->executeQuery($sql)->fetchAll();
+    }
+    
+    public function getEvaluaciones($establecimiento, $periodo) {
+        $em = $this->getEntityManager();
+        list($anio, $mes) = explode('_', $periodo);
+        
+        $sql = "SELECT A.codigo, A.descripcion, A.periodo_lectura_datos, A.meta, 
+                        A.forma_evaluacion, B.calificacion
+                    FROM costos.formulario A
+                        INNER JOIN (SELECT codigo_estandar, avg(calificacion) AS calificacion 
+                            FROM datos_evaluacion_calidad 
+                            WHERE anio=$anio 
+                                AND mes = '$mes'
+                                AND establecimiento = '$establecimiento'
+                            GROUP BY codigo_estandar
+                            ) AS B ON (A.codigo = B.codigo_estandar)
+                    ORDER BY A.posicion, A.codigo
+                     ";
+        return $em->getConnection()->executeQuery($sql)->fetchAll();
+          
+    }
+    
+    public function getHistorialEstablecimiento($establecimiento) {
+        $em = $this->getEntityManager();
+        
+        $sql = "SELECT anio, mes::integer, avg(calificacion) AS calificacion 
+                    FROM datos_evaluacion_calidad 
+                    WHERE establecimiento = '$establecimiento'
+                    GROUP BY anio, mes::integer                        
+                    ORDER BY anio, mes::integer
+                     ";
+        return $em->getConnection()->executeQuery($sql)->fetchAll();
+          
     }
 }

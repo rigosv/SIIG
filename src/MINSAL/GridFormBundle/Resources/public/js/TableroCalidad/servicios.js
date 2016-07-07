@@ -31,6 +31,6 @@ servicios.factory('Criterios', ['$resource',
 servicios.factory('HistorialEstablecimiento', ['$resource',
   function($resource){
     return $resource(Routing.generate('get_historial_establecimiento')+'/:establecimiento/:periodo', {}, {
-      query: {method:'GET', params:{establecimiento: '@_ide', periodo: '@_idp'}, isArray:true}
+      query: {method:'GET', params:{establecimiento: '@_ide'}, isArray:true}
     });
   }]);

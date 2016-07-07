@@ -134,14 +134,14 @@
                 $scope.establecimientoSeleccionado = establecimientoSel;
                 $scope.mostrarListadoEstablecimientos = false;
                 
-                Evaluaciones.query({ establecimiento: establecimientoSel.id_establecimiento, periodo: $scope.periodoSeleccionado.periodo })
+                Evaluaciones.query({ establecimiento: establecimientoSel.establecimiento, periodo: $scope.periodoSeleccionado.periodo })
                     .$promise.then(
                         function (data) {                            
-                            $scope.evaluaciones = (data != '') ? data[0].datos : [];
+                            $scope.evaluaciones = (data != '') ? data : [];
                             var aux = [];
                                      
-                            $scope.calificaciones = data[0].datos_grafico2;
-                            var datos = JSON.stringify(data[0].datos_grafico2);
+                            $scope.calificaciones = data;
+                            var datos = JSON.stringify(data);
                             
                             datos = datos.replace(/"value":/g,'"valueant":');
                             $scope.metas = JSON.parse(datos.replace(/"meta":/g,'"value":'));
@@ -159,12 +159,11 @@
                             alert(error);
                         }
                     );
-                
+                             
                 //Cambiar el gráfico 1
                 $scope.titulo_grafico1 = 'Cumplimiento por mes';
-                $scope.titulo = 'Evaluación de Calidad :: '+establecimientoSel.nombre;
-                //HistorialEstablecimiento.query({ establecimiento: establecimientoSel.id_establecimiento, periodo: $scope.periodoSeleccionado.periodo})
-                HistorialEstablecimiento.query({ establecimiento: establecimientoSel.id_establecimiento, periodo: $scope.periodoSeleccionado.periodo })
+                $scope.titulo = 'Evaluación de Calidad :: '+ establecimientoSel.nombre;
+                HistorialEstablecimiento.query({ establecimiento: establecimientoSel.establecimiento})
                     .$promise.then(
                         function (data) {                            
                             $scope.datosGrafico1 = (data != '') ? data : [];
@@ -172,13 +171,13 @@
                         function (error) {
                             alert(error);
                         }
-                    );
+                    );                
             };
             
             $scope.getCriterios = function(evaluacionSel) {
                 $scope.evaluacionSeleccionada = evaluacionSel;
                 Criterios.query(
-                        { establecimiento: $scope.establecimientoSeleccionado.id_establecimiento, 
+                        { establecimiento: $scope.establecimientoSeleccionado.establecimiento, 
                             periodo: $scope.periodoSeleccionado.periodo,
                             evaluacion: evaluacionSel.codigo
                         })
@@ -225,14 +224,6 @@
                             alert(error);
                         }
                     );
-            };                        
-
-            /*$('input').on('ifChecked', function(event){
-                $scope.toggleLabel($(this).val(), true);
-            });
-            $('input').on('ifUnchecked', function(event){
-                $scope.toggleLabel($(this).val(), false);
-            });*/
-            
+            };
         })        
         ;
