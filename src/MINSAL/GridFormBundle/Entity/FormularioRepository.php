@@ -437,37 +437,6 @@ class FormularioRepository extends EntityRepository {
         } catch (\PDOException $e) {
             return $e->getMessage();
         }
-    }   
-    
-    public function getListaCampos(Formulario $Frm, $array = true) {
-        $campos = '';
-        foreach ($Frm->getCampos() as $c){
-            $piv = $c->getOrigenPivote();
-            $codigoCampo = $c->getSignificadoCampo()->getCodigo();
-            if ($piv != ''){
-                $piv_ = json_decode($piv);
-                //La parte de datos
-                $campos .= ($array) ? "unnest(array[" : '';                
-                foreach($piv_ as $p){
-                    $alias = ($array) ? '' : ' AS "'.$p->descripcion.'" ';
-                    $campos .= " datos->'".$codigoCampo."_".$p->id."'". $alias.", ";
-                }
-                $campos = ($array) ? trim($campos, ', ') : $campos;
-                $campos .= ($array) ? "]) AS dato, " : '';
-                
-                //La parte del nombre del campo
-                $campos .= ($array) ? "unnest(array[" : '';                
-                foreach($piv_ as $p){
-                    //$alias = ($array) ? '' : ' AS "'.$p->descripcion.'" ';
-                    $campos .= "'$codigoCampo"."_".$p->id."', ";
-                }
-                $campos = ($array) ? trim($campos, ', ') : $campos;
-                $campos .= ($array) ? "]) AS nombre_pivote, " : '';
-            } else {
-                $campos .= " datos->'$codigoCampo' AS $codigoCampo, ";
-            }
-        }
-        return trim($campos, ', ');
     }
     
     protected function getDatosEvaluacion(Formulario $Frm, $establecimiento, $anio, $mes, $arreglo=true, $crear_tabla = true, $criteriosTodos = false, $eliminar_vacios = true) {
@@ -479,7 +448,7 @@ class FormularioRepository extends EntityRepository {
             $periodo_lectura = " AND (A.datos->'mes')::integer = '$mes' ";
             $mes_ = " '$mes' AS mes, ";
         }
-        $campos = $this->getListaCampos($Frm, $arreglo);
+        $campos = $em->getRepository('GridFormBundle:Indicador')->getListaCampos($Frm, $arreglo);
         
         $sql = "DROP TABLE IF EXISTS datos_tmp";
         $em->getConnection()->executeQuery($sql);
@@ -628,7 +597,7 @@ class FormularioRepository extends EntityRepository {
         $resp = array();
         foreach ($opciones as $campo => $opc){
             $sql = "SELECT $opc[campo2], SUM(cumplimiento) as cumplimiento, 
-                    SUM(no_cumplimiento) AS no_cumplimiento, 
+                    SUM(no_cumplimiento) AS no_cumplimiento,
                     ROUND((SUM(cumplimiento)::numeric / ( SUM(cumplimiento)::numeric + SUM(no_cumplimiento)::numeric ) * 100),0) AS porc_cumplimiento 
                 FROM (
                     SELECT $opc[campo], 

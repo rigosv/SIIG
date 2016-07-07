@@ -157,7 +157,7 @@ class IndicadorRepository extends EntityRepository {
         $em = $this->getEntityManager();
         list($anio, $mes) = explode('_', $periodo);
         
-        $campos = $em->getRepository('GridFormBundle:Formulario')->getListaCampos($Frm, false);
+        $campos = $this->getListaCampos($Frm, false);
         if ($campos == '') return array();
         $periodo_lectura = '';        
         
@@ -307,7 +307,7 @@ class IndicadorRepository extends EntityRepository {
         $em = $this->getEntityManager();
         list($anio, $mes) = explode('_', $periodo);
         
-        $campos = $em->getRepository('GridFormBundle:Formulario')->getListaCampos($Frm);
+        $campos = $this->getListaCampos($Frm);
         //$alcance = $datosIndicador['alcance_evaluacion'] ;
         
         $periodo_lectura = '';
@@ -338,19 +338,15 @@ class IndicadorRepository extends EntityRepository {
         
         $sql = "DROP TABLE IF EXISTS evaluacion_expediente_tmp";
         $em->getConnection()->executeQuery($sql);
+        
         // Resultado de la evaluación de cada expediente
-        $condicion = " HAVING (SUM(cumplimiento)::numeric + SUM(no_cumplimiento)::numeric) > 0 ";
-        $opc = array('grupo'=> "GROUP BY establecimiento, pivote $condicion ORDER BY pivote::numeric", 
-                                                'campo'=> "establecimiento, substring(nombre_pivote, '[0-9]{1,}') as pivote",
-                                                'campo2'=> "establecimiento, pivote"
-                        );
         $sql = "SELECT establecimiento, pivote AS expediente, SUM(cumplimiento) as cumplimiento, 
                     SUM(no_cumplimiento) AS no_cumplimiento,
                     SUM(cumplimiento) + SUM(no_cumplimiento) AS aplicable,
                     ROUND( (SUM(cumplimiento)::numeric / ( SUM(cumplimiento)::numeric + SUM(no_cumplimiento)::numeric ) * 100),0) AS porc_cumplimiento 
                 INTO evaluacion_expediente_tmp
                 FROM (
-                    SELECT $opc[campo], 
+                    SELECT establecimiento, substring(nombre_pivote, '[0-9]{1,}') as pivote, 
                         CASE WHEN dato = 'true' THEN 1 ELSE 0 END AS cumplimiento, 
                         CASE WHEN tipo_control = 'checkbox' AND dato != 'true' THEN 1 
                             WHEN tipo_control = 'checkbox_3_states' AND dato = 'false' THEN 1
@@ -360,7 +356,9 @@ class IndicadorRepository extends EntityRepository {
                         WHERE es_poblacion='false'
                             AND es_separador != 'true'
                     ) AS A 
-                $opc[grupo]";
+                GROUP BY establecimiento, pivote 
+                HAVING (SUM(cumplimiento)::numeric + SUM(no_cumplimiento)::numeric) > 0
+                ORDER BY pivote::numeric";
         $em->getConnection()->executeQuery($sql); //->fetchAll();
     }
     
@@ -482,5 +480,36 @@ class IndicadorRepository extends EntityRepository {
                      ";
         return $em->getConnection()->executeQuery($sql)->fetchAll();
           
+    }
+    
+    public function getListaCampos(Formulario $Frm, $array = true) {
+        $campos = '';
+        foreach ($Frm->getCampos() as $c){
+            $piv = $c->getOrigenPivote();
+            $codigoCampo = $c->getSignificadoCampo()->getCodigo();
+            if ($piv != ''){
+                $piv_ = json_decode($piv);
+                //La parte de datos
+                $campos .= ($array) ? "unnest(array[" : '';                
+                foreach($piv_ as $p){
+                    $alias = ($array) ? '' : ' AS "'.$p->descripcion.'" ';
+                    $campos .= " datos->'".$codigoCampo."_".$p->id."'". $alias.", ";
+                }
+                $campos = ($array) ? trim($campos, ', ') : $campos;
+                $campos .= ($array) ? "]) AS dato, " : '';
+                
+                //La parte del nombre del campo
+                $campos .= ($array) ? "unnest(array[" : '';                
+                foreach($piv_ as $p){
+                    //$alias = ($array) ? '' : ' AS "'.$p->descripcion.'" ';
+                    $campos .= "'$codigoCampo"."_".$p->id."', ";
+                }
+                $campos = ($array) ? trim($campos, ', ') : $campos;
+                $campos .= ($array) ? "]) AS nombre_pivote, " : '';
+            } else {
+                $campos .= " datos->'$codigoCampo' AS $codigoCampo, ";
+            }
+        }
+        return trim($campos, ', ');
     }
 }
