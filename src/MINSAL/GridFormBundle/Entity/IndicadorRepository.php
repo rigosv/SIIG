@@ -469,14 +469,17 @@ class IndicadorRepository extends EntityRepository {
           
     }
     
-    public function getHistorialEstablecimiento($establecimiento) {
+    public function getHistorialEstablecimiento($establecimiento, $periodo) {
         $em = $this->getEntityManager();
+        list($anio, $mes) = explode('_', $periodo);
         
         $sql = "SELECT anio, mes::integer, avg(calificacion) AS calificacion 
                     FROM datos_evaluacion_calidad 
                     WHERE establecimiento = '$establecimiento'
+                       AND (anio < $anio OR (anio = $anio AND mes::integer <= $mes ) )
                     GROUP BY anio, mes::integer                        
                     ORDER BY anio, mes::integer
+                    LIMIT 20
                      ";
         return $em->getConnection()->executeQuery($sql)->fetchAll();
           
