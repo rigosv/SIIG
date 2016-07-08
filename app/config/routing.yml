@@ -4,7 +4,7 @@ grid_form:
     prefix:   /
 
 _inicio:
-    pattern:  /
+    path:  /
     defaults: { _controller: SonataAdminBundle:Core:dashboard }
 
 indicadores:
@@ -35,10 +35,6 @@ captura_datos_rest:
 calidad_rest:
     type:     rest
     resource: MINSAL\GridFormBundle\Controller\TableroCalidadRESTController
-    prefix: /
-indicador_calidad_rest:
-    type:     rest
-    resource: MINSAL\GridFormBundle\Controller\IndicadorRESTController
     prefix: /
 # Internal routing configuration to handle ESI
 #_internal:

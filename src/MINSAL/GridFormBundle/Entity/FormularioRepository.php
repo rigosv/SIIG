@@ -539,13 +539,19 @@ class FormularioRepository extends EntityRepository {
             $this->ActualizarVariables($Frm->getId());
             
             $sql_forms .= "
-                SELECT $datos, B.id, B.codigo, B.descripcion, B.forma_evaluacion, F.codigo AS codigo_indicador
+                SELECT $datos, B.id, B.codigo, B.descripcion, B.forma_evaluacion, 
+                    array_to_string(
+                        ARRAY(
+                            SELECT BB.codigo 
+                                FROM indicador_variablecaptura  AA
+                                INNER JOIN indicador BB ON (AA.indicador_id = BB.id)
+                                WHERE variablecaptura_id = D.id
+                            )
+                    , ' ') AS codigo_indicador
                     FROM  almacen_datos.repositorio A
                         INNER JOIN costos.formulario B ON (A.id_formulario = B.id)
                         INNER JOIN ctl_establecimiento_simmow C ON (A.datos->'establecimiento' = C.id::text)
                         INNER JOIN variable_captura D ON (A.datos->'codigo_variable' = D.codigo)
-                        LEFT JOIN indicador_variablecaptura E ON (D.id = E.variablecaptura_id)
-                        LEFT JOIN indicador F ON (E.indicador_id = F.id)
                     WHERE area_costeo = 'calidad'
                         AND A.datos->'anio' = '$anio'
                         $mes_cadena
@@ -567,12 +573,15 @@ class FormularioRepository extends EntityRepository {
             $resp['datos'] =  $em->getConnection()->executeQuery($sql)->fetchAll();
             if ($Frm->getFormaEvaluacion() == 'lista_chequeo' ) { 
                 $resumen = $this->getResumenEvaluacionCriterios($mes);
+                $resumenIndicadores = $em->getRepository("GridFormBundle:Indicador")->getResumenEvaluacionIndicadores($establecimiento, $periodo, $formulario);
                 $resp['resumen_expedientes'] = $resumen['pivote'];
                 $resp['resumen_criterios'] = $resumen['codigo_variable'];
+                $resp['resumen_indicadores'] = $resumenIndicadores;
             }
             else{
                 $resp['resumen_expedientes'] = array();
                 $resp['resumen_criterios'] = array();
+                $resp['resumen_indicadores'] = array();
             }
             
             return $resp;
@@ -617,6 +626,5 @@ class FormularioRepository extends EntityRepository {
         }
         return $resp;
     }
-    
     
 }

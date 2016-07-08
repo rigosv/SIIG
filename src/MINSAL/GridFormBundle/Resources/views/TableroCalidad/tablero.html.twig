@@ -170,7 +170,7 @@
                                     <Th colspan="[[Formulario.resumen_expedientes.length]]" style="text-align: center;">{{'_elementos_evaluados_'|trans}}</Th>
                                     <Th style="text-align: center;" ng-if="Formulario.resumen_criterios.length > 0">{{'_resumen_eval_criterio_'|trans}}</Th>
                                 </tr>
-                                <TR  class="fila_criterios" ng-repeat="criterio in Formulario.criterios | filter : buscar_criterios" >
+                                <TR  class="fila_criterios [[criterio.codigo_indicador | quitarpunto]]" ng-repeat="criterio in Formulario.criterios | filter : buscar_criterios" >
                                     <TD class="separador indentacion_[[criterio.nivel_indentacion]]"
                                         ng-if="criterio.es_separador == 'true'" colspan="20" >
                                         [[criterio.descripcion_variable]]
@@ -258,12 +258,62 @@
         </div>
         <div class="row" ng-if="data_rec.length > 0 " ng-show="criterios.length">
             <div class="col-md-8" style="max-height: 800px">
-                <center><h3>{{'_porc_cumplimiento_criterio_'|trans}}</h3></center>
+                <div class="page-header">
+                    <h1><small>{{'_porc_cumplimiento_criterio_'|trans}}</small></h1>
+                </div>
                 <canvas id="resumen-eval-criterios" class="chart-horizontal-bar"
                   chart-data="data_rec" chart-labels="labels_rec" chart-options="options_rec" 
                   chart-dataset-override="datasetOverride_rec"
                   chart-series="series_rec">
                 </canvas>
+            </div>
+            <div class="col-md-4" >
+                <div class="page-header">
+                    <h1><small>{{'_evaluacion_por_indicador_'|trans}}</small></h1>
+                </div>
+                <div class="panel panel-primary" ng-repeat="indicador in resumenIndicadores">
+                    <div class="panel-heading" ng-click="resaltarCriterios(indicador.codigo)">
+                        <div class="row">                        
+                        <div class="col-md-8" >
+                            <B>Forma evaluación:</B> 
+                            <span ng-if="indicador.forma_evaluacion == 'cumplimiento_porcentaje_aceptacion' ">
+                                {{'_cumplimiento_100%_'|trans}}
+                            </span>
+                            <span ng-if="indicador.forma_evaluacion == 'cumplimiento_criterios' ">
+                                {{'_cumplimiento_criterios_'|trans}}
+                            </span>
+                        </div>
+                        <div class="col-md-4"><B>Código:</B> [[indicador.codigo]]</div>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                      [[indicador.descripcion]]
+                    </div>
+                    <div class="panel-footer" ng-if="indicador.forma_evaluacion == 'cumplimiento_porcentaje_aceptacion' ">
+                        <DIV class="row">
+                            <DIV class="col-md-4">{{'_expedientes_cumplen_100%_'|trans}}</DIV>
+                            <DIV class="col-md-4">{{'_total_expedientes_'|trans}}</DIV>
+                            <DIV class="col-md-4">{{'_calificacion_'|trans}}</DIV>
+                        </DIV>
+                        <DIV class="row fila-eval-indicador">
+                            <DIV class="col-md-4" >[[indicador.expedientes_cumplimiento]]</DIV>
+                            <DIV class="col-md-4">[[indicador.total_expedientes]]</DIV>
+                            <DIV class="col-md-4 calificacion">[[indicador.calificacion]]%</DIV>
+                        </DIV>
+                    </div>
+                    <div class="panel-footer" ng-if="indicador.forma_evaluacion == 'cumplimiento_criterios' ">
+                        <DIV class="row">
+                            <DIV class="col-md-4">{{'_criterios_cumplidos_'|trans}}</DIV>
+                            <DIV class="col-md-4">{{'_criterios_aplicables_'|trans}}</DIV>
+                            <DIV class="col-md-4">{{'_calificacion_'|trans}}</DIV>
+                        </DIV>
+                        <DIV class="row fila-eval-indicador">
+                            <DIV class="col-md-4" >[[indicador.criterios_cumplidos]]</DIV>
+                            <DIV class="col-md-4">[[indicador.criterios_aplicables]]</DIV>
+                            <DIV class="col-md-4 calificacion">[[indicador.calificacion]]%</DIV>
+                        </DIV>
+                    </div>
+                </div>                
             </div>
         </div>
         <!-- Modal Configuración -->

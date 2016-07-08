@@ -515,4 +515,28 @@ class IndicadorRepository extends EntityRepository {
         }
         return trim($campos, ', ');
     }
+    
+    public function getResumenEvaluacionIndicadores($establecimiento, $periodo, $cod_formulario){
+        $em = $this->getEntityManager();
+        list($anio, $mes) = explode('_', $periodo);
+        
+        $sql = "SELECT A.codigo, A.descripcion, B.total_expedientes, B.expedientes_cumplimiento, 
+                        B.criterios_aplicables, B.criterios_cumplidos, B.criterios_no_cumplidos,
+                        A.forma_evaluacion, B.calificacion
+                    FROM indicador A
+                        INNER JOIN (SELECT codigo_indicador, SUM(total_expedientes) AS total_expedientes,
+                            avg(calificacion) AS calificacion, SUM(expedientes_cumplimiento) AS expedientes_cumplimiento,
+                            SUM(criterios_aplicables) AS criterios_aplicables, SUM(criterios_cumplidos) AS criterios_cumplidos,
+                            SUM(criterios_no_cumplidos) AS criterios_no_cumplidos
+                            FROM datos_evaluacion_calidad 
+                            WHERE anio=$anio 
+                                AND mes = '$mes'
+                                AND establecimiento = '$establecimiento'
+                                AND codigo_estandar = '$cod_formulario'
+                            GROUP BY codigo_indicador
+                            ) AS B ON (A.codigo = B.codigo_indicador)
+                    ORDER BY A.codigo
+                     ";
+        return $em->getConnection()->executeQuery($sql)->fetchAll();
+    }
 }

@@ -147,3 +147,16 @@ DIV.row_tablero {
     font-size: 16pt;
     font-weight: bold;
 }
+
+.fila-eval-indicador{
+    text-align: center; 
+    font-size: 14pt; 
+    font-weight: bold;
+}
+.fila-eval-indicador .calificacion{
+    font-size: 16pt;
+}
+
+.seleccionado{
+    background-color: #FCF8E3;
+}

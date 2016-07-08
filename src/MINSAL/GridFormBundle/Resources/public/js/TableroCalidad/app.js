@@ -24,6 +24,11 @@
                 $interpolateProvider.endSymbol(']]');
             }])
         .directive('ifLoading', ifLoading)
+        .filter('quitarpunto',function() {
+            return function (value) {
+                return (!value) ? '' : value.replace(/\./g, '');
+            };
+        })
         .controller('mainCtrl', function AppCtrl ($scope, Periodos, Establecimientos, Evaluaciones, Criterios, HistorialEstablecimiento) {
             $scope.options = {width: 300, height: 250, 'bar': 'aaa'};
             $scope.data = [0];
@@ -175,6 +180,11 @@
                     );                
             };
             
+            $scope.resaltarCriterios =  function(codIndicador){                
+                $(".fila_criterios").removeClass('seleccionado');
+                $("."+codIndicador.replace(/\./g, '')).addClass('seleccionado');
+            }
+            
             $scope.getCriterios = function(evaluacionSel) {
                 $scope.evaluacionSeleccionada = evaluacionSel;
                 Criterios.query(
@@ -185,6 +195,7 @@
                         .$promise.then(
                         function (data) {                            
                             $scope.criterios = data;
+                            $scope.resumenIndicadores = data[0].resumen_indicadores;
                             $scope.labels_rec = [];
                             $scope.data_rec = [];
                             $scope.series_rec = ['Series A'];
