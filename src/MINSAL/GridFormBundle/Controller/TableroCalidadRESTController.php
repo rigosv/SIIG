@@ -127,7 +127,7 @@ class TableroCalidadRESTController extends Controller {
         foreach ($datos as $d) {
             $data[$d['codigo']]['descripcion'] = $d['descripcion'];
             $data[$d['codigo']]['forma_evaluacion'] = $d['forma_evaluacion'];
-            $data[$d['codigo']]['criterios'][] = json_decode('{' . str_replace('=>', ':', $d['datos']) . '}', true);
+            $data[$d['codigo']]['criterios'][] = json_decode('{' . str_replace('=>', ':', $d['datos'].', "codigo_indicador": "'.$d['codigo_indicador'].'"' ) . '}', true);
         }
         $data_ = array();
         foreach ($data as $d) {

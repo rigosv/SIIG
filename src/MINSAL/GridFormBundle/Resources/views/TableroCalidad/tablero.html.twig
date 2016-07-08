@@ -165,14 +165,18 @@
                             </thead>
                             <TBODY>
                                 <TR class="success" >
-                                    <Th style="text-align: center;">Criterios</Th>
-                                    <Th colspan="[[Formulario.resumen_expedientes.length]]" style="text-align: center;">Elementos evaluados</Th>
-                                    <Th style="text-align: center;" ng-if="Formulario.resumen_criterios.length > 0">Resumen evaluación por criterio</Th>
+                                    <Th style="text-align: center;">{{'_indicador_'|trans}}</Th>
+                                    <Th style="text-align: center;">{{'_criterios_'|trans}}</Th>                                    
+                                    <Th colspan="[[Formulario.resumen_expedientes.length]]" style="text-align: center;">{{'_elementos_evaluados_'|trans}}</Th>
+                                    <Th style="text-align: center;" ng-if="Formulario.resumen_criterios.length > 0">{{'_resumen_eval_criterio_'|trans}}</Th>
                                 </tr>
                                 <TR  class="fila_criterios" ng-repeat="criterio in Formulario.criterios | filter : buscar_criterios" >
                                     <TD class="separador indentacion_[[criterio.nivel_indentacion]]"
                                         ng-if="criterio.es_separador == 'true'" colspan="20" >
                                         [[criterio.descripcion_variable]]
+                                    </TD>
+                                    <TD class="indentacion_[[criterio.nivel_indentacion]]" style='width: "10px"' ng-if="criterio.es_separador != 'true'">
+                                        [[criterio.codigo_indicador]]
                                     </TD>
                                     <TD class="indentacion_[[criterio.nivel_indentacion]]" ng-if="criterio.es_separador != 'true'" >
                                         [[criterio.descripcion_variable]]
@@ -205,40 +209,40 @@
                             </tbody>
                             <Tfoot class="resumen" ng-if="Formulario.resumen_expedientes.length > 0">
                                 <TR class="criterios_cumplidos">
-                                    <TD style="text-align: right;">
-                                        Criterios cumplidos
+                                    <TD style="text-align: right;" colspan='2'>
+                                        {{'_criterios_cumplidos_'|trans}}
                                     </TD>
                                     <TD ng-repeat="resumen in Formulario.resumen_expedientes">
                                         [[resumen.cumplimiento]]
                                     </TD>
                                 </TR>
                                 <TR class="criterios_no_cumplidos">
-                                    <TD style="text-align: right;">
-                                        Criterios no  cumplidos
+                                    <TD style="text-align: right;" colspan='2'>
+                                        {{'_criterios_no_cumplidos_'|trans}}
                                     </TD>
                                     <TD ng-repeat="resumen in Formulario.resumen_expedientes">
                                         [[resumen.no_cumplimiento]]
                                     </TD>
                                 </TR>
                                 <TR class="porc_cumplimiento">
-                                    <TD style="text-align: right;">
-                                        Porcentaje de cumplimiento
+                                    <TD style="text-align: right;" colspan='2'>
+                                        {{'_porcentaje_cumplimiento_'|trans}}
                                     </TD>
                                     <TD ng-repeat="resumen in Formulario.resumen_expedientes">
                                         [[resumen.porc_cumplimiento]]%
                                     </TD>
                                 </TR>
                                 <TR class="cumplimiento_100_porc">
-                                    <TD style="text-align: right;">
-                                        Cantidad de expedientes evaluados
+                                    <TD style="text-align: right;" colspan='2'>
+                                        {{'_cant_expedientes_evaluados_'|trans}}
                                     </TD>
                                     <TD colspan="[[Formulario.resumen_expedientes.length]]">
                                         [[Formulario.resumen_expedientes.length]]
                                     </TD>
                                 </TR>
-                                <TR class="cumplimiento_100_porc">
-                                    <TD style="text-align: right;">
-                                       Expedientes que cumplen todos los criterios
+                                <TR class="cumplimiento_100_porc" >
+                                    <TD style="text-align: right;" colspan='2'>
+                                        {{'_expedientes_cumplen_todos_criterios_'|trans}}
                                     </TD>
                                     <TD colspan="[[Formulario.resumen_expedientes.length]]">
                                         [[(Formulario.resumen_expedientes|filter:{porc_cumplimiento:100}).length]] ([[ (((Formulario.resumen_expedientes|filter:{porc_cumplimiento:100}).length ) / Formulario.resumen_expedientes.length * 100 )| number : 1 ]]%)
@@ -254,7 +258,7 @@
         </div>
         <div class="row" ng-if="data_rec.length > 0 " ng-show="criterios.length">
             <div class="col-md-8" style="max-height: 800px">
-                <center><h3>Porcentaje de cumplimiento por criterio</h3></center>
+                <center><h3>{{'_porc_cumplimiento_criterio_'|trans}}</h3></center>
                 <canvas id="resumen-eval-criterios" class="chart-horizontal-bar"
                   chart-data="data_rec" chart-labels="labels_rec" chart-options="options_rec" 
                   chart-dataset-override="datasetOverride_rec"

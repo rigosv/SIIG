@@ -539,11 +539,13 @@ class FormularioRepository extends EntityRepository {
             $this->ActualizarVariables($Frm->getId());
             
             $sql_forms .= "
-                SELECT $datos, B.id, B.codigo, B.descripcion, B.forma_evaluacion
+                SELECT $datos, B.id, B.codigo, B.descripcion, B.forma_evaluacion, F.codigo AS codigo_indicador
                     FROM  almacen_datos.repositorio A
                         INNER JOIN costos.formulario B ON (A.id_formulario = B.id)
                         INNER JOIN ctl_establecimiento_simmow C ON (A.datos->'establecimiento' = C.id::text)
                         INNER JOIN variable_captura D ON (A.datos->'codigo_variable' = D.codigo)
+                        LEFT JOIN indicador_variablecaptura E ON (D.id = E.variablecaptura_id)
+                        LEFT JOIN indicador F ON (E.indicador_id = F.id)
                     WHERE area_costeo = 'calidad'
                         AND A.datos->'anio' = '$anio'
                         $mes_cadena
@@ -555,12 +557,12 @@ class FormularioRepository extends EntityRepository {
         $sql_forms = trim($sql_forms, 'UNION ALL ');        
         
        
-        $sql = "SELECT AA.id, AA.codigo, AA.descripcion, AA.forma_evaluacion , AA.datos
+        $sql = "SELECT AA.id, AA.codigo, AA.descripcion, AA.forma_evaluacion , AA.codigo_indicador, AA.datos
                 FROM (
                     $sql_forms
                 ) AS AA
                 ORDER BY codigo, datos->'es_poblacion' DESC, COALESCE(NULLIF(datos->'posicion', ''), '100000000')::numeric, datos->'descripcion_categoria_variable', datos->'descripcion_variable'
-                ;";
+                ";
         try {
             $resp['datos'] =  $em->getConnection()->executeQuery($sql)->fetchAll();
             if ($Frm->getFormaEvaluacion() == 'lista_chequeo' ) { 
