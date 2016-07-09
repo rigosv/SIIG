@@ -12,12 +12,10 @@
     <script type="text/javascript" src="{{ asset('bundles/gridform/js/d3tip.js') }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/gridform/js/angular-resource.min.js') }}"></script>
 
-    <script type="text/javascript" src="{{ asset('bundles/gridform/js/TableroCalidad/barchart.js') }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/gridform/js/TableroCalidad/radarchart.js') }}"></script>
     
     <script type="text/javascript" src="{{ asset('bundles/gridform/js/TableroCalidad/app.js') }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/gridform/js/TableroCalidad/servicios.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('bundles/gridform/js/TableroCalidad/barchartComponent.js') }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/gridform/js/TableroCalidad/radarchartComponent.js') }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/gridform/js/TableroCalidad/Chart.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/gridform/js/TableroCalidad/angular-chart.min.js') }}"></script>
@@ -61,12 +59,12 @@
                             <thead>
                                 <TR style="text-align: center; font-weight: bold;">
                                     <TD>{{'_establecimiento_'|trans}}</TD>
-                                    <TD>{{'_cumplimiento_'|trans}}</TD>
+                                    <TD>{{'_calificacion_'|trans}}</TD>
                                     <TD align="center">{{'_evaluaciones_complementarias_'|trans}}</TD>
                                 </TR>
                             </thead>
                             <tbody>
-                                <TR  ng-repeat="est in establecimientos | filter : buscar"   >
+                                <TR  ng-repeat="est in establecimientos | filter : buscar"  class='establecimiento [[est.establecimiento]]' >
                                     <TD ng-click="getEvaluaciones(est)">[[est.nombre]]</TD>
                                     <TD ng-click="getEvaluaciones(est)" align="center">[[est.measure]]%</TD>
                                     <TD align="center"><span ng-if="est.evaluaciones_externas.length > 0 " style="cursor: pointer;" class="glyphicon glyphicon-th-list" aria-hidden="true" 
@@ -86,8 +84,14 @@
                     <div class="panel-heading">
                         <strong>[[titulo_grafico1]]</strong>
                     </div>
-                    <div class="panel-body">
-                        <bar-chart height="options.height" data="datosGrafico1" ></bar-chart>
+                    <div class="panel-body" style="height: 90%">
+                        {#<bar-chart height="options.height" data="datosGrafico1" ></bar-chart>#}
+                        <canvas id="grafico1" class="chart chart-bar" 
+                            chart-data="datosGrafico1" chart-labels="etiquetasGrafico1"  ng-if='evaluaciones.length == 0'>
+                        </canvas>
+                        <canvas id="grafico1_2" class="chart chart-line" ng-if='evaluaciones.length > 0' 
+                            chart-data="datosGrafico1" chart-labels="etiquetasGrafico1" >
+                        </canvas>
                     </div>
                 </div>
             </div>

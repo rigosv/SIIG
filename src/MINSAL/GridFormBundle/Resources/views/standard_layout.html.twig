@@ -22,21 +22,25 @@
 {% block body_attributes %}ng-app="tableroCalidadApp" ng-controller="mainCtrl" class="sonata-bc sidebar-collapse"{% endblock %}
 
 {% block sonata_nav %}
-    <nav class="navbar navbar-static-top" role="navigation">
-        <span class="titulo_">[[titulo]]</span>
-        {% block sonata_top_nav_menu %}
-            <div class="navbar-custom-menu">
-                <ul class="nav navbar-nav">
-                    <li class="dropdown user-menu">
-                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                            <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
-                        </a>
-                        <ul class="dropdown-menu dropdown-user">
-                            {% include sonata_admin.adminPool.getTemplate('user_block') %}
-                        </ul>
-                    </li>
-                </ul>
+    <nav class="navbar navbar-static-top" role="navigation" style='text-align: center;'>
+        <div class='row'>
+            <div class="titulo_ col-md-8" style='text-align: center;'>[[titulo]]<BR/>[[subtitulo]]</div>
+            <div class='col-md-2'>
+            {% block sonata_top_nav_menu %}
+                <div class="navbar-custom-menu">
+                    <ul class="nav navbar-nav">
+                        <li class="dropdown user-menu">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                {% include sonata_admin.adminPool.getTemplate('user_block') %}
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            {% endblock %}
             </div>
-        {% endblock %}
+        </DIV>
     </nav>
 {% endblock sonata_nav %}

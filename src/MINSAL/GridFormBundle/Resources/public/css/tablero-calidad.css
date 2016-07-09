@@ -160,3 +160,15 @@ DIV.row_tablero {
 .seleccionado{
     background-color: #FCF8E3;
 }
+
+.establecimientoSeleccionado{
+    background-color: #3090F0;
+}
+
+#grafico1, #grafico1_2{
+    height: 97% !important;
+}
+
+.content-wrapper{
+    margin-top: 15px;
+}

@@ -42,9 +42,10 @@
             $scope.establecimientoSeleccionado = '';
             $scope.evaluacionSeleccionada = '';
             $scope.mes_ = '';
-            $scope.titulo_grafico1 = 'Establecimientos vs porcentaje cumplimiento'
+            $scope.titulo_grafico1 = 'Establecimientos vs calificación(%)'
             
-            $scope.titulo = 'Monitoreo y Evaluación de Calidad';
+            $scope.titulo = 'Monitoreo y Evaluación de la Gestión de la calidad en RIISS';
+            $scope.subtitulo = 'Unidad Nacional Gestión de Calidad de la RIISS - VMSS';
             $scope.establecimientos = [];
             $scope.datosGrafico1 = [];
             $scope.datosGrafico2 =  [];
@@ -119,9 +120,16 @@
                     .$promise.then(
                         function (data) {                            
                             $scope.establecimientos = (data != '') ? data : [];
-                            $scope.datosGrafico1 = $scope.establecimientos;
+                            $scope.datosGrafico1 = [];
+                            $scope.etiquetasGrafico1 = [];
+                            $scope.type = 'Bar';
+                            $scope.establecimientos.forEach(function(nodo, index){
+                                $scope.datosGrafico1.push(nodo.calificacion);
+                                $scope.etiquetasGrafico1.push(nodo.nombre_corto);
+                            });                            
+                            //$scope.datosGrafico1 = $scope.establecimientos;
                             $scope.evaluaciones = [];
-                            $scope.titulo_grafico1 = 'Establecimientos vs porcentaje cumplimiento';
+                            $scope.titulo_grafico1 = 'Establecimientos vs calificación';
                             $scope.criterios = [];                            
                         },
                         function (error) {
@@ -138,6 +146,10 @@
             $scope.getEvaluaciones = function(establecimientoSel) {
                 $scope.establecimientoSeleccionado = establecimientoSel;
                 $scope.mostrarListadoEstablecimientos = false;
+                
+                $(".establecimiento").removeClass('establecimientoSeleccionado');
+                $("."+establecimientoSel.establecimiento).addClass('establecimientoSeleccionado');
+
                 
                 Evaluaciones.query({ establecimiento: establecimientoSel.establecimiento, periodo: $scope.periodoSeleccionado.periodo })
                     .$promise.then(
@@ -166,13 +178,22 @@
                     );
                              
                 //Cambiar el gráfico 1
-                $scope.titulo_grafico1 = 'Cumplimiento por mes';
-                $scope.titulo = 'Evaluación de Calidad :: '+ establecimientoSel.nombre;
+                $scope.titulo_grafico1 = 'Historial de calificaciones';
+                //$scope.titulo = 'Evaluación de Calidad :: '+ establecimientoSel.nombre;
                 HistorialEstablecimiento.query({ establecimiento: establecimientoSel.establecimiento,
                                                 periodo: $scope.periodoSeleccionado.periodo,})
                     .$promise.then(
                         function (data) {                            
-                            $scope.datosGrafico1 = (data != '') ? data : [];
+                            var datos = (data != '') ? data : [];
+                            var aux = [];
+                            $scope.datosGrafico1 = [];
+                            $scope.etiquetasGrafico1 = [];
+                            
+                            datos.forEach(function(nodo, index){
+                                aux.push(nodo.calificacion);
+                                $scope.etiquetasGrafico1.push(nodo.category);
+                            });
+                            $scope.datosGrafico1.push(aux);
                         },
                         function (error) {
                             alert(error);
@@ -183,7 +204,7 @@
             $scope.resaltarCriterios =  function(codIndicador){                
                 $(".fila_criterios").removeClass('seleccionado');
                 $("."+codIndicador.replace(/\./g, '')).addClass('seleccionado');
-            }
+            };
             
             $scope.getCriterios = function(evaluacionSel) {
                 $scope.evaluacionSeleccionada = evaluacionSel;
