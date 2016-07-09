@@ -441,7 +441,7 @@ class IndicadorRepository extends EntityRepository {
         $em = $this->getEntityManager();
         list($anio, $mes) = explode('_', $periodo);
         
-        $sql = "SELECT establecimiento, nombre_corto, nombre_establecimiento, avg(calificacion) AS calificacion 
+        $sql = "SELECT establecimiento, nombre_corto, nombre_establecimiento, ROUND(avg(calificacion)::numeric,2) AS calificacion 
                     FROM datos_evaluacion_calidad 
                     WHERE anio=$anio AND mes = '$mes'
                     GROUP BY establecimiento, nombre_corto, nombre_establecimiento
@@ -454,7 +454,7 @@ class IndicadorRepository extends EntityRepository {
         list($anio, $mes) = explode('_', $periodo);
         
         $sql = "SELECT A.codigo, A.descripcion, A.periodo_lectura_datos, A.meta, 
-                        A.forma_evaluacion, B.calificacion
+                        A.forma_evaluacion, ROUND(B.calificacion::numeric,2) as calificacion
                     FROM costos.formulario A
                         INNER JOIN (SELECT codigo_estandar, avg(calificacion) AS calificacion 
                             FROM datos_evaluacion_calidad 
@@ -473,7 +473,7 @@ class IndicadorRepository extends EntityRepository {
         $em = $this->getEntityManager();
         list($anio, $mes) = explode('_', $periodo);
         
-        $sql = "SELECT anio, mes::integer, avg(calificacion) AS calificacion 
+        $sql = "SELECT anio, mes::integer, ROUND(avg(calificacion)::numeric,2) AS calificacion 
                     FROM datos_evaluacion_calidad 
                     WHERE establecimiento = '$establecimiento'
                        AND (anio < $anio OR (anio = $anio AND mes::integer <= $mes ) )
@@ -522,7 +522,7 @@ class IndicadorRepository extends EntityRepository {
         
         $sql = "SELECT A.codigo, A.descripcion, B.total_expedientes, B.expedientes_cumplimiento, 
                         B.criterios_aplicables, B.criterios_cumplidos, B.criterios_no_cumplidos,
-                        A.forma_evaluacion, B.calificacion
+                        A.forma_evaluacion, ROUND(B.calificacion::numeric,2) AS calificacion
                     FROM indicador A
                         INNER JOIN (SELECT codigo_indicador, SUM(total_expedientes) AS total_expedientes,
                             avg(calificacion) AS calificacion, SUM(expedientes_cumplimiento) AS expedientes_cumplimiento,

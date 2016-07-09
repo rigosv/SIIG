@@ -57,6 +57,12 @@
             $scope.calificaciones = [];
             $scope.metas = [];
             $scope.brechas = [];
+            $scope.options_bar_line = {
+                scales: {                                     
+                    yAxes: [{ ticks: { min: 0, max: 100} }]
+                }
+            };
+            
             
             $scope.periodos = Periodos.query();
             
@@ -122,12 +128,10 @@
                             $scope.establecimientos = (data != '') ? data : [];
                             $scope.datosGrafico1 = [];
                             $scope.etiquetasGrafico1 = [];
-                            $scope.type = 'Bar';
                             $scope.establecimientos.forEach(function(nodo, index){
                                 $scope.datosGrafico1.push(nodo.calificacion);
                                 $scope.etiquetasGrafico1.push(nodo.nombre_corto);
-                            });                            
-                            //$scope.datosGrafico1 = $scope.establecimientos;
+                            });
                             $scope.evaluaciones = [];
                             $scope.titulo_grafico1 = 'Establecimientos vs calificación';
                             $scope.criterios = [];                            
@@ -155,22 +159,27 @@
                     .$promise.then(
                         function (data) {                            
                             $scope.evaluaciones = (data != '') ? data : [];
-                            var aux = [];
-                                     
-                            $scope.calificaciones = data;
-                            var datos = JSON.stringify(data);
-                            
-                            datos = datos.replace(/"value":/g,'"valueant":');
-                            $scope.metas = JSON.parse(datos.replace(/"meta":/g,'"value":'));
-                            angular.forEach($scope.metas, function(value, key) {
-                                    this.categoria = 'Meta';
-                            }, $scope.metas);
-                            
-                            aux.push($scope.calificaciones);
-                            aux.push($scope.metas);
+                            $scope.options_radar =  {
+                                scale: {
+                                    ticks: {
+                                        beginAtZero: true
+                                    }
+                                }
+                            };
 
-                            $scope.datosGrafico2 = aux;
-                            $scope.criterios = [];
+                            var calificaciones = [];
+                            var metas = [];
+                            $scope.etiquetasGrafico2 = [];
+                            $scope.datosGrafico2 = [];
+                            $scope.evaluaciones.forEach(function(nodo, index){
+                                calificaciones.push(nodo.measure);
+                                metas.push(nodo.meta);
+                                $scope.etiquetasGrafico2.push(nodo.codigo);
+                            });
+                    
+                            $scope.datosGrafico2.push(calificaciones);
+                            $scope.datosGrafico2.push(metas);
+                            $scope.colors = ['#45b7cd', '#ff6384'];
                         },
                         function (error) {
                             alert(error);

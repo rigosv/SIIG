@@ -73,8 +73,12 @@ TR{
 DIV.row_tablero {
     height: 350px !important;
 }
-.listado .panel-body{
+.listado .panel-body:not(.panel-body-2_1){
     max-height: 273px !important;
+    overflow-y: auto;
+}
+.panel-body-2_1{
+    max-height: 293px !important;
     overflow-y: auto;
 }
 .separador {
@@ -167,6 +171,10 @@ DIV.row_tablero {
 
 #grafico1, #grafico1_2{
     height: 97% !important;
+}
+#radar{
+    height: 110% !important;
+    width: 110% !important;
 }
 
 .content-wrapper{

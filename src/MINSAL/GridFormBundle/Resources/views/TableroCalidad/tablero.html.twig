@@ -5,18 +5,11 @@
 {% endblock %}
 {% block javascripts %}
     {{parent()}}
-    <script type="text/javascript" src="{{ asset('bundles/indicadores/js/d3.v3.min.js') }}" ></script>
-    <!--<script type="text/javascript" src="{{ asset('bundles/indicadores/js/topojson.v1.min.js') }}" ></script> -->
-
     <script type="text/javascript" src="{{ asset('bundles/gridform/js/angular.min.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('bundles/gridform/js/d3tip.js') }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/gridform/js/angular-resource.min.js') }}"></script>
-
-    <script type="text/javascript" src="{{ asset('bundles/gridform/js/TableroCalidad/radarchart.js') }}"></script>
-    
+   
     <script type="text/javascript" src="{{ asset('bundles/gridform/js/TableroCalidad/app.js') }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/gridform/js/TableroCalidad/servicios.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('bundles/gridform/js/TableroCalidad/radarchartComponent.js') }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/gridform/js/TableroCalidad/Chart.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/gridform/js/TableroCalidad/angular-chart.min.js') }}"></script>
     
@@ -86,10 +79,10 @@
                     </div>
                     <div class="panel-body" style="height: 90%">
                         {#<bar-chart height="options.height" data="datosGrafico1" ></bar-chart>#}
-                        <canvas id="grafico1" class="chart chart-bar" 
+                        <canvas id="grafico1" class="chart chart-bar"  chart-options="options_bar_line"
                             chart-data="datosGrafico1" chart-labels="etiquetasGrafico1"  ng-if='evaluaciones.length == 0'>
                         </canvas>
-                        <canvas id="grafico1_2" class="chart chart-line" ng-if='evaluaciones.length > 0' 
+                        <canvas id="grafico1_2" class="chart chart-line" chart-options="options_bar_line" ng-if='evaluaciones.length > 0' 
                             chart-data="datosGrafico1" chart-labels="etiquetasGrafico1" >
                         </canvas>
                     </div>
@@ -112,7 +105,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="panel-body">
+                    <div class="panel-body panel-body-2_1">
                         <div class="alert alert-warning" role="alert" ng-show="!evaluaciones.length">{{'_no_hay_datos_mostrar_'|trans}}</div>
                         <table class="table table-hover" ng-show="evaluaciones.length">
                             <thead>
@@ -128,7 +121,7 @@
                                     <TD >[[eval.descripcion_estandar]]</TD>
                                     
                                     <TD ng-if="eval.tipo_evaluacion == 'lista_chequeo'">[[eval.measure | number:2]]%</TD>
-                                    <TD ng-if="eval.tipo_evaluacion == 'lista_chequeo'">[[eval.meta * 100 | number:2 ]]%</TD>
+                                    <TD ng-if="eval.tipo_evaluacion == 'lista_chequeo'">[[eval.meta | number:2 ]]%</TD>
                                     <TD ng-if="eval.tipo_evaluacion == 'lista_chequeo'">[[eval.brecha | number:2 ]]%</TD>
                                 </TR>
                             </tbody>
@@ -138,10 +131,18 @@
             </div>
             <div class="col-md-6">
                 <div class="panel panel-info panel_" >
-                    <div class="panel-body">
-                        <div style="font-weight: bold; float:left;  background-color: #02A1B1">{{'_calificacion_'|trans}}</div>
-                        <div style="font-weight: bold; float:left; background-color: #C13D4A">{{'_estandar_'|trans}}</div>
-                        <radar-chart data="datosGrafico2" ></radar-chart>
+                    <div class="panel-body" style="height: 100%">
+                        <DIV class="row" style="height: 100%">
+                            <div class="col-md-2">
+                                <div style="font-weight: bold;  background-color: #45b7cd">{{'_calificacion_'|trans}}</div>
+                                <div style="font-weight: bold; background-color: #ff6384">{{'_estandar_'|trans}}</div>
+                            </div>
+                            <div class="col-md-10">
+                                <canvas id="radar" class="chart chart-radar" chart-colors="colors" chart-options="options_radar"
+                                    chart-data="datosGrafico2" chart-labels="etiquetasGrafico2">
+                                </canvas> 
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
