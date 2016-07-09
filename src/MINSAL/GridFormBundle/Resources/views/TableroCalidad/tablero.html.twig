@@ -66,7 +66,7 @@
                             <tbody>
                                 <TR  ng-repeat="est in establecimientos | filter : buscar"  class='establecimiento [[est.establecimiento]]' >
                                     <TD ng-click="getEvaluaciones(est)">[[est.nombre]]</TD>
-                                    <TD ng-click="getEvaluaciones(est)" align="center">[[est.measure]]%</TD>
+                                    <TD ng-click="getEvaluaciones(est)" align="center">[[est.measure|number :2]]%</TD>
                                     <TD align="center"><span ng-if="est.evaluaciones_externas.length > 0 " style="cursor: pointer;" class="glyphicon glyphicon-th-list" aria-hidden="true" 
                                             ng-click="mostrarEvaluacionesComplementarias(est)">
                                         </span>
