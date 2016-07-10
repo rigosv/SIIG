@@ -1,14 +1,10 @@
 $(document).ready(function() {
     //Variables de configuración de datables
     sSwfPath = $('#directorio').val() + "/bundles/indicadores/js/DataTables/media/swf/copy_csv_xls_pdf.swf";
-$.fn.modal.Constructor.prototype.enforceFocus = function() {};
 
     $('body').on('show.bs.modal', function () {
-        $.fn.modal.Constructor.prototype.enforceFocus = function () {};
-
-        $('select', this).select2();
-        //$('.selectpicker').selectpicker('refresh');
-});
+        $('select', this).chosen({width: "100%"});
+    });
     // *****************
     //Con esto se verifica el comportamiento del area de gráfico
     //Si se despliega algún menú dentro del gráfico se modifica un atributo
