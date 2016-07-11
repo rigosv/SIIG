@@ -390,3 +390,5 @@ _no_sala_seleccionada_: First choose a room
 _ayuda_listado_salas_: The rooms that you have created will be displayed or that another user has shared with you
 _buscar_: Search
 _accesos_: Access
+_guardar_estado_: Save state
+_cargar_estado_: Load state

@@ -470,5 +470,56 @@ class FichaTecnicaRepository extends EntityRepository {
         $fichaTecnica->setCamposIndicador($campos_comunes);
         $em->flush();
     }
+    
+    public function setConfPivoTable($tipoElemento, $idElemento, $idUsuario, $configuracion) {
+        $em = $this->getEntityManager();
+        
+        //Verificar si existe la tabla, sino crearla
+        $sql = "CREATE TABLE IF NOT EXISTS configuracion_pivot_table(
+                    tipo_elemento     varchar(40),
+                    identificador_elemento    varchar(30),
+                    configuracion                text,
+                    id_usuario               integer
+                 )";
+        
+        $em->getConnection()->executeQuery($sql);
+        
+        //verificar si existe la configuración
+        $sql = "SELECT configuracion 
+                    FROM configuracion_pivot_table 
+                    WHERE tipo_elemento = '$tipoElemento' 
+                        AND identificador_elemento = '$idElemento'
+                        AND id_usuario = $idUsuario ";
+        $cons = $em->getConnection()->executeQuery($sql);
+        
+        if ($cons->rowCount() > 0){
+            //Actualizar la configuración
+            $sql = "UPDATE configuracion_pivot_table SET configuracion = '$configuracion'
+                        WHERE tipo_elemento = '$tipoElemento' 
+                        AND identificador_elemento = '$idElemento'
+                        AND id_usuario = $idUsuario ";
+            $em->getConnection()->executeQuery($sql);
+        } else {
+            //Guardar la configuración
+            $sql = "INSERT INTO configuracion_pivot_table(tipo_elemento, identificador_elemento, configuracion, id_usuario)
+                        VALUES ('$tipoElemento', '$idElemento', '$configuracion', $idUsuario) ";
+            $em->getConnection()->executeQuery($sql);
+        }
+        //echo $sql;
+        
+    }
+    
+    public function getConfPivoTable($tipoElemento, $idElemento, $idUsuario) {
+        $em = $this->getEntityManager();
+        
+        //Recuperar la configuración
+        $sql = "SELECT configuracion 
+                    FROM Configuracion_pivot_table 
+                    WHERE tipo_elemento = '$tipoElemento' 
+                        AND identificador_elemento = '$idElemento'
+                        AND id_usuario = $idUsuario ";
+
+        return $em->getConnection()->executeQuery($sql)->fetch();
+    }
 
 }
