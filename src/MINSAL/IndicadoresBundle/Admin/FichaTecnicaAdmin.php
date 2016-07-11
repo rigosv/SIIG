@@ -171,7 +171,7 @@ class FichaTecnicaAdmin extends Admin
         //Verificar que el usuario tiene una agencia asignada
         $usuario = $this->getConfigurationPool()
                 ->getContainer()
-                ->get('security.context')
+                ->get('security.token_storage')
                 ->getToken()
                 ->getUser();
         if ($usuario->getAgencia() == null){
@@ -288,7 +288,7 @@ class FichaTecnicaAdmin extends Admin
          */
         $usuario = $this->getConfigurationPool()
                 ->getContainer()
-                ->get('security.context')
+                ->get('security.token_storage')
                 ->getToken()
                 ->getUser();
         $fichaTecnica->setAgencia($usuario->getAgencia());
@@ -356,7 +356,7 @@ class FichaTecnicaAdmin extends Admin
 
         $usuario = $this->getConfigurationPool()
                 ->getContainer()
-                ->get('security.context')
+                ->get('security.token_storage')
                 ->getToken()
                 ->getUser();
         if ($usuario->hasRole('ROLE_SUPER_ADMIN')) {

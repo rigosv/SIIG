@@ -29,7 +29,7 @@ class FormatoVitacora
      */
     public function __invoke(array $record)
     {
-        $token = $this->container->get('security.context')->getToken();
+        $token = $this->container->get('security.token_storage')->getToken();
 
         $user_arr = null;
         if (is_object($token) && is_object($token->getUser())) {

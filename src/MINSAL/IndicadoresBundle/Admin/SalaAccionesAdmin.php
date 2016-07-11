@@ -51,7 +51,7 @@ class SalaAccionesAdmin extends Admin
     public function prePersist($salaAcciones){        
         $usuario = $this->getConfigurationPool()
                 ->getContainer()
-                ->get('security.context')
+                ->get('security.token_storage')
                 ->getToken()
                 ->getUser();
         
@@ -69,7 +69,7 @@ class SalaAccionesAdmin extends Admin
         $query = parent::createQuery($context);
         $usuario = $this->getConfigurationPool()
                 ->getContainer()
-                ->get('security.context')
+                ->get('security.token_storage')
                 ->getToken()
                 ->getUser();
         if ($usuario->hasRole('ROLE_SUPER_ADMIN')) {
