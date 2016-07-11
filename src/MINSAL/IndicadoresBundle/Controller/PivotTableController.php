@@ -46,5 +46,18 @@ class PivotTableController extends Controller {
         $response->setContent($conf['configuracion']);
         return $response;
     }
+    
+    /**
+     * @Route("/pivotable/datos/", name="get_datos_evaluacion_calidad", options={"expose"=true})
+     */
+    public function getDatosEvaluacionCalidadAction(Request $request) {
+        $em = $this->getDoctrine()->getManager();
+        $response = new Response();
+        
+        $datos = $em->getRepository("GridFormBundle:Indicador")->getDatosCalidad();
+        
+        $response->setContent(json_encode($datos));
+        return $response;
+    }
 
 }

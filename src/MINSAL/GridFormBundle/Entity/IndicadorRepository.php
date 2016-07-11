@@ -485,6 +485,16 @@ class IndicadorRepository extends EntityRepository {
           
     }
     
+    public function getDatosCalidad() {
+        $em = $this->getEntityManager();
+        
+        $sql = "SELECT * 
+                    FROM datos_evaluacion_calidad                     
+                     ";
+        return $em->getConnection()->executeQuery($sql)->fetchAll();
+          
+    }
+    
     public function getListaCampos(Formulario $Frm, $array = true) {
         $campos = '';
         foreach ($Frm->getCampos() as $c){

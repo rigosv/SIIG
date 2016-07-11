@@ -126,6 +126,21 @@ $(document).ready(function() {
             $('#myTab a:first').tab('show');
         });
     });
+    
+    $('A.calidad_datos_item').click(function() {        
+        var nombre_elemento = $(this).html();
+        
+        $.getJSON(Routing.generate('get_datos_evaluacion_calidad'), function(mps) {
+                datos_ = mps;
+                tipoElemento = 'calidad';
+                identificadorElemento = 'calidad';
+                cargarTablaDinamica(mps);
+            
+            $('#marco-sala').attr('data-content', nombre_elemento);   
+            $('#myTab a:first').tab('show');
+        });
+    });
+    
     function cargarTablaDinamica(datos){
         var renderers = $.extend($.pivotUtilities.renderers,
             $.pivotUtilities.gchart_renderers);
