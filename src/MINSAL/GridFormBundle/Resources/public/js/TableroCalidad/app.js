@@ -172,9 +172,11 @@
                             $scope.etiquetasGrafico2 = [];
                             $scope.datosGrafico2 = [];
                             $scope.evaluaciones.forEach(function(nodo, index){
-                                calificaciones.push(nodo.measure);
-                                metas.push(nodo.meta);
-                                $scope.etiquetasGrafico2.push(nodo.codigo);
+                                if (nodo.forma_evaluacion == 'lista_chequeo'){
+                                    calificaciones.push(nodo.measure);
+                                    metas.push(nodo.meta);
+                                    $scope.etiquetasGrafico2.push(nodo.codigo);
+                                }
                             });
                     
                             $scope.datosGrafico2.push(calificaciones);
@@ -185,7 +187,7 @@
                             alert(error);
                         }
                     );
-                             
+                $scope.criterios = [];         
                 //Cambiar el gráfico 1
                 $scope.titulo_grafico1 = 'Historial de calificaciones';
                 //$scope.titulo = 'Evaluación de Calidad :: '+ establecimientoSel.nombre;

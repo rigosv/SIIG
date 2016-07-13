@@ -495,18 +495,24 @@ class IndicadorRepository extends EntityRepository {
           
     }
     
-    public function getListaCampos(Formulario $Frm, $array = true) {
+    public function getListaCampos(Formulario $Frm, $array = true, $mes = null) {
         $campos = '';
+        $soloMes = ($Frm->getPeriodoLecturaDatos() == 'anual' and $mes!=null and $mes!='') ? true : false;
         foreach ($Frm->getCampos() as $c){
             $piv = $c->getOrigenPivote();
             $codigoCampo = $c->getSignificadoCampo()->getCodigo();
             if ($piv != ''){
                 $piv_ = json_decode($piv);
                 //La parte de datos
-                $campos .= ($array) ? "unnest(array[" : '';                
+                $campos .= ($array) ? "unnest(array[" : '';
                 foreach($piv_ as $p){
                     $alias = ($array) ? '' : ' AS "'.$p->descripcion.'" ';
-                    $campos .= " datos->'".$codigoCampo."_".$p->id."'". $alias.", ";
+                    if ($soloMes){
+                        if ($p->id == $mes)
+                            $campos .= " datos->'".$codigoCampo."_".$p->id."'". $alias.", ";
+                    } else {
+                        $campos .= " datos->'".$codigoCampo."_".$p->id."'". $alias.", ";
+                    }
                 }
                 $campos = ($array) ? trim($campos, ', ') : $campos;
                 $campos .= ($array) ? "]) AS dato, " : '';
@@ -514,8 +520,12 @@ class IndicadorRepository extends EntityRepository {
                 //La parte del nombre del campo
                 $campos .= ($array) ? "unnest(array[" : '';                
                 foreach($piv_ as $p){
-                    //$alias = ($array) ? '' : ' AS "'.$p->descripcion.'" ';
-                    $campos .= "'$codigoCampo"."_".$p->id."', ";
+                    if ($soloMes){
+                        if ($p->id == $mes)
+                            $campos .= "'$codigoCampo"."_".$p->id."', ";
+                    } else {
+                        $campos .= "'$codigoCampo"."_".$p->id."', ";
+                    }                    
                 }
                 $campos = ($array) ? trim($campos, ', ') : $campos;
                 $campos .= ($array) ? "]) AS nombre_pivote, " : '';
@@ -547,6 +557,32 @@ class IndicadorRepository extends EntityRepository {
                             ) AS B ON (A.codigo = B.codigo_indicador)
                     ORDER BY A.codigo
                      ";
+        return $em->getConnection()->executeQuery($sql)->fetchAll();
+    }
+    
+    public function getEvaluacionesNOListaChequeo($establecimiento, $periodo){
+        $em = $this->getEntityManager();
+        list($anio, $mes) = explode('_', $periodo);
+        
+        $sql = "SELECT descripcion AS descripcion_estandar, periodo_lectura_datos, 
+                    id as estandar_id, codigo,
+                    forma_evaluacion AS tipo_evaluacion, nombre AS nombre_evaluacion, 
+                    meta, periodo_lectura_datos, posicion
+                    FROM costos.formulario
+                    WHERE id 
+                        IN 
+                        (SELECT COALESCE(B.id_formulario_sup, B.id)                   
+                            FROM almacen_datos.repositorio A
+                                INNER JOIN costos.formulario B ON (A.id_formulario = B.id)
+                            WHERE area_costeo = 'calidad'
+                                AND A.datos->'establecimiento' = '$establecimiento'
+                                AND A.datos->'anio' = '$anio'
+                                AND A.datos->'es_separador' != 'true'
+                                AND B.forma_evaluacion != 'lista_chequeo'
+                        )
+                ORDER BY posicion    
+                ";
+
         return $em->getConnection()->executeQuery($sql)->fetchAll();
     }
 }

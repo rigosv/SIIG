@@ -90,8 +90,12 @@ class TableroCalidadRESTController extends Controller {
         $response = new Response();
         $em = $this->getDoctrine()->getManager();
 
+        // Evaluaciones por lista de chequeo
         $data = $em->getRepository('GridFormBundle:Indicador')->getEvaluaciones($establecimiento, $periodo);
-        //$resp = (count($data) == 0) ? array() : $data;
+        
+        //Obtener las otras evaluaciones que no son lista de chequeo
+        $data2 = $em->getRepository('GridFormBundle:Indicador')->getEvaluacionesNOListaChequeo($establecimiento, $periodo);
+        
         $resp = array();        
         foreach ($data as $f){            
             $f['descripcion_estandar'] = $f['descripcion'];
@@ -104,6 +108,11 @@ class TableroCalidadRESTController extends Controller {
             $f['category'] = $f['codigo'];
             $resp[] = $f;
         }
+        
+        foreach($data2 as $f){            
+            $resp[] = $f;
+        }
+        
         $response->setContent(json_encode($resp));
 
         return $response;

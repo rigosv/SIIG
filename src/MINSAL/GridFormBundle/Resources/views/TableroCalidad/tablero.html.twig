@@ -166,11 +166,11 @@
                         <div class="alert alert-warning" role="alert" ng-show="!criterios.length">{{'_no_hay_datos_mostrar_'|trans}}</div>
                         <TABLE CLASS="table table-hover" ng-repeat='Formulario in criterios'>
                             <THEAD ng-if="criterios.length > 1">
-                                <tr class="encabezado_tabla"><td>[[Formulario.descripcion]]</TD></tr>
+                                <tr class="encabezado_tabla"><td colspan="20">[[Formulario.descripcion]]</TD></tr>
                             </thead>
                             <TBODY>
                                 <TR class="success" >
-                                    <Th style="text-align: center;">{{'_indicador_'|trans}}</Th>
+                                    <Th style="text-align: center;" ng-if="Formulario.forma_evaluacion == 'lista_chequeo'">{{'_indicador_'|trans}}</Th>
                                     <Th style="text-align: center;">{{'_criterios_'|trans}}</Th>                                    
                                     <Th colspan="[[Formulario.resumen_expedientes.length]]" style="text-align: center;">{{'_elementos_evaluados_'|trans}}</Th>
                                     <Th style="text-align: center;" ng-if="Formulario.resumen_criterios.length > 0">{{'_resumen_eval_criterio_'|trans}}</Th>
@@ -180,7 +180,8 @@
                                         ng-if="criterio.es_separador == 'true'" colspan="20" >
                                         [[criterio.descripcion_variable]]
                                     </TD>
-                                    <TD class="indentacion_[[criterio.nivel_indentacion]]" style='width: "10px"' ng-if="criterio.es_separador != 'true'">
+                                    <TD class="indentacion_[[criterio.nivel_indentacion]]" style='width: "10px"' 
+                                        ng-if="criterio.es_separador != 'true' && Formulario.forma_evaluacion == 'lista_chequeo'">
                                         [[criterio.codigo_indicador]]
                                     </TD>
                                     <TD class="indentacion_[[criterio.nivel_indentacion]]" ng-if="criterio.es_separador != 'true'" >

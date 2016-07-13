@@ -399,7 +399,6 @@ class FormularioRepository extends EntityRepository {
                 SELECT A.datos->'anio' AS anio, A.datos->'mes' AS mes
                 FROM  almacen_datos.repositorio A
                     INNER JOIN costos.formulario B ON (A.id_formulario = B.id)
-                    INNER JOIN ctl_establecimiento_simmow C ON (A.datos->'establecimiento' = C.id::text)
                 WHERE B.area_costeo = 'calidad'
                     AND B.periodo_lectura_datos = 'mensual'
                     AND A.datos->'anio' != ''
@@ -421,7 +420,6 @@ class FormularioRepository extends EntityRepository {
                                 ) AS dato
                             FROM  almacen_datos.repositorio A
                                 INNER JOIN costos.formulario B ON (A.id_formulario = B.id)
-                                INNER JOIN ctl_establecimiento_simmow C ON (A.datos->'establecimiento' = C.id::text)
                             WHERE B.area_costeo = 'calidad'
                                 AND B.periodo_lectura_datos = 'anual'
                                 AND A.datos->'anio' != ''
@@ -448,7 +446,7 @@ class FormularioRepository extends EntityRepository {
             $periodo_lectura = " AND (A.datos->'mes')::integer = '$mes' ";
             $mes_ = " '$mes' AS mes, ";
         }
-        $campos = $em->getRepository('GridFormBundle:Indicador')->getListaCampos($Frm, $arreglo);
+        $campos = $em->getRepository('GridFormBundle:Indicador')->getListaCampos($Frm, $arreglo, $mes);
         
         $sql = "DROP TABLE IF EXISTS datos_tmp";
         $em->getConnection()->executeQuery($sql);
@@ -458,8 +456,8 @@ class FormularioRepository extends EntityRepository {
         $sql = "
                 SELECT $campos, $anio AS anio, $mes_ '$establecimiento' as establecimiento, 
                     A.datos->'es_poblacion' AS es_poblacion, A.datos->'codigo_tipo_control' AS tipo_control, 
-                    A.datos->'es_separador' AS es_separador, A.datos->'posicion' AS posicion
-                 INTO TEMP datos_tmp 
+                    A.datos->'es_separador' AS es_separador, A.datos->'posicion' AS posicion, id_formulario
+                 INTO datos_tmp 
                  FROM almacen_datos.repositorio A
                  WHERE id_formulario = '$idFrm'
                     AND A.datos->'establecimiento' = '$establecimiento'
@@ -505,7 +503,7 @@ class FormularioRepository extends EntityRepository {
         list($anio, $mes) = explode('_', $periodo);
         
         
-        $Frm = $em->getRepository('GridFormBundle:Formulario')->findOneByCodigo($formulario); 
+        $Frm = $em->getRepository('GridFormBundle:Formulario')->findOneByCodigo($formulario);
         
         
         $grupos = $Frm->getGrupoFormularios();
@@ -516,7 +514,8 @@ class FormularioRepository extends EntityRepository {
             $datos = 'datos';
             $periodo_mensual = $ff->getPeriodoLecturaDatos() == 'mensual';
             $this->getDatosEvaluacion($ff, $establecimiento, $anio, $mes, true, true, true, false);
-
+            //$campos = $em->getRepository('GridFormBundle:Indicador')->getListaCampos($ff, false, $mes);
+            //echo $campos; exit;
             //Verificar si tiene la variable de poblacion para obtener solo las columnas válidas        
             $sql = "SELECT codigo_variable FROM datos_tmp WHERE es_poblacion = 'true'";
             $cons = $em->getConnection()->executeQuery($sql);        
@@ -562,8 +561,17 @@ class FormularioRepository extends EntityRepository {
         }
         $sql_forms = trim($sql_forms, 'UNION ALL ');        
         
-       
-        $sql = "SELECT AA.id, AA.codigo, AA.descripcion, AA.forma_evaluacion , AA.codigo_indicador, AA.datos
+        $mes_borrar = array('cant_mensual_01', 'cant_mensual_02', 'cant_mensual_03', 'cant_mensual_04', 'cant_mensual_05', 'cant_mensual_06',
+                           'cant_mensual_07', 'cant_mensual_08', 'cant_mensual_09', 'cant_mensual_10', 'cant_mensual_11', 'cant_mensual_12', 
+                            'mes_check_01', 'mes_check_02', 'mes_check_03', 'mes_check_04', 'mes_check_05', 'mes_check_06',
+                           'mes_check_07', 'mes_check_08', 'mes_check_09', 'mes_check_10', 'mes_check_11', 'mes_check_12');
+        if (($key = array_search('cant_mensual_'.str_pad($mes, 2, "0", STR_PAD_LEFT), $mes_borrar)) !== false) {
+            unset($mes_borrar[$key]);
+        }
+        
+        $pivotes_borrar = "'".implode("','", $mes_borrar)."'";
+        
+        $sql = "SELECT AA.id, AA.codigo, AA.descripcion, AA.forma_evaluacion , AA.codigo_indicador, delete(AA.datos, ARRAY[$pivotes_borrar]) AS datos
                 FROM (
                     $sql_forms
                 ) AS AA
