@@ -74,26 +74,27 @@ div.na{
     width: 90% !important;
 }
 .jqx-checkbox-check-checked {
-    background: transparent url("/bundles/gridform/images/check_black.png") no-repeat scroll center center !important;
-    background-color: greenyellow !important;
-    background-size: 20px 20px;
+    background: transparent url("/bundles/gridform/images/check_si.png") no-repeat scroll center left;
+    background-color: #08C65B !important;
+    background-size: 60px 25px;
 }
 .jqx-checkbox-check-indeterminate{
-    background: transparent url("/bundles/gridform/images/check_indeterminate_black.png") no-repeat scroll center center;
-    background-color: #E0E9F5 !important;
-    background-size: 20px 20px;
+    background: transparent url("/bundles/gridform/images/check_na.png") no-repeat scroll center center;
+    background-color: #F7B138 !important;
+    background-size: 60px 25px;
 }
 .jqx-checkbox-default {
-    background-color: #F99090 !important;
-    background-size: 20px 20px;    
+    background: transparent url("/bundles/gridform/images/check_no.png") no-repeat scroll center right;
+    background-color: #FF5656 !important;
+    background-size: 60px 25px;    
 }
 .jqx-checkbox-default > div, .jqx-checkbox-default > div > span {
-    width: 20px !important;
-    height: 20px !important;
+    width: 55px !important;
+    height: 23px !important;
 }
 .jqx-checkbox{
-    width: 20px !important;
-    height: 20px !important;
+    width: 55px !important;
+    height: 23px !important;
 }
 .fila_separador .jqx-grid-cell{
     font-weight: bold !important;

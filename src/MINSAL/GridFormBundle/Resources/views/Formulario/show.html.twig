@@ -337,7 +337,7 @@
                                             if (tipo_control == 'checkbox' || tipo_control == 'checkbox_3_states'){                                                
                                                 var element_aux = $('<div></div>')                                                
                                                 if (tipo_control == 'checkbox_3_states'){
-                                                    var element = $('<div tabIndex=0 style="position: absolute; top: 50%; left: 50%; margin-top: -10px; margin-left: -10px;"></div>');
+                                                    var element = $('<div tabIndex=0 ></div>');
                                                     editor.append(element);
                                                     element.jqxCheckBox({hasThreeStates: true, animationShowDelay: 0, animationHideDelay: 0});
                                                 }
