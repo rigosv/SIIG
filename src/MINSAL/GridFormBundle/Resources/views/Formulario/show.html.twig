@@ -387,11 +387,11 @@
                                                 if (tipo_control == 'checkbox_3_states'){
                                                     if (cellValue != undefined){
                                                         if (cellValue.toString() == "true")
-                                                            checkBoxHTMLElement.jqxCheckBox({checked: true});
-                                                        else if (cellValue.toString() == "false")
-                                                            checkBoxHTMLElement.jqxCheckBox({checked: false});
-                                                        else
                                                             checkBoxHTMLElement.jqxCheckBox('indeterminate');
+                                                        else if (cellValue.toString() == "false")
+                                                            checkBoxHTMLElement.jqxCheckBox({checked: true});
+                                                        else
+                                                            checkBoxHTMLElement.jqxCheckBox({checked: false});
                                                     } else{
                                                         checkBoxHTMLElement.jqxCheckBox('indeterminate');
                                                     }
