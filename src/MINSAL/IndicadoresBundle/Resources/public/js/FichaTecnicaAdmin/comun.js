@@ -169,6 +169,8 @@ function descenderNivelDimension(zona, category) {
 
     //Borrar la opcion del control de dimensiones
     $dimension.remove();
+    //Actualizar el control para que ya no muestre el elemento eliminado
+    $('#' + zona + ' .dimensiones option:first-child').trigger("chosen:updated");
 
     $('#' + zona + ' .filtros_dimensiones A').click(function() {
         ascenderNivelDimension(zona, $(this).attr('data'));
