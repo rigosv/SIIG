@@ -205,12 +205,17 @@ class GridController extends Controller
         } else{
             $periodoEstructura = $em->getRepository("GridFormBundle:PeriodoIngresoDatosFormulario")->find($periodo_ingreso);
         }
+        if ($tipo_periodo == 'pg'){            
+            $unidad = $this->getUser()->getEstablecimientoPrincipal()->getCodigo();
+        } else {                
+            $unidad = $periodoEstructura->getUnidad()->getCodigo();
+        }
         
         $datos_frm = array();
         parse_str($request->get('datos_frm'), $datos_frm);
         unset($datos_frm['fechaEvaluacion']);
 
-        $em->getRepository("GridFormBundle:Formulario")->guardarEncabezado($periodoEstructura, $datos_frm);
+        $em->getRepository("GridFormBundle:Formulario")->guardarEncabezado($periodoEstructura, $unidad, $datos_frm);
                 
         return $response;
         

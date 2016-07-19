@@ -48,8 +48,8 @@ CREATE TABLE IF NOT EXISTS almacen_datos.repositorio(
 
 CREATE TABLE IF NOT EXISTS almacen_datos.encabezado_frm(
     id_formulario integer,
+    codigo_establecimiento varchar(10),
     mes varchar(5),
     anio integer,
-    datos hstore,
-    ultima_lectura timestamp
+    datos hstore
 );

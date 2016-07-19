@@ -635,7 +635,7 @@ class FormularioRepository extends EntityRepository {
         return $resp;
     }
     
-    public function guardarEncabezado($periodoIngresoFrm, $datos_frm) {
+    public function guardarEncabezado($periodoIngresoFrm, $unidad, $datos_frm) {
         $em = $this->getEntityManager();
         
         $frmId = $periodoIngresoFrm->getFormulario()->getId();
@@ -645,6 +645,7 @@ class FormularioRepository extends EntityRepository {
         //Verificar si existe
         $sql = "SELECT datos FROM almacen_datos.encabezado_frm 
                     WHERE id_formulario = $frmId
+                        AND codigo_establecimiento = '$unidad'
                         AND mes = '$mes'
                         AND anio = $anio ";
         $cons =  $em->getConnection()->executeQuery($sql);
@@ -661,18 +662,19 @@ class FormularioRepository extends EntityRepository {
             $sql = "UPDATE almacen_datos.encabezado_frm 
                         SET datos = datos || '" . $datos_e . "'::hstore
                     WHERE id_formulario = $frmId
+                        AND codigo_establecimiento = '$unidad'
                         AND mes = '$mes'
                         AND anio = $anio
                         ";
         } else {
-            $sql = "INSERT INTO almacen_datos.encabezado_frm (id_formulario, mes, anio,  datos)
-                        VALUES ($frmId, '$mes', $anio, '{$datos_e}'::hstore)
+            $sql = "INSERT INTO almacen_datos.encabezado_frm (id_formulario, codigo_establecimiento, mes, anio,  datos)
+                        VALUES ($frmId, '$unidad', '$mes', $anio, '{$datos_e}'::hstore)
                         ";
         }
         $em->getConnection()->executeQuery($sql);
     }
     
-    public function obtenerEncabezado($periodoIngresoFrm) {
+    public function obtenerEncabezado($periodoIngresoFrm, $unidad) {
         $em = $this->getEntityManager();
         
         $frmId = $periodoIngresoFrm->getFormulario()->getId();
@@ -682,9 +684,29 @@ class FormularioRepository extends EntityRepository {
         //Verificar si existe
         $sql = "SELECT datos FROM almacen_datos.encabezado_frm 
                     WHERE id_formulario = $frmId
+                        AND codigo_establecimiento = '$unidad'
                         AND mes = '$mes'
                         AND anio = $anio ";
         
+        $datos_ =  $em->getConnection()->executeQuery($sql)->fetch();
+        $datos = json_decode('{'.str_replace(array('=>'), array( ':'), $datos_['datos']).'}', true);
+        
+        return $datos;
+    }
+    
+    public function getEncabezado($unidad, $periodo, $frmCodigo){
+        $em = $this->getEntityManager();
+        
+        list($anio, $mes) = explode('_', $periodo);
+        
+        //Verificar si existe
+        $sql = "SELECT A.datos 
+                    FROM almacen_datos.encabezado_frm A
+                    INNER JOIN costos.formulario B ON (A.id_formulario = B.id)
+                    WHERE B.codigo = '$frmCodigo'
+                        AND codigo_establecimiento = '$unidad'
+                        AND mes::integer = '$mes'
+                        AND anio = $anio ";
         $datos_ =  $em->getConnection()->executeQuery($sql)->fetch();
         $datos = json_decode('{'.str_replace(array('=>'), array( ':'), $datos_['datos']).'}', true);
         

@@ -874,19 +874,20 @@
                         <div class="form-group">
                           <label for="fechaEvaluacion">{{'_fecha_evaluacion_'|trans}}</label>
                           <input name="fechaEvaluacion" type="date" class="form-control" id="fechaEvaluacion" 
-                                 {% if encabezado.fecha_evaluacion != '' %} 
+                                 {% if encabezado.fecha_evaluacion is defined and encabezado.fecha_evaluacion != '' %} 
                                      value="{{encabezado.fecha_evaluacion}}"
                                 {% endif %}
                             />
                         </div>
                         <div class="form-group">
                           <label for="nombreResponsable">{{'_nombre_responsable_evaluacion_'|trans}}</label>
-                          <input name='responsable' type="text" class="form-control" id="nombreResponsable" value="{{encabezado.responsable}}" />
+                          <input name='responsable' type="text" class="form-control" id="nombreResponsable" 
+                                 value="{% if encabezado.responsable is defined %} {{encabezado.responsable}}{% endif %}" />
                         </div>
                     {% endif %}
                     <div class="form-group">
                         <label for="observaciones">{{'_observaciones_'|trans}}</label>
-                        <textarea name="observaciones" class="form-control" id="observaciones">{{encabezado.observaciones}}</textarea>
+                        <textarea name="observaciones" class="form-control" id="observaciones">{% if encabezado.observaciones is defined %}{{encabezado.observaciones}}{% endif %}</textarea>
                     </div>
                 </form>
             </div>

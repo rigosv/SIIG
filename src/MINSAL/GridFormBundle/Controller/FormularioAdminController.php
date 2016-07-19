@@ -115,6 +115,7 @@ class FormularioAdminController extends Controller
             'titulo' => $titulo,
             'numero_carga' => $numero_carga,
             'editable' => $editable,
+            'encabezado' => array(),
             'mostrar_resumen' => $mostrar_resumen,
             'cantidad_formularios' => 0,
             'pk' => $pk);
@@ -130,7 +131,12 @@ class FormularioAdminController extends Controller
             $parametrosPlantilla['Formularios'] = $this->ajustarFormulas($formularios);
             $parametrosPlantilla['meses_activos'] = $meses[$periodoSeleccionado->getPeriodo()->getAnio()];
             //Recuperar los datos de encabezado, si los tiene
-            $parametrosPlantilla['encabezado'] = $em->getRepository("GridFormBundle:Formulario")->obtenerEncabezado($periodoSeleccionado);
+            if ($tipo_periodo == 'pg'){            
+                $unidad = $this->getUser()->getEstablecimientoPrincipal()->getCodigo();
+            } else {                
+                $unidad = $periodoSeleccionado->getUnidad()->getCodigo();
+            }
+            $parametrosPlantilla['encabezado'] = $em->getRepository("GridFormBundle:Formulario")->obtenerEncabezado($periodoSeleccionado, $unidad);
             
             foreach ($formularios as $frm){
                 $parametrosPlantilla['origenes'][$frm->getId()] = $this->getOrigenes($frm, $parametros);
