@@ -29,7 +29,7 @@
                 return (!value) ? '' : value.replace(/\./g, '');
             };
         })
-        .controller('mainCtrl', function AppCtrl ($scope, Periodos, Establecimientos, Evaluaciones, Criterios, HistorialEstablecimiento) {
+        .controller('mainCtrl', function AppCtrl ($scope, Periodos, Establecimientos, Evaluaciones, Criterios, EncabezadoFrm, HistorialEstablecimiento) {
             $scope.options = {width: 300, height: 250, 'bar': 'aaa'};
             $scope.data = [0];
             $scope.hovered = function(d){
@@ -219,6 +219,16 @@
             
             $scope.getCriterios = function(evaluacionSel) {
                 $scope.evaluacionSeleccionada = evaluacionSel;
+                EncabezadoFrm.query(
+                        { establecimiento: $scope.establecimientoSeleccionado.establecimiento, 
+                            periodo: $scope.periodoSeleccionado.periodo,
+                            evaluacion: evaluacionSel.codigo
+                        })
+                        .$promise.then(
+                        function (data) {                            
+                            $scope.encabezado = data[0];
+                        }
+                    );
                 Criterios.query(
                         { establecimiento: $scope.establecimientoSeleccionado.establecimiento, 
                             periodo: $scope.periodoSeleccionado.periodo,

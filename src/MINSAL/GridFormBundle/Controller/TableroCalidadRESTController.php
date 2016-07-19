@@ -126,11 +126,9 @@ class TableroCalidadRESTController extends Controller {
     public function getCriteriosAction($establecimiento, $periodo, $formulario) {
         $response = new Response();
         $em = $this->getDoctrine()->getManager();
-        //$resp = array();
 
         $datos_resumen = $em->getRepository('GridFormBundle:Formulario')->getCriterios($establecimiento, $periodo, $formulario);
         $datos = $datos_resumen['datos'];
-        $data_ = '';
 
         $data = array();
         foreach ($datos as $d) {
@@ -150,6 +148,27 @@ class TableroCalidadRESTController extends Controller {
         $resp = json_encode($data_);
 
         $response->setContent($resp);
+
+        return $response;
+    }
+    
+    /**
+     * Obtener los datos del formulario
+     * @Get("/rest-service/tablero-calidad/encabezado_evaluacion/{establecimiento}/{periodo}/{formulario}", options={"expose"=true})
+     * @Rest\View
+     */
+    public function getEncabezadoAction($establecimiento, $periodo, $formulario) {
+        $response = new Response();
+        $em = $this->getDoctrine()->getManager();
+     
+        $encabezado = $em->getRepository('GridFormBundle:Formulario')->getEncabezado($establecimiento, $periodo, $formulario);
+        $aux = array();
+        foreach ($encabezado as $k=>$v){
+            $aux[$this->get('translator')->trans('_'.$k.'_')] = $v;            
+        }
+        $resp[] = $aux; 
+
+        $response->setContent(json_encode($resp));
 
         return $response;
     }

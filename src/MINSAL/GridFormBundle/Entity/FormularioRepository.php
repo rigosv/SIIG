@@ -707,7 +707,7 @@ class FormularioRepository extends EntityRepository {
                         AND codigo_establecimiento = '$unidad'
                         AND mes::integer = '$mes'
                         AND anio = $anio ";
-        $datos_ =  $em->getConnection()->executeQuery($sql)->fetch();
+        $datos_ =  $em->getConnection()->executeQuery($sql)->fetch();        
         $datos = json_decode('{'.str_replace(array('=>'), array( ':'), $datos_['datos']).'}', true);
         
         return $datos;

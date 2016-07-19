@@ -721,10 +721,10 @@
                 if (validarFrmConf()){
                     var fechaEval = '';
                     {% if periodoSeleccionado.formulario.periodoLecturaDatos == 'mensual' %}
-                        fechaEval = '&fecha_evaluacion='+$('#fechaEvaluacion').val();
+                        fechaEval = 'fecha_evaluacion='+$('#fechaEvaluacion').val().'&';
                     {% endif %}
                     $.post(Routing.generate('guardar_encabezado', {periodo_ingreso: '{{parametros.periodo_estructura}}' }),
-                                            {datos_frm: $('#frmConf').serialize()+fechaEval},
+                                            {datos_frm: $fechaEval+$('#frmConf').serialize()},
                                 function(resp) {
                                 }, 'json'
                            );

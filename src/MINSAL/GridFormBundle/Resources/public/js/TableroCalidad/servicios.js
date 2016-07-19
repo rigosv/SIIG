@@ -28,6 +28,13 @@ servicios.factory('Criterios', ['$resource',
     });
   }]);
   
+  servicios.factory('EncabezadoFrm', ['$resource',
+  function($resource){
+    return $resource(Routing.generate('get_encabezado')+'/:establecimiento/:periodo/:evaluacion', {}, {
+      query: {method:'GET', params:{establecimiento: '@_ide', periodo: '@_idp', evaluacion : '@_ip'}, isArray:true}
+    });
+  }]);
+  
 servicios.factory('HistorialEstablecimiento', ['$resource',
   function($resource){
     return $resource(Routing.generate('get_historial_establecimiento')+'/:establecimiento/:periodo', {}, {

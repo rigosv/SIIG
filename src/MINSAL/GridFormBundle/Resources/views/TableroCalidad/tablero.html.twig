@@ -164,6 +164,15 @@
                     </div>
                     <div class="panel-body">
                         <div class="alert alert-warning" role="alert" ng-show="!criterios.length">{{'_no_hay_datos_mostrar_'|trans}}</div>
+                        <DIV>
+                            <table>
+                                <tbody>
+                                <tr ng-repeat="(key, value) in encabezado">
+                                    <th> [[key]]: </th> <td> [[ value ]] </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </DIV>
                         <TABLE CLASS="table table-hover" ng-repeat='Formulario in criterios'>
                             <THEAD ng-if="criterios.length > 1">
                                 <tr class="encabezado_tabla"><td colspan="20">[[Formulario.descripcion]]</TD></tr>
