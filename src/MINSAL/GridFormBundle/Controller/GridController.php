@@ -184,4 +184,35 @@ class GridController extends Controller
         return $response;
         
     }
+    
+    /**
+     * @Route("/formulario/guardar_conf/{periodo_ingreso}", name="guardar_encabezado", options={"expose"=true})
+     */
+    public function setEncabezado($periodo_ingreso, Request $request)
+    {
+        $response = new Response();
+        $em = $this->getDoctrine()->getManager();
+        
+        $tipo_periodo = null;
+        if (strpos($periodo_ingreso, '_') !== false){
+            $periodos_sel = explode('_', $periodo_ingreso);
+            $tipo_periodo = $periodos_sel[0];
+            if ($periodos_sel[0]=='pu'){
+                $periodoEstructura = $em->getRepository("GridFormBundle:PeriodoIngresoDatosFormulario")->find($periodos_sel[1]);
+            }else {
+                $periodoEstructura = $em->getRepository("GridFormBundle:PeriodoIngresoGrupoUsuarios")->find($periodos_sel[1]);
+            }
+        } else{
+            $periodoEstructura = $em->getRepository("GridFormBundle:PeriodoIngresoDatosFormulario")->find($periodo_ingreso);
+        }
+        
+        $datos_frm = array();
+        parse_str($request->get('datos_frm'), $datos_frm);
+        unset($datos_frm['fechaEvaluacion']);
+        
+        $em->getRepository("GridFormBundle:Formulario")->guardarEncabezado($periodoEstructura, $datos_frm);
+                
+        return $response;
+        
+    }
 }

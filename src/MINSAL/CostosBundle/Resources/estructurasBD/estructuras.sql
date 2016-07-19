@@ -45,3 +45,11 @@ CREATE TABLE IF NOT EXISTS almacen_datos.repositorio(
 
     FOREIGN KEY (id_formulario) REFERENCES costos.formulario(id) on update CASCADE on delete CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS almacen_datos.encabezado_frm(
+    id_formulario integer,
+    mes varchar(5),
+    anio integer,
+    datos hstore,
+    ultima_lectura timestamp
+);

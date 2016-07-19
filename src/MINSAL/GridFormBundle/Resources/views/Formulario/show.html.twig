@@ -714,15 +714,51 @@
                     $('#modal_msj').modal('show');
                 }
             });            
-            $("#fechaEvaluacion").jqxDateTimeInput({ width: '200px', height: '25px', culture: 'es-SV' });
+            {% if periodoSeleccionado.formulario.periodoLecturaDatos == 'mensual' %}
+                $("#fechaEvaluacion").jqxDateTimeInput({ width: '200px', height: '25px', culture: 'es-SV' });
+            {% endif%}
             $("#guardarConf").click(function () {
-                if (isNaN($('#cantidadExpedientes').val())){
-                    alert('Cantidad no valida');
+                if (validarFrmConf()){
+                    var fechaEval = '';
+                    {% if periodoSeleccionado.formulario.periodoLecturaDatos == 'mensual' %}
+                        fechaEval = '&fecha_evaluacion='+$('#fechaEvaluacion').val();
+                    {% endif %}
+                    $.post(Routing.generate('guardar_encabezado', {periodo_ingreso: '{{parametros.periodo_estructura}}' }),
+                                            {datos_frm: $('#frmConf').serialize()+fechaEval},
+                                function(resp) {
+                                }, 'json'
+                           );
+                    $('#myModalConf').modal('toggle')
                 } else {
-                    alert(listSource);
-                    //$("#jqxgrid{{Formularios[0].id}}").jqxGrid('hidecolumn', event.args.value);
+                    $('#myModalConf').modal('show');
                 }
-            })
+            });
+            $('#myModalConf').on('hidden.bs.modal', function (e) {
+                if (!validarFrmConf()){
+                    $('#myModalConf').modal('show');
+                }               
+            });
+                       
+            function validarFrmConf(){
+                var msj = '';
+                {% if periodoSeleccionado.formulario.periodoLecturaDatos == 'mensual' %}
+                    if ($('#nombreResponsable').val().trim() === '')
+                        msj = 'Ingrese el nombre del responsable de la evaluación';
+                {% endif %}
+                if (msj === ''){
+                    $('#msjConf').html('');
+                    return true;
+                }
+                else{
+                    $('#msjConf').html('<div class="alert alert-danger" role="alert">'+msj+'</div>');
+                    return false;
+                }                
+            }
+            
+            if (!validarFrmConf()){
+                $('#msjConf').html('');
+                $('#myModalConf').modal('show');
+            }
 
         });
         
@@ -829,22 +865,21 @@
           <div class="modal-content">
             <div class="modal-header">
               <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-              <h4 class="modal-title" id="myModalLabel">{{'_configuracion_'|trans}}</h4>
+              <h4 class="modal-title" id="myModalLabel" style="color: white; font-weight: bold;">{{'_configuracion_'|trans}}</h4>
             </div>
             <div class="modal-body">
+                <DIV id="msjConf"></div>
                 <form id="frmConf">
-                    <div class="form-group">
-                      <label for="fechaEvaluacion">{{'_fecha_evaluacion_'|trans}}</label>
-                      <input type="date" class="form-control" id="fechaEvaluacion" >
-                    </div>
-                    <div class="form-group">
-                      <label for="nombreResponsable">{{'_nombre_responsable_evaluacion_'|trans}}</label>
-                      <input type="text" class="form-control" id="nombreResponsable" >
-                    </div>
-                    <div class="form-group">
-                      <label for="cantidadExpedientes">{{'_cantidad_expedientes_reportar_'|trans}}</label>
-                      <input type="integer" class="form-control" id="cantidadExpedientes">
-                    </div>
+                    {% if periodoSeleccionado.formulario.periodoLecturaDatos == 'mensual' %}
+                        <div class="form-group">
+                          <label for="fechaEvaluacion">{{'_fecha_evaluacion_'|trans}}</label>
+                          <input name="fechaEvaluacion" type="date" class="form-control" id="fechaEvaluacion" />
+                        </div>
+                        <div class="form-group">
+                          <label for="nombreResponsable">{{'_nombre_responsable_evaluacion_'|trans}}</label>
+                          <input name='responsable' type="text" class="form-control" id="nombreResponsable" />
+                        </div>
+                    {% endif %}
                     <div class="form-group">
                         <label for="observaciones">{{'_observaciones_'|trans}}</label>
                         <textarea name="observaciones" class="form-control" id="observaciones"></textarea>
