@@ -119,7 +119,6 @@ class FormularioAdminController extends Controller
             'cantidad_formularios' => 0,
             'pk' => $pk);
         if ($periodo != '-1'){
-            //$formularios = $Frm->getGrupoFormularios();
             $formularios = $em->getRepository('GridFormBundle:Formulario')->findBy(array('formularioSup'=>$Frm), array('codigo'=>'ASC'));
             if ($formularios == null or count($formularios) == 0){
                 $formularios[] = $Frm;
@@ -129,8 +128,9 @@ class FormularioAdminController extends Controller
             $parametrosPlantilla['llave_primaria'] = $pk;
             $parametrosPlantilla['cantidad_formularios'] = count($formularios);            
             $parametrosPlantilla['Formularios'] = $this->ajustarFormulas($formularios);
-            //$parametrosPlantilla['Formularios'] = $formularios;
             $parametrosPlantilla['meses_activos'] = $meses[$periodoSeleccionado->getPeriodo()->getAnio()];
+            //Recuperar los datos de encabezado, si los tiene
+            $parametrosPlantilla['encabezado'] = $em->getRepository("GridFormBundle:Formulario")->obtenerEncabezado($periodoSeleccionado);
             
             foreach ($formularios as $frm){
                 $parametrosPlantilla['origenes'][$frm->getId()] = $this->getOrigenes($frm, $parametros);

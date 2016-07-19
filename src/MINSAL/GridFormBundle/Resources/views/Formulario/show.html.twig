@@ -873,16 +873,20 @@
                     {% if periodoSeleccionado != null and periodoSeleccionado.formulario.periodoLecturaDatos == 'mensual' %}
                         <div class="form-group">
                           <label for="fechaEvaluacion">{{'_fecha_evaluacion_'|trans}}</label>
-                          <input name="fechaEvaluacion" type="date" class="form-control" id="fechaEvaluacion" />
+                          <input name="fechaEvaluacion" type="date" class="form-control" id="fechaEvaluacion" 
+                                 {% if encabezado.fecha_evaluacion != '' %} 
+                                     value="{{encabezado.fecha_evaluacion}}"
+                                {% endif %}
+                            />
                         </div>
                         <div class="form-group">
                           <label for="nombreResponsable">{{'_nombre_responsable_evaluacion_'|trans}}</label>
-                          <input name='responsable' type="text" class="form-control" id="nombreResponsable" />
+                          <input name='responsable' type="text" class="form-control" id="nombreResponsable" value="{{encabezado.responsable}}" />
                         </div>
                     {% endif %}
                     <div class="form-group">
                         <label for="observaciones">{{'_observaciones_'|trans}}</label>
-                        <textarea name="observaciones" class="form-control" id="observaciones"></textarea>
+                        <textarea name="observaciones" class="form-control" id="observaciones">{{encabezado.observaciones}}</textarea>
                     </div>
                 </form>
             </div>

@@ -650,23 +650,44 @@ class FormularioRepository extends EntityRepository {
         $cons =  $em->getConnection()->executeQuery($sql);
         
         $datos = str_replace(array('{', '}', ':', 'null'), array('', '', '=>', '""'), json_encode($datos_frm));
+        $datos = '';
+        foreach ($datos_frm as $k=>$v){
+            $datos .= '"'.$k.'"=>'.'"'.$v.'", ';
+        }
+        $datos = trim ($datos, ', ');
         $datos_e = pg_escape_string($datos);
-        
-        //Cambiar formato de fecha
-        //$datos = preg_replace('/([0-9]{4})-([0-9]{2})-([0-9]{2})T[0-9]{2}=>[0-9]{2}=>[0-9]{2}.[0-9]{3}Z/', '${3}/${2}/${1}', $datos);        
-        
+            
         if ($cons->rowCount() > 0){
             $sql = "UPDATE almacen_datos.encabezado_frm 
-                        SET datos = datos || '" . $datos . "'::hstore
+                        SET datos = datos || '" . $datos_e . "'::hstore
                     WHERE id_formulario = $frmId
                         AND mes = '$mes'
                         AND anio = $anio
                         ";
         } else {
             $sql = "INSERT INTO almacen_datos.encabezado_frm (id_formulario, mes, anio,  datos)
-                        VALUES ($frmId, '$mes', $anio, '{$datos}'::hstore)
+                        VALUES ($frmId, '$mes', $anio, '{$datos_e}'::hstore)
                         ";
         }
-        echo $sql;
+        $em->getConnection()->executeQuery($sql);
+    }
+    
+    public function obtenerEncabezado($periodoIngresoFrm) {
+        $em = $this->getEntityManager();
+        
+        $frmId = $periodoIngresoFrm->getFormulario()->getId();
+        $mes = $periodoIngresoFrm->getPeriodo()->getMes();
+        $anio = $periodoIngresoFrm->getPeriodo()->getAnio();
+
+        //Verificar si existe
+        $sql = "SELECT datos FROM almacen_datos.encabezado_frm 
+                    WHERE id_formulario = $frmId
+                        AND mes = '$mes'
+                        AND anio = $anio ";
+        
+        $datos_ =  $em->getConnection()->executeQuery($sql)->fetch();
+        $datos = json_decode('{'.str_replace(array('=>'), array( ':'), $datos_['datos']).'}', true);
+        
+        return $datos;
     }
 }

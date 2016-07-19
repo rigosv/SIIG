@@ -209,7 +209,7 @@ class GridController extends Controller
         $datos_frm = array();
         parse_str($request->get('datos_frm'), $datos_frm);
         unset($datos_frm['fechaEvaluacion']);
-        
+
         $em->getRepository("GridFormBundle:Formulario")->guardarEncabezado($periodoEstructura, $datos_frm);
                 
         return $response;
