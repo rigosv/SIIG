@@ -870,7 +870,7 @@
             <div class="modal-body">
                 <DIV id="msjConf"></div>
                 <form id="frmConf">
-                    {% if periodoSeleccionado.formulario.periodoLecturaDatos == 'mensual' %}
+                    {% if periodoSeleccionado != null and periodoSeleccionado.formulario.periodoLecturaDatos == 'mensual' %}
                         <div class="form-group">
                           <label for="fechaEvaluacion">{{'_fecha_evaluacion_'|trans}}</label>
                           <input name="fechaEvaluacion" type="date" class="form-control" id="fechaEvaluacion" />
