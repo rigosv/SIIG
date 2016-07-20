@@ -25,9 +25,15 @@
     <ul class="nav nav-tabs" id="myTab">
         <li ><a href="#tab1">{{'_tabla_pivote_'|trans}}</a></li>    
         <li class="active"><a href="#listado_indicadores">{{"indicadores"|trans}}</a></li>
-        <li ><a href="#listado_costeo">{{"_costeo_"|trans}}</a></li>
-        <li ><a href="#listado_captura_datos">{{"_captura_datos_"|trans}}</a></li>
-        <li ><a href="#calidad_datos">{{"_evaluacion_calidad_"|trans}}</a></li>
+        {% if is_granted('ROLE_SUPER_ADMIN') or is_granted('ROLE_USER_COSTOS') %}
+            <li ><a href="#listado_costeo">{{"_costeo_"|trans}}</a></li>
+        {% endif %}
+        {% if is_granted('ROLE_SUPER_ADMIN') or is_granted('ROLE_USER_CAPTURA_DATOS') %}
+            <li ><a href="#listado_captura_datos">{{"_captura_datos_"|trans}}</a></li>
+        {% endif %}
+        {% if is_granted('ROLE_SUPER_ADMIN') or is_granted('ROLE_USER_TABLERO_CALIDAD') %}
+            <li ><a href="#calidad_datos">{{"_evaluacion_calidad_"|trans}}</a></li>
+        {% endif %}
     </ul>
 
     <div id='nombre_sala2' ></div>
@@ -41,13 +47,13 @@
             <div id="output" ></div>
         </div>
         {% include 'IndicadoresBundle:FichaTecnicaAdmin:listado_indicadores.html.twig'%}   
-        {% if is_granted('ROLE_SONATA_ADMIN') or is_granted('ROLE_USER_COSTOS') %}
+        {% if is_granted('ROLE_SUPER_ADMIN') or is_granted('ROLE_USER_COSTOS') %}
             {% include 'IndicadoresBundle:FichaTecnicaAdmin:listado_origenes_costos.html.twig'%}
         {% endif %}
-        {% if is_granted('ROLE_SONATA_ADMIN') or is_granted('ROLE_USER_CAPTURA_DATOS') %}
+        {% if is_granted('ROLE_SUPER_ADMIN') or is_granted('ROLE_USER_CAPTURA_DATOS') %}
             {% include 'IndicadoresBundle:FichaTecnicaAdmin:captura_datos.html.twig'%}
         {% endif %}
-        {% if is_granted('ROLE_SONATA_ADMIN') or is_granted('ROLE_USER_TABLERO_CALIDAD') %}
+        {% if is_granted('ROLE_SUPER_ADMIN') or is_granted('ROLE_USER_TABLERO_CALIDAD') %}
             {% include 'IndicadoresBundle:FichaTecnicaAdmin:calidad_datos.html.twig'%}
         {% endif %}
     </div>
