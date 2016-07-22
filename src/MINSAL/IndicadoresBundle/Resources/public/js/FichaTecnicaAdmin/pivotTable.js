@@ -25,8 +25,27 @@ $(document).ready(function() {
         tableToExcel(t[0],'indicador', $('#marco-sala').attr('data-content').trim()+'.xls');
     });
     $('#export_grp').click(function() {        
-        $('#myModalLabel2').html(trans.guardar_imagen);
-        $('#myModal2').modal('show');
+        var html = $('DIV[aria-label="A chart."]').html();
+        var svg = $('svg[aria-label="A chart."]');
+        if (svg.length == 0){
+            $('#export_grp').notify(trans._no_grafico_, {className: "info" });
+            return;
+        }
+
+        $('#sql').html('<canvas id="canvasGrp" width="'+svg.attr('width')+'" height="'+svg.attr('height')+'"></canvas>');
+
+        var canvas = document.getElementById("canvasGrp");
+
+        rasterizeHTML.drawHTML(html, canvas)
+            .then(function success(renderResult) {
+                var link = document.createElement("a");
+                canvas = document.getElementById("canvasGrp");
+                link.href = canvas.toDataURL("image/png");
+
+                link.download = 'grafico.png';
+                document.body.appendChild(link);
+                link.click();
+            });
     });
     
     $('#guardarConf').click(function (){
