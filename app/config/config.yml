@@ -79,6 +79,7 @@ swiftmailer:
 sonata_block:
     default_contexts: [cms]    
     blocks:
+        sonata.user.block.menu:    # used to display the menu in profile pages
         sonata.admin.block.admin_list:
             contexts:   [admin]
 
