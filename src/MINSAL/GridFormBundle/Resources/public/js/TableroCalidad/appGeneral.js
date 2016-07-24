@@ -20,6 +20,11 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['serviciosGeneral',
             $scope.indicadorSeleccionado = [];
             $scope.datosGrafico2 = [];
             $scope.mostrarInfoIndicador = false;
+            $scope.options_bar_line = {
+                scales: {                                     
+                    yAxes: [{ ticks: { min: 0, max: 100} }]
+                }
+            };
             
             
 
@@ -51,6 +56,13 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['serviciosGeneral',
                                 $scope.filtroListadoIndicador = 'todos';
                                 
                                 $scope.datosGrafico1 = $scope.indicadores;
+                                
+                                $scope.labelsGrp1 = [];
+                                $scope.valorGrp1 = [];
+                                $scope.datosGrafico1.forEach(function(nodo, index){
+                                    $scope.labelsGrp1.push(nodo.codigo_indicador);
+                                    $scope.valorGrp1.push(nodo.calificacion);
+                                });
                             },
                             function (error) {
                                 alert(error);
@@ -76,6 +88,12 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['serviciosGeneral',
                 }else if (filtro === '-10'){
                     $scope.datosGrafico1 = $scope.indicadoresLess10;
                 }
+                $scope.labelsGrp1 = [];
+                $scope.valorGrp1 = [];
+                $scope.datosGrafico1.forEach(function(nodo, index){
+                    $scope.labelsGrp1.push(nodo.codigo_indicador);
+                    $scope.valorGrp1.push(nodo.calificacion);
+                });
                 $scope.$apply();
             };
             $scope.seleccionarIndicador = function(indicadorSel){
@@ -101,10 +119,6 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['serviciosGeneral',
                 var valorEstandar = [];
                 var valorEstablecimiento = [];
                 
-                /*for(var i = 0; i < indicadorSel.evaluacion.lenght; i++){
-                    var f = indicadorSel.evaluacion[i];
-                    
-                }*/
                 indicadorSel.evaluacion.forEach(function(nodo, index){
                     labels.push(nodo.nombre_corto);
                     valorEstandar.push(indicadorSel.calificacion);

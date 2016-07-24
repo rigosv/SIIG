@@ -5,18 +5,12 @@
 {% endblock %}
 {% block javascripts %}
     {{parent()}}
-    <script type="text/javascript" src="{{ asset('bundles/indicadores/js/d3.v3.min.js') }}" ></script>
-
     <script type="text/javascript" src="{{ asset('bundles/gridform/js/angular.min.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('bundles/gridform/js/d3tip.js') }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/gridform/js/angular-resource.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/gridform/js/ui-bootstrap-tpls-1.3.2.min.js') }}"></script>    
-
-    <script type="text/javascript" src="{{ asset('bundles/gridform/js/TableroCalidad/barchart.js') }}"></script>
     
     <script type="text/javascript" src="{{ asset('bundles/gridform/js/TableroCalidad/appGeneral.js') }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/gridform/js/TableroCalidad/serviciosGeneral.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('bundles/gridform/js/TableroCalidad/barchartComponent.js') }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/gridform/js/TableroCalidad/Chart.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/gridform/js/TableroCalidad/angular-chart.min.js') }}"></script>
     
@@ -84,7 +78,7 @@
                                 <tbody ng-show="filtroListadoIndicador == 'todos'">
                                     <TR  ng-repeat="ind in indicadores | filter : buscar_indicadores" ng-click="seleccionarIndicador(ind)">
                                         <TD >[[ind.descripcion_estandar]]</TD>
-                                        <TD >[[ind.descripcion_indicador]]</TD>
+                                        <TD ><B>([[ind.codigo_indicador]])</B> [[ind.descripcion_indicador]]</TD>
                                         <TD>[[ind.calificacion | number:2]]%</TD>
                                     </TR>
                                 </tbody>
@@ -112,7 +106,10 @@
                             <strong>[[titulo_grafico1]]</strong>
                         </div>
                         <div class="panel-body" >
-                            <bar-chart height="options.height" data="datosGrafico1" ></bar-chart>
+                            <canvas id="grafico1" class="chart-bar" chart-options="options_bar_line"
+                                chart-data="valorGrp1" chart-labels="labelsGrp1"
+                                 >
+                            </canvas> 
                         </div>                
                     </div>
                 </div>
@@ -125,18 +122,6 @@
                             <div class="form_row row">
                                 <DIV class="col-md-4"><strong>{{'_establecimientos_'|trans}}</strong></div>
                                 <DIV class="col-md-4">
-                                    <!--<div class="btn-group">
-                                        <label class="btn btn-primary active" ng-model="filtroListadoIndicador" uib-btn-radio="'todos'" ng-change="cambiarGrafico1('todos')">
-                                            <!--<span class="glyphicon glyphicon-tasks" aria-hidden="true" title="Todos"></span> -->
-                                            <!-- Todos
-                                        </label>
-                                        <label class="btn btn-success" ng-model="filtroListadoIndicador" uib-btn-radio="'+10'" ng-change="cambiarGrafico1('+10')">
-                                          +10
-                                        </label>
-                                        <label class="btn btn-danger" ng-model="filtroListadoIndicador" uib-btn-radio="'-10'" ng-change="cambiarGrafico1('-10')">
-                                          -10
-                                        </label>
-                                    </div> -->
                                 </div>
                                 <DIV class="col-md-4">
                                     <div class="input-group">
@@ -172,7 +157,7 @@
                             <strong>[[titulo_grafico2]]</strong>
                         </div>
                         <div class="panel-body" >
-                            <canvas id="grafico2" class="chart-bar"
+                            <canvas id="grafico2" class="chart-bar" chart-options="options_bar_line"
                                 chart-data="datosGrafico2" chart-labels="labels" chart-colors="colors"
                                 chart-dataset-override="datasetOverride" >
                             </canvas> 

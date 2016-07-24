@@ -97,7 +97,7 @@ label.active {
     display: block;
     font-size: 16pt;
 }
-#grafico2{
+#grafico2, #grafico1{
     height: 90% !important;
     width: 90% !important;
 }
