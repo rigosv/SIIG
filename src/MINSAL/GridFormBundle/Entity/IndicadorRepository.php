@@ -65,7 +65,7 @@ class IndicadorRepository extends EntityRepository {
             foreach($eval_ as $e){
                 $calificacion += $e['calificacion'];
             }
-            $calificacionIndicador = (count($eval_) > 0) ? ($calificacion / count($eval_)) : 0;
+            $calificacionIndicador = (count($eval_) > 0) ? number_format(($calificacion / count($eval_)),2) : 0;
             foreach($eval_ as $e){
                 $f = $e;
                 $f['calificacion_indicador'] = $calificacionIndicador;
