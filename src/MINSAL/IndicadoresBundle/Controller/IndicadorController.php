@@ -86,7 +86,8 @@ class IndicadorController extends Controller {
             //$em->flush();
 
             $d = \DateTime::createFromFormat('Y-m-d H:i:s', $fichaTec->getUltimaLectura());
-            $resp['ultima_lectura'] = date('d/m/Y', $d->getTimestamp());
+            if ($d !== false)
+                $resp['ultima_lectura'] = date('d/m/Y', $d->getTimestamp());
             $resp['resultado'] = 'ok';
         } else {
             $resp['resultado'] = 'error';
