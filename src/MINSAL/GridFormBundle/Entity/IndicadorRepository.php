@@ -252,6 +252,8 @@ class IndicadorRepository extends EntityRepository {
                                 ) AS A
                             WHERE A.dato is not null
                                 AND dato != ''
+                                AND dato != 'NaN'
+                                AND dato != 'Infinity'
                                 $where_
                             GROUP BY indicador_id, id_formulario,
                                     codigo_variable, establecimiento, area_id                    
