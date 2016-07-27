@@ -76,6 +76,14 @@ class Indicador
      */
     private $IndicadorPadre;
     
+    /**
+     * @var \Doctrine\Common\Collections\ArrayCollection
+     *
+     * @ORM\ManyToMany(targetEntity="RangoAlerta", inversedBy="indicadores")
+     * @ORM\OrderBy({"limiteInferior" = "ASC", "limiteSuperior" = "ASC", "color" = "ASC"})
+     **/
+    private $alertas;
+    
     
 
     public function __toString()
@@ -302,5 +310,39 @@ class Indicador
     public function getIndicadorPadre()
     {
         return $this->IndicadorPadre;
+    }
+
+    /**
+     * Add alerta
+     *
+     * @param \MINSAL\GridFormBundle\Entity\RangoAlerta $alerta
+     *
+     * @return Indicador
+     */
+    public function addAlerta(\MINSAL\GridFormBundle\Entity\RangoAlerta $alerta)
+    {
+        $this->alertas[] = $alerta;
+
+        return $this;
+    }
+
+    /**
+     * Remove alerta
+     *
+     * @param \MINSAL\GridFormBundle\Entity\RangoAlerta $alerta
+     */
+    public function removeAlerta(\MINSAL\GridFormBundle\Entity\RangoAlerta $alerta)
+    {
+        $this->alertas->removeElement($alerta);
+    }
+
+    /**
+     * Get alertas
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getAlertas()
+    {
+        return $this->alertas;
     }
 }

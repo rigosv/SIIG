@@ -81,3 +81,19 @@ label.active {
 .content-wrapper{
     margin-top: 45px;
 }
+
+.panel-calificacion {
+    text-align: center;
+    width: 100%;
+}
+
+.panel-calificacion span {
+    background-color: #fff;
+    border-radius: 1em;
+    display: inline-block;
+    font-size: 24pt;
+    font-weight: bold;
+    line-height: 14px;
+    padding: 10px;
+    text-transform: uppercase;
+}

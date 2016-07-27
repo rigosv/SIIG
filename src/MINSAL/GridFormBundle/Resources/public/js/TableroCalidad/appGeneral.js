@@ -25,7 +25,7 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['serviciosGeneral',
                 $interpolateProvider.endSymbol(']]');
             }])
         .directive('ifLoading', ifLoading)
-        .controller('mainCtrl', function AppCtrl($scope, Indicadores, Periodos) {
+        .controller('mainCtrl', function AppCtrl($scope, Indicadores, Periodos, DetalleIndicador) {
             $scope.options = {width: 300, height: 250, 'bar': 'aaa'};
             $scope.data = [0];
             $scope.hovered = function (d) {
@@ -93,6 +93,21 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['serviciosGeneral',
                     .$promise.then(
                             function (data) {
                                 $scope.indicadores2 = (data != '') ? data : [];
+                            },
+                            function (error) {
+                                alert(error);
+                            }
+                    );
+            };
+            
+            $scope.detalleArea = function(indicador){
+                $scope.detalleIndicador = indicador;
+
+                DetalleIndicador.query({ periodo: $scope.periodoSeleccionado.periodo, id: indicador.id })
+                    .$promise.then(
+                            function (data) {
+                                $scope.detalle = (data != '') ? data[0] : [];
+                                $('#modalDetalleIndicador').modal('show');
                             },
                             function (error) {
                                 alert(error);

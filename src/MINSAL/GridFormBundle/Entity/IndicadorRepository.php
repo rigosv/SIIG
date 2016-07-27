@@ -111,87 +111,176 @@ class IndicadorRepository extends EntityRepository {
     public function getIndicadoresEvaluadosNumericos($periodo) {
         $em = $this->getEntityManager();
         list($anio, $mes) = explode('_', $periodo);
+        
+        $this->prepararDatosEvaluacionNumerica($periodo);
+
         $datos = array();
         $calificaciones = array();
                 
-        $sql = "SELECT id, estandar_id, codigo, descripcion, forma_evaluacion, indicadorpadre_id
-                    FROM indicador A                    
-                    WHERE A.forma_evaluacion = 'promedio'
-                        AND indicadorpadre_id is null
+        $sql = "SELECT B.id, B.codigo AS codigo_indicador, B.descripcion AS descripcion_indicador,
+                    A.calificacion,(SELECT color 
+                                    FROM indicador_rangoalerta AA 
+                                        INNER JOIN rango_alerta BB ON (AA.rangoalerta_id = BB.id)
+                                    WHERE A.calificacion BETWEEN COALESCE(limite_inferior, -100000) AND COALESCE(limite_superior, 1000000)
+                                    ) AS color, 
+                                array(
+                                    SELECT COALESCE(limite_inferior::varchar,'')||'-'||COALESCE(limite_superior::varchar, '')||'-'||color  
+                                        FROM indicador_rangoalerta AA 
+                                            INNER JOIN rango_alerta BB ON (AA.rangoalerta_id = BB.id) 
+                                        WHERE AA.indicador_id = A.id_indicador
+                                    ) AS alertas,
+                                array(
+                                    SELECT '{\"mes\":\"'||mes||'/'||anio||'\",\"valor\":\"'||ROUND(AVG(calificacion)::numeric,2)||'\"}'
+                                        FROM datos_evaluacion_calidad_num AA 
+                                        WHERE AA.id_indicador = A.id_indicador
+                                            AND calificacion != 'NaN'
+                                            AND (anio < $anio OR (anio = $anio AND mes::integer <= $mes ) )
+                                        GROUP BY anio, mes, id_indicador
+                                        ORDER BY anio, mes
+                                        LIMIT 10
+                                    ) AS historial
+                    FROM
+                    (SELECT id_indicador, ROUND(AVG(calificacion)::numeric,2) AS calificacion
+                        FROM  datos_evaluacion_calidad_num
+                        WHERE anio = $anio
+                            AND (mes = '$mes' OR mes = '0$mes')
+                        GROUP BY id_indicador
+                    ) AS A
+                    INNER JOIN indicador B ON (A.id_indicador = B.id)
+                    ORDER BY calificacion
                     ";
-        $indicadores = $em->getConnection()->executeQuery($sql)->fetchAll();
-        
-        foreach ($indicadores as $ind){
-            //Verificar si tiene hijos
-            $Indicador = $em->getRepository('GridFormBundle:Indicador')->find($ind['id']);
-            
-            $indHijos = $Indicador->getIndicadoresHijos();
-            
-            $indicadoresRecorrer = (count($indHijos) > 0) ? $indHijos : array(0=>$Indicador);
-            $datosArea = array();
-            $valorIndPrincipal = 0;
-            foreach($indicadoresRecorrer as $f){
-                $Frm = $f->getEstandar(); 
-                $datosEval_ = array();
-                $valor = 0;
-                if ($Frm != null)
-                    $datosEval_ = $this->getDatosEvaluacionNumerica($Frm, $periodo, $f);
-                foreach ($datosEval_ as $r){
-                    $valor = array_key_exists($this->meses[$mes], $r) ? $r[$this->meses[$mes]] : 0;
-                }
-                $datosArea[] = array('nombre_area' => $f->getDescripcion(),
-                            'valor'=> $valor
-                        );
-                $valorIndPrincipal  += $valor;
-            }
-            $valorIndPrincipal = $valorIndPrincipal / count($indicadoresRecorrer);
-            $datos[] = array ('nombre_indicador' => $Indicador->getDescripcion(),
-                             'valor'=> $valorIndPrincipal,
-                            'datos_area'=> $datosArea);
-            
-        }
-        return $datos;
+        return $em->getConnection()->executeQuery($sql)->fetchAll();        
     }
     
-    protected function getDatosEvaluacionNumerica(Formulario $Frm, $periodo, Indicador $datosIndicador){
+    /**
+     * 
+     * @param type $periodo
+     * @return type
+     * Recupera el detalle de un indicador
+     */
+    public function getDetalleIndicador($periodo, $id_indicador) {
+        $em = $this->getEntityManager();
+        list($anio, $mes) = explode('_', $periodo);        
+
+        $datos = array();
+        $calificaciones = array();
+                
+        $sql = "SELECT B.id, B.codigo AS codigo_criterio, COALESCE(C.descripcion, B.descripcion) AS descripcion_criterio,
+                    A.calificacion
+                    FROM
+                    (SELECT codigo_criterio, ROUND(AVG(calificacion)::numeric,2) AS calificacion
+                        FROM  datos_evaluacion_calidad_num
+                        WHERE anio = $anio
+                            AND (mes = '$mes' OR mes = '0$mes')
+                            AND id_indicador = $id_indicador
+                        GROUP BY codigo_criterio
+                    ) AS A
+                    INNER JOIN variable_captura B ON (A.codigo_criterio = B.codigo)
+                    LEFT JOIN area_variable_captura C ON (B.area_id = C.id)
+                    ORDER BY calificacion
+                    ";
+        $areas = $em->getConnection()->executeQuery($sql)->fetchAll();
+        
+        $sql = "SELECT B.nombre, A.calificacion
+                    FROM
+                    (SELECT establecimiento, ROUND(AVG(calificacion)::numeric,2) AS calificacion
+                        FROM  datos_evaluacion_calidad_num
+                        WHERE anio = $anio
+                            AND (mes = '$mes' OR mes = '0$mes')
+                            AND id_indicador = $id_indicador
+                        GROUP BY establecimiento
+                    ) AS A
+                    INNER JOIN costos.estructura B ON (A.establecimiento = B.codigo)
+                    ORDER BY calificacion
+                    ";
+        $establecimientos = $em->getConnection()->executeQuery($sql)->fetchAll();
+        
+        $resp['areas'] = $areas;
+        $resp['establecimientos'] = $establecimientos;
+        
+        return $resp;
+    }
+    
+    protected function prepararDatosEvaluacionNumerica($periodo) {
+        $em = $this->getEntityManager();
+        
+        $this->crearTablaIndNumericos();
+        $formularios = $em->getRepository("GridFormBundle:Formulario")->findBy(array('areaCosteo'=>'calidad', 'formaEvaluacion'=>'rango_colores'));
+        
+        foreach ($formularios as $Frm) {
+            $this->getDatosEvaluacionNumerica($Frm, $periodo);
+        }
+    }
+    
+    protected function getDatosEvaluacionNumerica(Formulario $Frm, $periodo){
         $em = $this->getEntityManager();
         list($anio, $mes) = explode('_', $periodo);
         
-        $campos = $this->getListaCampos($Frm, false);
-        if ($campos == '') return array();
+        $campos = $this->getListaCampos($Frm);
+        if ($campos == '') {return;}
         $periodo_lectura = '';        
-        
-        $criterio = $datosIndicador->getCriterios();
-        $codCriterio = $criterio[0]->getCodigo();
         $frmId = $Frm->getId();
         
         if ($Frm->getPeriodoLecturaDatos() == 'mensual' and $mes != null){
             $periodo_lectura = " AND (A.datos->'mes')::integer = '$mes' ";
-            $mes_ = '';
             $where_ = '';
-        } else {
-            
-            $mes_ = ' "'.$this->meses[$mes].'" AS dato, '; 
-            $where_ = " WHERE dato is not null AND dato != '' "; 
+        } else {            
+            $where_ = " AND (substring(nombre_pivote::text from '..$') = '$mes' OR substring(nombre_pivote::text from '..$') = '0$mes') "; 
             
         }
+        
+        $sql = "DROP TABLE IF EXISTS datos_indicadores_tmp";
+        $em->getConnection()->executeQuery($sql);
+        
         //Sacar los datos sobre los que se harán los cálculos
-            $datos = "SELECT * FROM (SELECT $mes_ *
-                    FROM 
-                    (SELECT $campos, A.datos->'establecimiento' as establecimiento
-                        FROM almacen_datos.repositorio A
-                        WHERE A.datos->'es_poblacion' = 'false'
-                            AND id_formulario = '$frmId'                        
-                            AND A.datos->'es_separador' = 'false'
-                            AND A.datos->'anio' = '$anio'
-                            AND datos->'codigo_variable' = '$codCriterio'
-                            $periodo_lectura
-                    ) AS AA 
-                    ) AS BB
-                    $where_
-                    "
-                ;
-        return $em->getConnection()->executeQuery($datos)->fetchAll();
+        $datos = "SELECT indicador_id, id_formulario,
+                            codigo_variable AS codigo_criterio, 
+                            establecimiento, area_id,
+                            AVG(dato::numeric) AS calificacion
+                            INTO TEMP datos_indicadores_tmp
+                            FROM 
+                                (SELECT $campos, A.datos->'establecimiento' as establecimiento, 
+                                    A.id_formulario, C.indicador_id, B.area_id
+                                    FROM almacen_datos.repositorio A
+                                        INNER JOIN variable_captura B ON (A.datos->'codigo_variable' = B.codigo) 
+                                        INNER JOIN indicador_variablecaptura C ON (B.id = C.variablecaptura_id)
+                                    WHERE A.datos->'es_poblacion' = 'false'
+                                        AND A.id_formulario = '$frmId'                        
+                                        AND A.datos->'es_separador' = 'false'
+                                        AND A.datos->'anio' = '$anio'
+                                        $periodo_lectura
+                                ) AS A
+                            WHERE A.dato is not null
+                                AND dato != ''
+                                $where_
+                            GROUP BY indicador_id, id_formulario,
+                                    codigo_variable, establecimiento, area_id                    
+                "
+            ;
+        
+        $cons = $em->getConnection()->executeQuery($datos);
+        if ($cons->rowCount() > 0){
+            $sql = "DELETE FROM datos_evaluacion_calidad_num
+                        WHERE (id_formulario, id_indicador, codigo_criterio, 
+                                anio, mes, establecimiento, id_area_criterio)
+                                IN 
+                                (SELECT id_formulario::integer, indicador_id::integer, 
+                                        codigo_criterio::text,
+                                        $anio::integer, '$mes'::text, establecimiento::text, area_id::integer
+                                    FROM datos_indicadores_tmp
+                                )";
+            $em->getConnection()->executeQuery($sql);
+            
+            $sql = "INSERT INTO datos_evaluacion_calidad_num(id_formulario, id_indicador, codigo_criterio, 
+                                anio, mes, establecimiento, id_area_criterio, calificacion)
+                                
+                                SELECT id_formulario, indicador_id, codigo_criterio,
+                                    $anio, '$mes', establecimiento, area_id, calificacion
+                                    FROM datos_indicadores_tmp
+                                ";
+            $em->getConnection()->executeQuery($sql);
+            
+        }
     }
     protected function getDatosEvaluacionListaChequeo(Formulario $Frm, $periodo, $datosIndicador){
 
@@ -238,9 +327,9 @@ class IndicadorRepository extends EntityRepository {
                             GROUP BY establecimiento
                         ) AS B 
                         ON (A.establecimiento = B.establecimiento)                    
-                    INNER JOIN ctl_establecimiento_simmow ES ON (A.establecimiento = ES.id::text)                
+                    INNER JOIN ctl_establecimiento_simmow ES ON (A.establecimiento = ES.id::text)
                 ) AS F
-                    INNER JOIN costos.estructura CE ON (F.establecimiento = CE.codigo)                    
+                    INNER JOIN costos.estructura CE ON (F.establecimiento = CE.codigo)
                 ORDER BY calificacion DESC
          ";
         
@@ -297,7 +386,26 @@ class IndicadorRepository extends EntityRepository {
                     expedientes_cumplimiento integer,
                     criterios_aplicables   integer,
                     criterios_cumplidos     integer,
-                    criterios_no_cumplidos  integer
+                    criterios_no_cumplidos  integer,
+                    id_area_criterio      integer
+                 )";
+        
+        $em->getConnection()->executeQuery($sql);
+    }
+    
+    private function crearTablaIndNumericos() {
+        $em = $this->getEntityManager();
+        
+        //Verificar si existe la tabla, sino crearla
+        $sql = "CREATE TABLE IF NOT EXISTS datos_evaluacion_calidad_num(
+                    id_formulario       integer,
+                    id_indicador    integer,
+                    codigo_criterio     varchar(200),
+                    anio                integer,
+                    mes                 varchar(5),
+                    calificacion        float,
+                    establecimiento     varchar (20),
+                    id_area_criterio      integer
                  )";
         
         $em->getConnection()->executeQuery($sql);

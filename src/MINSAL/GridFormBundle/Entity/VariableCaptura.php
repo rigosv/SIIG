@@ -75,6 +75,11 @@ class VariableCaptura
     private $categoria;
     
     /**
+     * @ORM\ManyToOne(targetEntity="AreaVariableCaptura")
+     * */
+    private $area;
+    
+    /**
      * @ORM\ManyToOne(targetEntity="Formulario", inversedBy="variables")
      * */
     private $formulario;
@@ -456,5 +461,29 @@ class VariableCaptura
     public function getIndicadores()
     {
         return $this->indicadores;
+    }
+
+    /**
+     * Set area
+     *
+     * @param \MINSAL\GridFormBundle\Entity\AreaVariableCaptura $area
+     *
+     * @return VariableCaptura
+     */
+    public function setArea(\MINSAL\GridFormBundle\Entity\AreaVariableCaptura $area = null)
+    {
+        $this->area = $area;
+
+        return $this;
+    }
+
+    /**
+     * Get area
+     *
+     * @return \MINSAL\GridFormBundle\Entity\AreaVariableCaptura
+     */
+    public function getArea()
+    {
+        return $this->area;
     }
 }

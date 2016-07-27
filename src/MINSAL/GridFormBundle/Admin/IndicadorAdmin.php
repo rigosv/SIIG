@@ -7,6 +7,7 @@ use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Route\RouteCollection;
+use Doctrine\ORM\EntityRepository;
 
 class IndicadorAdmin extends Admin
 {
@@ -45,6 +46,17 @@ class IndicadorAdmin extends Admin
                                         ->orderBy('f.posicion, c.posicion')
                                         ;
                             }))
+            ->add('alertas', 'entity', 
+                    array('label'=> $this->getTranslator()->trans('_alertas_'), 
+                    'expanded' => false, 
+                    'multiple' => true,
+                    'by_reference' => false,
+                    'class' => 'GridFormBundle:RangoAlerta',
+                    'query_builder' => function(EntityRepository $er) {
+                        return $er->createQueryBuilder('c')
+                                ->orderBy('c.color, c.limiteInferior, c.limiteSuperior');
+                    }    
+                    ))
             
         ;
         $formMapper
@@ -58,7 +70,7 @@ class IndicadorAdmin extends Admin
         $datagridMapper
             ->add('codigo', null, array('label'=> $this->getTranslator()->trans('_codigo_')))
             ->add('descripcion', null, array('label'=> $this->getTranslator()->trans('_descripcion_')))
-            ->add('estandar', null, array('label'=> $this->getTranslator()->trans('_estardar_')))
+            ->add('estandar', null, array('label'=> $this->getTranslator()->trans('_estandar_')))
         ;
     }
 

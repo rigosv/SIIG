@@ -3,19 +3,19 @@
 {% block javascripts %}
     {{ parent() }}    
     <script type="text/javascript">
-        $(document).ready(function () {                        
-            /*$('select[id$="_estandar"]').select2({ width: 'resolve' }).on('change', function () {
-                var estandar = $('select[id$="_estandar"]').val();
-                var url = Routing.generate('get_criterios_estandar', {id: estandar });
-                $.post(url, function( data ) {
-                    $('select[id$="_criterios"]').select2({                        
-                        data
-                    });
-                });
-            });*/
+        $(document).ready(function () {
             $('select[id$="_criterios"]').select2({
                 closeOnSelect:false,
                 width: '100%'
+            });
+            
+            function formatState (state) {
+                var partes = state.text.split('-');
+                return partes[0] + ' - ' + partes[1] + '<span style="background-color:'+partes[2]+'"> '+partes[2]+'</span>';
+            };            
+            $('select[id$="_alertas"]').select2({
+                formatSelection: formatState,
+                formatResult: formatState
             });
         });
     </script>

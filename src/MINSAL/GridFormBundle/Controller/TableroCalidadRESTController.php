@@ -204,10 +204,41 @@ class TableroCalidadRESTController extends Controller {
         $response = new Response();
         $em = $this->getDoctrine()->getManager();
 
-        if ($tipo == 2)
+        if ($tipo == 2){
             $data = $em->getRepository('GridFormBundle:Indicador')->getIndicadoresEvaluadosNumericos($periodo);
+            $aux = array();
+            foreach ($data as $k=>$d){
+                $aux = json_decode(str_replace(array('\\', '"{', '}"', '{{', '}}'), array('', '{', '}', '[{', '}]'), $d['historial']), true);
+                $etiquetas = array();
+                $valores = array();
+                foreach ($aux as $f){
+                    $etiquetas[] = $f['mes'];
+                    $valores[] = $f['valor'];
+                }
+                $data[$k]['historial'] = array('etiquetas'=>$etiquetas, 'valores'=> $valores);
+            }
+        }
         else
             $data = $em->getRepository('GridFormBundle:Indicador')->getIndicadoresEvaluadosListaChequeo($periodo);
+        
+        $resp = (count($data) == 0)? array(): $data;
+        
+        $response->setContent(json_encode($resp));
+        return $response;
+    }
+    
+    /**
+     * Obtener los datos del formulario
+     * @Get("/rest-service/calidad/indicador/{periodo}/{id}", options={"expose"=true})
+     * @Rest\View
+     */
+    public function getDetalleIndicadorCalidadAction($periodo, $id) {
+        
+        $response = new Response();
+        $em = $this->getDoctrine()->getManager();
+
+        
+        $data[] = $em->getRepository('GridFormBundle:Indicador')->getDetalleIndicador($periodo, $id);        
         
         $resp = (count($data) == 0)? array(): $data;
         

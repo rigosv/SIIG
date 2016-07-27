@@ -50,6 +50,13 @@ class RangoAlerta
      * @ORM\ManyToMany(targetEntity="VariableCaptura", mappedBy="alertas")
      * */
     private $criterios;
+    
+    /**
+     * @var \Doctrine\Common\Collections\ArrayCollection
+     * 
+     * @ORM\ManyToMany(targetEntity="Indicador", mappedBy="alertas")
+     * */
+    private $indicadores;
 
 
     public function __toString()
@@ -174,5 +181,39 @@ class RangoAlerta
     public function getCriterios()
     {
         return $this->criterios;
+    }
+
+    /**
+     * Add indicadore
+     *
+     * @param \MINSAL\GridFormBundle\Entity\Indicador $indicadore
+     *
+     * @return RangoAlerta
+     */
+    public function addIndicadore(\MINSAL\GridFormBundle\Entity\Indicador $indicadore)
+    {
+        $this->indicadores[] = $indicadore;
+
+        return $this;
+    }
+
+    /**
+     * Remove indicadore
+     *
+     * @param \MINSAL\GridFormBundle\Entity\Indicador $indicadore
+     */
+    public function removeIndicadore(\MINSAL\GridFormBundle\Entity\Indicador $indicadore)
+    {
+        $this->indicadores->removeElement($indicadore);
+    }
+
+    /**
+     * Get indicadores
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getIndicadores()
+    {
+        return $this->indicadores;
     }
 }

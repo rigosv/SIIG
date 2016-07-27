@@ -90,6 +90,12 @@
             <argument>MINSAL\GridFormBundle\Entity\AreaEstandar</argument>
             <argument />            
         </service>
+        <service id="sonata.gridform.admin.area_criterio" class="MINSAL\GridFormBundle\Admin\AreaVariableCapturaAdmin">
+            <tag name="sonata.admin" manager_type="orm" group="_calidad_" label="_area_criterios_"/>
+            <argument />
+            <argument>MINSAL\GridFormBundle\Entity\AreaVariableCaptura</argument>
+            <argument />            
+        </service>
         <service id="sonata.gridform.admin.rango_alerta" class="MINSAL\GridFormBundle\Admin\RangoAlertaAdmin">
             <tag name="sonata.admin" manager_type="orm" group="_calidad_" label="_rango_alerta_"/>
             <argument />

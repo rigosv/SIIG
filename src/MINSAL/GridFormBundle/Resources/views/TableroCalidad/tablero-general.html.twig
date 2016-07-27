@@ -167,46 +167,28 @@
             </div>
         </div>
         <div role="tabpanel" class="tab-pane" id="numericos">
+            <div class="input-group">
+                <div class="input-group-addon"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></div>
+                <input type="text" class="form-control" size="10" ng-model="buscar_indicadores2" >
+            </div>
             <div class="row row_tablero" ng-if="indicadores2.length > 0">
-            <DIV class="col-md-6 listado">
-                <div class="panel panel-info panel_" >
-                    <div class="panel-heading">
-                        <div class="form_row row">
-                            <DIV class="col-md-4"><strong>{{'_evaluaciones_'|trans}}</strong></div>
-                            <DIV class="col-md-4">
-
-                            </div>
-                            <DIV class="col-md-4">
-                                <div class="input-group">
-                                    <div class="input-group-addon"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></div>
-                                    <input type="text" class="form-control" size="10" ng-model="buscar_indicadores2" >
-                                </div>
-                            </div>
+                <DIV class="col-md-3" ng-repeat="ind in indicadores2 | filter : buscar_indicadores2">
+                    <div class="panel panel-info panel_" >
+                        <div class="panel-heading" style="text-align: center; cursor: pointer;" ng-click="detalleArea(ind)">
+                            <h3 class="panel-title">[[ind.descripcion_indicador]]</h3>
                         </div>
-                    </div>
-                    <div class="panel-body">                        
-                        <table class="table table-hover" ng-repeat="ind2 in indicadores2 | filter : buscar_indicadores2">
-                            <thead>
-                                <TR class="success">
-                                    <!--<TH>{{'_estandar_'|trans}}</TH> -->
-                                    <TH colspan="2">[[ind2.nombre_indicador]] : [[ind2.valor | number:2]]%</TH>                                
-                                </TR>
-                            </thead>
-                            <tbody ng-show="filtroListadoIndicador == 'todos'">
-                                <TR   ng-repeat="area in ind2.datos_area">
-                                    <!--<TD >[[ind.descripcion_estandar]]</TD> -->
-                                    <TD >[[area.nombre_area]]</TD>
-                                    <TD>[[area.valor]]%</TD>
-                                </TR>
-                            </tbody>                        
-                        </table>
+                        <div class="panel-body">
+                            <div class="panel-calificacion" >
+                                <span class="ng-scope"  title= "Valor periodo actual" style="color:[[ind.color]]; border: 2px solid [[ind.color]];">[[ind.calificacion]]</span>
+                            </div>
+                            <canvas title= 'Historial' id="grafico[[ind.codigo_indicador]]" class="chart-bar" style="margin-top: 40px;"
+                                chart-data="ind.historial.valores" chart-labels="ind.historial.etiquetas"
+                                 >
+                            </canvas> 
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
-
-            </div>
-        </div>
         </div>
     </div>
     <!-- Modal Configuración -->
@@ -231,6 +213,55 @@
             </div>
         </div>
     </div>
+    
+    <div class="modal fade" id="modalDetalleIndicador" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h3 class="modal-title">[[detalleIndicador.descripcion_indicador]]</h3>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-hover table-striped">
+                        <CAPTION><h3>Detalle por &aacute;rea</h3></CAPTION>
+                        <THEAD>
+                            <TR>
+                                <TH>&Aacute;rea<TH>
+                                <TH>Calificaci&oacute;n</TH>
+                            </TR>
+                        </THEAD>
+                        <TBODy>
+                            <TR ng-repeat="criterio in detalle.areas">
+                                <TD>[[criterio.descripcion_criterio]]<TD>
+                                <TD>[[criterio.calificacion]]</TD>
+                            </canvas></TD>
+                            </TR>
+                        </tBODY>
+                    </table>
+                    
+                    <table class="table table-hover table-striped">
+                        <CAPTION><h3>Detalle por establecimiento</h3></CAPTION>
+                        <THEAD>
+                            <TR>
+                                <TH>Establecimiento<TH>
+                                <TH>Calificaci&oacute;n</TH>
+                            </TR>
+                        </THEAD>
+                        <TBODy>
+                            <TR ng-repeat="est in detalle.establecimientos">
+                                <TD>[[est.nombre]]<TD>
+                                <TD>[[est.calificacion]]</TD>
+                            </TR>
+                        </tBODY>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <p id='loading' class="text-center text-muted" if-loading>
         <img src='{{ asset('bundles/gridform/images/loading.gif') }}' class='ajax-loader'>
     </p>
