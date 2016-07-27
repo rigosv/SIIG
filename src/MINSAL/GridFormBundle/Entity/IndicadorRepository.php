@@ -192,7 +192,7 @@ class IndicadorRepository extends EntityRepository {
                     ) AS A
                     INNER JOIN costos.estructura B ON (A.establecimiento = B.codigo)
                     ORDER BY calificacion
-                    ";
+                    ";        
         $establecimientos = $em->getConnection()->executeQuery($sql)->fetchAll();
         
         $resp['areas'] = $areas;
@@ -552,10 +552,34 @@ class IndicadorRepository extends EntityRepository {
         list($anio, $mes) = explode('_', $periodo);
         
         $sql = "SELECT establecimiento, nombre_corto, nombre_establecimiento, ROUND(avg(calificacion)::numeric,2) AS calificacion 
+                    INTO  esta_lc_tmp
                     FROM datos_evaluacion_calidad 
                     WHERE anio=$anio AND mes = '$mes'
                     GROUP BY establecimiento, nombre_corto, nombre_establecimiento
                      ";
+        $em->getConnection()->executeQuery($sql);
+        
+        $sql = "SELECT A.establecimiento, B.nombre_corto, 
+                    B.nombre AS nombre_establecimiento
+                    INTO  esta_num_tmp
+                    FROM datos_evaluacion_calidad_num A
+                    INNER JOIN costos.estructura B ON (A.establecimiento = B.codigo)
+                    WHERE anio=$anio AND mes = '$mes'
+                        AND A.establecimiento 
+                            NOT IN
+                        (SELECT establecimiento FROM esta_lc_tmp) 
+                    GROUP BY A.establecimiento, B.nombre_corto,  B.nombre";
+        
+        $em->getConnection()->executeQuery($sql);
+        
+        $sql = "SELECT 'LISTA_CHECK' AS tipo, establecimiento, nombre_corto, 
+                        nombre_establecimiento, calificacion 
+                    FROM esta_lc_tmp
+                UNION    
+                SELECT 'NUMERIC' AS tipo, establecimiento, nombre_corto,
+                        nombre_establecimiento, 0 as calificacion
+                    FROM esta_num_tmp
+                ORDER BY tipo";
         return $em->getConnection()->executeQuery($sql)->fetchAll();
     }
     

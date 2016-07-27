@@ -129,8 +129,10 @@
                             $scope.datosGrafico1 = [];
                             $scope.etiquetasGrafico1 = [];
                             $scope.establecimientos.forEach(function(nodo, index){
-                                $scope.datosGrafico1.push(nodo.calificacion);
-                                $scope.etiquetasGrafico1.push(nodo.nombre_corto);
+                                if (nodo.tipo === 'LISTA_CHECK'){
+                                    $scope.datosGrafico1.push(nodo.calificacion);
+                                    $scope.etiquetasGrafico1.push(nodo.nombre_corto);
+                                }
                             });
                             $scope.evaluaciones = [];
                             $scope.titulo_grafico1 = 'Establecimientos vs calificación';

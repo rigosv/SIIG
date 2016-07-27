@@ -64,7 +64,7 @@ class TableroCalidadRESTController extends Controller {
         //$data = $em->getRepository('GridFormBundle:Formulario')->getEstablecimientosEvaluados($periodo);
         $eval_compl = $em->getRepository('GridFormBundle:Indicador')->getEvaluacionesComplementarias();
         $em->getRepository('GridFormBundle:Indicador')->getIndicadoresEvaluadosListaChequeo($periodo);
-        //$data = array_shift($data);
+        
         $establecimientos = $em->getRepository('GridFormBundle:Indicador')->getEvaluacionEstablecimiento($periodo);
         
         $resp = array();
