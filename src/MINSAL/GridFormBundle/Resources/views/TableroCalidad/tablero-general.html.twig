@@ -2,6 +2,7 @@
 {% block stylesheets %}
     {{ parent() }}
        <link rel="stylesheet" href="{{ asset('bundles/gridform/css/tablero-general-calidad.css') }}" type="text/css" media="all" />
+       <link rel="stylesheet" href="{{ asset('bundles/indicadores/js/pivotTable/pivot.min.css') }}" type="text/css" media="all" />
 {% endblock %}
 {% block javascripts %}
     {{parent()}}
@@ -14,6 +15,8 @@
     <script type="text/javascript" src="{{ asset('bundles/gridform/js/TableroCalidad/Chart.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/gridform/js/TableroCalidad/angular-chart.min.js') }}"></script>
     
+    <script src="{{ asset('bundles/indicadores/js/pivotTable/pivot.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('bundles/indicadores/js/pivotTable/pivot.es.min.js') }}" type="text/javascript"></script>
 
 {% endblock %}
 
@@ -34,6 +37,7 @@
     <ul class="nav nav-tabs" role="tablist">
         <li role="presentation" class="active"><a href="#lista_chequeo" aria-controls="lista_chequeo" role="tab" data-toggle="tab" ng-if="indicadores.length > 0">Estándares 1-24</a></li>
         <li role="presentation"><a href="#numericos" aria-controls="numericos" role="tab" data-toggle="tab" ng-if="indicadores.length > 0">Estándares 25-29</a></li>
+        <li role="presentation"><a href="#eval_complementarias" aria-controls="numericos" role="tab" data-toggle="tab" ng-if="indicadores.length > 0" >Evaluaciones complementarias</a></li>
     </ul>
     <!-- Tab panes -->
     <div class="tab-content">
@@ -190,6 +194,28 @@
                 </div>
             </div>
         </div>
+        <DIV role="tabpanel" class="tab-pane" id="eval_complementarias">
+            <table class="table table-hover" ng-if="indicadores.length > 0">
+                <caption>Evaluaciones complementarias</caption>
+                <thead>
+                    <TR class="success">
+                        <TH>{{'_tipo_evaluacion_'|trans}}</TH>
+                        <TH>{{'_anio_'|trans}}</TH>
+                        <TH>{{'_valor_'|trans}}</TH>
+                        <TH>{{'_unidad_medida_'|trans}}</TH>
+                    </TR>
+                </thead>
+                <tbody>                                    
+                    <TR ng-repeat="eval_ext in evaluaciones_complementarias.nacional">
+                        <TD>[[eval_ext.tipo_evaluacion]]</TD>
+                        <TD>[[eval_ext.anio]]</TD>
+                        <TD>[[eval_ext.valor]]</TD>
+                        <TD>[[eval_ext.unidad_medida]]</TD>
+                    </TR>
+                </tbody>
+            </table>
+            <DIV id="pivotEvaluacionesComplementarias"></DIV>
+        </DIV>
     </div>
     <!-- Modal Configuración -->
     <div class="modal fade" id="modalConfiguracion" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
@@ -222,6 +248,7 @@
                     <h3 class="modal-title">[[detalleIndicador.descripcion_indicador]]</h3>
                 </div>
                 <div class="modal-body">
+                    <DIV id="pivottable"></DIV>
                     <table class="table table-hover table-striped">
                         <CAPTION><h3>Detalle por &aacute;rea</h3></CAPTION>
                         <THEAD>

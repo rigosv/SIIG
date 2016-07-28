@@ -50,6 +50,28 @@ class TableroCalidadRESTController extends Controller {
         return $response;
         //}
     }
+    
+    /**
+     * Obtener los datos del formulario
+     * @Get("/rest-service/tablero-calidad/evaluaciones_comple", options={"expose"=true})
+     * @Rest\View
+     */
+    public function getEvaluacionesComplementariasAction() {
+        $response = new Response();
+
+        $resp = array();
+
+        $em = $this->getDoctrine()->getManager();
+        
+        $data[0]['nacional'] = $em->getRepository('GridFormBundle:Indicador')->getEvaluacionesComplementariasNacional();
+        $data[0]['establecimiento'] = $em->getRepository('GridFormBundle:Indicador')->getEvaluacionesComplementarias(null, true);
+        
+        $response->setContent(json_encode($data));
+        
+
+        return $response;
+        //}
+    }
 
     /**
      * Obtener los datos del formulario
@@ -238,7 +260,8 @@ class TableroCalidadRESTController extends Controller {
         $em = $this->getDoctrine()->getManager();
 
         
-        $data[] = $em->getRepository('GridFormBundle:Indicador')->getDetalleIndicador($periodo, $id);        
+        //$data = $em->getRepository('GridFormBundle:Indicador')->getDetalleIndicador($periodo, $id);        
+        $data[] = $em->getRepository('GridFormBundle:Indicador')->getDetalleIndicador($periodo, $id);
         
         $resp = (count($data) == 0)? array(): $data;
         

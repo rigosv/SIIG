@@ -97,3 +97,5 @@ label.active {
     padding: 10px;
     text-transform: uppercase;
 }
+
+#pivotEvaluacionesComplementarias .rowTotal, #pivotEvaluacionesComplementarias th.pvtTotalLabel[rowspan], #pivotEvaluacionesComplementarias .pvtGrandTotal {display: none}

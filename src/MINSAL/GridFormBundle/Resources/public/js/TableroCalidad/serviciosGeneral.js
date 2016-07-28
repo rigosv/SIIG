@@ -20,4 +20,11 @@ serviciosGeneral.factory('DetalleIndicador', ['$resource',
       query: {method:'GET', params:{periodo: '@_id', id: '@_idi'}, isArray:true}
     });
   }]);
+  
+serviciosGeneral.factory('EvaluacionesComplementarias', ['$resource',
+  function($resource){
+    return $resource(Routing.generate('get_evaluaciones_complementarias'), {}, {
+      query: {method:'GET', params:{}, isArray:true}
+    });
+  }]);
  

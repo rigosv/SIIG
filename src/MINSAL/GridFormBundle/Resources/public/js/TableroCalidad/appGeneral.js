@@ -25,7 +25,7 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['serviciosGeneral',
                 $interpolateProvider.endSymbol(']]');
             }])
         .directive('ifLoading', ifLoading)
-        .controller('mainCtrl', function AppCtrl($scope, Indicadores, Periodos, DetalleIndicador) {
+        .controller('mainCtrl', function AppCtrl($scope, Indicadores, Periodos, DetalleIndicador, EvaluacionesComplementarias) {
             $scope.options = {width: 300, height: 250, 'bar': 'aaa'};
             $scope.data = [0];
             $scope.hovered = function (d) {
@@ -98,6 +98,28 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['serviciosGeneral',
                                 alert(error);
                             }
                     );
+                EvaluacionesComplementarias.query()
+                .$promise.then(
+                        function (data) {
+                            $scope.evaluaciones_complementarias = (data != '') ? data[0] : [];
+                            var utils = $.pivotUtilities;
+                            var render =  utils.renderers["Table"];
+                            var function_ =  utils.aggregators["Average"];
+
+                            $("#pivotEvaluacionesComplementarias").pivot(
+                              data[0].establecimiento, {
+                                rows: ["nombre_corto"],
+                                cols: ["tipo_evaluacion"],
+                                aggregator: function_(["valor"]),
+                                renderer: render
+                              });
+                            
+                        },
+                        function (error) {
+                            alert(error);
+                        }
+                );
+            
             };
             
             $scope.detalleArea = function(indicador){
@@ -107,6 +129,17 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['serviciosGeneral',
                     .$promise.then(
                             function (data) {
                                 $scope.detalle = (data != '') ? data[0] : [];
+                                /*var utils = $.pivotUtilities;
+                                var render =  utils.renderers["Table"];
+                                var function_ =  utils.aggregators["Average"];
+
+                                $("#pivottable").pivot(
+                                  data, {
+                                    rows: ["establecimiento"],
+                                    cols: ["area"],
+                                    aggregator: function_(["calificacion"]),
+                                    renderer: render
+                                  });*/
                                 $('#modalDetalleIndicador').modal('show');
                             },
                             function (error) {

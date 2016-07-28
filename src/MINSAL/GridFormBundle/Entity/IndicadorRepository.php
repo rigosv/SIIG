@@ -41,8 +41,6 @@ class IndicadorRepository extends EntityRepository {
         $datos = array();
         $calificaciones = array();
         
-        //Recuperar los indicadores que no tienen asociado ningún criterio
-        //Estos serán los que están cargados a todo el estándar
         $sql = "SELECT B.posicion, A.codigo, A.descripcion, A.forma_evaluacion,  
                                 A.porcentaje_aceptacion, 
                                 B.descripcion descripcion_estandar, B.periodo_lectura_datos, 
@@ -164,6 +162,22 @@ class IndicadorRepository extends EntityRepository {
 
         $datos = array();
         $calificaciones = array();
+        $sql = "SELECT B.id, D.nombre as nombre_establecimieto, D.nombre_corto AS ESTABLECIMIENTO, B.codigo AS codigo_criterio, COALESCE(C.descripcion, B.descripcion) AS AREA,
+                    A.calificacion
+                    FROM
+                    (SELECT establecimiento, codigo_criterio, ROUND(AVG(calificacion)::numeric,2) AS calificacion
+                        FROM  datos_evaluacion_calidad_num
+                        WHERE anio = $anio
+                            AND (mes = '$mes' OR mes = '0$mes')
+                            AND id_indicador = $id_indicador
+                        GROUP BY establecimiento, codigo_criterio
+                    ) AS A
+                    INNER JOIN variable_captura B ON (A.codigo_criterio = B.codigo)
+                    LEFT JOIN area_variable_captura C ON (B.area_id = C.id)
+                    INNER JOIN costos.estructura D ON (A.establecimiento = D.codigo)
+                    ORDER BY calificacion
+                    ";
+        //return $em->getConnection()->executeQuery($sql)->fetchAll();
                 
         $sql = "SELECT B.id, B.codigo AS codigo_criterio, COALESCE(C.descripcion, B.descripcion) AS descripcion_criterio,
                     A.calificacion
@@ -303,13 +317,13 @@ class IndicadorRepository extends EntityRepository {
         
         
         $sql = "DROP TABLE IF EXISTS auxiliar_tmp";
-        $em->getConnection()->executeQuery($sql)->fetchAll();
+        $em->getConnection()->executeQuery($sql);
         $sql = "SELECT F.*, 
                 CE.nombre AS nombre_establecimiento, COALESCE(CE.nombre_corto, CE.nombre) AS nombre_corto,
                 $anio AS anio, '$mes' AS mes, '$datosIndicador[codigo_estandar]' AS codigo_estandar, '$datosIndicador[descripcion_estandar]' AS descripcion_estandar,
                  '$datosIndicador[codigo]' AS codigo_indicador, '$datosIndicador[descripcion]' AS descripcion_indicador,
                  '$datosIndicador[tipo_evaluacion]' AS tipo_evaluacion, '$datosIndicador[meta]' AS meta, '$datosIndicador[posicion]' AS posicion   
-                INTO TEMP auxiliar_tmp
+                INTO auxiliar_tmp
                 FROM 
                 (   SELECT A.establecimiento, A.total_expedientes, COALESCE(B.expedientes_cumplimiento, 0) AS expedientes_cumplimiento,
                     A.criterios_aplicables, A.criterios_cumplidos, A.criterios_no_cumplidos, 
@@ -337,6 +351,18 @@ class IndicadorRepository extends EntityRepository {
         
         $em->getConnection()->executeQuery($sql);
         
+        //Borrar los datos si estos ya existen
+        $sql = "DELETE FROM datos_evaluacion_calidad
+                 WHERE (codigo_estandar, codigo_indicador, anio, mes,
+                         establecimiento)
+                         IN 
+                         (SELECT codigo_estandar::text, codigo_indicador::text, anio::integer, mes::text,
+                                    establecimiento::text
+                            FROM auxiliar_tmp
+                        )";
+        $em->getConnection()->executeQuery($sql);
+        
+        // Insertar los nuevos datos
         $sql = "INSERT INTO datos_evaluacion_calidad(codigo_estandar, codigo_indicador, anio, mes,
                          descripcion_indicador, calificacion, nombre_establecimiento, nombre_corto, 
                         establecimiento, total_expedientes, expedientes_cumplimiento, criterios_aplicables, 
@@ -454,7 +480,7 @@ class IndicadorRepository extends EntityRepository {
                     SUM(no_cumplimiento) AS no_cumplimiento,
                     SUM(cumplimiento) + SUM(no_cumplimiento) AS aplicable,
                     ROUND( (SUM(cumplimiento)::numeric / ( SUM(cumplimiento)::numeric + SUM(no_cumplimiento)::numeric ) * 100),0) AS porc_cumplimiento 
-                INTO evaluacion_expediente_tmp
+                INTO TEMP evaluacion_expediente_tmp
                 FROM (
                     SELECT establecimiento, substring(nombre_pivote, '[0-9]{1,}') as pivote, 
                         CASE WHEN dato = 'true' THEN 1 ELSE 0 END AS cumplimiento, 
@@ -469,7 +495,7 @@ class IndicadorRepository extends EntityRepository {
                 GROUP BY establecimiento, pivote 
                 HAVING (SUM(cumplimiento)::numeric + SUM(no_cumplimiento)::numeric) > 0
                 ORDER BY pivote::numeric";
-        $em->getConnection()->executeQuery($sql); //->fetchAll();
+        $em->getConnection()->executeQuery($sql);
     }
     
     public function borrarVacios($mes) {
@@ -514,7 +540,7 @@ class IndicadorRepository extends EntityRepository {
         }
     }
     
-    public function getEvaluacionesComplementarias($codigo_establecimiento = null) {
+    public function getEvaluacionesComplementarias($codigo_establecimiento = null, $raw = false) {
         $em = $this->getEntityManager();
         $resp = array();
         
@@ -525,7 +551,7 @@ class IndicadorRepository extends EntityRepository {
 
         //Obtener valores de evaluaciones externas, extraer la medición 
         //del último año ingresado para cada evaluación
-        $sql = "SELECT D.codigo as establecimiento, D.id AS id_estructura, 
+        $sql = "SELECT D.codigo as establecimiento, D.nombre_corto, D.id AS id_estructura, 
                         C.descripcion AS categoria, B.descripcion AS tipo_evaluacion, 
                        A.anio, A.valor, B.unidad_medida
                     FROM evaluacion_externa A
@@ -540,11 +566,37 @@ class IndicadorRepository extends EntityRepository {
                         )
                         $cond
                     ORDER BY C.id, B.id, A.anio, A.valor";       
-        
-        foreach ($em->getConnection()->executeQuery($sql)->fetchAll() as $f){
-            $resp[$f['establecimiento']][] = $f;
+        if ($raw){
+            return $em->getConnection()->executeQuery($sql)->fetchAll();
         }
-        return $resp;
+        else{ 
+            foreach ($em->getConnection()->executeQuery($sql)->fetchAll() as $f){
+                $resp[$f['establecimiento']][] = $f;
+            }
+            return $resp;
+        }
+    }
+    
+    public function getEvaluacionesComplementariasNacional() {
+        $em = $this->getEntityManager();
+  
+        //Obtener valores de evaluaciones externas, extraer la medición 
+        //del último año ingresado para cada evaluación
+        $sql = "SELECT B.descripcion AS tipo_evaluacion, 
+                       A.anio, AVG(A.valor) AS valor, B.unidad_medida
+                    FROM evaluacion_externa A
+                    INNER JOIN evaluacion_externa_tipo B ON (A.tipoevaluacion_id = B.id)
+                    INNER JOIN evaluacion_categoria C ON (B.categoriaevaluacion_id = C.id)
+                    WHERE (tipoevaluacion_id, anio) 
+                        IN 
+                        (SELECT tipoevaluacion_id, MAX(anio) AS anio 
+                            FROM evaluacion_externa 
+                            GROUP BY tipoevaluacion_id
+                        )
+                    GROUP BY B.descripcion, A.anio, B.unidad_medida
+                    ORDER BY B.descripcion, A.anio, B.unidad_medida";       
+        
+        return $em->getConnection()->executeQuery($sql)->fetchAll();
     }
     
     public function getEvaluacionEstablecimiento($periodo) {
@@ -552,7 +604,7 @@ class IndicadorRepository extends EntityRepository {
         list($anio, $mes) = explode('_', $periodo);
         
         $sql = "SELECT establecimiento, nombre_corto, nombre_establecimiento, ROUND(avg(calificacion)::numeric,2) AS calificacion 
-                    INTO  esta_lc_tmp
+                    INTO  TEMP esta_lc_tmp
                     FROM datos_evaluacion_calidad 
                     WHERE anio=$anio AND mes = '$mes'
                     GROUP BY establecimiento, nombre_corto, nombre_establecimiento
@@ -561,7 +613,7 @@ class IndicadorRepository extends EntityRepository {
         
         $sql = "SELECT A.establecimiento, B.nombre_corto, 
                     B.nombre AS nombre_establecimiento
-                    INTO  esta_num_tmp
+                    INTO  TEMP esta_num_tmp
                     FROM datos_evaluacion_calidad_num A
                     INNER JOIN costos.estructura B ON (A.establecimiento = B.codigo)
                     WHERE anio=$anio AND mes = '$mes'
