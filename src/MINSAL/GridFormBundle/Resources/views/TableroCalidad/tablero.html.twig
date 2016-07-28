@@ -191,7 +191,7 @@
                                     </TD>
                                     <TD class="indentacion_[[criterio.nivel_indentacion]]" style='width: "10px"' 
                                         ng-if="criterio.es_separador != 'true' && Formulario.forma_evaluacion == 'lista_chequeo'">
-                                        [[criterio.codigo_indicador]]
+                                        [[criterio.codigo_indicador.split('n1_').join('').split(' ').join(', ')]]
                                     </TD>
                                     <TD class="indentacion_[[criterio.nivel_indentacion]]" ng-if="criterio.es_separador != 'true'" >
                                         [[criterio.descripcion_variable]]
@@ -217,7 +217,7 @@
                                         </button>
                                         <span ng-if="getValorExpediente(exp) != 'false' && getValorExpediente(exp) != 'true'">[[getValorExpediente(exp)]]</span>
                                     </TD>
-                                    <TD align=center ng-if="criterio.es_separador == 'false' && criterio.es_poblacion == 'false' " ng-repeat="resumen_criterio in Formulario.resumen_criterios | filter:{codigo_variable:criterio.codigo_variable}" >
+                                    <TD align=center ng-if="criterio.es_separador == 'false' && criterio.es_poblacion == 'false' && $first" ng-repeat="resumen_criterio in Formulario.resumen_criterios | filter:{codigo_variable:criterio.codigo_variable}" >
                                         <span class="porc_cumplimiento_criterio">[[resumen_criterio.porc_cumplimiento]]% </span>([[resumen_criterio.cumplimiento]]/[[resumen_criterio.cumplimiento + resumen_criterio.no_cumplimiento]])
                                     </TD>
                                 </TR>
@@ -298,7 +298,7 @@
                                 {{'_cumplimiento_criterios_'|trans}}
                             </span>
                         </div>
-                        <div class="col-md-4"><B>Código:</B> [[indicador.codigo]]</div>
+                        <div class="col-md-4"><B>Código:</B> [[indicador.codigo.split('n1_').join('')]]</div>
                         </div>
                     </div>
                     <div class="panel-body">
