@@ -30,8 +30,7 @@ class IndicadorAdmin extends Admin
                             'promedio' => $this->getTranslator()->trans('_promedio_')
                             )
                         ))            
-            ->add('porcentajeAceptacion', null, array('label'=> $this->getTranslator()->trans('_porcentaje_aceptacion_')))
-            ->add('IndicadorPadre', null, array('label'=> $this->getTranslator()->trans('_indicador_padre_')))
+            ->add('porcentajeAceptacion', null, array('label'=> $this->getTranslator()->trans('_porcentaje_aceptacion_')))            
             ->add('criterios', null, 
                     array('label'=> $this->getTranslator()->trans('_criterios_'), 
                         'expanded' => false,

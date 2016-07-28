@@ -64,17 +64,7 @@ class Indicador
      *
      * @ORM\ManyToMany(targetEntity="VariableCaptura", inversedBy="indicadores")
      **/
-    private $criterios;
-    
-    /**
-     * @ORM\OneToMany(targetEntity="Indicador", mappedBy="IndicadorPadre")
-     */
-    private $IndicadoresHijos;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="Indicador", inversedBy="IndicadoresHijos")
-     */
-    private $IndicadorPadre;
+    private $criterios;        
     
     /**
      * @var \Doctrine\Common\Collections\ArrayCollection
@@ -254,63 +244,7 @@ class Indicador
     public function getCriterios()
     {
         return $this->criterios;
-    }
-
-    /**
-     * Add IndicadoresHijos
-     *
-     * @param \MINSAL\GridFormBundle\Entity\Indicador $indicadoresHijos
-     * @return Indicador
-     */
-    public function addIndicadoresHijo(\MINSAL\GridFormBundle\Entity\Indicador $indicadoresHijos)
-    {
-        $this->IndicadoresHijos[] = $indicadoresHijos;
-
-        return $this;
-    }
-
-    /**
-     * Remove IndicadoresHijos
-     *
-     * @param \MINSAL\GridFormBundle\Entity\Indicador $indicadoresHijos
-     */
-    public function removeIndicadoresHijo(\MINSAL\GridFormBundle\Entity\Indicador $indicadoresHijos)
-    {
-        $this->IndicadoresHijos->removeElement($indicadoresHijos);
-    }
-
-    /**
-     * Get IndicadoresHijos
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getIndicadoresHijos()
-    {
-        return $this->IndicadoresHijos;
-    }
-
-    /**
-     * Set IndicadorPadre
-     *
-     * @param \MINSAL\GridFormBundle\Entity\Indicador $indicadorPadre
-     * @return Indicador
-     */
-    public function setIndicadorPadre(\MINSAL\GridFormBundle\Entity\Indicador $indicadorPadre = null)
-    {
-        $this->IndicadorPadre = $indicadorPadre;
-
-        return $this;
-    }
-
-    /**
-     * Get IndicadorPadre
-     *
-     * @return \MINSAL\GridFormBundle\Entity\Indicador 
-     */
-    public function getIndicadorPadre()
-    {
-        return $this->IndicadorPadre;
-    }
+    }    
 
     /**
      * Add alerta
