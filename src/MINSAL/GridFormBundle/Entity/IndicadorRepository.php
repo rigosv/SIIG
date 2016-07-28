@@ -444,6 +444,19 @@ class IndicadorRepository extends EntityRepository {
         list($anio, $mes) = explode('_', $periodo);
         
         $campos = $this->getListaCampos($Frm);
+        if ($campos == ''){
+            //Es un formulario padre, verificar que formulario hijo contiene los
+            //criterios del indicador
+            $sql = "SELECT A.formulario_id
+                        FROM variable_captura A
+                            INNER JOIN indicador_variablecaptura B ON (A.id = B.variablecaptura_id)
+                        WHERE B.indicador_id = $datosIndicador[indicador_id]
+                        GROUP BY A.formulario_id
+                            ";
+            $form = $em->getConnection()->executeQuery($sql)->fetch();
+            $Frm = $em->getRepository("GridFormBundle:Formulario")->find($form['formulario_id']);
+            $campos = $this->getListaCampos($Frm);
+        }
         //$alcance = $datosIndicador['alcance_evaluacion'] ;
         
         $periodo_lectura = '';
