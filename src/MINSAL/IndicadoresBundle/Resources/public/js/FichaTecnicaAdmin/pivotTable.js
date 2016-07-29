@@ -1,5 +1,4 @@
 var idIndicadorActivo;
-google.load("visualization", "1", {packages: ["corechart", "charteditor"]});
 
 $(document).ready(function() {
     var datos_ = '';
@@ -25,8 +24,8 @@ $(document).ready(function() {
         tableToExcel(t[0],'indicador', $('#marco-sala').attr('data-content').trim()+'.xls');
     });
     $('#export_grp').click(function() {        
-        var html = $('DIV[aria-label="A chart."]').html();
-        var svg = $('svg[aria-label="A chart."]');
+        var html = $('div.c3').html();
+        var svg = $('div.c3 svg');
         if (svg.length == 0){
             $('#export_grp').notify(trans._no_grafico_, {className: "info" });
             return;
@@ -162,7 +161,7 @@ $(document).ready(function() {
     
     function cargarTablaDinamica(datos){
         var renderers = $.extend($.pivotUtilities.renderers,
-            $.pivotUtilities.gchart_renderers);
+            $.pivotUtilities.c3_renderers);
                 
         $("#output").pivotUI(datos, {
             renderers: renderers,
