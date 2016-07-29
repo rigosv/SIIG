@@ -3,6 +3,7 @@
     {{ parent() }}
        <link rel="stylesheet" href="{{ asset('bundles/gridform/css/tablero-general-calidad.css') }}" type="text/css" media="all" />
        <link rel="stylesheet" href="{{ asset('bundles/indicadores/js/pivotTable/pivot.min.css') }}" type="text/css" media="all" />
+       {#<link rel="stylesheet" href="{{ asset('bundles/indicadores/js/c3/c3.min.css') }}" type="text/css" media="all" />#}
 {% endblock %}
 {% block javascripts %}
     {{parent()}}
@@ -17,6 +18,9 @@
     
     <script src="{{ asset('bundles/indicadores/js/pivotTable/pivot.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('bundles/indicadores/js/pivotTable/pivot.es.min.js') }}" type="text/javascript"></script>
+    {#<script src="{{ asset('bundles/indicadores/js/d3.v3.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('bundles/indicadores/js/c3/c3.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('bundles/indicadores/js/pivotTable/c3_renderers.min.js') }}" type="text/javascript"></script>#}
 
 {% endblock %}
 
@@ -244,43 +248,12 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
 
-                <div class="modal-header">
+                <div class="modal-header" style="background-color: #337AB7; color:white;">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     <h3 class="modal-title">[[detalleIndicador.descripcion_indicador]]</h3>
                 </div>
                 <div class="modal-body">
-                    <DIV id="pivottable"></DIV>
-                    <table class="table table-hover table-striped">
-                        <CAPTION><h3>Detalle por &aacute;rea</h3></CAPTION>
-                        <THEAD>
-                            <TR>
-                                <TH>&Aacute;rea<TH>
-                                <TH>Calificaci&oacute;n</TH>
-                            </TR>
-                        </THEAD>
-                        <TBODy>
-                            <TR ng-repeat="criterio in detalle.areas">
-                                <TD>[[criterio.descripcion_criterio]]<TD>
-                                <TD>[[criterio.calificacion]]</TD>
-                            </canvas></TD>
-                            </TR>
-                        </tBODY>
-                    </table>
-                    
-                    <table class="table table-hover table-striped">
-                        <CAPTION><h3>Detalle por establecimiento</h3></CAPTION>
-                        <THEAD>
-                            <TR>
-                                <TH>Establecimiento<TH>
-                                <TH>Calificaci&oacute;n</TH>
-                            </TR>
-                        </THEAD>
-                        <TBODy>
-                            <TR ng-repeat="est in detalle.establecimientos">
-                                <TD>[[est.nombre]]<TD>
-                                <TD>[[est.calificacion]]</TD>
-                            </TR>
-                        </tBODY>
-                    </table>
+                    <DIV id="pivotDetalleIndicador"></DIV>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>

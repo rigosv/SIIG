@@ -17,7 +17,7 @@ function ifLoading($http) {
       };
     }
 
-    ifLoading.$inject = ['$http'];
+    ifLoading.$inject = ['$http'];    
     
 var tableroCalidadApp = angular.module('tableroCalidadApp', ['serviciosGeneral', 'ui.bootstrap', 'chart.js'])
         .config(['$interpolateProvider', function ($interpolateProvider) {
@@ -35,7 +35,7 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['serviciosGeneral',
             $scope.filtroIndicador = '';
             $scope.filtroListadoIndicador = '';
 
-            $scope.titulo = 'Monitoreo y Evaluación de la Gestión de la calidad en RIISS';
+            $scope.titulo = 'Monitoreo y Evaluación de la Gestión de la Calidad en RIISS';
             $scope.subtitulo = 'Unidad Nacional Gestión de Calidad de la RIISS - VMSS';
             $scope.subtitulo2 = '';
             $scope.periodoSeleccionado = [];
@@ -57,7 +57,7 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['serviciosGeneral',
 
                         if (data.length > 0){
                             $scope.periodoSeleccionado = $scope.periodos[0];
-                            $scope.subtitulo2 = 'Tablero General :: Periodo ' + $scope.periodoSeleccionado.etiqueta;
+                            $scope.subtitulo2 = 'Tablero de Mando :: Periodo ' + $scope.periodoSeleccionado.etiqueta;
                         }
                     }
                 );
@@ -129,17 +129,43 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['serviciosGeneral',
                     .$promise.then(
                             function (data) {
                                 $scope.detalle = (data != '') ? data[0] : [];
-                                /*var utils = $.pivotUtilities;
-                                var render =  utils.renderers["Table"];
+                                var utils = $.pivotUtilities;
                                 var function_ =  utils.aggregators["Average"];
-
-                                $("#pivottable").pivot(
+                                    
+                                $("#pivotDetalleIndicador").pivot(
                                   data, {
                                     rows: ["establecimiento"],
                                     cols: ["area"],
                                     aggregator: function_(["calificacion"]),
-                                    renderer: render
-                                  });*/
+                                    rendererName: "Table Barchart"
+                                  });
+
+                                /*var renderers = $.extend($.pivotUtilities.renderers, $.pivotUtilities.c3_renderers);
+                                $("#pivotDetalleIndicador").pivotUI(data, {
+                                    renderers: renderers,
+                                    menuLimit: 500,
+                                    unusedAttrsVertical: false,
+                                    rows: ["establecimiento"],
+                                    cols: ["area"],
+                                    vals: ["calificacion"],
+                                    aggregatorName: "Average",
+                                    rendererName: "Heatmap",
+                                    rendererOptions: {
+                                        heatmap: {
+                                            colorScaleGenerator: function(values) {
+                                                return d3.scale.linear()
+                                                    .domain([d3.min(values), 0.5, d3.max(values)])
+                                                    .range(["red", "blue", "green"])
+                                            }
+                                        }
+                                    }
+                                }, true);*/
+                                $('TD.pvtVal[data-value="0"]').html('0.00');
+                                $('TD.pvtTotal[data-value="0"]').html('0.00');
+                                $('.pvtTotalLabel').html('Totales');
+                                //var tabla = $('#pivotDetalleIndicador .pvtRendererArea');                                
+                                //$('#pivotDetalleIndicador').html('');
+                                //$('#pivotDetalleIndicador').append(tabla);
                                 $('#modalDetalleIndicador').modal('show');
                             },
                             function (error) {

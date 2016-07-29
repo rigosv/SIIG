@@ -177,8 +177,8 @@ class IndicadorRepository extends EntityRepository {
                     INNER JOIN costos.estructura D ON (A.establecimiento = D.codigo)
                     ORDER BY calificacion
                     ";
-        //return $em->getConnection()->executeQuery($sql)->fetchAll();
-                
+        return $em->getConnection()->executeQuery($sql)->fetchAll();
+        /*        
         $sql = "SELECT B.id, B.codigo AS codigo_criterio, COALESCE(C.descripcion, B.descripcion) AS descripcion_criterio,
                     A.calificacion
                     FROM
@@ -212,7 +212,7 @@ class IndicadorRepository extends EntityRepository {
         $resp['areas'] = $areas;
         $resp['establecimientos'] = $establecimientos;
         
-        return $resp;
+        return $resp;*/
     }
     
     protected function prepararDatosEvaluacionNumerica($periodo) {
