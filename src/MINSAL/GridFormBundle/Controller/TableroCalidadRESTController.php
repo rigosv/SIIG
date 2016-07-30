@@ -36,6 +36,9 @@ class TableroCalidadRESTController extends Controller {
         $em = $this->getDoctrine()->getManager();
         
         $data = $em->getRepository('GridFormBundle:Formulario')->getPeriodosEvaluacion();
+        //Verificar que existen las tablas necesarias
+        $em->getRepository('GridFormBundle:Indicador')->crearTabla();
+        
         $data_ = array();
         foreach ($data as $f) {
             $f['etiqueta'] = $this->meses[$f['mes']] . '/' . $f['anio'];

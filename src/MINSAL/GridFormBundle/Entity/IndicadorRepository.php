@@ -27,7 +27,7 @@ class IndicadorRepository extends EntityRepository {
                 10=>'Oct',
                 11=>'Nov',
                 12=>'Dic'
-                );
+                );    
     /**
      * 
      * @param type $periodo
@@ -403,7 +403,7 @@ class IndicadorRepository extends EntityRepository {
     private function prepararTabla($codigo_estandar, $codigo_indicador, $anio, $mes) {
         $em = $this->getEntityManager();
         
-        $this->crearTabla();
+        //$this->crearTabla();
         
         //Borrar los datos antiguos de la evaluación y actualizarla con los nuevos
         $sql = "DELETE FROM datos_evaluacion_calidad
@@ -415,7 +415,7 @@ class IndicadorRepository extends EntityRepository {
         $em->getConnection()->executeQuery($sql);
     }
     
-    private function crearTabla() {
+    public function crearTabla() {
         $em = $this->getEntityManager();
         
         //Verificar si existe la tabla, sino crearla
@@ -438,6 +438,33 @@ class IndicadorRepository extends EntityRepository {
                  )";
         
         $em->getConnection()->executeQuery($sql);
+        
+        //Verificar si existe la tabla de límites de aceptación, sino crearla
+        $sql = "CREATE TABLE IF NOT EXISTS limites_aceptacion_calidad(
+                    codigo varchar(100),
+                    valor float,
+                    PRIMARY KEY (codigo)
+                 )";        
+        $em->getConnection()->executeQuery($sql);
+        
+        //Insertar valores iniciales por si no existen
+        $sql = "DROP TABLE IF EXISTS aux_tmp";
+        $em->getConnection()->executeQuery($sql);
+        $sql = "SELECT * INTO TEMP aux_tmp FROM limites_aceptacion_calidad LIMIT 0";
+        $em->getConnection()->executeQuery($sql);
+        
+        //Insertar valores iniciales por si no existen
+        $sql = "INSERT INTO aux_tmp VALUES 
+                    ('nivel_aprobacion_indicador_calidad', 80),
+                    ('nivel_aprobacion_estandar_calidad', 80),
+                    ('nivel_aprobacion_establecimiento_calidad', 80)";
+        $em->getConnection()->executeQuery($sql);
+        
+        $sql = "INSERT INTO limites_aceptacion_calidad 
+                 SELECT codigo, valor FROM aux_tmp 
+                    WHERE codigo NOT IN (SELECT codigo FROM limites_aceptacion_calidad)";
+        $em->getConnection()->executeQuery($sql);
+        
     }
     
     private function crearTablaIndNumericos() {
@@ -635,15 +662,22 @@ class IndicadorRepository extends EntityRepository {
         $em = $this->getEntityManager();
         list($anio, $mes) = explode('_', $periodo);
         
-        $sql = "SELECT establecimiento, nombre_corto, nombre_establecimiento, ROUND(avg(calificacion)::numeric,2) AS calificacion 
-                    INTO  TEMP esta_lc_tmp
-                    FROM datos_evaluacion_calidad 
-                    WHERE anio=$anio AND mes = '$mes'
-                    GROUP BY establecimiento, nombre_corto, nombre_establecimiento
-                     ";
-        $em->getConnection()->executeQuery($sql);
+        $sqlEvalEstandar = $this->getSQLEvaluacionEstandar();
+        $sqlEvalEstablecimiento = $this->getSQLEvaluacionEstablecimiento($sqlEvalEstandar);
         
-        $sql = "SELECT A.establecimiento, B.nombre_corto, 
+        
+        $sql_lc = "SELECT A.establecimiento, nombre_corto, nombre_establecimiento, ROUND(B.calificacion::numeric,2) as calificacion
+                    INTO  TEMP esta_lc_tmp
+                    FROM ($sqlEvalEstablecimiento) AS B
+                    INNER JOIN datos_evaluacion_calidad A ON (B.establecimiento = A.establecimiento
+                                                                AND B.anio = A.anio
+                                                                AND B.mes = A.mes)
+                    WHERE A.anio=$anio AND A.mes = '$mes'
+                     ";
+
+        $em->getConnection()->executeQuery($sql_lc);
+        
+        $sql_nm = "SELECT A.establecimiento, B.nombre_corto, 
                     B.nombre AS nombre_establecimiento
                     INTO  TEMP esta_num_tmp
                     FROM datos_evaluacion_calidad_num A
@@ -654,7 +688,7 @@ class IndicadorRepository extends EntityRepository {
                         (SELECT establecimiento FROM esta_lc_tmp) 
                     GROUP BY A.establecimiento, B.nombre_corto,  B.nombre";
         
-        $em->getConnection()->executeQuery($sql);
+        $em->getConnection()->executeQuery($sql_nm);
         
         $sql = "SELECT 'LISTA_CHECK' AS tipo, establecimiento, nombre_corto, 
                         nombre_establecimiento, calificacion 
@@ -667,20 +701,51 @@ class IndicadorRepository extends EntityRepository {
         return $em->getConnection()->executeQuery($sql)->fetchAll();
     }
     
-    public function getEvaluaciones($establecimiento, $periodo) {
+    public function getSQLEvaluacionEstandar(){
+        $em = $this->getEntityManager();
+        
+        $sql = "SELECT valor FROM limites_aceptacion_calidad WHERE codigo = 'nivel_aprobacion_indicador_calidad' ";        
+        $nivel = $em->getConnection()->executeQuery($sql)->fetch();
+        
+        //Si el nivel de aprovación es 0 se hará un promedio normal
+        $eval = ($nivel['valor'] == 0 ) ? 
+                " ROUND(avg(calificacion)::numeric,2) " :
+                " COUNT(CASE WHEN calificacion >= $nivel[valor] THEN 1 END)::numeric / COUNT(calificacion)::numeric * 100 ";
+        return "SELECT anio, mes, establecimiento, codigo_estandar, 
+                            $eval AS calificacion
+                    FROM datos_evaluacion_calidad
+                    GROUP BY anio, mes, establecimiento, codigo_estandar
+                     ";
+    }
+    
+    public function getSQLEvaluacionEstablecimiento($sqlEvalEstandar) {
+        $em = $this->getEntityManager();
+        
+        $sql = "SELECT valor FROM limites_aceptacion_calidad WHERE codigo = 'nivel_aprobacion_indicador_calidad' ";        
+        $nivel = $em->getConnection()->executeQuery($sql)->fetch();
+        //Si el nivel de aprovación es 0 se hará un promedio normal
+        $eval = ($nivel['valor'] == 0 ) ? 
+                " ROUND(avg(calificacion)::numeric,2) " :
+                " COUNT(CASE WHEN calificacion >= $nivel[valor] THEN 1 END)::numeric / COUNT(calificacion)::numeric * 100 ";
+        return  " SELECT anio, mes, establecimiento, 
+                        $eval AS calificacion
+                        FROM ($sqlEvalEstandar) AS CST
+                        GROUP BY anio, mes, establecimiento
+                 ";
+    }
+    
+    public function getEvaluaciones($establecimiento, $periodo, $nivelAprobacionIndicador = 0) {
         $em = $this->getEntityManager();
         list($anio, $mes) = explode('_', $periodo);
-        
+        $sqlEvalEstandar = $this->getSQLEvaluacionEstandar();
         $sql = "SELECT A.codigo, A.descripcion, A.periodo_lectura_datos, A.meta, 
                         A.forma_evaluacion, ROUND(B.calificacion::numeric,2) as calificacion
                     FROM costos.formulario A
-                        INNER JOIN (SELECT codigo_estandar, avg(calificacion) AS calificacion 
-                            FROM datos_evaluacion_calidad 
-                            WHERE anio=$anio 
-                                AND mes = '$mes'
-                                AND establecimiento = '$establecimiento'
-                            GROUP BY codigo_estandar
+                        INNER JOIN ($sqlEvalEstandar
                             ) AS B ON (A.codigo = B.codigo_estandar)
+                    WHERE B.anio=$anio 
+                        AND B.mes = '$mes'
+                        AND B.establecimiento = '$establecimiento'
                     ORDER BY A.posicion, A.codigo
                      ";
         return $em->getConnection()->executeQuery($sql)->fetchAll();
@@ -691,12 +756,14 @@ class IndicadorRepository extends EntityRepository {
         $em = $this->getEntityManager();
         list($anio, $mes) = explode('_', $periodo);
         
-        $sql = "SELECT anio, mes::integer, ROUND(avg(calificacion)::numeric,2) AS calificacion 
-                    FROM datos_evaluacion_calidad 
-                    WHERE establecimiento = '$establecimiento'
-                       AND (anio < $anio OR (anio = $anio AND mes::integer <= $mes ) )
-                    GROUP BY anio, mes::integer                        
-                    ORDER BY anio, mes::integer
+        $sqlEvalEstandar = $this->getSQLEvaluacionEstandar();
+        $sqlEvalEstablecimiento = $this->getSQLEvaluacionEstablecimiento($sqlEvalEstandar);
+     
+        $sql = "SELECT A.anio, A.mes::integer, ROUND(A.calificacion::numeric,2) AS calificacion 
+                    FROM ($sqlEvalEstablecimiento) AS A 
+                    WHERE A.establecimiento = '$establecimiento'
+                       AND (A.anio < $anio OR (A.anio = $anio AND A.mes::integer <= $mes ) )                    
+                    ORDER BY A.anio, A.mes::integer
                     LIMIT 20
                      ";
         return $em->getConnection()->executeQuery($sql)->fetchAll();
