@@ -3,7 +3,7 @@
     {{ parent() }}
        <link rel="stylesheet" href="{{ asset('bundles/gridform/css/tablero-general-calidad.css') }}" type="text/css" media="all" />
        <link rel="stylesheet" href="{{ asset('bundles/indicadores/js/pivotTable/pivot.min.css') }}" type="text/css" media="all" />
-       {#<link rel="stylesheet" href="{{ asset('bundles/indicadores/js/c3/c3.min.css') }}" type="text/css" media="all" />#}
+       <link rel="stylesheet" href="{{ asset('bundles/indicadores/js/c3/c3.min.css') }}" type="text/css" media="all" />
 {% endblock %}
 {% block javascripts %}
     {{parent()}}
@@ -17,10 +17,10 @@
     <script type="text/javascript" src="{{ asset('bundles/gridform/js/TableroCalidad/angular-chart.min.js') }}"></script>
     
     <script src="{{ asset('bundles/indicadores/js/pivotTable/pivot.min.js') }}" type="text/javascript"></script>
-    <script src="{{ asset('bundles/indicadores/js/pivotTable/pivot.es.min.js') }}" type="text/javascript"></script>
-    {#<script src="{{ asset('bundles/indicadores/js/d3.v3.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('bundles/indicadores/js/pivotTable/pivot.es-sv.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('bundles/indicadores/js/d3.v3.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('bundles/indicadores/js/c3/c3.min.js') }}" type="text/javascript"></script>
-    <script src="{{ asset('bundles/indicadores/js/pivotTable/c3_renderers.min.js') }}" type="text/javascript"></script>#}
+    <script src="{{ asset('bundles/indicadores/js/pivotTable/c3_renderers.min.js') }}" type="text/javascript"></script>
 
 {% endblock %}
 
@@ -250,9 +250,13 @@
 
                 <div class="modal-header" style="background-color: #337AB7; color:white;">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h3 class="modal-title">[[detalleIndicador.descripcion_indicador]]</h3>
+                    <h3 class="modal-title">[[detalleIndicador.descripcion_indicador]] <span>([[periodoDetalle]])</span></h3>
                 </div>
                 <div class="modal-body">
+                    <div class="btn-group" role="group" aria-label="...">
+                        <button type="button" class="btn btn-success" ng-click="tablaDetalle()">[[periodoSeleccionado.etiqueta]]</button>
+                        <button type="button" id='export_grp' class="btn btn-success" title="{{'_historial_establecimiento_'|trans}}" ng-click="tablaHistorial()"><span class="glyphicon glyphicon-calendar"></span></button> 
+                    </div>
                     <DIV id="pivotDetalleIndicador"></DIV>
                 </div>
                 <div class="modal-footer">

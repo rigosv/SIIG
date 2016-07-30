@@ -129,49 +129,61 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['serviciosGeneral',
                     .$promise.then(
                             function (data) {
                                 $scope.detalle = (data != '') ? data[0] : [];
-                                var utils = $.pivotUtilities;
-                                var function_ =  utils.aggregators["Average"];
-                                    
-                                $("#pivotDetalleIndicador").pivot(
-                                  data, {
-                                    rows: ["establecimiento"],
-                                    cols: ["area"],
-                                    aggregator: function_(["calificacion"]),
-                                    rendererName: "Table Barchart"
-                                  });
-
-                                /*var renderers = $.extend($.pivotUtilities.renderers, $.pivotUtilities.c3_renderers);
-                                $("#pivotDetalleIndicador").pivotUI(data, {
-                                    renderers: renderers,
-                                    menuLimit: 500,
-                                    unusedAttrsVertical: false,
-                                    rows: ["establecimiento"],
-                                    cols: ["area"],
-                                    vals: ["calificacion"],
-                                    aggregatorName: "Average",
-                                    rendererName: "Heatmap",
-                                    rendererOptions: {
-                                        heatmap: {
-                                            colorScaleGenerator: function(values) {
-                                                return d3.scale.linear()
-                                                    .domain([d3.min(values), 0.5, d3.max(values)])
-                                                    .range(["red", "blue", "green"])
-                                            }
-                                        }
-                                    }
-                                }, true);*/
-                                $('TD.pvtVal[data-value="0"]').html('0.00');
-                                $('TD.pvtTotal[data-value="0"]').html('0.00');
-                                $('.pvtTotalLabel').html('Totales');
-                                //var tabla = $('#pivotDetalleIndicador .pvtRendererArea');                                
-                                //$('#pivotDetalleIndicador').html('');
-                                //$('#pivotDetalleIndicador').append(tabla);
+                                $scope.tablaDetalle();
                                 $('#modalDetalleIndicador').modal('show');
                             },
                             function (error) {
                                 alert(error);
                             }
                     );
+            };
+            
+            $scope.tablaDetalle = function(){
+                $("#pivotDetalleIndicador").pivotUI($scope.detalle.actual, {
+                    unusedAttrsVertical: false,
+                    rows: ["establecimiento"],
+                    cols: ["area"],
+                    vals: ["calificacion"],
+                    aggregatorName: "Average",
+                    rendererName: "Tabla",
+                    renderers: {
+                        "Tabla": $.pivotUtilities.renderers['Table'],
+                        "Tabla y columnas": $.pivotUtilities.renderers['Table Barchart'],
+                        "Gráfico de líneas": $.pivotUtilities.c3_renderers['Line Chart'],
+                        "Gráfico de columnas": $.pivotUtilities.c3_renderers['Bar Chart']
+                    },
+                    onRefresh: $scope.arreglarValores0
+                }, true);
+                
+                $scope.periodoDetalle = $scope.periodoSeleccionado.etiqueta;
+                
+            };
+            
+            $scope.tablaHistorial = function(){
+                $("#pivotDetalleIndicador").pivotUI($scope.detalle.historico, {
+                    renderers: {
+                        "Tabla": $.pivotUtilities.renderers['Table'],
+                        "Tabla y columnas": $.pivotUtilities.renderers['Table Barchart'],
+                        "Gráfico de líneas": $.pivotUtilities.c3_renderers['Line Chart'],
+                        "Gráfico de columnas": $.pivotUtilities.c3_renderers['Bar Chart']
+                    },
+                    unusedAttrsVertical: false,
+                    rows: ["establecimiento"],
+                    cols: ["periodo"],
+                    vals: ["calificacion"],
+                    aggregatorName: "Average",
+                    rendererName: "Tabla",
+                    onRefresh: $scope.arreglarValores0
+                }, true);
+                
+                $scope.periodoDetalle = 'Historial por establecimiento';
+                $scope.arreglarValores0();
+            };
+            
+            $scope.arreglarValores0 = function(){
+                $('#pivotDetalleIndicador .pvtVal[data-value="0"]').html('0.00');
+                $('#pivotDetalleIndicador .pvtTotal[data-value="0"]').html('0.00');
+                $('#pivotDetalleIndicador .pvtTotalLabel').html('Totales');
             };
             
             $scope.cambiarGrafico1 = function(filtro){

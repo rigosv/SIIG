@@ -111,3 +111,7 @@ table.pvtTable td{
     width: auto;
     min-width: 300px;   
 }
+
+#pivotDetalleIndicador .pvtAxisContainer, #pivotDetalleIndicador .pvtVals{
+    display: none;
+}

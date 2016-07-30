@@ -260,7 +260,7 @@ class TableroCalidadRESTController extends Controller {
         $em = $this->getDoctrine()->getManager();
 
         
-        $data = $em->getRepository('GridFormBundle:Indicador')->getDetalleIndicador($periodo, $id);        
+        $data[] = $em->getRepository('GridFormBundle:Indicador')->getDetalleIndicador($periodo, $id);        
         //$data[] = $em->getRepository('GridFormBundle:Indicador')->getDetalleIndicador($periodo, $id);
         
         $resp = (count($data) == 0)? array(): $data;

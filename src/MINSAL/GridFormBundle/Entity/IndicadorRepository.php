@@ -170,14 +170,33 @@ class IndicadorRepository extends EntityRepository {
                         WHERE anio = $anio
                             AND (mes = '$mes' OR mes = '0$mes')
                             AND id_indicador = $id_indicador
-                        GROUP BY establecimiento, codigo_criterio
+                        GROUP BY anio, mes, establecimiento, codigo_criterio
                     ) AS A
                     INNER JOIN variable_captura B ON (A.codigo_criterio = B.codigo)
                     LEFT JOIN area_variable_captura C ON (B.area_id = C.id)
                     INNER JOIN costos.estructura D ON (A.establecimiento = D.codigo)
                     ORDER BY calificacion
                     ";
-        return $em->getConnection()->executeQuery($sql)->fetchAll();
+        $actual=  $em->getConnection()->executeQuery($sql)->fetchAll();
+        
+        $sql = "SELECT B.id, D.nombre as nombre_establecimieto, D.nombre_corto AS ESTABLECIMIENTO, B.codigo AS codigo_criterio, COALESCE(C.descripcion, B.descripcion) AS AREA,
+                    A.calificacion, A.periodo
+                    FROM
+                    (SELECT mes||'/'||anio as periodo, establecimiento, codigo_criterio, ROUND(AVG(calificacion)::numeric,2) AS calificacion
+                        FROM  datos_evaluacion_calidad_num
+                        WHERE id_indicador = $id_indicador
+                        GROUP BY anio, mes, establecimiento, codigo_criterio
+                    ) AS A
+                    INNER JOIN variable_captura B ON (A.codigo_criterio = B.codigo)
+                    LEFT JOIN area_variable_captura C ON (B.area_id = C.id)
+                    INNER JOIN costos.estructura D ON (A.establecimiento = D.codigo)
+                    ORDER BY calificacion
+                    ";
+        $historico = $em->getConnection()->executeQuery($sql)->fetchAll();
+        $resp['actual'] = $actual;
+        $resp['historico'] = $historico;
+        
+        return $resp;
         /*        
         $sql = "SELECT B.id, B.codigo AS codigo_criterio, COALESCE(C.descripcion, B.descripcion) AS descripcion_criterio,
                     A.calificacion
