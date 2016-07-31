@@ -96,6 +96,12 @@
             <argument>MINSAL\GridFormBundle\Entity\AreaVariableCaptura</argument>
             <argument />            
         </service>
+        <service id="sonata.gridform.admin.limites_aceptacion" class="MINSAL\GridFormBundle\Admin\LimitesAceptacionCalidadAdmin">
+            <tag name="sonata.admin" manager_type="orm" group="_calidad_" label="_limites_aceptacion_"/>
+            <argument />
+            <argument>MINSAL\GridFormBundle\Entity\LimitesAceptacionCalidad</argument>
+            <argument />            
+        </service>
         <service id="sonata.gridform.admin.rango_alerta" class="MINSAL\GridFormBundle\Admin\RangoAlertaAdmin">
             <tag name="sonata.admin" manager_type="orm" group="_calidad_" label="_rango_alerta_"/>
             <argument />
