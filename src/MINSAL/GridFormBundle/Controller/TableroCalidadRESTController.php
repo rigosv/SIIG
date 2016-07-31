@@ -96,6 +96,7 @@ class TableroCalidadRESTController extends Controller {
         foreach ($establecimientos as $f){
             $f['category'] = $f['nombre_corto'];
             $f['measure'] = $f['calificacion'];
+            $f['color'] = ($f['color'] != '') ? $f['color'] : '#0EAED8';
             $f['nombre'] = $f['nombre_establecimiento'];
             $f['evaluaciones_externas'] = (array_key_exists($f['establecimiento'], $eval_compl)) ? $eval_compl[$f['establecimiento']] : array();
             $resp[] = $f;
@@ -129,6 +130,7 @@ class TableroCalidadRESTController extends Controller {
             $f['brecha'] = $f['meta'] - $f['calificacion'];
             $f['meta'] = $f['meta'];
             $f['measure'] = $f['calificacion'];
+            $f['color'] = $f['color'];
             $f['value'] = $f['calificacion'] / 100;            
             $f['category'] = $f['codigo'];
             $resp[] = $f;
@@ -145,7 +147,7 @@ class TableroCalidadRESTController extends Controller {
 
     /**
      * Obtener los datos del formulario
-     * @Get("/rest-service/tablero-calidad/evaluaciones/{establecimiento}/{periodo}/{formulario}", options={"expose"=true})
+     * @Get("/rest-service/tablero-calidad/criterios/{establecimiento}/{periodo}/{formulario}", options={"expose"=true})
      * @Rest\View
      */
     public function getCriteriosAction($establecimiento, $periodo, $formulario) {
@@ -243,9 +245,9 @@ class TableroCalidadRESTController extends Controller {
                 $data[$k]['historial'] = array('etiquetas'=>$etiquetas, 'valores'=> $valores);
             }
         }
-        else
+        else {
             $data = $em->getRepository('GridFormBundle:Indicador')->getIndicadoresEvaluadosListaChequeo($periodo);
-        
+        }
         $resp = (count($data) == 0)? array(): $data;
         
         $response->setContent(json_encode($resp));

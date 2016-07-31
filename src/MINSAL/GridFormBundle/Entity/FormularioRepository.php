@@ -583,7 +583,19 @@ class FormularioRepository extends EntityRepository {
                 $resumen = $this->getResumenEvaluacionCriterios($mes);
                 $resumenIndicadores = $em->getRepository("GridFormBundle:Indicador")->getResumenEvaluacionIndicadores($establecimiento, $periodo, $formulario);
                 $resp['resumen_expedientes'] = $resumen['pivote'];
-                $resp['resumen_criterios'] = $resumen['codigo_variable'];
+                $criterios = array();
+                foreach ($resumen['codigo_variable'] AS $r){
+                    $sql = "SELECT color FROM rangos_alertas_generales 
+                        WHERE $r[porc_cumplimiento] >= limite_inferior
+                            AND $r[porc_cumplimiento] <= limite_superior";
+                    $cons = $em->getConnection()->executeQuery($sql);
+                    
+                    $color = ($cons->rowCount() > 0 ) ? $cons->fetch(): array('color'=>'#0EAED8');
+                    $rr = $r;
+                    $rr['color'] = $color['color'];
+                    $criterios[] = $rr;
+                }
+                $resp['resumen_criterios'] = $criterios;
                 $resp['resumen_indicadores'] = $resumenIndicadores;
             }
             else{

@@ -79,9 +79,11 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['serviciosGeneral',
                                 
                                 $scope.labelsGrp1 = [];
                                 $scope.valorGrp1 = [];
+                                $scope.coloresGrp1 = [];
                                 $scope.datosGrafico1.forEach(function(nodo, index){
                                     $scope.labelsGrp1.push(nodo.codigo_indicador);
                                     $scope.valorGrp1.push(nodo.calificacion);
+                                    $scope.coloresGrp1.push(nodo.color);
                                 });
                             },
                             function (error) {
@@ -196,9 +198,11 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['serviciosGeneral',
                 }
                 $scope.labelsGrp1 = [];
                 $scope.valorGrp1 = [];
+                $scope.coloresGrp1 = [];
                 $scope.datosGrafico1.forEach(function(nodo, index){
                     $scope.labelsGrp1.push(nodo.codigo_indicador);
                     $scope.valorGrp1.push(nodo.calificacion);
+                    $scope.coloresGrp1.push(nodo.color);
                 });
                 $scope.$apply();
             };

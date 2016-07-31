@@ -128,10 +128,12 @@
                             $scope.establecimientos = (data != '') ? data : [];
                             $scope.datosGrafico1 = [];
                             $scope.etiquetasGrafico1 = [];
+                            $scope.coloresGrafico1 = [];
                             $scope.establecimientos.forEach(function(nodo, index){
                                 if (nodo.tipo === 'LISTA_CHECK'){
                                     $scope.datosGrafico1.push(nodo.calificacion);
                                     $scope.etiquetasGrafico1.push(nodo.nombre_corto);
+                                    $scope.coloresGrafico1.push(nodo.color);
                                 }
                             });
                             $scope.evaluaciones = [];
@@ -242,6 +244,7 @@
                             $scope.resumenIndicadores = data[0].resumen_indicadores;
                             $scope.labels_rec = [];
                             $scope.data_rec = [];
+                            $scope.colors_rec = [];
                             $scope.series_rec = ['Series A'];
                             $scope.datasetOverride_rec = [{ xAxisID: 'x-axis-1' }, { xAxisID: 'x-axis-2' }];
                             $scope.options_rec = {
@@ -273,6 +276,7 @@
                             angular.forEach(data[0].resumen_criterios, function(value, key) {
                                     this.push(value.descripcion_variable);
                                     $scope.data_rec.push(value.porc_cumplimiento);
+                                    $scope.colors_rec.push(value.color);
                             }, $scope.labels_rec);
                             
                         },

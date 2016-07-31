@@ -59,7 +59,7 @@
                             <tbody>
                                 <TR  ng-repeat="est in establecimientos | filter : buscar"  class='establecimiento [[est.establecimiento]]' >
                                     <TD ng-click="getEvaluaciones(est)">[[est.nombre]]</TD>
-                                    <TD ng-click="getEvaluaciones(est)" align="center"><span ng-if="est.tipo == 'LISTA_CHECK'">[[est.measure|number :2]]%</span></TD>
+                                    <TD ng-click="getEvaluaciones(est)" align="center" style="color:[[est.color]]"><span ng-if="est.tipo == 'LISTA_CHECK'">[[est.measure|number :2]]%</span></TD>
                                     <TD align="center"><span ng-if="est.evaluaciones_externas.length > 0 " style="cursor: pointer;" class="glyphicon glyphicon-th-list" aria-hidden="true" 
                                             ng-click="mostrarEvaluacionesComplementarias(est)">
                                         </span>
@@ -79,11 +79,11 @@
                     </div>
                     <div class="panel-body" style="height: 90%">
                         {#<bar-chart height="options.height" data="datosGrafico1" ></bar-chart>#}
-                        <canvas id="grafico1" class="chart chart-bar"  chart-options="options_bar_line"
+                        <canvas id="grafico1" class="chart chart-bar"  chart-options="options_bar_line" chart-colors="coloresGrafico1"
                             chart-data="datosGrafico1" chart-labels="etiquetasGrafico1"  ng-if='evaluaciones.length == 0'>
                         </canvas>
                         <canvas id="grafico1_2" class="chart chart-line" chart-options="options_bar_line" ng-if='evaluaciones.length > 0' 
-                            chart-data="datosGrafico1" chart-labels="etiquetasGrafico1" >
+                            chart-data="datosGrafico1" chart-labels="etiquetasGrafico1" chart-dataset-override="datasetOverride1_2" >
                         </canvas>
                     </div>
                 </div>
@@ -120,7 +120,7 @@
                                 <TR  ng-repeat="eval in evaluaciones | filter : buscar_evaluaciones" ng-click="getCriterios(eval)">
                                     <TD >[[eval.descripcion_estandar]]</TD>
                                     
-                                    <TD ng-if="eval.tipo_evaluacion == 'lista_chequeo'">[[eval.measure | number:2]]%</TD>
+                                    <TD ng-if="eval.tipo_evaluacion == 'lista_chequeo'" style="color:[[eval.color]]" >[[eval.measure | number:2]]%</TD>
                                     <TD ng-if="eval.tipo_evaluacion == 'lista_chequeo'">[[eval.meta | number:2 ]]%</TD>
                                     <TD ng-if="eval.tipo_evaluacion == 'lista_chequeo'">[[eval.brecha | number:2 ]]%</TD>
                                 </TR>
@@ -278,7 +278,7 @@
                 </div>
                 <canvas id="resumen-eval-criterios" class="chart-horizontal-bar"
                   chart-data="data_rec" chart-labels="labels_rec" chart-options="options_rec" 
-                  chart-dataset-override="datasetOverride_rec"
+                  chart-dataset-override="datasetOverride_rec" chart-colors="colors_rec"
                   chart-series="series_rec">
                 </canvas>
             </div>
@@ -313,7 +313,7 @@
                         <DIV class="row fila-eval-indicador">
                             <DIV class="col-md-4" >[[indicador.expedientes_cumplimiento]]</DIV>
                             <DIV class="col-md-4">[[indicador.total_expedientes]]</DIV>
-                            <DIV class="col-md-4 calificacion">[[indicador.calificacion]]%</DIV>
+                            <DIV class="col-md-4 calificacion" style="color:[[indicador.color]]">[[indicador.calificacion]]%</DIV>
                         </DIV>
                     </div>
                     <div class="panel-footer" ng-if="indicador.forma_evaluacion == 'cumplimiento_criterios' ">
@@ -325,7 +325,7 @@
                         <DIV class="row fila-eval-indicador">
                             <DIV class="col-md-4" >[[indicador.criterios_cumplidos]]</DIV>
                             <DIV class="col-md-4">[[indicador.criterios_aplicables]]</DIV>
-                            <DIV class="col-md-4 calificacion">[[indicador.calificacion]]%</DIV>
+                            <DIV class="col-md-4 calificacion" style="color:[[indicador.color]]">[[indicador.calificacion]]%</DIV>
                         </DIV>
                     </div>
                 </div>                

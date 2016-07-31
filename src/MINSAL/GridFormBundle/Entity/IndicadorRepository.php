@@ -27,7 +27,7 @@ class IndicadorRepository extends EntityRepository {
                 10=>'Oct',
                 11=>'Nov',
                 12=>'Dic'
-                );    
+                );
     /**
      * 
      * @param type $periodo
@@ -69,6 +69,11 @@ class IndicadorRepository extends EntityRepository {
                 $f['calificacion_indicador'] = $calificacionIndicador;
                 $eval[] = $f;
             }
+            $sql = "SELECT color FROM rangos_alertas_generales 
+                        WHERE $calificacionIndicador >= limite_inferior
+                            AND $calificacionIndicador <= limite_superior";
+            $cons = $em->getConnection()->executeQuery($sql);
+            $color = ($cons->rowCount() > 0 ) ? $cons->fetch(): array('color'=>'#0EAED8');
             
             $datos[] = array('descripcion_estandar'=>$ind['descripcion_estandar'],  
                             'descripcion_indicador'=>$ind['descripcion'] ,
@@ -81,7 +86,8 @@ class IndicadorRepository extends EntityRepository {
                             'calificacion' => $calificacionIndicador,
                             'evaluacion' => $eval,
                             'category'=> $ind['codigo'] ,
-                            'measure' => $calificacionIndicador
+                            'measure' => $calificacionIndicador,
+                            'color' => $color['color']
                         );
             $calificaciones[] = $calificacionIndicador;
             
@@ -447,22 +453,29 @@ class IndicadorRepository extends EntityRepository {
                  )";        
         $em->getConnection()->executeQuery($sql);
         
-        //Insertar valores iniciales por si no existen
-        $sql = "DROP TABLE IF EXISTS aux_tmp";
-        $em->getConnection()->executeQuery($sql);
-        $sql = "SELECT * INTO TEMP aux_tmp FROM limites_aceptacion_calidad LIMIT 0";
-        $em->getConnection()->executeQuery($sql);
-        
-        //Insertar valores iniciales por si no existen
-        $sql = "INSERT INTO aux_tmp VALUES 
-                    ('nivel_aprobacion_indicador_calidad', 80),
-                    ('nivel_aprobacion_estandar_calidad', 80),
-                    ('nivel_aprobacion_establecimiento_calidad', 80)";
+        $sql = "INSERT INTO limites_aceptacion_calidad (codigo, valor)
+                 select key, value::numeric from json_each_text('{".'"nivel_aprobacion_indicador_calidad":80,
+                                            "nivel_aprobacion_estandar_calidad":80,
+                                            "nivel_aprobacion_establecimiento_calidad":80}'."')
+                    WHERE key NOT IN (SELECT codigo FROM limites_aceptacion_calidad)";
         $em->getConnection()->executeQuery($sql);
         
-        $sql = "INSERT INTO limites_aceptacion_calidad 
-                 SELECT codigo, valor FROM aux_tmp 
-                    WHERE codigo NOT IN (SELECT codigo FROM limites_aceptacion_calidad)";
+        //Verificar si existe la tabla de límites de aceptación, sino crearla
+        $sql = "CREATE TABLE IF NOT EXISTS rangos_alertas_generales(
+                    limite_inferior double precision,
+                    limite_superior double precision,
+                    color           character varying(50),
+                    PRIMARY KEY (limite_inferior, limite_superior, color)
+                 )";        
+        $em->getConnection()->executeQuery($sql);
+        
+        $sql = "INSERT INTO rangos_alertas_generales (limite_inferior, limite_superior, color)
+                    SELECT * FROM ( SELECT unnest(ARRAY[0,60,80]::float[]) AS limite_inferior, 
+                            unnest(ARRAY[59.9, 79.9, 100]::float[]) AS limite_superior, 
+                            unnest(ARRAY['#D73925', '#ffa500', '#008D4C']::varchar[]) AS color) AS A
+                    WHERE (limite_inferior, limite_superior, color) 
+                        NOT IN 
+                        (SELECT limite_inferior, limite_superior, color FROM rangos_alertas_generales)";
         $em->getConnection()->executeQuery($sql);
         
     }
@@ -691,11 +704,12 @@ class IndicadorRepository extends EntityRepository {
         $em->getConnection()->executeQuery($sql_nm);
         
         $sql = "SELECT 'LISTA_CHECK' AS tipo, establecimiento, nombre_corto, 
-                        nombre_establecimiento, calificacion 
+                        nombre_establecimiento, calificacion, 
+                        (SELECT color FROM rangos_alertas_generales WHERE calificacion >= limite_inferior AND calificacion <= limite_superior LIMIT 1) AS color
                     FROM esta_lc_tmp
                 UNION    
                 SELECT 'NUMERIC' AS tipo, establecimiento, nombre_corto,
-                        nombre_establecimiento, 0 as calificacion
+                        nombre_establecimiento, 0 as calificacion, '#0EAED8' AS color 
                     FROM esta_num_tmp
                 ORDER BY tipo";
         return $em->getConnection()->executeQuery($sql)->fetchAll();
@@ -739,7 +753,8 @@ class IndicadorRepository extends EntityRepository {
         list($anio, $mes) = explode('_', $periodo);
         $sqlEvalEstandar = $this->getSQLEvaluacionEstandar();
         $sql = "SELECT A.codigo, A.descripcion, A.periodo_lectura_datos, A.meta, 
-                        A.forma_evaluacion, ROUND(B.calificacion::numeric,2) as calificacion
+                        A.forma_evaluacion, ROUND(B.calificacion::numeric,2) as calificacion,
+                        (SELECT color FROM rangos_alertas_generales WHERE B.calificacion >= limite_inferior AND B.calificacion <= limite_superior LIMIT 1) AS color
                     FROM costos.formulario A
                         INNER JOIN ($sqlEvalEstandar
                             ) AS B ON (A.codigo = B.codigo_estandar)
@@ -827,7 +842,8 @@ class IndicadorRepository extends EntityRepository {
         
         $sql = "SELECT A.codigo, A.descripcion, B.total_expedientes, B.expedientes_cumplimiento, 
                         B.criterios_aplicables, B.criterios_cumplidos, B.criterios_no_cumplidos,
-                        A.forma_evaluacion, ROUND(B.calificacion::numeric,2) AS calificacion
+                        A.forma_evaluacion, ROUND(B.calificacion::numeric,2) AS calificacion,
+                        (SELECT color FROM rangos_alertas_generales WHERE B.calificacion >= limite_inferior AND B.calificacion <= limite_superior LIMIT 1) AS color
                     FROM indicador A
                         INNER JOIN (SELECT codigo_indicador, SUM(total_expedientes) AS total_expedientes,
                             avg(calificacion) AS calificacion, SUM(expedientes_cumplimiento) AS expedientes_cumplimiento,
