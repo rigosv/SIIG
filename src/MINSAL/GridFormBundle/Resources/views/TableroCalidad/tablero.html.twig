@@ -200,22 +200,22 @@
                                         ng-repeat="exp in getExpedientes(criterio)"
                                         style="[[getAlertas(criterio, getValorExpediente(exp))]]"
                                         >
-                                        <button class="btn btn-success" ng-if="getValorExpediente(exp)=='true'">
+                                        <button class="btn btn-success" ng-if="(criterio.codigo_tipo_control == 'checkbox' || criterio.codigo_tipo_control == 'checkbox_3_states') && (getValorExpediente(exp)=='true' || getValorExpediente(exp)=='1') ">
                                             <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
                                         </button>
                                         <button class="btn btn-danger"
-                                                ng-if="criterio.codigo_tipo_control == 'checkbox' && (getValorExpediente(exp)=='false' || getValorExpediente(exp)=='')">
+                                                ng-if="criterio.codigo_tipo_control == 'checkbox' && (getValorExpediente(exp)=='false' || getValorExpediente(exp)=='0' || getValorExpediente(exp)=='')">
                                             <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                                         </button>
                                         <button class="btn btn-danger"
-                                                ng-if="criterio.codigo_tipo_control == 'checkbox_3_states' && getValorExpediente(exp)=='false' ">
+                                                ng-if="criterio.codigo_tipo_control == 'checkbox_3_states' && (getValorExpediente(exp)=='false' || getValorExpediente(exp)=='0') ">
                                             <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                                         </button>
                                         <button class="btn btn-warning"
-                                                ng-if="criterio.codigo_tipo_control == 'checkbox_3_states' && getValorExpediente(exp) != 'false' && getValorExpediente(exp) != 'true'">
+                                                ng-if="criterio.codigo_tipo_control == 'checkbox_3_states' && (getValorExpediente(exp) != 'false' || getValorExpediente(exp)!='0') && (getValorExpediente(exp) != 'true' || getValorExpediente(exp)!='1')">
                                             N/A
                                         </button>
-                                        <span ng-if="getValorExpediente(exp) != 'false' && getValorExpediente(exp) != 'true'">[[getValorExpediente(exp)]]</span>
+                                        <span ng-if="criterio.codigo_tipo_control != 'checkbox' && criterio.codigo_tipo_control != 'checkbox_3_states' ">[[getValorExpediente(exp)]]</span>
                                     </TD>
                                     <TD align=center ng-if="criterio.es_separador == 'false' && criterio.es_poblacion == 'false' && $first" ng-repeat="resumen_criterio in Formulario.resumen_criterios | filter:{codigo_variable:criterio.codigo_variable}" >
                                         <span class="porc_cumplimiento_criterio">[[resumen_criterio.porc_cumplimiento]]% </span>([[resumen_criterio.cumplimiento]]/[[resumen_criterio.cumplimiento + resumen_criterio.no_cumplimiento]])
