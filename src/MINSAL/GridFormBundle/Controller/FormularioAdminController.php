@@ -164,15 +164,22 @@ class FormularioAdminController extends Controller
         foreach ($formularios as $f){
             $var_ = $em->getRepository("GridFormBundle:VariableCaptura")->findBy(array('formulario'=>$f), array('posicion'=>'ASC'));
             $i = 0;
-            //Quitar todos los espacios
-            $formula = str_replace(' ','',$f->getCalculoFilas());
+            $formula = $f->getCalculoFilas();
+            $busqueda = array();
+            $reemplazo = array();
             foreach($var_ as $v){
-                $formula = str_replace('{'.$v->getCodigo().'}', '{F'.$i++.'}', $formula);
+                $f_ = $v->getFormulaCalculo();
+                $formulaVariable = ( $f_ != '') ? ','.$f_ : '';
+                $busqueda[] = '{'.$v->getCodigo().'}';
+                $reemplazo[] = '{F'.$i++.'}';
+                $formula = str_replace($busqueda, $reemplazo , $formula.$formulaVariable);
             }
+            $formula = trim($formula, ',');
             $f->setCalculoFilas($formula);
           
             $frm_ajustados[] = $f;
-        } 
+        }
+        
         return $frm_ajustados;
     }
         

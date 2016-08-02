@@ -68,10 +68,9 @@
                         var campos = '{{Frm.calculoFilas}}'.split(',');
                         var filasFormulas = [];
                         campos.forEach(function(nodo, index){
-                            formula = nodo.split(':');
-                            var campo= new RegExp(formula[0].toString().trim());
+                            formula = nodo;
                             filasp = /\{F[0-9]{1,3}\}/g;
-                            lados_formula = formula[1].split('=');
+                            lados_formula = formula.split(':=');
                             filasFormulas.push(filasp.exec(lados_formula[0]).toString().replace(/\{|\}|F/gi,''));
                         });
                         for(i = 0; i < filasFormulas.length; i++){
@@ -100,14 +99,16 @@
                         };
                         
                     }
+                    var clase = cellclass(row, datafield, value);                    
+                    var patt = new RegExp("oculto");
+                    if (patt.test(clase))
+                        return false;
+                    
                     {% if Frm.calculoFilas != '' %}
                         return  !(filaFormula(row, datafield));
                     {% endif %}
                     
-                    var clase = cellclass(row, datafield, value);
-                    var patt = new RegExp("oculto");
-                    if (patt.test(clase))
-                        return false;
+                    
                 };
                 
                 var cellclass = function (row, columnfield, value) {
@@ -599,19 +600,20 @@
                         
                             var campos = '{{Frm.calculoFilas}}'.split(',');
                             var formula = [];
-                            //se espera el formato codigoColumna: {F2} = {F0}/{F1} * 100
+                            //se espera el formato codigoColumna: {F2} := {F0}/{F1} * 100
                             // Primero se separa por : para obtener el nombre de la columna y la formula
                             // Luego se separa por = para obtener los dos lados de la ecuación
                             // Luego se sustituyen los valores por el dato de la fila correspondiente
                             // y se hace el cálculo 
                             campos.forEach(function(nodo, index){
-                                formula = nodo.split(':');
+                                //formula = nodo.split(':');
+                                formula = nodo;
                                 //Procesar solamente las fórmulas donde la celda actual aparece
-                                if (formula[1].toString().indexOf('{F'+fila+'}') != -1){
-                                    var campo= new RegExp(formula[0].toString().trim());
-                                    if (campo.test(columna)){
+                                if (formula.toString().indexOf('{F'+fila+'}') != -1){
+                                    //var campo= new RegExp(formula[0].toString().trim());
+                                    //if (campo.test(columna)){
                                         filasp = /\{F[0-9]{1,2}\}/g;
-                                        lados_formula = formula[1].split('=');
+                                        lados_formula = formula.split(':=');
                                         fila_destino = filasp.exec(lados_formula[0]).toString().replace(/\{|\}|F/gi,'');
                                         operaciones = lados_formula[1];
                                         operadores = operaciones.toString().match(/\{F[0-9]{1,2}\}/g);
@@ -629,7 +631,9 @@
                                             operaciones = operaciones.replace(nodo2.toString(), valor_oper);
                                         });
                                         try {
+                                            operaciones = operaciones.replace(/amp;/g, '');                                            
                                             result =  eval(operaciones);
+                                            $('#nombreResponsable').val(operaciones);
                                             if (datarow.codigo_tipo_control == 'time'){
 
                                                 horas = ~~(parseInt(result) / 60);
@@ -648,16 +652,16 @@
                                                 minutos = parseInt((horas_ - horas) * 60);
                                                 minutos = ( minutos >= 0 && minutos < 10 ) ? '0'+Math.abs(minutos) : Math.abs(minutos);
                                                 result =  horas+ ':' + minutos;
-                                            } else {
+                                            } else if (datarow.codigo_tipo_control == 'Number'){ 
                                                 result = result.toFixed(2);
-                                            }
+                                            } 
                                             $("#jqxgrid{{Frm.id}}").jqxGrid('setcellvalue', fila_destino, columna, result);
                                         }
                                         catch(err) {
-                                            return
+                                            return;
                                         }
 
-                                    }
+                                    //}
                                 }
                             });
                     });

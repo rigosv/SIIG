@@ -27,8 +27,9 @@ class VariableCapturaAdmin extends Admin
                 ->add('textoAyuda', null, array('label' => $this->getTranslator()->trans('_ayuda_')))
                 ->add('esPoblacion', null, array('label' => $this->getTranslator()->trans('_es_poblacion_')))
                 ->add('reglaValidacion', null, array('label' => $this->getTranslator()->trans('_regla_validacion_')))
-                ->add('tipoControl', null, array('label'=> $this->getTranslator()->trans('_tipo_control_')))
-                ->add('posicion', null, array('label'=> $this->getTranslator()->trans('_posicion_')))
+                ->add('formulaCalculo', null, array('label'=> $this->getTranslator()->trans('_formula_campo_calculado_')))
+                ->add('tipoControl', null, array('label'=> $this->getTranslator()->trans('_tipo_control_'), 'required' => true,))
+                ->add('posicion', null, array('label'=> $this->getTranslator()->trans('_posicion_'), 'required' => true,))
                 ->add('nivelIndentacion', null, array('label'=> $this->getTranslator()->trans('_nivel_indentacion_')))
                 ->add('esSeparador', null, array('label'=> $this->getTranslator()->trans('_separador_')))
                 ->add('categoria', 'entity', array('label' => $this->getTranslator()->trans('_categoria_'),
@@ -41,6 +42,7 @@ class VariableCapturaAdmin extends Admin
                 ))
                 ->add('alertas', 'entity', 
                     array('label'=> $this->getTranslator()->trans('_alertas_'), 
+                    'required' => false,
                     'expanded' => false, 
                     'multiple' => true,
                     'by_reference' => false,
@@ -53,7 +55,8 @@ class VariableCapturaAdmin extends Admin
         ;
         $formMapper
             ->setHelps(array(
-                    'reglaValidacion' => $this->getTranslator()->trans('_operadores_permitidos_')
+                    'reglaValidacion' => $this->getTranslator()->trans('_operadores_permitidos_'),
+                    'formulaCalculo' => $this->getTranslator()->trans('_formula_calculo_help_')
                 ))
                 ;
     }

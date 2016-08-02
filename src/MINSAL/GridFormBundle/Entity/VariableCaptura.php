@@ -119,6 +119,13 @@ class VariableCaptura
      **/
     private $alertas;
     
+    
+    /**
+     * @var string $formula_calculo
+     *
+     * @ORM\Column(name="formula_calculo", type="text", nullable=true)
+     */
+    private $formulaCalculo;
 
     /**
      * Get id
@@ -485,5 +492,29 @@ class VariableCaptura
     public function getArea()
     {
         return $this->area;
+    }
+
+    /**
+     * Set formulaCalculo
+     *
+     * @param string $formulaCalculo
+     *
+     * @return VariableCaptura
+     */
+    public function setFormulaCalculo($formulaCalculo)
+    {
+        $this->formulaCalculo = $formulaCalculo;
+
+        return $this;
+    }
+
+    /**
+     * Get formulaCalculo
+     *
+     * @return string
+     */
+    public function getFormulaCalculo()
+    {
+        return $this->formulaCalculo;
     }
 }

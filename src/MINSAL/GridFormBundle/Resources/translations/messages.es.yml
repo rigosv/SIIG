@@ -18,7 +18,7 @@ _ayuda_validacion_campo_: 'Ingrese la condición para ser válido. Usar "value" 
 _ayuda_variable_calculo_consumo_: 'Cuando el consumo del compromiso financiero se determine a partir de otra variable. Ej.: El mantenimiento la planta telefónica, será a partir de la cantidad de aparatos fijos asignados a la dependencia'
 _brecha_: Brecha
 _calculo_filas_formula_:  Fórmula para cálculo por filas
-_calculo_filas_help_: 'Cálculo por filas, se hará sobre la misma columna. Ej.Cálculo sobre dos columnas: nombreColumna : {F2}={F0}/{F1}, nombreColumna2 : {F8}={F2}/{F3}'
+_calculo_filas_help_: 'Cálculo por filas, se hará sobre la misma columna. Ej.Cálculo sobre dos columnas: {F2}:={F0}/{F1}, F8}:={F2}/{F3}'
 _calidad_ : Calidad
 _cargar_datos_: Cargar
 _campo_: Campo
@@ -215,3 +215,5 @@ _area_criterios_: Área de criterios de evaluación
 _area_: Área
 _historial_establecimiento_: Historial por establecimiento
 _limites_aceptacion_: Limites de aceptación
+_formula_campo_calculado_: Fórmula para campo calculado
+_formula_calculo_help_ : 'Cálculo por filas, se hará sobre la misma columna. Ej.Cálculo sobre dos columnas: {codigo_variable_dest}:={codigo_variable1}/{codigo_variable2}'

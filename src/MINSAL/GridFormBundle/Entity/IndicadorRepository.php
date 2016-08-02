@@ -348,7 +348,7 @@ class IndicadorRepository extends EntityRepository {
                 $anio AS anio, '$mes' AS mes, '$datosIndicador[codigo_estandar]' AS codigo_estandar, '$datosIndicador[descripcion_estandar]' AS descripcion_estandar,
                  '$datosIndicador[codigo]' AS codigo_indicador, '$datosIndicador[descripcion]' AS descripcion_indicador,
                  '$datosIndicador[tipo_evaluacion]' AS tipo_evaluacion, '$datosIndicador[meta]' AS meta, '$datosIndicador[posicion]' AS posicion   
-                INTO auxiliar_tmp
+                INTO TEMP auxiliar_tmp
                 FROM 
                 (   SELECT A.establecimiento, A.total_expedientes, COALESCE(B.expedientes_cumplimiento, 0) AS expedientes_cumplimiento,
                     A.criterios_aplicables, A.criterios_cumplidos, A.criterios_no_cumplidos, 
