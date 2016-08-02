@@ -353,12 +353,22 @@
                                             } else if (tipo_control == 'text') {
                                                 var inputElement = $("<input type='text' style='width: 100%; height: 100%;' />").prependTo(editor);
                                                 inputElement.jqxInput({  width: width, height: height});
+                                            } else if (tipo_control == 'date') {
+                                                var element = $('<input type="date"></input>');
+                                                editor.append(element);                                                
+                                                var fecha = (moment(cellValue, "DD/MM/YYYY").isValid()) ? moment(cellValue, "DD/MM/YYYY") : moment();
+                                                element.jqxDateTimeInput({value:fecha.format("DD/MM/YYYY"), width: width, height: height, 
+                                                    template: "info",
+                                                    culture: 'es-SV',
+                                                    formatString: 'dd/MM/yyyy',
+                                                    showTimeButton: false}); 
                                             } else if (tipo_control == 'datetimeinput') {
                                                 var element = $('<input type="datetime"></input>');
-                                                editor.append(element);
-                                                var fecha = (moment(cellValue).isValid()) ? moment(cellValue, "DD/MM/YYYY HH:mm") : new Date();
-                                                element.jqxDateTimeInput({value:fecha.toLocaleString('es-SV'), width: width, height: height, 
+                                                editor.append(element);                                                
+                                                var fecha = (moment(cellValue).isValid()) ? moment(cellValue, "DD/MM/YYYY HH:mm") : moment();
+                                                element.jqxDateTimeInput({value:fecha.format("DD/MM/YYYY HH:mm"), width: width, height: height, 
                                                     template: "info",
+                                                    culture: 'es-SV',
                                                     formatString: 'dd/MM/yyyy HH:mm',
                                                     showTimeButton: true}); 
                                             } else if (tipo_control == 'time') {
@@ -417,14 +427,15 @@
                                                     inputField.val(cellValue);
                                                     inputField.jqxInput('selectAll');
                                                 }
+                                            } else if (tipo_control == 'date'){
+                                                var dateElement = editor.find('div:first');    
+                                                
+                                                var fecha = (moment(cellValue, "DD/MM/YYYY").isValid()) ? moment(cellValue, "DD/MM/YYYY") : moment();
+                                                dateElement.jqxDateTimeInput('val', fecha.format("DD/MM/YYYY"));
                                             } else if (tipo_control == 'datetimeinput'){
                                                 var dateElement = editor.find('div:first');    
-                                                //alert(moment('12/12/2012', "DD/MM/YYYY HH:ss"));
-                                                
-                                                var fecha = (moment(cellValue).isValid()) ? moment(cellValue, "DD/MM/YYYY HH:mm") : new Date();
-                                                dateElement.jqxDateTimeInput('val', fecha);
-                                                //dateElement.jqxDateTimeInput({width: width, height: height, template: "info",formatString: 'dd/MM/yyyy HH:mm',
-                                                  //  showTimeButton: true});
+                                                var fecha = (moment(cellValue).isValid()) ? moment(cellValue, "DD/MM/YYYY HH:mm") : moment();
+                                                dateElement.jqxDateTimeInput('val', fecha.format("DD/MM/YYY HH:mm"));
                                             } else if (tipo_control == 'time') {
                                                 var dateElement = editor.find('div:first');                                                
                                                 var hora =  cellValue.split(':');
@@ -452,10 +463,15 @@
                                                 return checkBoxHTMLElement.val();
                                             } else if (tipo_control == 'text'){
                                                 return editor.find('input').val();
+                                            } else if (tipo_control == 'date'){
+                                                var dateElement = editor.find('div:first');
+                                                var date = new Date(dateElement.jqxDateTimeInput('getDate'));
+                                                
+                                                return date.getDate() + '/' + (parseInt(date.getMonth())+1) + '/'+ date.getFullYear();
                                             } else if (tipo_control == 'datetimeinput'){
                                                 var dateElement = editor.find('div:first');
                                                 var date = new Date(dateElement.jqxDateTimeInput('getDate'));
-                                                return date.toLocaleString('es-SV');
+                                                return date.getDate() + '/' + (parseInt(date.getMonth())+1) + '/'+ date.getFullYear() + ' '+ date.getHours() + ':' + date.getMinutes();
                                             } else if (tipo_control == 'time'){
                                                 var dateElement = editor.find('div:first');
                                                 var date = new Date(dateElement.jqxDateTimeInput('getDate')).toLocaleString('es-SV');
@@ -631,7 +647,7 @@
                                             operaciones = operaciones.replace(nodo2.toString(), valor_oper);
                                         });
                                         try {
-                                            operaciones = operaciones.replace(/amp;/g, '');                                            
+                                            operaciones = operaciones.replace(/amp;/g, '');
                                             result =  eval(operaciones);
                                             $('#nombreResponsable').val(operaciones);
                                             if (datarow.codigo_tipo_control == 'time'){
