@@ -169,12 +169,12 @@ class FormularioAdminController extends Controller
             $reemplazo = array();
             foreach($var_ as $v){
                 $f_ = $v->getFormulaCalculo();
-                $formulaVariable = ( $f_ != '') ? ','.$f_ : '';
+                $formulaVariable = ( $f_ != '') ? '::'.$f_ : '';
                 $busqueda[] = '{'.$v->getCodigo().'}';
                 $reemplazo[] = '{F'.$i++.'}';
                 $formula = str_replace($busqueda, $reemplazo , $formula.$formulaVariable);
             }
-            $formula = trim($formula, ',');
+            $formula = trim($formula, '::');
             $f->setCalculoFilas($formula);
           
             $frm_ajustados[] = $f;

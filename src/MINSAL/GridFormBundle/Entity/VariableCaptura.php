@@ -126,7 +126,7 @@ class VariableCaptura
      * @ORM\Column(name="formula_calculo", type="text", nullable=true)
      */
     private $formulaCalculo;
-
+    
     /**
      * Get id
      *
@@ -516,5 +516,29 @@ class VariableCaptura
     public function getFormulaCalculo()
     {
         return $this->formulaCalculo;
+    }
+
+    /**
+     * Set logicaSalto
+     *
+     * @param string $logicaSalto
+     *
+     * @return VariableCaptura
+     */
+    public function setLogicaSalto($logicaSalto)
+    {
+        $this->logicaSalto = $logicaSalto;
+
+        return $this;
+    }
+
+    /**
+     * Get logicaSalto
+     *
+     * @return string
+     */
+    public function getLogicaSalto()
+    {
+        return $this->logicaSalto;
     }
 }
