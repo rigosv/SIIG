@@ -518,27 +518,5 @@ class VariableCaptura
         return $this->formulaCalculo;
     }
 
-    /**
-     * Set logicaSalto
-     *
-     * @param string $logicaSalto
-     *
-     * @return VariableCaptura
-     */
-    public function setLogicaSalto($logicaSalto)
-    {
-        $this->logicaSalto = $logicaSalto;
-
-        return $this;
-    }
-
-    /**
-     * Get logicaSalto
-     *
-     * @return string
-     */
-    public function getLogicaSalto()
-    {
-        return $this->logicaSalto;
-    }
+    
 }
