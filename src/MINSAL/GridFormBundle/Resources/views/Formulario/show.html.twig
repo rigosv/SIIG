@@ -53,6 +53,14 @@
     {% if periodoSeleccionado != null and parametros.periodo_estructura != '-1' %}
     {% set titulos = Frm.tituloColumnas | jsonDecode(true) %}
     <script type="text/javascript">
+        function decimal_date(){
+            return moment('01/01/1900' , 'DD/MM/YYYY').diff(moment(fecha, 'DD/MM/YYYY'), 'days')
+        }
+        
+        function decimal_date_time(fecha){
+            return decimal-date(fecha);
+        }
+        
         $(document).ready(function () {
             $("#FiltroListadoFormularios").searchFilter({targetSelector: ".formulario", charCount: 2});
             $.jqx.theme = 'ui-redmond';
@@ -222,7 +230,8 @@
                         {name: 'codigo_tipo_dato'},
                         {name: 'ayuda'},
                         {name: 'alertas'},
-                        {name: 'rango'}
+                        {name: 'rango'},
+                        {name: 'origen_fila'}
                     ],
                     url: url,
                     root: 'data'
@@ -405,6 +414,9 @@
                                             } else if (tipo_control == 'Number') {
                                                 var inputElement = $("<input type='number' style='width: 100%; height: 100%;' />").prependTo(editor);
                                                 inputElement.jqxNumberInput({ template: "info", inputMode: 'simple', spinMode: 'none', decimalDigits : 0,  width: width, height: height});
+                                            } else if (tipo_control == 'selectOne'){
+                                                var origenLista = eval(datarow.origen_fila);
+                                                editor.jqxDropDownList({autoDropDownHeight: true,  width: width, height: height, displayMember: "label", valueMember: "value", source:  origenLista });
                                             }
                                         }
                                     },
@@ -471,6 +483,8 @@
                                                     inputField.val(cellValue);
                                                     inputField.jqxNumberInput('selectAll');
                                                 }
+                                            } else if (tipo_control == 'selectOne'){
+                                                editor.jqxDropDownList('selectItem', cellValue);
                                             }
                                         }
                                     },
@@ -480,6 +494,7 @@
                                         if (datarow.es_separador != 'true'){
                                             if (tipo_control == 'checkbox' || tipo_control == 'checkbox_3_states'){
                                                 var checkBoxHTMLElement = editor.find('div:first');
+                                                alert(editor.val());
                                                 return checkBoxHTMLElement.val();
                                             } else if (tipo_control == 'text'){
                                                 return editor.find('input').val();
@@ -571,6 +586,14 @@
                                             fecha = moment(cellValue, "DD/MM/YYYY HH:mm");
                                             valorCelda = (fecha.isValid()) ? fecha.format("DD/MM/YYYY HH:mm"): cellValue
                                             return "<div class='"+clase_poblacion+" jqx-{{campo.alineacion.codigo|default('left')}}-align nivel_"+0+"' "+ estilo + " title='"+datarow.ayuda+"'  >" + valorCelda +"</div>";
+                                        } else if (tipo_control == 'selectOne' && datafield != 'descripcion_variable'){
+                                            var origenLista = eval(datarow.origen_fila);
+                                            valorEtiqueta =  '';
+                                            origenLista.forEach(function(nodo, index){
+                                                if (nodo.value == cellValue)
+                                                    valorEtiqueta = nodo.label;
+                                            });
+                                            return "<div class='jqx-{{campo.alineacion.codigo|default('left')}}-align nivel_"+datarow.nivel_indentacion+"' "+ estilo + " title='"+datarow.ayuda+"'  data-placement= 'top' >" + valorEtiqueta +"</div>";
                                         } else {
                                             valor = (isNaN(cellValue)) ? ((cellValue == 'NaN') ? '' : cellValue) : ( (esFormula) ? parseFloat(cellValue).toFixed(2)  : cellValue);                                            
                                             return "<div class='"+clase_poblacion+" jqx-{{campo.alineacion.codigo|default('left')}}-align nivel_"+0+"' "+ estilo + " title='"+datarow.ayuda+"'  >" + valor +"</div>";

@@ -110,6 +110,9 @@ class GridController extends Controller
             //Verificar si tiene campos de control de calidad para calcular el 
             // porcentaje de ejecución
             $datos = json_decode($request->get('fila'), true);
+            if (array_key_exists('origen_fila', $datos)){
+                unset($datos['origen_fila']);
+            }
             $data_ = json_encode($this->setPorcentajeCompletado($datos), JSON_UNESCAPED_UNICODE);
             $user = $this->getUser();
             $request->attributes->set('fila', $data_);

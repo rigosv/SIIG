@@ -183,8 +183,9 @@ class FormularioRepository extends EntityRepository {
                         ||('\"descripcion_variable\"=>'||'\"'|| COALESCE(A.descripcion::varchar, '') ||'\"')::hstore
                         ||('\"regla_validacion\"=>'||'\"'||COALESCE(A.regla_validacion::varchar,'')||'\"')::hstore
                         ||('\"codigo_tipo_control\"=>'||'\"'||COALESCE(C.codigo::varchar,'')||'\"')::hstore
+                        ||('\"origen_fila\"=>'||'\"'||COALESCE(A.origen_fila::varchar,'')||'\"')::hstore
                         ||('\"alertas\"=>'||'\"'||COALESCE(D.alertas::varchar,'')||'\"')::hstore
-                    FROM (SELECT texto_ayuda, es_poblacion, es_separador, posicion, nivel_indentacion, regla_validacion, 
+                    FROM (SELECT texto_ayuda, es_poblacion, es_separador, origen_fila, posicion, nivel_indentacion, regla_validacion, 
                         replace(descripcion, '\"', '\\\"') AS descripcion, id_categoria_captura, id_tipo_control, codigo, id
                         FROM variable_captura ) AS A
                         INNER JOIN categoria_variable_captura B ON (A.id_categoria_captura = B.id)

@@ -128,6 +128,13 @@ class VariableCaptura
     private $formulaCalculo;
     
     /**
+     * @var string $origen_fila
+     *
+     * @ORM\Column(name="origen_fila", type="text", nullable=true)
+     */
+    private $origenFila;
+    
+    /**
      * Get id
      *
      * @return integer 
@@ -519,4 +526,28 @@ class VariableCaptura
     }
 
     
+
+    /**
+     * Set origenFila
+     *
+     * @param string $origenFila
+     *
+     * @return VariableCaptura
+     */
+    public function setOrigenFila($origenFila)
+    {
+        $this->origenFila = $origenFila;
+
+        return $this;
+    }
+
+    /**
+     * Get origenFila
+     *
+     * @return string
+     */
+    public function getOrigenFila()
+    {
+        return $this->origenFila;
+    }
 }
