@@ -74,7 +74,7 @@
                             lados_formula = formula.split(':=');
                             
                             //Separar dos arreglos, con los lados izquierdo y derecho de cada fórmula
-                            var LadoIzq = lados_formula[0].toString().replace(/\{F|\}/g,'');
+                            var LadoIzq = lados_formula[0].toString().replace(/\$\{F|\}/g,'');
                             var LadoDer = lados_formula[1];
                             filasFormulas.push(LadoIzq.trim());                            
                             operacionesFormulas.push(LadoDer.trim());
@@ -629,9 +629,9 @@
                     {% if Frm.calculoFilas != '' %}
                     
                     evalLadoDerecho = function (fila, columna, valor_celda_actual, datarow, operaciones){
-                        operadores = operaciones.toString().match(/\{F[0-9]{1,2}\}/g);
+                        operadores = operaciones.toString().match(/\$\{F[0-9]{1,2}\}/g);
                         operadores.forEach(function(nodo2, index){
-                            fil = nodo2.toString().replace(/\{|\}|F/gi,'');
+                            fil = nodo2.toString().replace(/\$\{F|\}/gi,'');
                             valor_oper = (fil == fila) ? valor_celda_actual :  $('#jqxgrid{{Frm.id}}').jqxGrid('getcellvalue', fil, columna);
                             if (datarow.codigo_tipo_control == 'time'){
                                 hora =  valor_oper.split(':');
@@ -696,15 +696,15 @@
                                 formula = nodo;
                                 //Procesar solamente las fórmulas donde la celda actual aparece
                                 if (formula.toString().indexOf('{F'+fila+'}') != -1){
-                                    filasp = /\{F[0-9]{1,2}\}/g;
+                                    filasp = /\$\{F[0-9]{1,2}\}/g;
                                     lados_formula = formula.split(':=');
-                                    fila_destino = filasp.exec(lados_formula[0]).toString().replace(/\{|\}|F/gi,'');
+                                    fila_destino = filasp.exec(lados_formula[0]).toString().replace(/\$\{F|\}/gi,'');
                                     operaciones = lados_formula[1];
                                     result = evalLadoDerecho(fila, columna, valor_celda_actual, datarow, operaciones); 
                                     var valor;
-                                    if ( lados_formula[0].replace(/\{F|\}/g,'').trim() == fila_destino+'_LS'){
+                                    if ( lados_formula[0].replace(/\$\{F|\}/g,'').trim() == fila_destino+'_LS'){
                                         valor = (result) ? null : 'N/A'; 
-                                    }else if ( lados_formula[0].replace(/\{F|\}/g,'').trim() == fila_destino+'_LSX'){
+                                    }else if ( lados_formula[0].replace(/\$\{F|\}/g,'').trim() == fila_destino+'_LSX'){
                                         valor = result; 
                                     }
                                     else{
