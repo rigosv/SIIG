@@ -212,7 +212,7 @@
                                             <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                                         </button>
                                         <button class="btn btn-warning"
-                                                ng-if="criterio.codigo_tipo_control == 'checkbox_3_states' && (getValorExpediente(exp) != 'false' || getValorExpediente(exp)!='0') && (getValorExpediente(exp) != 'true' || getValorExpediente(exp)!='1')">
+                                                ng-if="criterio.codigo_tipo_control == 'checkbox_3_states' && getValorExpediente(exp) != 'false' && getValorExpediente(exp)!='0' && getValorExpediente(exp) != 'true' && getValorExpediente(exp)!='1'">
                                             N/A
                                         </button>
                                         <span ng-if="criterio.codigo_tipo_control != 'checkbox' && criterio.codigo_tipo_control != 'checkbox_3_states' ">[[getValorExpediente(exp)]]</span>
