@@ -42,9 +42,9 @@
             $scope.establecimientoSeleccionado = '';
             $scope.evaluacionSeleccionada = '';
             $scope.mes_ = '';
-            $scope.titulo_grafico1 = 'Establecimientos vs calificación(%)'
+            $scope.titulo_grafico1 = 'Establecimientos vs calificación(%)';
             
-            $scope.titulo = 'Monitoreo y Evaluación de la Gestión de la calidad en RIISS';
+            $scope.titulo = 'Monitoreo y Evaluación de la Gestión de la Calidad en RIISS';
             $scope.subtitulo = 'Unidad Nacional Gestión de Calidad de la RIISS - VMSS';
             $scope.establecimientos = [];
             $scope.datosGrafico1 = [];
