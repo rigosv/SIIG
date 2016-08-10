@@ -95,6 +95,7 @@ class FormularioAdmin extends Admin
     protected function configureListFields(ListMapper $listMapper)
     {
         $listMapper
+            ->addIdentifier('id', null, array('label'=> $this->getTranslator()->trans('_id_')))
             ->addIdentifier('codigo', null, array('label'=> $this->getTranslator()->trans('_codigo_')))
             ->add('nombre', null, array('label'=> $this->getTranslator()->trans('_nombre_')))
             ->add('descripcion', null, array('label'=> $this->getTranslator()->trans('_descripcion_'))) 
