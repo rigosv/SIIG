@@ -36,6 +36,7 @@
                 $scope.barValue = d;
                 $scope.$apply();
             };
+            $scope.nivel = 'hosp';            
             $scope.periodoSeleccionado = '';
             $scope.mostrarListadoEstablecimientos = true;
             $scope.fila = 1;
@@ -119,10 +120,21 @@
                 return expedientes;
             };
             
+            $( "input[name='nivel_establecimiento']" ).change(function() {                
+                $scope.nivel = $(this).val();                
+                $scope.getEstablecimientos();
+            });
+
+            
             $scope.getEstablecimientos = function() {
+                
+                if ($scope.periodoSeleccionado == ''){
+                    $('#s2id_periodo').notify('Seleccione un periodo', {className: "error" });
+                    return;
+                }
                 $scope.mes_ = ($scope.periodoSeleccionado.mes < 10) ? '0' + $scope.periodoSeleccionado.mes : $scope.periodoSeleccionado.mes ;
                 
-                Establecimientos.query({ periodo: $scope.periodoSeleccionado.periodo })
+                Establecimientos.query({ periodo: $scope.periodoSeleccionado.periodo, nivel: $scope.nivel })
                     .$promise.then(
                         function (data) {                            
                             $scope.establecimientos = (data != '') ? data : [];

@@ -78,19 +78,18 @@ class TableroCalidadRESTController extends Controller {
 
     /**
      * Obtener los datos del formulario
-     * @Get("/rest-service/tablero-calidad/establecimientos/{periodo}", options={"expose"=true})
+     * @Get("/rest-service/tablero-calidad/establecimientos/{periodo}/{nivel}", options={"expose"=true})
      * @Rest\View
      */
-    public function getEstablecimientosEvaluadosAction($periodo) {
+    public function getEstablecimientosEvaluadosAction($periodo, $nivel) {
 
         $response = new Response();
         $em = $this->getDoctrine()->getManager();
 
-        //$data = $em->getRepository('GridFormBundle:Formulario')->getEstablecimientosEvaluados($periodo);
         $eval_compl = $em->getRepository('GridFormBundle:Indicador')->getEvaluacionesComplementarias();
         $em->getRepository('GridFormBundle:Indicador')->getIndicadoresEvaluadosListaChequeo($periodo);
         
-        $establecimientos = $em->getRepository('GridFormBundle:Indicador')->getEvaluacionEstablecimiento($periodo);
+        $establecimientos = $em->getRepository('GridFormBundle:Indicador')->getEvaluacionEstablecimiento($periodo, $nivel);
         
         $resp = array();
         foreach ($establecimientos as $f){

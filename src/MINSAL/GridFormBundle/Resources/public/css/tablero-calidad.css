@@ -131,3 +131,13 @@ DIV.row_tablero {
 .content-wrapper{
     margin-top: 15px;
 }
+
+label.active{
+    color: green !important;
+}
+label.active span.glyphicon-ok{
+    display: inline;
+}
+label span.glyphicon-ok{
+    display: none;
+}

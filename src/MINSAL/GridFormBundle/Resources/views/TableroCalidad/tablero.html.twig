@@ -12,6 +12,7 @@
     <script type="text/javascript" src="{{ asset('bundles/gridform/js/TableroCalidad/servicios.js') }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/gridform/js/TableroCalidad/Chart.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/gridform/js/TableroCalidad/angular-chart.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/indicadores/js/notify.min.js') }}"></script>
     
 
 {% endblock %}
@@ -26,16 +27,30 @@
                         <div class="form_row row">
                             <div class="col-md-4">
                                 <strong>{{'_periodo_evaluacion_'|trans}}</strong>
-                                <select class="form-control"
+                                <select class="form-control" id ='periodo'
                                         data-ng-options="periodo as periodo.etiqueta for periodo in periodos track by periodo.periodo"
                                         ng-model="periodoSeleccionado" ng-change="getEstablecimientos(periodoSeleccionado)" required >
-                                </select>
+                                </select>                                
                             </div>
                             <div class="col-md-4">
-                                <!--
-                                <button ng-click="update()" class="btn btn-success">+10</button>
-                                <button ng-click="update()" class="btn btn-danger">-10</button>
-                                <button ng-click="update()" class="btn btn-primary">{{'_todos_'|trans}}</button> -->
+                                <div class="btn-group" data-toggle="buttons">
+                                    <label class="btn btn-default active">
+                                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                                        <input type="radio" value="hosp" name="nivel_establecimiento" id="option1" 
+                                               ng-click="getEstablecimientos(periodoSeleccionado)" 
+                                               ng-model="nivel"
+                                               class ="nivel"
+                                               autocomplete="off" checked> Hosp.
+                                    </label>
+                                    <label class="btn btn-default">
+                                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                                        <input type="radio" value= "pna" name="nivel_establecimiento" id="option2" 
+                                               ng-click="getEstablecimientos(periodoSeleccionado)" 
+                                               ng-model="nivel"
+                                               class ="nivel"
+                                               autocomplete="off"> PNA
+                                    </label>
+                                </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="input-group">

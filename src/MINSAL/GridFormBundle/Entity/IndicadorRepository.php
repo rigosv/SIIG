@@ -202,42 +202,7 @@ class IndicadorRepository extends EntityRepository {
         $resp['actual'] = $actual;
         $resp['historico'] = $historico;
         
-        return $resp;
-        /*        
-        $sql = "SELECT B.id, B.codigo AS codigo_criterio, COALESCE(C.descripcion, B.descripcion) AS descripcion_criterio,
-                    A.calificacion
-                    FROM
-                    (SELECT codigo_criterio, ROUND(AVG(calificacion)::numeric,2) AS calificacion
-                        FROM  datos_evaluacion_calidad_num
-                        WHERE anio = $anio
-                            AND (mes = '$mes' OR mes = '0$mes')
-                            AND id_indicador = $id_indicador
-                        GROUP BY codigo_criterio
-                    ) AS A
-                    INNER JOIN variable_captura B ON (A.codigo_criterio = B.codigo)
-                    LEFT JOIN area_variable_captura C ON (B.area_id = C.id)
-                    ORDER BY calificacion
-                    ";
-        $areas = $em->getConnection()->executeQuery($sql)->fetchAll();
-        
-        $sql = "SELECT B.nombre, A.calificacion
-                    FROM
-                    (SELECT establecimiento, ROUND(AVG(calificacion)::numeric,2) AS calificacion
-                        FROM  datos_evaluacion_calidad_num
-                        WHERE anio = $anio
-                            AND (mes = '$mes' OR mes = '0$mes')
-                            AND id_indicador = $id_indicador
-                        GROUP BY establecimiento
-                    ) AS A
-                    INNER JOIN costos.estructura B ON (A.establecimiento = B.codigo)
-                    ORDER BY calificacion
-                    ";        
-        $establecimientos = $em->getConnection()->executeQuery($sql)->fetchAll();
-        
-        $resp['areas'] = $areas;
-        $resp['establecimientos'] = $establecimientos;
-        
-        return $resp;*/
+        return $resp;   
     }
     
     protected function prepararDatosEvaluacionNumerica($periodo) {
@@ -671,12 +636,17 @@ class IndicadorRepository extends EntityRepository {
         return $em->getConnection()->executeQuery($sql)->fetchAll();
     }
     
-    public function getEvaluacionEstablecimiento($periodo) {
+    public function getEvaluacionEstablecimiento($periodo, $nivel) {
         $em = $this->getEntityManager();
         list($anio, $mes) = explode('_', $periodo);
         
         $sqlEvalEstandar = $this->getSQLEvaluacionEstandar();
         $sqlEvalEstablecimiento = $this->getSQLEvaluacionEstablecimiento($sqlEvalEstandar);
+        if ($nivel == 'hosp'){
+            $niveles = "IN (1, 14, 30, 31, 35 )";
+        } elseif ($nivel == 'pna'){
+            $niveles = "NOT IN (1, 14, 30, 31, 35)";
+        }
         
         
         $sql_lc = "SELECT A.establecimiento, nombre_corto, nombre_establecimiento, ROUND(B.calificacion::numeric,2) as calificacion
@@ -685,7 +655,9 @@ class IndicadorRepository extends EntityRepository {
                     INNER JOIN datos_evaluacion_calidad A ON (B.establecimiento = A.establecimiento
                                                                 AND B.anio = A.anio
                                                                 AND B.mes = A.mes)
+                    INNER JOIN ctl_establecimiento_simmow C ON (A.establecimiento::integer = C.id)
                     WHERE A.anio=$anio AND A.mes = '$mes'
+                        AND C.id_tipo_establecimiento $niveles
                      ";
 
         $em->getConnection()->executeQuery($sql_lc);
@@ -695,7 +667,9 @@ class IndicadorRepository extends EntityRepository {
                     INTO  TEMP esta_num_tmp
                     FROM datos_evaluacion_calidad_num A
                     INNER JOIN costos.estructura B ON (A.establecimiento = B.codigo)
+                    INNER JOIN ctl_establecimiento_simmow C ON (A.establecimiento::integer = C.id)
                     WHERE anio=$anio AND mes = '$mes'
+                        AND C.id_tipo_establecimiento $niveles
                         AND A.establecimiento 
                             NOT IN
                         (SELECT establecimiento FROM esta_lc_tmp) 
