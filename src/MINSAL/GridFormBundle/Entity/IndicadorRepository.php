@@ -35,11 +35,17 @@ class IndicadorRepository extends EntityRepository {
      * Recupera los indicadores que son por lista de chequeo
      * 
      */
-    public function getIndicadoresEvaluadosListaChequeo($periodo) {
+    public function getIndicadoresEvaluadosListaChequeo($periodo, $nivel) {
         $em = $this->getEntityManager();
-        list($anio, $mes) = explode('_', $periodo);
+
         $datos = array();
         $calificaciones = array();
+        
+        if ($nivel == 'hosp'){
+            $niveles = " (1, 14, 30, 31, 35 )";
+        } elseif ($nivel == 'pna'){
+            $niveles = " (27, 8, 9)";
+        }
         
         $sql = "SELECT B.posicion, A.codigo, A.descripcion, A.forma_evaluacion,  
                                 A.porcentaje_aceptacion, 
@@ -50,6 +56,17 @@ class IndicadorRepository extends EntityRepository {
                     FROM indicador A
                         INNER JOIN costos.formulario B ON (A.estandar_id = B.id)
                     WHERE B.forma_evaluacion = 'lista_chequeo'
+                        AND B.id 
+                           IN 
+                           (SELECT A.id_formulario 
+                                FROM (
+                                    SELECT DISTINCT ON  (id_formulario, datos->'establecimiento') 
+                                        id_formulario, datos->'establecimiento' AS establecimiento 
+                                    FROM almacen_datos.repositorio
+                                    ) AS A 
+                                    INNER JOIN ctl_establecimiento_simmow B ON (A.establecimiento = B.id::varchar) 
+                                WHERE B.id_tipo_establecimiento IN $niveles
+                            )
                     ORDER BY posicion, codigo_estandar, codigo
                     ";
         
@@ -112,11 +129,17 @@ class IndicadorRepository extends EntityRepository {
      * Recupera los indicadores que tienen indicadores hijos asociados
      * datos numéricos
      */
-    public function getIndicadoresEvaluadosNumericos($periodo) {
+    public function getIndicadoresEvaluadosNumericos($periodo, $nivel) {
         $em = $this->getEntityManager();
         list($anio, $mes) = explode('_', $periodo);
         
         $this->prepararDatosEvaluacionNumerica($periodo);
+        
+        if ($nivel == 'hosp'){
+            $niveles = " (1, 14, 30, 31, 35 )";
+        } elseif ($nivel == 'pna'){
+            $niveles = " (27, 8, 9)";
+        }
 
         $datos = array();
         $calificaciones = array();
@@ -144,10 +167,12 @@ class IndicadorRepository extends EntityRepository {
                                         LIMIT 10
                                     ) AS historial
                     FROM
-                    (SELECT id_indicador, ROUND(AVG(calificacion)::numeric,2) AS calificacion
-                        FROM  datos_evaluacion_calidad_num
-                        WHERE anio = $anio
-                            AND (mes = '$mes' OR mes = '0$mes')
+                    (SELECT A.id_indicador, ROUND(AVG(A.calificacion)::numeric,2) AS calificacion
+                        FROM  datos_evaluacion_calidad_num A
+                            INNER JOIN ctl_establecimiento_simmow B ON (A.establecimiento = B.id::varchar) 
+                        WHERE A.anio = $anio
+                            AND (A.mes = '$mes' OR A.mes = '0$mes')
+                            AND B.id_tipo_establecimiento IN $niveles
                         GROUP BY id_indicador
                     ) AS A
                     INNER JOIN indicador B ON (A.id_indicador = B.id)
@@ -577,9 +602,15 @@ class IndicadorRepository extends EntityRepository {
         }
     }
     
-    public function getEvaluacionesComplementarias($codigo_establecimiento = null, $raw = false) {
+    public function getEvaluacionesComplementarias($codigo_establecimiento = null, $raw = false, $nivel) {
         $em = $this->getEntityManager();
         $resp = array();
+        
+        if ($nivel == 'hosp'){
+            $niveles = " (1, 14, 30, 31, 35 )";
+        } elseif ($nivel == 'pna'){
+            $niveles = " (27, 8, 9)";
+        }
         
         $cond = '';
         if ($codigo_establecimiento != null){
@@ -595,6 +626,7 @@ class IndicadorRepository extends EntityRepository {
                     INNER JOIN evaluacion_externa_tipo B ON (A.tipoevaluacion_id = B.id)
                     INNER JOIN evaluacion_categoria C ON (B.categoriaevaluacion_id = C.id)
                     INNER JOIN costos.estructura D ON (A.establecimiento_id = D.id)
+                    INNER JOIN ctl_establecimiento_simmow E ON (D.codigo = E.id::varchar)
                     WHERE (D.id, tipoevaluacion_id, anio) 
                         IN 
                         (SELECT establecimiento_id, tipoevaluacion_id, MAX(anio) AS anio 
@@ -602,6 +634,7 @@ class IndicadorRepository extends EntityRepository {
                             GROUP BY establecimiento_id, tipoevaluacion_id
                         )
                         $cond
+                        AND E.id_tipo_establecimiento IN $niveles
                     ORDER BY C.id, B.id, A.anio, A.valor";       
         if ($raw){
             return $em->getConnection()->executeQuery($sql)->fetchAll();
@@ -614,8 +647,14 @@ class IndicadorRepository extends EntityRepository {
         }
     }
     
-    public function getEvaluacionesComplementariasNacional() {
+    public function getEvaluacionesComplementariasNacional($nivel) {
         $em = $this->getEntityManager();
+        
+        if ($nivel == 'hosp'){
+            $niveles = " (1, 14, 30, 31, 35 )";
+        } elseif ($nivel == 'pna'){
+            $niveles = " (27, 8, 9)";
+        }
   
         //Obtener valores de evaluaciones externas, extraer la medición 
         //del último año ingresado para cada evaluación
@@ -624,15 +663,18 @@ class IndicadorRepository extends EntityRepository {
                     FROM evaluacion_externa A
                     INNER JOIN evaluacion_externa_tipo B ON (A.tipoevaluacion_id = B.id)
                     INNER JOIN evaluacion_categoria C ON (B.categoriaevaluacion_id = C.id)
+                    INNER JOIN costos.estructura D ON (A.establecimiento_id = D.id)
+                    INNER JOIN ctl_establecimiento_simmow E ON (D.codigo = E.id::varchar)
                     WHERE (tipoevaluacion_id, anio) 
                         IN 
                         (SELECT tipoevaluacion_id, MAX(anio) AS anio 
                             FROM evaluacion_externa 
                             GROUP BY tipoevaluacion_id
                         )
+                        AND E.id_tipo_establecimiento IN $niveles
                     GROUP BY B.descripcion, A.anio, B.unidad_medida
                     ORDER BY B.descripcion, A.anio, B.unidad_medida";       
-        
+
         return $em->getConnection()->executeQuery($sql)->fetchAll();
     }
     
@@ -643,9 +685,9 @@ class IndicadorRepository extends EntityRepository {
         $sqlEvalEstandar = $this->getSQLEvaluacionEstandar();
         $sqlEvalEstablecimiento = $this->getSQLEvaluacionEstablecimiento($sqlEvalEstandar);
         if ($nivel == 'hosp'){
-            $niveles = "IN (1, 14, 30, 31, 35 )";
+            $niveles = " (1, 14, 30, 31, 35 )";
         } elseif ($nivel == 'pna'){
-            $niveles = "NOT IN (1, 14, 30, 31, 35)";
+            $niveles = " (27, 8, 9)";
         }
         
         
@@ -655,9 +697,9 @@ class IndicadorRepository extends EntityRepository {
                     INNER JOIN datos_evaluacion_calidad A ON (B.establecimiento = A.establecimiento
                                                                 AND B.anio = A.anio
                                                                 AND B.mes = A.mes)
-                    INNER JOIN ctl_establecimiento_simmow C ON (A.establecimiento::integer = C.id)
+                    INNER JOIN ctl_establecimiento_simmow C ON (A.establecimiento = C.id::varchar)
                     WHERE A.anio=$anio AND A.mes = '$mes'
-                        AND C.id_tipo_establecimiento $niveles
+                        AND C.id_tipo_establecimiento IN $niveles
                      ";
 
         $em->getConnection()->executeQuery($sql_lc);
@@ -669,7 +711,7 @@ class IndicadorRepository extends EntityRepository {
                     INNER JOIN costos.estructura B ON (A.establecimiento = B.codigo)
                     INNER JOIN ctl_establecimiento_simmow C ON (A.establecimiento::integer = C.id)
                     WHERE anio=$anio AND mes = '$mes'
-                        AND C.id_tipo_establecimiento $niveles
+                        AND C.id_tipo_establecimiento IN $niveles
                         AND A.establecimiento 
                             NOT IN
                         (SELECT establecimiento FROM esta_lc_tmp) 

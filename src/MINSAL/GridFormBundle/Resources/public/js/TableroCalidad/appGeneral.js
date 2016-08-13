@@ -66,8 +66,11 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['serviciosGeneral',
                 $scope.procesar();
             };
             
-            $scope.procesar = function () {
-                Indicadores.query({ periodo: $scope.periodoSeleccionado.periodo, tipo:1 })
+            $scope.procesar = function (nivel) {
+                $scope.indicadores = [];
+                $scope.indicadores2 = [];
+                $scope.evaluaciones_complementarias = [];
+                Indicadores.query({ periodo: $scope.periodoSeleccionado.periodo, tipo:1, nivel:nivel })
                     .$promise.then(
                             function (data) {
                                 $scope.indicadores = (data != '') ? data[0].datos : [];
@@ -91,7 +94,7 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['serviciosGeneral',
                             }
                     );
             
-                 Indicadores.query({ periodo: $scope.periodoSeleccionado.periodo, tipo:2 })
+                 Indicadores.query({ periodo: $scope.periodoSeleccionado.periodo, tipo:2, nivel:nivel })
                     .$promise.then(
                             function (data) {
                                 $scope.indicadores2 = (data != '') ? data : [];
@@ -100,7 +103,7 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['serviciosGeneral',
                                 alert(error);
                             }
                     );
-                EvaluacionesComplementarias.query()
+                EvaluacionesComplementarias.query({ nivel:nivel })
                 .$promise.then(
                         function (data) {
                             $scope.evaluaciones_complementarias = (data != '') ? data[0] : [];

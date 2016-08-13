@@ -9,8 +9,8 @@ serviciosGeneral.factory('Periodos', ['$resource',
     
 serviciosGeneral.factory('Indicadores', ['$resource',
   function($resource){
-    return $resource(Routing.generate('get_indicadores_calidad_evaluados')+'/:periodo/:tipo', {}, {
-      query: {method:'GET', params:{periodo: '@_id', tipo: '@_idt'}, isArray:true}
+    return $resource(Routing.generate('get_indicadores_calidad_evaluados')+'/:periodo/:tipo/:nivel', {}, {
+      query: {method:'GET', params:{periodo: '@_id', tipo: '@_idt', nivel: '@_idn'}, isArray:true}
     });
   }]);
   
@@ -23,8 +23,8 @@ serviciosGeneral.factory('DetalleIndicador', ['$resource',
   
 serviciosGeneral.factory('EvaluacionesComplementarias', ['$resource',
   function($resource){
-    return $resource(Routing.generate('get_evaluaciones_complementarias'), {}, {
-      query: {method:'GET', params:{}, isArray:true}
+    return $resource(Routing.generate('get_evaluaciones_complementarias')+'/:nivel', {}, {
+      query: {method:'GET', params:{nivel: '@_idn'}, isArray:true}
     });
   }]);
  

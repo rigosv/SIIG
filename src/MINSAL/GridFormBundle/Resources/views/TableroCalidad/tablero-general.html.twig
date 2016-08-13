@@ -32,16 +32,20 @@
             </label>
         </div>
         <div class="btn-group">
-            <label class="btn btn-primary" ng-model="filtroIndicador" uib-btn-radio="'todos1'" ng-click='procesar()'>
-                <span class="glyphicon glyphicon-tasks" aria-hidden="true" title="Todos los indicadores"></span>
-                <span class="glyphicon-class">Todos</span>
+            <label class="btn btn-default" ng-model="filtroIndicador" uib-btn-radio="'hosp'" ng-click="procesar('hosp')">
+                <span class="glyphicon glyphicon-ok" aria-hidden="true" title="Hospitales"></span>
+                <span class="glyphicon-class">HOSP.</span>
+            </label>
+            <label class="btn btn-default" ng-model="filtroIndicador" uib-btn-radio="'pna'" ng-click="procesar('pna')">
+                <span class="glyphicon glyphicon-ok" aria-hidden="true" title="Primer Nivel de Atención"></span>
+                <span class="glyphicon-class">PNA</span>
             </label>
         </div>
     </div>
     <ul class="nav nav-tabs" role="tablist">
         <li role="presentation" class="active"><a href="#lista_chequeo" aria-controls="lista_chequeo" role="tab" data-toggle="tab" ng-if="indicadores.length > 0">Estándares 1-24</a></li>
-        <li role="presentation"><a href="#numericos" aria-controls="numericos" role="tab" data-toggle="tab" ng-if="indicadores.length > 0">Estándares 25-29</a></li>
-        <li role="presentation"><a href="#eval_complementarias" aria-controls="numericos" role="tab" data-toggle="tab" ng-if="indicadores.length > 0" >Evaluaciones complementarias</a></li>
+        <li role="presentation"><a href="#numericos" aria-controls="numericos" role="tab" data-toggle="tab" ng-if="indicadores2.length > 0">Estándares 25-29</a></li>
+        <li role="presentation"><a href="#eval_complementarias" aria-controls="numericos" role="tab" data-toggle="tab" ng-if="evaluaciones_complementarias.nacional.length > 0" >Evaluaciones complementarias</a></li>
     </ul>
     <!-- Tab panes -->
     <div class="tab-content">
@@ -199,7 +203,7 @@
             </div>
         </div>
         <DIV role="tabpanel" class="tab-pane" id="eval_complementarias">
-            <table class="table table-hover" ng-if="indicadores.length > 0">
+            <table class="table table-hover" ng-if="evaluaciones_complementarias.nacional.length > 0">
                 <caption>Evaluaciones complementarias</caption>
                 <thead>
                     <TR class="success">

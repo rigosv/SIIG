@@ -115,3 +115,13 @@ table.pvtTable td{
 #pivotDetalleIndicador .pvtAxisContainer, #pivotDetalleIndicador .pvtVals{
     display: none;
 }
+
+label.active{
+    color: #008D4C !important;
+}
+label.active span.glyphicon-ok{
+    display: block !important;
+}
+label.btn span.glyphicon-ok{
+    display: none;
+}
