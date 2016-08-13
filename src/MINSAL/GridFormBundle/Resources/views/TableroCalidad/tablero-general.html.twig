@@ -91,21 +91,21 @@
                                     <TR  ng-repeat="ind in indicadores | filter : buscar_indicadores" ng-click="seleccionarIndicador(ind)">
                                         <TD >[[ind.descripcion_estandar]]</TD>
                                         <TD ><B>([[ind.codigo_indicador]])</B> [[ind.descripcion_indicador]]</TD>
-                                        <TD>[[ind.calificacion | number:2]]%</TD>
+                                        <TD style="color:[[ind.color]]">[[ind.calificacion | number:2]]%</TD>
                                     </TR>
                                 </tbody>
                                 <tbody ng-show="filtroListadoIndicador == '+10'" >
                                     <TR  ng-repeat="ind in indicadoresTop10 " ng-click="seleccionarIndicador(ind)">
                                         <TD >[[ind.descripcion_estandar]]</TD>
                                         <TD >[[ind.descripcion_indicador]]</TD>
-                                        <TD>[[ind.calificacion | number:2]]%</TD>
+                                        <TD style="color:[[ind.color]]">[[ind.calificacion | number:2]]%</TD>
                                     </TR>
                                 </tbody>
                                 <tbody ng-show="filtroListadoIndicador == '-10'" >
                                     <TR  ng-repeat="ind in indicadoresLess10 " ng-click="seleccionarIndicador(ind)" >
                                         <TD >[[ind.descripcion_estandar]]</TD>
                                         <TD >[[ind.descripcion_indicador]]</TD>
-                                        <TD>[[ind.calificacion | number:2]]%</TD>
+                                        <TD style="color:[[ind.color]]">[[ind.calificacion | number:2]]%</TD>
                                     </TR>
                                 </tbody>
                             </table>
@@ -156,7 +156,7 @@
                                 <tbody >
                                     <TR  ng-repeat="est in indicadorSeleccionado.evaluacion | filter : buscar_establecimientos" >
                                         <TD >[[est.nombre_establecimiento]]</TD>
-                                        <TD >[[est.calificacion]]</TD>
+                                        <TD style="color:[[est.color]]">[[est.calificacion]]</TD>
                                     </TR>
                                 </tbody>                        
                             </table>
@@ -170,7 +170,7 @@
                         </div>
                         <div class="panel-body" >
                             <canvas id="grafico2" class="chart-bar" chart-options="options_bar_line"
-                                chart-data="datosGrafico2" chart-labels="labels" chart-colors="colors"
+                                chart-data="datosGrafico2" chart-labels="labels" 
                                 chart-dataset-override="datasetOverride" >
                             </canvas> 
                         </div>                

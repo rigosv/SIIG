@@ -18,7 +18,9 @@ function ifLoading($http) {
     }
 
     ifLoading.$inject = ['$http'];    
-    
+function hexToRGBA(hex, opacity) {
+    return 'rgba(' + (hex = hex.replace('#', '')).match(new RegExp('(.{' + hex.length/3 + '})', 'g')).map(function(l) { return parseInt(hex.length%2 ? l+l : l, 16) }).concat(opacity||1).join(',') + ')';
+}    
 var tableroCalidadApp = angular.module('tableroCalidadApp', ['serviciosGeneral', 'ui.bootstrap', 'chart.js'])
         .config(['$interpolateProvider', function ($interpolateProvider) {
                 $interpolateProvider.startSymbol('[[');
@@ -70,6 +72,7 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['serviciosGeneral',
                 $scope.indicadores = [];
                 $scope.indicadores2 = [];
                 $scope.evaluaciones_complementarias = [];
+                $scope.mostrarInfoIndicador = false;
                 Indicadores.query({ periodo: $scope.periodoSeleccionado.periodo, tipo:1, nivel:nivel })
                     .$promise.then(
                             function (data) {
@@ -213,34 +216,42 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['serviciosGeneral',
                 $scope.indicadorSeleccionado = indicadorSel;
                 $scope.mostrarInfoIndicador = true;
                 $scope.colors = ['#45b7cd', '#ff6384', '#ff8e72'];
+               
+                
+                var labels = [];
+                var valorEstandar = [];
+                var valorEstablecimiento = [];
+                var coloresGrp2 = [];
+                
+                indicadorSel.evaluacion.forEach(function(nodo, index){
+                    labels.push(nodo.nombre_corto);
+                    valorEstandar.push(indicadorSel.calificacion);
+                    valorEstablecimiento.push(nodo.calificacion);
+                    coloresGrp2.push(hexToRGBA(nodo.color,.3));
+                });
                 $scope.datasetOverride = [
                     {
                       label: "Calificación establecimiento",
                       borderWidth: 1,
-                      type: 'bar'
+                      type: 'bar',
+                      backgroundColor: coloresGrp2
                     },
                     {
                       label: "Calificación estándar",
                       borderWidth: 3,
                       hoverBackgroundColor: "rgba(255,99,132,0.4)",
                       hoverBorderColor: "rgba(255,99,132,1)",
-                      type: 'line'
+                      type: 'line',
+                      fill:false,
+                      borderColor: [indicadorSel.color]
                     }
                 ];
-                
-                var labels = [];
-                var valorEstandar = [];
-                var valorEstablecimiento = [];
-                
-                indicadorSel.evaluacion.forEach(function(nodo, index){
-                    labels.push(nodo.nombre_corto);
-                    valorEstandar.push(indicadorSel.calificacion);
-                    valorEstablecimiento.push(nodo.calificacion);
-                });
                 $scope.datosGrafico2 = [];
                 $scope.labels = labels;
+                //$scope.colors.push(coloresGrp2);                
                 $scope.datosGrafico2.push(valorEstablecimiento);
                 $scope.datosGrafico2.push(valorEstandar); 
+                
                 
             };
         });

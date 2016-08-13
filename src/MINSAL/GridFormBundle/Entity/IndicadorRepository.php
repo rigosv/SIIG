@@ -389,8 +389,12 @@ class IndicadorRepository extends EntityRepository {
                     FROM auxiliar_tmp
                 " ;
         $em->getConnection()->executeQuery($sql);
-        
-        $sql = "SELECT * FROM auxiliar_tmp";
+
+        $sql = "SELECT A.*, (SELECT color 
+                                    FROM rangos_alertas_generales
+                                    WHERE A.calificacion BETWEEN COALESCE(limite_inferior, -100000) AND COALESCE(limite_superior, 1000000)
+                                    ) AS color 
+                    FROM auxiliar_tmp A";
         return $em->getConnection()->executeQuery($sql)->fetchAll();
         
         
