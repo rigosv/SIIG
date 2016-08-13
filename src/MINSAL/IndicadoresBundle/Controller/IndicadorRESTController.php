@@ -54,11 +54,13 @@ class IndicadorRESTController extends Controller {
         $fichaRepository = $em->getRepository('IndicadoresBundle:FichaTecnica');
 
         $fichaRepository->crearIndicador($fichaTec, $dimension, $filtros);
-        $resp['datos'] = $fichaRepository->calcularIndicador($fichaTec, $dimension, $filtros, $verSql);
+        $resp['datos'] = $fichaRepository->calcularIndicador($fichaTec, $dimension, $filtros, $verSql);        
         $respj = json_encode($resp);
 
         $response->setContent($respj);
-        $redis->set('indicador_'.$fichaTec->getId().'_'.$dimension.$hash, $respj);
+        if ( is_array($resp['datos']) ){
+            $redis->set('indicador_'.$fichaTec->getId().'_'.$dimension.$hash, $respj);
+        }        
 
         return $response;
         
@@ -97,7 +99,10 @@ class IndicadorRESTController extends Controller {
 
         //Guardar los datos en caché de redis            
         $response->setContent($respj);
-        $redis->set('indicador_'.$fichaTec->getId(), $respj);
+        
+        if ( is_array($resp['datos']) ){
+            $redis->set('indicador_'.$fichaTec->getId(), $respj);
+        }        
 
         return $response;
         
