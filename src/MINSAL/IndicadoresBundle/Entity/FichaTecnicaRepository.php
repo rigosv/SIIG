@@ -247,8 +247,8 @@ class FichaTecnicaRepository extends EntityRepository {
                 $campos[] = $letra_catalogo . '.descripcion AS ' . str_replace('id_', '', $c);
                 $campos_grp[] = $letra_catalogo . '.descripcion';
             } else {
-                $campos[] = $c;
-                $campos_grp[] = $c;
+                $campos[] = 'A.'.$c;
+                $campos_grp[] = 'A.'.$c;
             }
         }
 
