@@ -77,6 +77,15 @@ $(document).ready(function() {
         }
     });
     
+    $('#exportFichas').click(function (){
+        var id_sala = $('#nombre_sala').attr('id-sala');
+        if (id_sala != ''){
+            window.location = Routing.generate('fichas_sala', {id: id_sala, _sonata_admin: 'sonata.admin.ficha'});
+        } else {
+            $('#sala_opciones_menu').notify(trans._no_sala_cargada_, {className: "error", position:"right" });
+        }
+    });
+    
     $('#crear_acceso').click(function(){
         var duracion = $('#duracion').val();
         if (!isNaN(duracion) && duracion > 0){

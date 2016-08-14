@@ -2,30 +2,40 @@
     "name": "SIIG/eTAB",
     "description": "SIIG/eTAB",
     "autoload": {
-        "psr-0": { "": "src/" }
+        "psr-4": {
+            "": "src/"
+        },
+        "classmap": [
+            "app/AppKernel.php",
+            "app/AppCache.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
     },
     "require": {
         "php": ">=5.3.3",
                 
         "symfony/symfony": "2.8.*",
-        "doctrine/orm": "v2.4.4",
-        "doctrine/doctrine-bundle": "v1.2.0",
-        "twig/extensions": "v1.0.1",
-        "symfony/assetic-bundle": "2.3.*@stable",
-        "kriswallsmith/assetic": "1.1.x@stable",
-        "symfony/swiftmailer-bundle": "v2.3.7",
-        "symfony/monolog-bundle": "v2.6.1",
-        "sensio/distribution-bundle": "v2.3.4",
-        "sensio/framework-extra-bundle": "v2.3.4",
-        "sensio/generator-bundle": "v2.3.5",
-        "incenteev/composer-parameter-handler": "v2.1.0",
-        
-        "doctrine/data-fixtures": "v1.0.0",
-        "doctrine/doctrine-fixtures-bundle": "v2.2.0",
+        "doctrine/orm": "^2.5",
+        "doctrine/doctrine-bundle": "^1.6",
+        "doctrine/doctrine-cache-bundle": "^1.2",
+        "symfony/polyfill-apcu": "^1.0",
+        "twig/extensions": "v1.3.0",
+        "symfony/assetic-bundle": "v2.8.0",
+        "kriswallsmith/assetic": "v1.3.2",
+        "symfony/swiftmailer-bundle": "^2.3",
+        "symfony/monolog-bundle": "^2.8",
+        "sensio/distribution-bundle": "~5.0",
+        "sensio/framework-extra-bundle": "v3.0.16",
+        "sensio/generator-bundle": "v3.0.7",
+        "incenteev/composer-parameter-handler": "v2.1.2",
         
         "knplabs/knp-menu-bundle":"dev-master",
         
-        "sonata-project/cache": "^1.0.3",
+        "sonata-project/cache": "v1.0.7",
         "sonata-project/cache-bundle": "dev-master",
         "sonata-project/datagrid-bundle": "^2.2",
         "sonata-project/core-bundle": "3.*",
@@ -38,19 +48,23 @@
         	
         "simplethings/entity-audit-bundle": "v0.6",
 	"friendsofsymfony/user-bundle": "v1.3.6",
-        "friendsofsymfony/jsrouting-bundle": "v1.5.3",
+        "friendsofsymfony/jsrouting-bundle": "v1.6.0",
         
         "os/excel-bundle": "v2.1",
         "php-amqplib/php-amqplib": "~2.6",
-        "php-amqplib/rabbitmq-bundle": "^1.9",
-        "fr3d/ldap-bundle": "2.0.*@dev",
-	"knplabs/knp-snappy-bundle": "v1.2",
+        "php-amqplib/rabbitmq-bundle": "^1.10",
+        "fr3d/ldap-bundle": "v3.0.0",
+	"knplabs/knp-snappy-bundle": "v1.4",
                 
-        "suncat/mobile-detect-bundle": "0.9.*",
-        "jms/serializer-bundle": "v0.13.0",
-        "friendsofsymfony/rest-bundle": "1.1.0",
-        "snc/redis-bundle": "1.1.*",
-        "predis/predis": "1.*"
+        "suncat/mobile-detect-bundle": "v1.0.3",
+        "jms/serializer-bundle": "v1.1.0",
+        "friendsofsymfony/rest-bundle": "^1.1",
+        "snc/redis-bundle": "v2.0.0",
+        "predis/predis": "v1.1.1"
+    },
+    "require-dev": {
+        "sensio/generator-bundle": "^3.0",
+        "symfony/phpunit-bridge": "^3.0"
     },
     "scripts": {
         "post-install-cmd": [
@@ -72,12 +86,12 @@
     "extra": {
         "symfony-app-dir": "app",
         "symfony-web-dir": "web",
+        "symfony-bin-dir": "bin",
+        "symfony-var-dir": "var",
+        "symfony-tests-dir": "tests",
         "incenteev-parameters": {
             "file": "app/config/parameters.yml"
         },
-        "branch-alias": {
-            "dev-master": "2.4-dev"
-        },
-	"symfony-assets-install": "symlink"
+        "symfony-assets-install": "symlink"
     }
 }

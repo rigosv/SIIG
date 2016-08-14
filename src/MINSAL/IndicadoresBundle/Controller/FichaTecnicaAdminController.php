@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
-
+use \MINSAL\IndicadoresBundle\Entity\GrupoIndicadores;
 //use Symfony\Component\Console\Input\ArrayInput;
 
 class FichaTecnicaAdminController extends Controller {
@@ -97,9 +97,7 @@ class FichaTecnicaAdminController extends Controller {
      */
     public function tableroSalaAction($sala, Request $request) {
         $em = $this->getDoctrine()->getManager();
-        $redis = $this->container->get('snc_redis.default');
-
-        $recalcular = true;
+        
         $tipo_reporte = ($request->get('indicador') != null) ? 'indicador' : 'sala';
 
         $html = $this->tableroAction($sala);
@@ -250,23 +248,32 @@ class FichaTecnicaAdminController extends Controller {
                     'formularios' => $formularios
         ));
     }
-
-    public function batchActionVerFicha($idx = null) {
-        $parameterBag = $this->get('request')->request;
+    
+    /**
+     * @Route("/sala/{id}/fichas", name="fichas_sala", options={"expose"=true})
+     */
+    public function fichasSalaAction(GrupoIndicadores $sala) {
         $em = $this->getDoctrine()->getManager();
 
-        $selecciones = $parameterBag->get('idx');
-
+        $fichas_ = $sala->getIndicadores();
+        $fichas = array();
+        foreach ($fichas_ as $ficha){
+            $fichas[] = $ficha->getIndicador();
+        }
+        
+        return $this->getFichas($fichas);
+    }
+    
+    protected function getFichas($fichas){
         $salida = '';
-        foreach ($selecciones as $ficha) {
-            $fichaTec = $em->find('IndicadoresBundle:FichaTecnica', $ficha);
+        foreach ($fichas as $ficha) {
 
             $admin = $this->get('sonata.admin.ficha');
-            $admin->setSubject($fichaTec);
+            $admin->setSubject($ficha);
 
             $html = $this->render($admin->getTemplate('show'), array(
                 'action' => 'show',
-                'object' => $fichaTec,
+                'object' => $ficha,
                 'elements' => $admin->getShow(),
                 'admin' => $admin,
                 'base_template' => 'IndicadoresBundle::ajax_layout.html.twig'
@@ -283,12 +290,24 @@ class FichaTecnicaAdminController extends Controller {
         $salida = str_ireplace('<TABLE', "<TABLE width=95% ", $salida);
 
         return new Response('<HTML>' . $salida . '</HTML>', 200, array(
-            'Content-Type' => 'application/msword',
-            'Content-Disposition' => 'attachment; filename="ficha_tecnica.doc"',
-            'Pragma' => 'no-cache',
-            'Expires' => '0'
-                )
+                'Content-Type' => 'application/msword',
+                'Content-Disposition' => 'attachment; filename="fichas_tecnicas.doc"',
+                'Pragma' => 'no-cache',
+                'Expires' => '0'
+            )
         );
+    }
+    
+    public function batchActionVerFicha($idx = null) {
+        $parameterBag = $this->get('request')->request;
+        $em = $this->getDoctrine()->getManager();
+
+        $selecciones = $parameterBag->get('idx');
+        $fichas = array();
+        foreach ($selecciones as $ficha) {
+            $fichas[] = $em->find('IndicadoresBundle:FichaTecnica', $ficha);
+        }
+        return $this->getFichas($fichas);
     }    
 
 }
