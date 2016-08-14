@@ -59,8 +59,11 @@ $(document).ready(function() {
     });
     
     $('#accesoExterno').click(function() {
-        if ($(this).parent().hasClass('enabled')){
+        var id_sala = $('#nombre_sala').attr('id-sala');
+        if (id_sala != ''){
             $('#myModalAccesExt').modal('show');
+        } else {
+            $('#sala_opciones_menu').notify(trans._no_sala_cargada_, {className: "error", position:"right" });
         }
     });
     
@@ -70,7 +73,7 @@ $(document).ready(function() {
         if (id_sala != ''){
             window.location = Routing.generate('tablero_sala', {sala: id_sala, _sonata_admin: 'sonata.admin.ficha'});
         } else {
-            $('#exportarOpciones').notify(trans._no_sala_cargada_, {className: "error", position:"right" });
+            $('#sala_opciones_menu').notify(trans._no_sala_cargada_, {className: "error", position:"right" });
         }
     });
     
@@ -139,9 +142,9 @@ $(document).ready(function() {
     function sala_agregar_fila() {
         var cant = $('DIV.area_grafico').length;
         $('.zona_actual').removeClass('zona_actual');
-
+        var cantidad = parseInt(cant + 1);
         var html = 
-                '<div id="zgrafico_' + parseInt(cant + 1) + '" ><div class="area_grafico zona_actual panel panel-success" id="grafico_' + parseInt(cant + 1) + '" >' +
+                '<div id="zgrafico_' + cantidad + '" ><div class="area_grafico zona_actual panel panel-success" id="grafico_' + parseInt(cant + 1) + '" >' +
                 "<DIV class= 'titulo panel-heading'><h5><span class='titulo_indicador '></span>" +
                 "<span>(" + trans.por + " <span class='dimension' ></span>)</span></h5>" +
                 '</DIV>' +
@@ -155,12 +158,11 @@ $(document).ready(function() {
                 '</div>' +
                 '<div class="pie_grafico" ></div>' +
                 '</DIV></div>';
-
-        if (parseInt(cant + 1) == 6){
-            html +=  '<div style="page-break-before:always;" class="salto-pagina1"></div>';
-        }
-        if (parseInt(cant + 1) == 12 || parseInt(cant + 1) == 18){
-            html +=  '<div style="page-break-before:always;" class="salto-pagina1"></div><div style="page-break-before:always;" class="salto-pagina1"></div>';
+        //Cada 6 gráficos agregar espacioes para saltos de página
+        if (cantidad == 6){
+            html +=  '<div class="salto-pagina1"></div>';
+        }else if (cantidad % 6 == 0){
+            html +=  '<div class="salto-pagina1"></div><div class="salto-pagina1"></div>';
         }
         $('#sala').append(html);
         $('DIV.area_grafico').click(function() {
