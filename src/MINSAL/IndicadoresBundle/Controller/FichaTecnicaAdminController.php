@@ -102,74 +102,47 @@ class FichaTecnicaAdminController extends Controller {
         $recalcular = true;
         $tipo_reporte = ($request->get('indicador') != null) ? 'indicador' : 'sala';
 
-        //Verificar si existe la información de la sala almacenada en caché
-        if ($redis->get('sala_time_' . $tipo_reporte . '_' . $sala) != null) {
-            //Verificar la fecha de la última actualización
-            $ult_fecha = new \DateTime("2000-07-08 11:14:15.638276");
-            $salaObj = $em->getRepository("IndicadoresBundle:GrupoIndicadores")->find($sala);
-            $indicadores_sala = $em->getRepository('IndicadoresBundle:GrupoIndicadores')->getIndicadoresSala($salaObj);
-            foreach ($indicadores_sala as $ind) {
-                $indicador = $indicador = $em->find('IndicadoresBundle:FichaTecnica', $ind['idIndicador']);
-                if ($indicador->getUltimaLectura() > $ult_fecha) {
-                    $ult_fecha = $indicador->getUltimaLectura();
-                }
-            }
-            //Comparar con la fecha de actualización de la sala
-            $ult_fecha = ($ult_fecha > $salaObj->getUpdatedAt()) ? $ult_fecha : $salaObj->getUpdatedAt();
+        $html = $this->tableroAction($sala);
+        $html = $html->getContent();
 
-            //Recuperar la última fecha en que se construyó el informe
-            $st = $redis->get('sala_time_' . $tipo_reporte . '_' . $sala);
-            $dt = new \DateTime();
-            $dt->setTimestamp($st);
-            $recalcular = ($ult_fecha > $dt) ? true : false;
-        }
-        $recalcular = true;
-        if ($recalcular) {
-            $html = $this->tableroAction($sala);
-            $info_indicador = '';
-            if ($request->get('indicador') != null) {
-                //Se está cargando el reporte de la sala como reporte asociado
-                //a un indicadores, recuperar el indicador para mostrar 
-                //información adicional
+        $info_indicador = '';
+        if ($request->get('indicador') != null) {
+            //Se está cargando el reporte de la sala como reporte asociado
+            //a un indicadores, recuperar el indicador para mostrar 
+            //información adicional
 
-                $id = $request->get('indicador');
-                $indicador = $em->find('IndicadoresBundle:FichaTecnica', $id);
-                $info_indicador .= '<BR/></BR/><BR/></BR/>'
-                        . '<DIV class="col-md-12" >'
-                        . '<B>Interpretación:</B><BR/>' . $indicador->getTema()
-                        . '</DIV><BR/><BR/>'
-                        . '<DIV class="col-md-12" >'
-                        . '<B>Concepto:</B></BR>' . $indicador->getConcepto()
-                        . '</DIV><BR/><BR/>'
-                        . '<DIV class="col-md-12" >'
-                        . '<B>Observaciones:</B><BR/>' . $indicador->getObservacion()
-                        . '</div>'
-                ;
-            }
-
-            $html = preg_replace("/HTTP.+/", "", $html);
-            $html = preg_replace("/Cache.+/", "", $html);
-            $html = preg_replace("/Date.+/", "", $html);
-
-            $http = 'http';
-            if (array_key_exists('HTTPS', $_SERVER)) {
-                $http = ($_SERVER['HTTPS'] == null or $_SERVER['HTTPS'] == 'off') ? 'http' : 'https';
-            }
-            $html = str_replace(array('href="/bundles', 'src="/bundles', 'src="/app_dev.php'), 
-                    array('href="' . $http . '://' . $_SERVER['HTTP_HOST'] . $this->container->getParameter('directorio') . '/bundles',
-                            'src="' . $http . '://' . $_SERVER['HTTP_HOST']. $this->container->getParameter('directorio') . '/bundles',
-                            'src="' . $http . '://'. $_SERVER['HTTP_HOST'] . $this->container->getParameter('directorio') . '/app_dev.php'), $html);
-            $html .= $info_indicador;
-            $html = $this->get('knp_snappy.pdf')->getOutputFromHtml($html);
-            
-            $redis->set('sala_' . $sala, $html);
-            $redis->set('sala_' . $tipo_reporte . '_' . $sala, $html);
-            $redis->set('sala_time_' . $tipo_reporte . '_' . $sala, time());
-        } else {
-            $html = $redis->get('sala_' . $sala);
+            $id = $request->get('indicador');
+            $indicador = $em->find('IndicadoresBundle:FichaTecnica', $id);
+            $info_indicador .= '<BR/></BR/><BR/></BR/>'
+                    . '<DIV class="col-md-12" >'
+                    . '<B>Interpretación:</B><BR/>' . $indicador->getTema()
+                    . '</DIV><BR/><BR/>'
+                    . '<DIV class="col-md-12" >'
+                    . '<B>Concepto:</B></BR>' . $indicador->getConcepto()
+                    . '</DIV><BR/><BR/>'
+                    . '<DIV class="col-md-12" >'
+                    . '<B>Observaciones:</B><BR/>' . $indicador->getObservacion()
+                    . '</div>'
+            ;
         }
 
-        //return new Response($html);        
+        $html = preg_replace("/HTTP.+/", "", $html);
+        $html = preg_replace("/Cache.+/", "", $html);
+        $html = preg_replace("/Date.+/", "", $html);
+
+        $http = 'http';
+        if (array_key_exists('HTTPS', $_SERVER)) {
+            $http = ($_SERVER['HTTPS'] == null or $_SERVER['HTTPS'] == 'off') ? 'http' : 'https';
+        }
+        $html = str_replace(array('href="/bundles', 'src="/bundles', 'src="/app_dev.php'), 
+                array('href="' . $http . '://' . $_SERVER['HTTP_HOST'] . $this->container->getParameter('directorio') . '/bundles',
+                        'src="' . $http . '://' . $_SERVER['HTTP_HOST']. $this->container->getParameter('directorio') . '/bundles',
+                        'src="' . $http . '://'. $_SERVER['HTTP_HOST'] . $this->container->getParameter('directorio') . '/app_dev.php'), $html);
+        $html .= $info_indicador;
+        //echo $html; exit;
+        
+        $html = $this->get('knp_snappy.pdf')->getOutputFromHtml($html);
+
         return new Response(
                 $html, 200, array(
             'Content-Type' => 'application/pdf',
@@ -198,7 +171,6 @@ class FichaTecnicaAdminController extends Controller {
         
 
         //Salas por usuario
-        
         if (($usuario->hasRole('ROLE_SUPER_ADMIN'))) {
             foreach ($em->getRepository("IndicadoresBundle:GrupoIndicadores")->findBy(array(), array('nombre' => 'ASC')) as $sala) {
                 $usuarioSalas[$sala->getId()] = $sala;
@@ -233,12 +205,12 @@ class FichaTecnicaAdminController extends Controller {
                     'filtro' => $ind['filtro'],
                     'ver_sql' => false)
                 );
-                $indicadoresDimensiones[$ind['idIndicador']]['id'] = $ind['idIndicador'];
-                $indicadoresDimensiones[$ind['idIndicador']]['dimensiones'] = $req_dimensiones->getContent();
-                $indicadoresDimensiones[$ind['idIndicador']]['datos'] = $req_datos->getContent();
+                $indicadoresDimensiones[$ind['posicion']]['id'] = $ind['posicion'];
+                $indicadoresDimensiones[$ind['posicion']]['dimensiones'] = $req_dimensiones->getContent();
+                $indicadoresDimensiones[$ind['posicion']]['datos'] = $req_datos->getContent();
             }
         }
-
+        
         $datos = $this->getListadoIndicadores();
 
         $confTablero = array('graficos_por_fila' => $this->container->getParameter('graficos_por_fila'),

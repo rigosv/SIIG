@@ -34,7 +34,6 @@
                             <THEAD>
                                 <TR>
                                     <TH>{{'_nombre_sala_'|trans}}</TH>
-                                    <TH>{{'_acciones_'|trans}}</TH>
                                 </tr>
                             </thead>
                             <TBody>
@@ -43,13 +42,6 @@
                                         <TD>
                                             <A class='salas-id' sala-id='{{sala.datos_sala.id}}' sala-nombre='{{sala.datos_sala.nombre}}'  data="{{sala.indicadores_sala|json_encode()}}">{{sala.datos_sala.nombre}}</A>
                                         </td>
-                                        <TD>
-                                            <A href="{{url('tablero_sala', {sala: sala.datos_sala.id, _sonata_admin: 'sonata.admin.ficha'})}}">
-                                                <button class="btn btn-info btn-bg " type="button" title='{{'_reporte_sala_'|trans}}'>
-                                                    <span class="glyphicon glyphicon-file"></span>                                                
-                                                </button>
-                                            </A>
-                                        </TD>
                                     </TR>
                                 {% endfor %}
                             </tbody>

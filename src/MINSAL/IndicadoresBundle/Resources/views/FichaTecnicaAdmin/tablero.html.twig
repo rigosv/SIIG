@@ -1,89 +1,93 @@
 {# Modificado para que agregar el botón para ir al listado #}
 
 {% extends 'IndicadoresBundle::standard_layout.html.twig' %}
-{% block stylesheets %}
-    {% if id_sala == 0%}
+{% block stylesheets %}    
+    {% if id_sala == 0 %}
         {{ parent() }}
     {% else %}
+        
         {% if admin_pool is defined %}
             {% for stylesheet in admin_pool.getOption('stylesheets', []) %}
                 {% if 'bootstrap.min.css' in stylesheet %}
-                    <link rel="stylesheet" type="text/css"  href="{{ asset(stylesheet) }}"  />
+                    <link rel="stylesheet" type="text/css"  href="{{ app.request.schemeAndHttpHost ~ asset(stylesheet) }}"  />
                 {% endif%}                
             {% endfor %}
-            <link rel="stylesheet" href="{{ asset('bundles/indicadores/css/custom_bootstrap.min.css') }}" type="text/css" media="all" />
-            <link rel="stylesheet" href="{{ asset('bundles/indicadores/css/custom_layout.css') }}" type="text/css" media="all" />
+            <link rel="stylesheet" href="{{ app.request.schemeAndHttpHost ~ asset('bundles/indicadores/css/custom_layout.css') }}" type="text/css" media="all" />
         {% endif %}
     {% endif %}
     
-    <link rel="stylesheet" href="{{ asset('bundles/indicadores/css/FichaTecnicaAdmin/tablero.css') }}" type="text/css" media="all" />
+    <link rel="stylesheet" href="{{ app.request.schemeAndHttpHost ~ asset('bundles/indicadores/css/FichaTecnicaAdmin/tablero.css') }}" type="text/css" media="all" />
     <!--EDITADO PARA NUEVOS TIPOS DE GRAFICOS (CSS)-->
-    <link rel="stylesheet" href="{{ asset('bundles/indicadores/css/FichaTecnicaAdmin/gauge.css') }}" type="text/css" media="all" />
+    <link rel="stylesheet" href="{{ app.request.schemeAndHttpHost ~ asset('bundles/indicadores/css/FichaTecnicaAdmin/gauge.css') }}" type="text/css" media="all" />
     {% if id_sala == 0%}
-        <link rel="stylesheet" href="{{ asset('bundles/indicadores/js/DataTables/media/css/jquery.dataTables.css') }}" type="text/css" media="all" />
-        <link rel="stylesheet" href="{{ asset('bundles/indicadores/js/DataTables/media/css/TableTools.css') }}" type="text/css" media="all" />
-        <link rel="stylesheet" href="{{ asset('bundles/indicadores/js/ryrych-rcarousel/widget/css/rcarousel.css') }}" type="text/css" media="all" />
-        <link rel="stylesheet" href="{{ asset('bundles/indicadores/js/ryrych-rcarousel/examples/rlightbox/css/lightbox.css') }}" type="text/css" media="all" />
-        <link rel="stylesheet" href="{{ asset('bundles/indicadores/css/FichaTecnicaAdmin/carrusel.css') }}" type="text/css" media="all" />
-        <link rel="stylesheet" href="{{ asset('bundles/indicadores/js/chosen/chosen.min.css') }}" type="text/css" media="all" />
+        <link rel="stylesheet" href="{{ app.request.schemeAndHttpHost ~ asset('bundles/indicadores/js/DataTables/media/css/jquery.dataTables.css') }}" type="text/css" media="all" />
+        <link rel="stylesheet" href="{{ app.request.schemeAndHttpHost ~ asset('bundles/indicadores/js/DataTables/media/css/TableTools.css') }}" type="text/css" media="all" />
+        <link rel="stylesheet" href="{{ app.request.schemeAndHttpHost ~ asset('bundles/indicadores/js/ryrych-rcarousel/widget/css/rcarousel.css') }}" type="text/css" media="all" />
+        <link rel="stylesheet" href="{{ app.request.schemeAndHttpHost ~ asset('bundles/indicadores/js/ryrych-rcarousel/examples/rlightbox/css/lightbox.css') }}" type="text/css" media="all" />
+        <link rel="stylesheet" href="{{ app.request.schemeAndHttpHost ~ asset('bundles/indicadores/css/FichaTecnicaAdmin/carrusel.css') }}" type="text/css" media="all" />
+        <link rel="stylesheet" href="{{ app.request.schemeAndHttpHost ~ asset('bundles/indicadores/js/chosen/chosen.min.css') }}" type="text/css" media="all" />
         
     {% endif %}
 
 {% endblock %}
 
-{% block javascripts %}    
+{% block javascripts %}
     {% if id_sala == 0%}
         {{ parent() }}
     {% else %}
         {% if admin_pool is defined %}
             {% for javascript in admin_pool.getOption('javascripts', []) %}
                 {% if 'jquery.min.js' in javascript  or 'bootstrap.min.js' in javascript %}
-                    <script src="{{ asset(javascript) }}" type="text/javascript"></script>
+                    <script src="{{ app.request.schemeAndHttpHost ~ asset(javascript) }}" type="text/javascript"></script>
                 {% endif%}
             {% endfor %}
         {% endif %}
+        <script type="text/javascript" src="{{ app.request.schemeAndHttpHost ~ asset('bundles/fosjsrouting/js/router.js') }}"></script>    
+        <script type="text/javascript" src="{{ path('fos_js_routing_js', {"callback": "fos.Router.setData"}) }}"></script>
         {% include (['IndicadoresBundle::messages_js.html.twig']|join) %}
     {% endif %}
-    <script src="{{ asset('bundles/indicadores/js/d3.v3.min.js') }}" type="text/javascript"></script>
-    <script src="{{ asset('bundles/indicadores/js/d3pie.js') }}" type="text/javascript"></script>
-    <script src="{{ asset('bundles/indicadores/js/topojson.v1.min.js') }}" type="text/javascript"></script>
-    <script src="{{ asset('bundles/indicadores/js/affix.min.js') }}" type="text/javascript"></script>
+    <script src="{{ app.request.schemeAndHttpHost ~ asset('bundles/indicadores/js/d3.v3.min.js') }}" type="text/javascript"></script>
+    <script src="{{ app.request.schemeAndHttpHost ~ asset('bundles/indicadores/js/d3pie.js') }}" type="text/javascript"></script>
+    <script src="{{ app.request.schemeAndHttpHost ~ asset('bundles/indicadores/js/topojson.v1.min.js') }}" type="text/javascript"></script>
+    <script src="{{ app.request.schemeAndHttpHost ~ asset('bundles/indicadores/js/affix.min.js') }}" type="text/javascript"></script>
 
-    <script src="{{ asset('bundles/indicadores/js/FichaTecnicaAdmin/tablero.js') }}" type="text/javascript"></script>
-    <script src="{{ asset('bundles/indicadores/js/FichaTecnicaAdmin/comun.js') }}" type="text/javascript"></script>
-    <script src="{{ asset('bundles/indicadores/js/FichaTecnicaAdmin/grafico_pastel.js') }}" type="text/javascript"></script>
-    <script src="{{ asset('bundles/indicadores/js/FichaTecnicaAdmin/grafico_columnas.js') }}" type="text/javascript"></script>
-    <script src="{{ asset('bundles/indicadores/js/FichaTecnicaAdmin/grafico_lineas.js') }}" type="text/javascript"></script>
-    <script src="{{ asset('bundles/indicadores/js/FichaTecnicaAdmin/grafico_mapa.js') }}" type="text/javascript"></script>
+    <script src="{{ app.request.schemeAndHttpHost ~ asset('bundles/indicadores/js/FichaTecnicaAdmin/tablero.js') }}" type="text/javascript"></script>
+    <script src="{{ app.request.schemeAndHttpHost ~ asset('bundles/indicadores/js/FichaTecnicaAdmin/comun.js') }}" type="text/javascript"></script>
+    <script src="{{ app.request.schemeAndHttpHost ~ asset('bundles/indicadores/js/FichaTecnicaAdmin/grafico_pastel.js') }}" type="text/javascript"></script>
+    <script src="{{ app.request.schemeAndHttpHost ~ asset('bundles/indicadores/js/FichaTecnicaAdmin/grafico_columnas.js') }}" type="text/javascript"></script>
+    <script src="{{ app.request.schemeAndHttpHost ~ asset('bundles/indicadores/js/FichaTecnicaAdmin/grafico_lineas.js') }}" type="text/javascript"></script>
+    <script src="{{ app.request.schemeAndHttpHost ~ asset('bundles/indicadores/js/FichaTecnicaAdmin/grafico_mapa.js') }}" type="text/javascript"></script>
     
     {% if id_sala == 0%}
-        <script src="{{ asset('bundles/indicadores/js/bridge_draggable_touch.js') }}" type="text/javascript"></script>
-        <script src="{{ asset('bundles/indicadores/js/jquery.ui.touch-punch.js') }}" type="text/javascript"></script>
-        <script src="{{ asset('bundles/indicadores/js/rasterizeHTML.allinone.js') }}" type="text/javascript"></script>
-        <script src="{{ asset('bundles/indicadores/js/DataTables/jquery.dataTables.min.js') }}" type="text/javascript"></script>
-        <script src="{{ asset('bundles/indicadores/js/DataTables/DataTables-es.js') }}" type="text/javascript"></script>
-        <script src="{{ asset('bundles/indicadores/js/DataTables/TableTools.min.js') }}" type="text/javascript"></script>
-        <script src="{{ asset('bundles/indicadores/js/ryrych-rcarousel/widget/lib/jquery.ui.rcarousel.min.js') }}" type="text/javascript"></script>
-        <script src="{{ asset('bundles/indicadores/js/ryrych-rcarousel/examples/rlightbox/lib/jquery.ui.rlightbox.min.js') }}" type="text/javascript"></script>
-        <script src="{{ asset('bundles/indicadores/js/FichaTecnicaAdmin/carrusel.js') }}" type="text/javascript"></script>
-        <script src="{{ asset('bundles/indicadores/js/jquery.searchFilter.js') }}" type="text/javascript"></script>
-        <script src="{{ asset('bundles/indicadores/js/FichaTecnicaAdmin/fullscreen.js') }}" type="text/javascript"></script>
-        <script src="{{ asset('bundles/indicadores/js/chosen/chosen.jquery.min.js') }}" type="text/javascript"></script>
+        <script src="{{ app.request.schemeAndHttpHost ~ asset('bundles/indicadores/js/bridge_draggable_touch.js') }}" type="text/javascript"></script>
+        <script src="{{ app.request.schemeAndHttpHost ~ asset('bundles/indicadores/js/jquery.ui.touch-punch.js') }}" type="text/javascript"></script>
+        <script src="{{ app.request.schemeAndHttpHost ~ asset('bundles/indicadores/js/rasterizeHTML.allinone.js') }}" type="text/javascript"></script>
+        <script src="{{ app.request.schemeAndHttpHost ~ asset('bundles/indicadores/js/DataTables/jquery.dataTables.min.js') }}" type="text/javascript"></script>
+        <script src="{{ app.request.schemeAndHttpHost ~ asset('bundles/indicadores/js/DataTables/DataTables-es.js') }}" type="text/javascript"></script>
+        <script src="{{ app.request.schemeAndHttpHost ~ asset('bundles/indicadores/js/DataTables/TableTools.min.js') }}" type="text/javascript"></script>
+        <script src="{{ app.request.schemeAndHttpHost ~ asset('bundles/indicadores/js/ryrych-rcarousel/widget/lib/jquery.ui.rcarousel.min.js') }}" type="text/javascript"></script>
+        <script src="{{ app.request.schemeAndHttpHost ~ asset('bundles/indicadores/js/ryrych-rcarousel/examples/rlightbox/lib/jquery.ui.rlightbox.min.js') }}" type="text/javascript"></script>
+        <script src="{{ app.request.schemeAndHttpHost ~ asset('bundles/indicadores/js/FichaTecnicaAdmin/carrusel.js') }}" type="text/javascript"></script>
+        <script src="{{ app.request.schemeAndHttpHost ~ asset('bundles/indicadores/js/jquery.searchFilter.js') }}" type="text/javascript"></script>
+        <script src="{{ app.request.schemeAndHttpHost ~ asset('bundles/indicadores/js/FichaTecnicaAdmin/fullscreen.js') }}" type="text/javascript"></script>
+        <script src="{{ app.request.schemeAndHttpHost ~ asset('bundles/indicadores/js/chosen/chosen.jquery.min.js') }}" type="text/javascript"></script>
     {% endif %}
     
-    <script src="{{ asset('bundles/indicadores/js/FichaTecnicaAdmin/grafico_gauge.js') }}" type="text/javascript"></script>
-    <script src="{{ asset('bundles/indicadores/js/FichaTecnicaAdmin/grafico_termometro.js') }}" type="text/javascript"></script>
-    <script src="{{ asset('bundles/indicadores/js/FichaTecnicaAdmin/iopctrl.js') }}" type="text/javascript"></script>
+    <script src="{{ app.request.schemeAndHttpHost ~ asset('bundles/indicadores/js/FichaTecnicaAdmin/grafico_gauge.js') }}" type="text/javascript"></script>
+    <script src="{{ app.request.schemeAndHttpHost ~ asset('bundles/indicadores/js/FichaTecnicaAdmin/grafico_termometro.js') }}" type="text/javascript"></script>
+    <script src="{{ app.request.schemeAndHttpHost ~ asset('bundles/indicadores/js/FichaTecnicaAdmin/iopctrl.js') }}" type="text/javascript"></script>
     
 {% endblock %}
 
 {% block content %}
-<div id="div_carga" class='affix'>
-    <img id="cargador" src="{{ asset('bundles/indicadores/images/ajax-loader.gif') }}"/>
-</div>
-{% if id_sala == 0%}
-    {% include 'IndicadoresBundle:FichaTecnicaAdmin:tablero_normal.html.twig' %}
-{% else %}
-    {% include 'IndicadoresBundle:FichaTecnicaAdmin:tablero_sala.html.twig' %}
-{% endif%}
+    <div id="div_carga" class='affix'>
+        <img id="cargador" src="{{ app.request.schemeAndHttpHost ~ asset('bundles/indicadores/images/ajax-loader.gif') }}"/>
+    </div>
+    {% if id_sala == 0 %}
+        {% include 'IndicadoresBundle:FichaTecnicaAdmin:tablero_normal.html.twig' %}
+    {% else %}    
+        {% include 'IndicadoresBundle:FichaTecnicaAdmin:tablero_sala.html.twig' %}
+    {% endif%}
 {% endblock %}
+{% block sonata_header %}{% if id_sala == 0 %}{{ parent() }}{% else %}{% endif %}{% endblock %}
+{% block sonata_left_side %}{% if id_sala == 0 %}{{ parent() }}{% else %}{% endif %}{% endblock %}

@@ -201,7 +201,9 @@ function dibujarGrafico(zona, dimension, desde_sala) {
             $('#modal_msj').modal('show');
         });
     } else {
-        procesarDibujarGrafico(indicadoresDatos[id_indicador], zona, desde_sala);
+        var posicion = zona.split('_');
+        var indice = parseInt(posicion[1]);
+        procesarDibujarGrafico(indicadoresDatos[indice], zona, desde_sala);
     }
 }
 
@@ -221,11 +223,11 @@ function procesarDibujarGrafico(resp, zona, desde_sala) {
 
     $('#' + zona).attr('datasetPrincipal', datos);
 
-    dibujarGraficoPrincipal(zona, $('#opciones_' + zona + ' .tipo_grafico_principal').val());
     controles_filtros(zona);
     if (desde_sala){
-        aplicarFiltro(zona);
+       aplicarFiltro(zona);
     }
+    dibujarGraficoPrincipal(zona, $('#opciones_' + zona + ' .tipo_grafico_principal').val());
 }
 
 function ordenarDatos(zona, ordenar_por, modo_orden) {
@@ -252,20 +254,29 @@ function aplicarFiltro(zona) {
     $('#opciones_dimension_' + zona + ' .capa_dimension_valores input:checked').each(function() {
         elementos += $(this).val() + '&';
     });
-    $.post(Routing.generate('indicador_datos_filtrar'),
-            {datos: datasetPrincipal, desde: $('#opciones_dimension_' + zona + ' .filtro_desde').val(), hasta: $('#opciones_dimension_' + zona + ' .filtro_hasta').val(),
-                elementos: elementos},
-    function(resp) {
-        //datasetPrincipal = resp.datos;
-        $('#' + zona).attr('datasetPrincipal', JSON.stringify(resp.datos));
-        dibujarGraficoPrincipal(zona, $('#opciones_' + zona + ' .tipo_grafico_principal').val());
-    }, 'json').fail(function() {
-        $('#div_carga').hide();
-        $('#modal_msj_content').html('<div class="alert alert-danger" role="alert">'+trans._error_conexion_2_+'</div>');        
-        $('#modal_msj').modal('show');
-    });
-    $('#' + zona).attr('orden', '');
-    $('#' + zona + ' .titulo_indicador').attr('filtro-elementos', '');
+    
+    var datos = datasetPrincipal,
+            desde = $('#opciones_dimension_' + zona + ' .filtro_desde').val(), 
+            hasta = $('#opciones_dimension_' + zona + ' .filtro_hasta').val(),
+            datos_aux = [];
+    
+    if (elementos != '') {
+        elementos = (elementos).trim('&');
+        var datos_a_mostrar = elementos.split('&');
+        $.each(datos, function(nodo, fila) {
+            if (datos_a_mostrar.indexOf(fila.category) >= 0) {
+                datos_aux.push(fila);
+            }
+        });
+    } else {
+        var max = datos.length;
+        hasta = (hasta == '' || hasta > max) ? max : hasta;
+        desde = (desde == '' || desde <= 0) ? 0 : desde - 1;
+
+        var cantidad = hasta - desde;
+        datos_aux = datos.slice(desde, cantidad);
+    }
+    $('#' + zona).attr('datasetPrincipal', JSON.stringify(datos_aux));    
 }
 
 function controles_filtros(zona) {
@@ -292,6 +303,7 @@ function controles_filtros(zona) {
 
     $('#opciones_dimension_' + zona + ' .aplicar_filtro').click(function() {
         aplicarFiltro(zona);
+        dibujarGraficoPrincipal(zona, $('#opciones_' + zona + ' .tipo_grafico_principal').val());
     });
     $('#opciones_dimension_' + zona + ' .quitar_filtro').click(function() {
         $('#opciones_dimension_' + zona + ' .filtro_desde').val('');
@@ -815,7 +827,9 @@ function recuperarDimensiones(id_indicador, datos, desde_sala) {
                 $('#modal_msj').modal('show');                
             });
     } else {
-        procesarDimensiones(indicadoresDimensiones[id_indicador], datos, zona_g, desde_sala);
+        var posicion = zona_g.split('_');
+        var indice = parseInt(posicion[1]);
+        procesarDimensiones(indicadoresDimensiones[indice] , datos, zona_g, desde_sala);
     }
 }
 

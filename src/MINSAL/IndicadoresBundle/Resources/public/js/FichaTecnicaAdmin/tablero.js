@@ -1,7 +1,7 @@
 $(document).ready(function() {
     //Variables de configuración de datables
     sSwfPath = $('#directorio').val() + "/bundles/indicadores/js/DataTables/media/swf/copy_csv_xls_pdf.swf";
-
+    
     $('body').on('show.bs.modal', function () {
         $('select', this).chosen({width: "100%"});
     });
@@ -61,6 +61,16 @@ $(document).ready(function() {
     $('#accesoExterno').click(function() {
         if ($(this).parent().hasClass('enabled')){
             $('#myModalAccesExt').modal('show');
+        }
+    });
+    
+    //Exportar la sala a pdf
+    $('#exportSalaGraficos').click(function(){
+        var id_sala = $('#nombre_sala').attr('id-sala');
+        if (id_sala != ''){
+            window.location = Routing.generate('tablero_sala', {sala: id_sala, _sonata_admin: 'sonata.admin.ficha'});
+        } else {
+            $('#exportarOpciones').notify(trans._no_sala_cargada_, {className: "error", position:"right" });
         }
     });
     
@@ -225,7 +235,7 @@ $(document).ready(function() {
         //El acceso externo, permite una sola sala, cargarlas
         cargarSala($('#salaExtId'));
     }
-
+    
     function cargarSala(obj) {
         $('.marco-sala').attr('id-sala', $(obj).attr('sala-id'));
         $('.marco-sala').attr('data-content', trans._nombre_sala_ + ': ' + $(obj).attr('sala-nombre'));
@@ -285,6 +295,18 @@ $(document).ready(function() {
         } else {
             $('.area_grafico').css('height', '290');
         }
+        
+        
+        
+        if ($('#sala_default').val() != 0) {
+            $('DIV').removeAttr('datasetprincipal');
+            $('DIV').removeAttr('datasetprincipal_bk');
+            $('#listado-salas').remove();
+            $('A').removeAttr('data');
+        }
+        
+        
+        
     }
 
     function moverAGraficoActual() {
@@ -432,10 +454,12 @@ $(document).ready(function() {
         }, 'json');
     });
     
-    $('#tabla_listado_salas').dataTable({
-        "oTableTools": {
-            "aButtons": []
-        },
-        "oLanguage": oLanguage
-    });
+    if ($('#sala_default').val() == 0) {
+        $('#tabla_listado_salas').dataTable({
+            "oTableTools": {
+                "aButtons": []
+            },
+            "oLanguage": oLanguage
+        });
+    }
 });

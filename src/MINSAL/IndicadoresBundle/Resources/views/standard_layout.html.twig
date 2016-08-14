@@ -1,16 +1,16 @@
 {% extends 'SonataAdminBundle::standard_layout.html.twig' %}
 {% block stylesheets %}
     {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('bundles/indicadores/css/custom_layout.css') }}" type="text/css" media="all" />
+    <link rel="stylesheet" href="{{ app.request.schemeAndHttpHost ~ asset('bundles/indicadores/css/custom_layout.css') }}" type="text/css" media="all" />
     {% if logo == 1 %}
-        <link rel="stylesheet" href="{{ asset('bundles/indicadores/css/custom_layout_2.css') }}" type="text/css" media="all" />
+        <link rel="stylesheet" href="{{ app.request.schemeAndHttpHost ~ asset('bundles/indicadores/css/custom_layout_2.css') }}" type="text/css" media="all" />
     {% endif %}
 
 {% endblock %}
 {% block javascripts %}
     {{parent()}}
-    <script type="text/javascript" src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('bundles/indicadores/js/notify.min.js') }}"></script>
+    <script type="text/javascript" src="{{ app.request.schemeAndHttpHost ~ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+    <script type="text/javascript" src="{{ app.request.schemeAndHttpHost ~ asset('bundles/indicadores/js/notify.min.js') }}"></script>
     <script type="text/javascript" src="{{ path('fos_js_routing_js', {"callback": "fos.Router.setData"}) }}"></script>
 
     {% include (['IndicadoresBundle::messages_js.html.twig']|join) %}
@@ -61,6 +61,6 @@
         </ul>
     </div>    
     <div id="div_cargando" class='affix'>
-        <img id="cargador" src="{{ asset('bundles/indicadores/images/ajax-loader.gif') }}"/>
+        <img id="cargador" src="{{ app.request.schemeAndHttpHost ~ asset('bundles/indicadores/images/ajax-loader.gif') }}"/>
     </div>    
 {% endblock %}

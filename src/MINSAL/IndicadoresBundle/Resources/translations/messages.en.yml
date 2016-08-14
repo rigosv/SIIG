@@ -404,3 +404,5 @@ _mayor_cero_: Enter a value greater than zero
 _token_no_valido_: Token invalid or has expired
 _salir_: Exit
 _clave_no_valida_: Invalid password
+_no_sala_cargada_: No selected room
+_exportar_sala_: Export room

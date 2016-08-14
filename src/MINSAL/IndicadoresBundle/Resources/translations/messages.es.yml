@@ -411,3 +411,5 @@ _mayor_cero_: Ingrese un valor mayor que cero
 _token_no_valido_: Token no válido o ya expiró
 _salir_: Salir
 _clave_no_valida_: Clave no válida
+_no_sala_cargada_: No ha cargado ninguna sala
+_exportar_sala_: Exportar sala
