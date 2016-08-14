@@ -11,6 +11,7 @@ use MINSAL\IndicadoresBundle\Entity\ClasificacionUso;
 use MINSAL\IndicadoresBundle\Entity\User;
 use MINSAL\IndicadoresBundle\Entity\GrupoIndicadores;
 use MINSAL\IndicadoresBundle\Entity\UsuarioGrupoIndicadores;
+use MINSAL\IndicadoresBundle\Entity\AccesoExterno;
 
 class IndicadorController extends Controller {
 
@@ -356,6 +357,29 @@ class IndicadorController extends Controller {
         $response = new Response($ret);
 
         return $response;
+    }
+    
+    /**
+     * @Route("/sala/{id}/acceso_externo_crear/{duracion}/", name="crear_acceso_externo", options={"expose"=true})
+     */
+    public function salaCrearAccesoExterno(GrupoIndicadores $sala, $duracion) {
+        $em = $this->getDoctrine()->getManager();        
+        
+        $accExt = new AccesoExterno();
+        $date = new \DateTime();
+        $date->modify("+$duracion days");       
+        
+        $accExt->setUsuarioCrea($this->getUser());
+        $accExt->setCaducidad($date);
+        $accExt->setToken(md5(rand()));
+        $accExt->addSala($sala);
+        
+        $em->persist($accExt);
+        $em->flush();
+        
+        $host = $this->getRequest()->getHost();
+        $url = $host.'/ae/'.$accExt->getToken().'/';
+        return new Response($url);
     }
 
 }

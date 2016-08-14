@@ -81,6 +81,8 @@ security:
 
         - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/ae, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/externo/autenticar, role: IS_AUTHENTICATED_ANONYMOUSLY }
         
 
         # Secured part of the site

@@ -33,27 +33,31 @@
                 </a>
                 {% include admin_pool.getTemplate('add_block') %}
             </li>#}
-            <li class="dropdown user-menu">
-                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                    <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
-                </a>
-                <ul class="dropdown-menu dropdown-user">
-                    {% if app.user != '' %}
-                        {% include admin_pool.getTemplate('user_block') %}                                            
-                        <li><A class="btn btn-flat" href='{{url('fos_user_change_password')}}'>
-                               <span class="glyphicon glyphicon-repeat"></span>{{"_cambiar_clave_"|trans}}</A>
-                        </li>
-                        <li class="divider"></li>
-                    {% endif %}                
-                {% for locale, lenguaje in {'es_SV':'Español', 'en_US':'English'} %}
-                    {% if locale == app.request.locale %}
-                        <li class='active'><A href='#'>{{lenguaje}}</a></li>
-                    {% else %}
-                        <li ><a href='{{url('change_locale',{_locale:locale})}}'>{{lenguaje}}</a></li>
-                    {% endif %}
-                {% endfor %}
-                </ul>
-            </li>            
+            {% if app.user != '' and app.user.username == 'externo' %}
+                <li ><a href='{{url('sonata_user_admin_security_logout')}}'>{{'_salir_'|trans}}</a></li>
+            {% else %}
+                <li class="dropdown user-menu">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                        <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-user">
+                        {% if app.user != '' %}
+                            {% include admin_pool.getTemplate('user_block') %}                                            
+                            <li><A class="btn btn-flat" href='{{url('fos_user_change_password')}}'>
+                                   <span class="glyphicon glyphicon-repeat"></span>{{"_cambiar_clave_"|trans}}</A>
+                            </li>
+                            <li class="divider"></li>
+                        {% endif %}                
+                    {% for locale, lenguaje in {'es_SV':'Español', 'en_US':'English'} %}
+                        {% if locale == app.request.locale %}
+                            <li class='active'><A href='#'>{{lenguaje}}</a></li>
+                        {% else %}
+                            <li ><a href='{{url('change_locale',{_locale:locale})}}'>{{lenguaje}}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                    </ul>
+                </li>
+            {% endif %}
         </ul>
     </div>    
     <div id="div_cargando" class='affix'>

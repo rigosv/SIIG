@@ -57,7 +57,21 @@ $(document).ready(function() {
     $('#aCollapseOne').click(function() {
         $('.main-header').toggle();
     });
-
+    
+    $('#accesoExterno').click(function() {
+        if ($(this).parent().hasClass('enabled')){
+            $('#myModalAccesExt').modal('show');
+        }
+    });
+    
+    $('#crear_acceso').click(function(){
+        var duracion = $('#duracion').val();
+        if (!isNaN(duracion) && duracion > 0){
+            $('#ruta').load(Routing.generate('crear_acceso_externo', {id: $('.marco-sala').attr('id-sala'), duracion: duracion}));
+        } else {
+            $('#duracion').notify(trans._mayor_cero_, {className: "error" });
+        }
+    });
 
     function ajax_states() {
         $(document).bind("ajaxStart.mine", function() {
@@ -205,12 +219,20 @@ $(document).ready(function() {
     $('.salas-id').click(function() {
         cargarSala(this);
     });
+    
+    //Verificar si se ha cargado la sala con acceso externo
+    if ($('#usuarioExt').val() == 1){
+        //El acceso externo, permite una sola sala, cargarlas
+        cargarSala($('#salaExtId'));
+    }
 
     function cargarSala(obj) {
         $('.marco-sala').attr('id-sala', $(obj).attr('sala-id'));
         $('.marco-sala').attr('data-content', trans._nombre_sala_ + ': ' + $(obj).attr('sala-nombre'));
         $('#nombre_sala').attr('id-sala', $(obj).attr('sala-id'));
         $('#nombre_sala').html($(obj).attr('sala-nombre'));
+        $('#accesoExternoLI').removeClass('disabled');
+        $('#accesoExternoLI').addClass('enabled');
 
         var graficos = JSON.parse($(obj).attr('data'));
         var max_id = 0;

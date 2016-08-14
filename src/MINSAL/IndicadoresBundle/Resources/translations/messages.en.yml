@@ -394,3 +394,13 @@ _guardar_estado_: Save state
 _cargar_estado_: Load state
 _no_grafico_: No chart available
 title_user_edit_password: Change your password
+_menu_principal_: Main menu
+_acceso_externo_: External access
+_acceso_externo_title_: External access to room
+_duracion_: Duration
+_crear_: Create
+_dias_: Days
+_mayor_cero_: Enter a value greater than zero
+_token_no_valido_: Token invalid or has expired
+_salir_: Exit
+_clave_no_valida_: Invalid password

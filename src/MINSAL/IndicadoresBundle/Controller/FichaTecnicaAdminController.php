@@ -181,11 +181,24 @@ class FichaTecnicaAdminController extends Controller {
     public function tableroAction($sala_default = null) {
         $em = $this->getDoctrine()->getManager();
         $usuario = $this->getUser();
-
+        $usuarioSalas = array();
+        
+        $req = $this->getRequest();
+        
         $sala_default = ($sala_default == null) ? 0 : $sala_default;
+        
+        if ($req->get('token') != ''){
+            $ae = $em->getRepository('IndicadoresBundle:AccesoExterno')->findOneBy(array('token' => $req->get('token')));
+            $ahora = new \DateTime();
+            if ($ae != null and $ahora <= $ae->getCaducidad()){
+                $salas = $ae->getSalas();            
+                $usuarioSalas[$salas[0]->getId()] = $salas[0];
+            }
+        }        
+        
 
         //Salas por usuario
-        $usuarioSalas = array();
+        
         if (($usuario->hasRole('ROLE_SUPER_ADMIN'))) {
             foreach ($em->getRepository("IndicadoresBundle:GrupoIndicadores")->findBy(array(), array('nombre' => 'ASC')) as $sala) {
                 $usuarioSalas[$sala->getId()] = $sala;

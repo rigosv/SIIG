@@ -401,3 +401,13 @@ _evaluacion_calidad_: Evaluación de calidad
 _datos_calidad_: Datos de evaluación de calidad
 _no_grafico_: No hay ningún gráfico disponible
 title_user_edit_password: Cambio de contraseña
+_menu_principal_: Menú principal
+_acceso_externo_: Acceso externo
+_acceso_externo_title_: Crear acceso externo a sala
+_duracion_: Duración
+_crear_: Crear
+_dias_: Días
+_mayor_cero_: Ingrese un valor mayor que cero
+_token_no_valido_: Token no válido o ya expiró
+_salir_: Salir
+_clave_no_valida_: Clave no válida
