@@ -156,7 +156,12 @@ $(document).ready(function() {
                 '<div class="pie_grafico" ></div>' +
                 '</DIV></div>';
 
-
+        if (parseInt(cant + 1) == 6){
+            html +=  '<div style="page-break-before:always;" class="salto-pagina1"></div>';
+        }
+        if (parseInt(cant + 1) == 12 || parseInt(cant + 1) == 18){
+            html +=  '<div style="page-break-before:always;" class="salto-pagina1"></div><div style="page-break-before:always;" class="salto-pagina1"></div>';
+        }
         $('#sala').append(html);
         $('DIV.area_grafico').click(function() {
             zona_elegir(this);
@@ -313,7 +318,7 @@ $(document).ready(function() {
         $('#myTab a:first').tab('show');
         $('html, body').animate({
             scrollTop: $(".zona_actual").offset().top
-        }, 2000);
+        }, 1000);
     }
 
     function setScroll() {
