@@ -340,9 +340,10 @@ class IndicadorController extends Controller {
         $em->persist($accExt);
         $em->flush();
         
-        $host = $this->getRequest()->getHost();
+        $host = $this->get('request')->getSchemeAndHttpHost();
         $url = $host.'/ae/'.$accExt->getToken().'/';
-        return new Response($url);
+        $resp = $this->get('translator')->trans('_url_acceso_ext_ayuda_').'<BR/>'.$url;
+        return new Response($resp);
     }
 
 }
