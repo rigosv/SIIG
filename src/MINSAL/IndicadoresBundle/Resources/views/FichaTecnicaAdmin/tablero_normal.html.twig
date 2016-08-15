@@ -180,4 +180,10 @@
             <span>{{'_mostrar_cinta_'|trans}}</span>
         </a>
     </div>
+    <DIV STYLE="display:none;">
+        <FORM id='exportTablaDatosFrm' action="{{ url('tablas_datos_sala', {_sonata_admin: 'sonata.admin.ficha'})}}" method="post">
+            <textarea NAME="titulos" id="titulos"></textarea>
+            <textarea name="tablas" id="tablas"></textarea>
+        </FORM>
+    </DIV>
 {% endblock %}

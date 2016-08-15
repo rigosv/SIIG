@@ -258,7 +258,7 @@ class FichaTecnicaAdminController extends Controller {
         $fichas_ = $sala->getIndicadores();
         $fichas = array();
         foreach ($fichas_ as $ficha){
-            $fichas[] = $ficha->getIndicador();
+            $fichas[$ficha->getIndicador()->getId()] = $ficha->getIndicador();
         }
         
         return $this->getFichas($fichas);
@@ -309,5 +309,31 @@ class FichaTecnicaAdminController extends Controller {
         }
         return $this->getFichas($fichas);
     }    
+    
+    /**
+     * @Route("/sala/tablas-datos", name="tablas_datos_sala", options={"expose"=true})
+     */
+    public function tablasDatosSalaAction() {
+        $em = $this->getDoctrine()->getManager();
 
+        $req = $this->getRequest();
+
+        $titulos = json_decode($req->get('titulos'), true);
+        $tablas = json_decode($req->get('tablas'), true);
+        
+        $html = '<HTML><HEAD><meta http-equiv="content-type" content="text/html; charset=UTF-8" /><STYLE>table{border-collapse: collapse } td, th {border: 1px solid black} </STYLE></HEAD><BODY>';
+
+        foreach ($titulos as $k=> $t){
+            $html .= '<h3>'.$t.'</h3><BR/>'.$tablas[$k].'<BR/><BR/>';
+        }
+        $html .= '</body></html>';
+        
+        return new Response($html, 200, array(
+                'Content-Type' => 'data:application/vnd.ms-excel;base64',
+                'Content-Disposition' => 'attachment; filename="tablas_datos.xls"',
+                'Pragma' => 'no-cache',
+                'Expires' => '0'
+            )
+        );
+    }
 }

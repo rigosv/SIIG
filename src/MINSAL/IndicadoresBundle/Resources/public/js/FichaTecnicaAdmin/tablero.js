@@ -86,6 +86,28 @@ $(document).ready(function() {
         }
     });
     
+    $('#exportTablasDatos').click(function (){
+        var id_sala = $('#nombre_sala').attr('id-sala');
+        if (id_sala != ''){
+            var titulos = [];
+            var tablas = [];
+            $('.area_grafico').each(function(){
+                var tit = $(this).find('.titulo_indicador').html();
+                var tit_dimension = $(this).find('.dimension').html();
+                
+                titulos.push(tit + ' (por ' + tit_dimension + ')');
+                tablas.push($(this).find('table').parent().html());
+            });
+            $('#titulos').html(JSON.stringify(titulos));
+            $('#tablas').html(JSON.stringify(tablas));
+
+            //window.location = Routing.generate('tablas_datos_sala', {_sonata_admin: 'sonata.admin.ficha', titulos: JSON.stringify(titulos), tablas: JSON.stringify(tablas)});
+            $('#exportTablaDatosFrm').submit();
+        } else {
+            $('#sala_opciones_menu').notify(trans._no_sala_cargada_, {className: "error", position:"right" });
+        }
+    });
+    
     $('#crear_acceso').click(function(){
         var duracion = $('#duracion').val();
         if (!isNaN(duracion) && duracion > 0){
@@ -329,7 +351,7 @@ $(document).ready(function() {
         $('#myTab a:first').tab('show');
         $('html, body').animate({
             scrollTop: $(".zona_actual").offset().top
-        }, 1000);
+        }, 100);
     }
 
     function setScroll() {
