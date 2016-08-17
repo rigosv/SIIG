@@ -88,26 +88,36 @@ class FormularioRepository extends EntityRepository {
         //Verificar si existe origen de datos para los números de expedientes
         if ($Frm->getOrigenNumerosExpedientes() != '' and $Frm->getConexionOrigenExpedientes() != ''){
             $campos = $em->getRepository("GridFormBundle:Indicador")->getListaCampos($Frm);
-
-            //verificar los números de expediente que no se han ingresado
-            $sql = "SELECT codigo_variable, nombre_pivote
-                        FROM (SELECT $campos, datos->'establecimiento' AS establecimiento, 
+            
+            //Crear la tabla de la fila que contiene los números de expedientes
+            $em->getConnection()->executeQuery("DROP TABLE IF EXISTS num_expes_tmp");
+            $sql = "SELECT $campos, datos->'establecimiento' AS establecimiento, 
                         datos->'anio' AS anio
+                        INTO TEMP num_expes_tmp
                         FROM almacen_datos.repositorio
                         WHERE id_formulario = '$idFrm'
                             $params_string
                             AND datos->'es_poblacion' = 'true'
-                        ) AS A 
-                    WHERE dato is not null AND dato = '' ";
+                        ";
+            $em->getConnection()->executeQuery($sql);
+            
+            //Recuperar los campos para los que no se ha ingresado número de expediente
+            $sql = "SELECT codigo_variable, nombre_pivote
+                        FROM num_expes_tmp A 
+                    WHERE dato is null OR dato = '' ";
 
             $expeVacios = $em->getConnection()->executeQuery($sql)->fetchAll();
             $cantExpeVacios = count($expeVacios);
+            
+            //Recuperar números ya utilizados
+            $sql = "SELECT dato
+                        FROM num_expes_tmp A 
+                    WHERE dato is not null AND dato != '' ";
+            $expeUtilizados = $em->getConnection()->executeQuery($sql)->fetchAll();
 
             if ($cantExpeVacios > 0){
-                $sql = $Frm->getOrigenNumerosExpedientes();
-
                 //Recuperar los expedientes disponibles
-                $sql = "SELECT expe FROM pp";
+                $sql = $Frm->getOrigenNumerosExpedientes();
                 //reemplazar ciertos valores que deben ser dinámicos en la consulta
                 $sql = str_replace( array('{anio}', '{mes}', '{establecimiento}'), 
                                     array($periodo->getAnio(), $periodo->getMes(), $establecimiento), 
@@ -118,9 +128,23 @@ class FormularioRepository extends EntityRepository {
                     ->getRepository('IndicadoresBundle:Conexion')
                     ->getConexionGenerica($Conexion);
 
-                $expeDisponibles = $conn->query($sql)->fetchAll();
+                $expeDisponibles_ = $conn->query($sql)->fetchAll();
+                $expeDisponibles = array();
+                //Filtrar que no vengan repetidos
+                foreach ($expeDisponibles_ as $e) {
+                    $exp_ = array_pop($e);
+                    $expeDisponibles[$exp_] = $exp_; 
+                }
+                //Eliminar los que ya estén
+                foreach ($expeUtilizados as $eu) {
+                    $exp_ = $eu['dato'];
+                    if (array_key_exists($exp_, $expeDisponibles)){
+                        unset($expeDisponibles[$exp_]);
+                    }
+                }
+                
                 $cantExpeDisponibles = count($expeDisponibles);
-
+                
                 //Sustituir los números de expedientes
                 $cantExpeAplicados = 0;
                 while ($cantExpeAplicados < $cantExpeVacios and $cantExpeAplicados < $cantExpeDisponibles){
@@ -128,14 +152,15 @@ class FormularioRepository extends EntityRepository {
                     $expeVacio = $expeVacios[$cantExpeAplicados];
                     $campoNumExpe = $expeVacio['nombre_pivote'];
                     $codVariable = $expeVacio['codigo_variable'];
-                    $expeDisp = array_pop($expeDisponibles[$cantExpeAplicados]);
-
+                    $expeDisp = array_shift($expeDisponibles);
+                    
                     $sql = " UPDATE almacen_datos.repositorio 
                                 SET datos = datos ||('\"$campoNumExpe\"=>'||'\"'||$expeDisp||'\"')::hstore                        
                                 WHERE id_formulario = '$idFrm'
                                     $params_string
                                     AND datos->'es_poblacion' = 'true'
-                                    AND datos->'codigo_variable' = '$codVariable' ";
+                                    AND datos->'codigo_variable' = '$codVariable' 
+                                    ";
                     $em->getConnection()->executeQuery($sql);
                     $cantExpeAplicados++;
                 }
