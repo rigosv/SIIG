@@ -143,6 +143,18 @@ class Formulario
      * @ORM\Column(name="calculo_filas", type="text", nullable=true)
      */
     private $calculoFilas;
+    
+    /**
+     * @ORM\ManyToOne(targetEntity="MINSAL\IndicadoresBundle\Entity\Conexion")
+     * */
+    private $conexionOrigenExpedientes;
+    
+    /**
+     * @var string $origenNumerosExpedientes
+     *
+     * @ORM\Column(name="origen_num_expedientes", type="text", nullable=true)
+     */
+    private $origenNumerosExpedientes;
         
     
     /**
@@ -839,4 +851,52 @@ class Formulario
     {
         return $this->posicion;
     }    
+
+    /**
+     * Set origenNumerosExpedientes
+     *
+     * @param string $origenNumerosExpedientes
+     *
+     * @return Formulario
+     */
+    public function setOrigenNumerosExpedientes($origenNumerosExpedientes)
+    {
+        $this->origenNumerosExpedientes = $origenNumerosExpedientes;
+
+        return $this;
+    }
+
+    /**
+     * Get origenNumerosExpedientes
+     *
+     * @return string
+     */
+    public function getOrigenNumerosExpedientes()
+    {
+        return $this->origenNumerosExpedientes;
+    }
+
+    /**
+     * Set conexionOrigenExpedientes
+     *
+     * @param \MINSAL\IndicadoresBundle\Entity\Conexion $conexionOrigenExpedientes
+     *
+     * @return Formulario
+     */
+    public function setConexionOrigenExpedientes(\MINSAL\IndicadoresBundle\Entity\Conexion $conexionOrigenExpedientes = null)
+    {
+        $this->conexionOrigenExpedientes = $conexionOrigenExpedientes;
+
+        return $this;
+    }
+
+    /**
+     * Get conexionOrigenExpedientes
+     *
+     * @return \MINSAL\IndicadoresBundle\Entity\Conexion
+     */
+    public function getConexionOrigenExpedientes()
+    {
+        return $this->conexionOrigenExpedientes;
+    }
 }

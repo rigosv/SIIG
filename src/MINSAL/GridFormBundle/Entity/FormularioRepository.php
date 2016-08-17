@@ -37,7 +37,7 @@ class FormularioRepository extends EntityRepository {
         
     }
     
-    public function getDatos(Formulario $Frm, $periodoIngreso, $tipo_periodo = null, Request $request, $user = null) {
+    public function getDatos(Formulario $Frm, $idPeriodoIngreso, $tipo_periodo = null, Request $request, $user = null) {
         $em = $this->getEntityManager();
         $this->area = $Frm->getAreaCosteo();
         
@@ -46,17 +46,25 @@ class FormularioRepository extends EntityRepository {
         $this->orden = '';
 
         if ($tipo_periodo == null or $tipo_periodo == 'pu'){
-            $periodoIngreso = $em->getRepository("GridFormBundle:PeriodoIngresoDatosFormulario")->find($periodoIngreso);
+            $periodoIngreso = $em->getRepository("GridFormBundle:PeriodoIngresoDatosFormulario")->find($idPeriodoIngreso);
+            $esta = $periodoIngreso->getUnidad()->getCodigo();
         } elseif($tipo_periodo == 'pg'){
-            $periodoIngreso = $em->getRepository("GridFormBundle:PeriodoIngresoGrupoUsuarios")->find($periodoIngreso);
+            $periodoIngreso = $em->getRepository("GridFormBundle:PeriodoIngresoGrupoUsuarios")->find($idPeriodoIngreso);
+            $esta = $user->getEstablecimientoPrincipal();
+            if ($esta != ''){
+                $esta = $esta->getCodigo();
+            }
         }
         
         $params_string = $this->getParameterString( $Frm, $parametros, $periodoIngreso->getId(), $tipo_periodo, $user);
+        
         $this->origenes = $this->getOrigenes($Frm->getOrigenDatos());
         $this->campo = 'id_origen_dato';
         
         if ($this->area == 'almacen_datos' or $this->area == 'calidad'){
             $this->cargarDatos($Frm);
+            
+            $this->cargarNumerosExpedientes($Frm, $params_string, $periodoIngreso->getPeriodo(), $esta);
         }
         
         $tabla =  ($this->area == 'almacen_datos' or $this->area == 'calidad') ? 'almacen_datos.repositorio' : 'costos.fila_origen_dato_'.strtolower($this->area);
@@ -71,6 +79,67 @@ class FormularioRepository extends EntityRepository {
             return $em->getConnection()->executeQuery($sql)->fetchAll();
         } catch (\PDOException $e) {
             return $e->getMessage();
+        }
+    }
+    
+    protected function cargarNumerosExpedientes(Formulario $Frm, $params_string, PeriodoIngreso $periodo, $establecimiento){
+        $em = $this->getEntityManager();
+        $idFrm = $Frm->getId();
+        //Verificar si existe origen de datos para los números de expedientes
+        if ($Frm->getOrigenNumerosExpedientes() != '' and $Frm->getConexionOrigenExpedientes() != ''){
+            $campos = $em->getRepository("GridFormBundle:Indicador")->getListaCampos($Frm);
+
+            //verificar los números de expediente que no se han ingresado
+            $sql = "SELECT codigo_variable, nombre_pivote
+                        FROM (SELECT $campos, datos->'establecimiento' AS establecimiento, 
+                        datos->'anio' AS anio
+                        FROM almacen_datos.repositorio
+                        WHERE id_formulario = '$idFrm'
+                            $params_string
+                            AND datos->'es_poblacion' = 'true'
+                        ) AS A 
+                    WHERE dato is not null AND dato = '' ";
+
+            $expeVacios = $em->getConnection()->executeQuery($sql)->fetchAll();
+            $cantExpeVacios = count($expeVacios);
+
+            if ($cantExpeVacios > 0){
+                $sql = $Frm->getOrigenNumerosExpedientes();
+
+                //Recuperar los expedientes disponibles
+                $sql = "SELECT expe FROM pp";
+                //reemplazar ciertos valores que deben ser dinámicos en la consulta
+                $sql = str_replace( array('{anio}', '{mes}', '{establecimiento}'), 
+                                    array($periodo->getAnio(), $periodo->getMes(), $establecimiento), 
+                                    $sql);
+                
+                $Conexion = $em->find('IndicadoresBundle:Conexion', $Frm->getConexionOrigenExpedientes());
+                $conn = $this->getEntityManager()
+                    ->getRepository('IndicadoresBundle:Conexion')
+                    ->getConexionGenerica($Conexion);
+
+                $expeDisponibles = $conn->query($sql)->fetchAll();
+                $cantExpeDisponibles = count($expeDisponibles);
+
+                //Sustituir los números de expedientes
+                $cantExpeAplicados = 0;
+                while ($cantExpeAplicados < $cantExpeVacios and $cantExpeAplicados < $cantExpeDisponibles){
+
+                    $expeVacio = $expeVacios[$cantExpeAplicados];
+                    $campoNumExpe = $expeVacio['nombre_pivote'];
+                    $codVariable = $expeVacio['codigo_variable'];
+                    $expeDisp = array_pop($expeDisponibles[$cantExpeAplicados]);
+
+                    $sql = " UPDATE almacen_datos.repositorio 
+                                SET datos = datos ||('\"$campoNumExpe\"=>'||'\"'||$expeDisp||'\"')::hstore                        
+                                WHERE id_formulario = '$idFrm'
+                                    $params_string
+                                    AND datos->'es_poblacion' = 'true'
+                                    AND datos->'codigo_variable' = '$codVariable' ";
+                    $em->getConnection()->executeQuery($sql);
+                    $cantExpeAplicados++;
+                }
+            }
         }
     }
     

@@ -74,6 +74,8 @@ class FormularioAdmin extends Admin
                 ))
             ->add('formularioSup', null, array('label'=> $this->getTranslator()->trans('_formulario_superior_')))
             ->add('sqlLecturaDatos', null, array('label'=> $this->getTranslator()->trans('_sql_lectura_datos_')))
+            ->add('origenNumerosExpedientes', null, array('label'=> $this->getTranslator()->trans('_origen_numeros_expedientes_')))
+            ->add('conexionOrigenExpedientes', null, array('label'=> $this->getTranslator()->trans('_conexion_numeros_expedientes_')))
         ;
                             
         $formMapper
@@ -81,6 +83,8 @@ class FormularioAdmin extends Admin
                 'sqlLecturaDatos' => $this->getTranslator()->trans('_sql_lectura_datos_help'),
                 'tituloColumnas' => $this->getTranslator()->trans('_titulo_columna_help_'),
                 'calculoFilas' => $this->getTranslator()->trans('_calculo_filas_help_'),
+                'origenNumerosExpedientes' => $this->getTranslator()->trans('_origen_numeros_expedientes_help_'),
+                'conexionOrigenExpedientes' => $this->getTranslator()->trans('_conexion_numeros_expedientes_help_')
             ));
     }
 
