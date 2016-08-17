@@ -28,6 +28,18 @@ class IndicadorRepository extends EntityRepository {
                 11=>'Nov',
                 12=>'Dic'
                 );
+    private function getNivelesEstablecimiento($nivel) {
+        $niveles = '';
+        if ($nivel == 'hosp'){
+            $niveles = " (1, 14, 30, 31, 35 )";
+        } elseif ($nivel == 'pna'){
+            $niveles = " (27, 8, 9)";
+        }elseif ($nivel == 'todos'){
+            $niveles = " (1, 14, 30, 31, 35, 27, 8, 9)";
+        }
+        return $niveles;
+    }
+    
     /**
      * 
      * @param type $periodo
@@ -41,11 +53,8 @@ class IndicadorRepository extends EntityRepository {
         $datos = array();
         $calificaciones = array();
         
-        if ($nivel == 'hosp'){
-            $niveles = " (1, 14, 30, 31, 35 )";
-        } elseif ($nivel == 'pna'){
-            $niveles = " (27, 8, 9)";
-        }
+        $niveles = $this->getNivelesEstablecimiento($nivel);
+        
         
         $sql = "SELECT B.posicion, A.codigo, A.descripcion, A.forma_evaluacion,  
                                 A.porcentaje_aceptacion, 
@@ -135,11 +144,7 @@ class IndicadorRepository extends EntityRepository {
         
         $this->prepararDatosEvaluacionNumerica($periodo);
         
-        if ($nivel == 'hosp'){
-            $niveles = " (1, 14, 30, 31, 35 )";
-        } elseif ($nivel == 'pna'){
-            $niveles = " (27, 8, 9)";
-        }
+        $niveles = $this->getNivelesEstablecimiento($nivel);
 
         $datos = array();
         $calificaciones = array();
@@ -610,11 +615,7 @@ class IndicadorRepository extends EntityRepository {
         $em = $this->getEntityManager();
         $resp = array();
         
-        if ($nivel == 'hosp'){
-            $niveles = " (1, 14, 30, 31, 35 )";
-        } elseif ($nivel == 'pna'){
-            $niveles = " (27, 8, 9)";
-        }
+        $niveles = $this->getNivelesEstablecimiento($nivel);
         
         $cond = '';
         if ($codigo_establecimiento != null){
@@ -654,11 +655,7 @@ class IndicadorRepository extends EntityRepository {
     public function getEvaluacionesComplementariasNacional($nivel) {
         $em = $this->getEntityManager();
         
-        if ($nivel == 'hosp'){
-            $niveles = " (1, 14, 30, 31, 35 )";
-        } elseif ($nivel == 'pna'){
-            $niveles = " (27, 8, 9)";
-        }
+        $niveles = $this->getNivelesEstablecimiento($nivel);
   
         //Obtener valores de evaluaciones externas, extraer la medición 
         //del último año ingresado para cada evaluación
@@ -688,11 +685,7 @@ class IndicadorRepository extends EntityRepository {
         
         $sqlEvalEstandar = $this->getSQLEvaluacionEstandar();
         $sqlEvalEstablecimiento = $this->getSQLEvaluacionEstablecimiento($sqlEvalEstandar);
-        if ($nivel == 'hosp'){
-            $niveles = " (1, 14, 30, 31, 35 )";
-        } elseif ($nivel == 'pna'){
-            $niveles = " (27, 8, 9)";
-        }
+        $niveles = $this->getNivelesEstablecimiento($nivel);
         
         
         $sql_lc = "SELECT A.establecimiento, nombre_corto, nombre_establecimiento, ROUND(B.calificacion::numeric,2) as calificacion
