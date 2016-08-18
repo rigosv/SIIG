@@ -598,9 +598,9 @@ class IndicadorRepository extends EntityRepository {
         if ($cons->rowCount() > 0){
             //Quitar las columnas para las que no se ingresó número de expediente
             $sql = "DELETE FROM datos_tmp 
-                    WHERE (establecimiento, nombre_pivote)
+                    WHERE (establecimiento::text, nombre_pivote::text)
                         NOT IN 
-                        (SELECT establecimiento, nombre_pivote 
+                        (SELECT establecimiento::text, nombre_pivote::text 
                             FROM datos_tmp 
                             WHERE 
                                 (nombre_pivote::text = 'mes_check_$mes' OR nombre_pivote::text = 'mes_check_0$mes')
