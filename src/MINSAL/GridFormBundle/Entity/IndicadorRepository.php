@@ -501,7 +501,7 @@ class IndicadorRepository extends EntityRepository {
         $em = $this->getEntityManager();
         list($anio, $mes) = explode('_', $periodo);
         
-        $campos = $this->getListaCampos($Frm);
+        $campos = $this->getListaCampos($Frm, true, $mes);
         if ($campos == ''){
             //Es un formulario padre, verificar que formulario hijo contiene los
             //criterios del indicador
@@ -513,7 +513,7 @@ class IndicadorRepository extends EntityRepository {
                             ";
             $form = $em->getConnection()->executeQuery($sql)->fetch();
             $Frm = $em->getRepository("GridFormBundle:Formulario")->find($form['formulario_id']);
-            $campos = $this->getListaCampos($Frm);
+            $campos = $this->getListaCampos($Frm, true, $mes);
         }
         //$alcance = $datosIndicador['alcance_evaluacion'] ;
         
@@ -538,7 +538,7 @@ class IndicadorRepository extends EntityRepository {
                     AND AC.indicador_id = '$datosIndicador[indicador_id]' 
                     $periodo_lectura                
                  ";
-       
+
         $em->getConnection()->executeQuery($sql);
         
         $this->borrarVacios($mes);
