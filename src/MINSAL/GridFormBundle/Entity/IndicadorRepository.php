@@ -765,7 +765,7 @@ class IndicadorRepository extends EntityRepository {
         $em = $this->getEntityManager();
         list($anio, $mes) = explode('_', $periodo);
         $sqlEvalEstandar = $this->getSQLEvaluacionEstandar();
-        $sql = "SELECT A.codigo, A.descripcion, A.periodo_lectura_datos, A.meta, 
+        $sql = "SELECT A.codigo, A.descripcion, A.periodo_lectura_datos, A.meta, A.evaluacion_por_expedientes,
                         A.forma_evaluacion, ROUND(B.calificacion::numeric,2) as calificacion,
                         (SELECT color FROM rangos_alertas_generales WHERE B.calificacion >= limite_inferior AND B.calificacion <= limite_superior LIMIT 1) AS color
                     FROM costos.formulario A

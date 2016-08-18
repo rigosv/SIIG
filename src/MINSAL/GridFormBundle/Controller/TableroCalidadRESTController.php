@@ -126,6 +126,7 @@ class TableroCalidadRESTController extends Controller {
             $f['descripcion_estandar'] = $f['descripcion'];
             $f['codigo_estandar'] = $f['codigo'];
             $f['tipo_evaluacion'] = $f['forma_evaluacion'];
+            $f['evalua_expedientes'] = $f['evaluacion_por_expedientes'];
             $f['brecha'] = $f['meta'] - $f['calificacion'];
             $f['meta'] = $f['meta'];
             $f['measure'] = $f['calificacion'];

@@ -261,7 +261,7 @@
                                         [[resumen.porc_cumplimiento]]%
                                     </TD>
                                 </TR>
-                                <TR class="cumplimiento_100_porc">
+                                <TR class="cumplimiento_100_porc" ng-if="evaluacionSeleccionada.evalua_expedientes">
                                     <TD style="text-align: right;" colspan='2'>
                                         {{'_cant_expedientes_evaluados_'|trans}}
                                     </TD>
@@ -269,7 +269,7 @@
                                         [[Formulario.resumen_expedientes.length]]
                                     </TD>
                                 </TR>
-                                <TR class="cumplimiento_100_porc" >
+                                <TR class="cumplimiento_100_porc" ng-if="evaluacionSeleccionada.evalua_expedientes">
                                     <TD style="text-align: right;" colspan='2'>
                                         {{'_expedientes_cumplen_todos_criterios_'|trans}}
                                     </TD>
