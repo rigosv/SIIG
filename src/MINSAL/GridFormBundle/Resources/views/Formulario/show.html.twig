@@ -904,8 +904,8 @@
                         <div id='jqxTabs'>
                             <ul>
                             {% for Frm in Formularios %}
-                                <li >
-                                    {{Frm.descripcion|default(Frm.id)}}
+                                <li title="{{Frm.descripcion|default(Frm.id)}}">
+                                    {{Frm.descripcion|default(Frm.id)|truncate(60)}}
                                 </li>
                             {% endfor %}
                             </ul>
