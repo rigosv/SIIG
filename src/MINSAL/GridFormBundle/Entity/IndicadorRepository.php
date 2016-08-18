@@ -553,7 +553,7 @@ class IndicadorRepository extends EntityRepository {
                     ROUND( (SUM(cumplimiento)::numeric / ( SUM(cumplimiento)::numeric + SUM(no_cumplimiento)::numeric ) * 100),0) AS porc_cumplimiento 
                 INTO TEMP evaluacion_expediente_tmp
                 FROM (
-                    SELECT establecimiento, substring(nombre_pivote, '[0-9]{1,}') as pivote, 
+                    SELECT establecimiento, ltrim(substring(nombre_pivote, '_[0-9]{1,}'),'_') as pivote, 
                         CASE WHEN dato = 'true' OR dato = '1' THEN 1 ELSE 0 END AS cumplimiento, 
                         CASE WHEN tipo_control = 'checkbox' AND dato != 'true' AND dato != '1' THEN 1 
                             WHEN tipo_control = 'checkbox_3_states' AND dato = 'false' OR dato = '0' THEN 1

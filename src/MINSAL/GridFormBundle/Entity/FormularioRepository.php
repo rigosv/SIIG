@@ -610,7 +610,7 @@ class FormularioRepository extends EntityRepository {
             $periodo_mensual = $ff->getPeriodoLecturaDatos() == 'mensual';
             $this->getDatosEvaluacion($ff, $establecimiento, $anio, $mes, true, true, true, false);
             //$campos = $em->getRepository('GridFormBundle:Indicador')->getListaCampos($ff, false, $mes);
-            //echo $campos; exit;
+            
             //Verificar si tiene la variable de poblacion para obtener solo las columnas válidas        
             $sql = "SELECT codigo_variable FROM datos_tmp WHERE es_poblacion = 'true'";
             $cons = $em->getConnection()->executeQuery($sql);        
@@ -671,8 +671,8 @@ class FormularioRepository extends EntityRepository {
                     $sql_forms
                 ) AS AA
                 ORDER BY codigo, datos->'es_poblacion' DESC, COALESCE(NULLIF(datos->'posicion', ''), '100000000')::numeric, datos->'descripcion_categoria_variable', datos->'descripcion_variable'
-                ";
-        try {
+                ";        
+        try {            
             $resp['datos'] =  $em->getConnection()->executeQuery($sql)->fetchAll();
             if ($Frm->getFormaEvaluacion() == 'lista_chequeo' ) { 
                 $resumen = $this->getResumenEvaluacionCriterios($mes);
@@ -712,7 +712,7 @@ class FormularioRepository extends EntityRepository {
         
         $condicion = " HAVING (SUM(cumplimiento)::numeric + SUM(no_cumplimiento)::numeric) > 0 ";
         $opciones = array ('pivote'=> array('grupo'=> "GROUP BY pivote $condicion ORDER BY pivote::numeric", 
-                                                'campo'=> "substring(nombre_pivote, '[0-9]{1,}')as pivote",
+                                                'campo'=> "ltrim(substring(nombre_pivote, '_[0-9]{1,}'),'_') as pivote",
                                                 'campo2'=> "pivote"
                                             ), 
                             'codigo_variable'=>array('grupo'=> "GROUP BY codigo_variable, descripcion_variable $condicion ORDER BY ROUND((SUM(cumplimiento)::numeric / ( SUM(cumplimiento)::numeric + SUM(no_cumplimiento)::numeric ) * 100),0) ", 
