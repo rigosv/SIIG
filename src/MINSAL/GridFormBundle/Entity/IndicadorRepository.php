@@ -58,7 +58,7 @@ class IndicadorRepository extends EntityRepository {
         
         $sql = "SELECT B.posicion, A.codigo, A.descripcion, A.forma_evaluacion,  
                                 A.porcentaje_aceptacion, 
-                                B.descripcion descripcion_estandar, B.periodo_lectura_datos, 
+                                B.descripcion AS descripcion_estandar, B.periodo_lectura_datos, 
                                 B.id as estandar_id, B.codigo as codigo_estandar, A.id AS indicador_id,
                                 B.forma_evaluacion AS tipo_evaluacion, B.nombre AS nombre_evaluacion, 
                                 B.meta, B.periodo_lectura_datos, B.posicion
