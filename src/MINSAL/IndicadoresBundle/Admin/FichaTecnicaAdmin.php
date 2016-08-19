@@ -328,6 +328,7 @@ class FichaTecnicaAdmin extends Admin
     {
         $collection->add('tablero');
         $collection->add('pivotTable');
+        $collection->add('matrizSeguimiento');
     }
 
     public function getTemplate($name)

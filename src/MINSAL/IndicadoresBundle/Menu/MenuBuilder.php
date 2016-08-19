@@ -77,8 +77,9 @@ class MenuBuilder
                     )
                     ->setExtra('roles', $group['roles'])
                     ->setExtra('translationdomain', 'messages')
-            ;           
+            ;            
         }
+        $menu->addChild('_reportes_');
         foreach ($this->pool->getAdminGroups() as $name => $group) {
             foreach ($group['items'] as $item) {
                 if (array_key_exists('admin', $item) && $item['admin'] != null) {
@@ -99,6 +100,14 @@ class MenuBuilder
                                 if ($admin->hasRoute('tablero') and ( $usuario->hasRole('ROLE_SUPER_ADMIN') or $usuario->hasRole('ROLE_USER_TABLERO'))) {
                                     $menu[$name]
                                             ->addChild('indicador_tablero', array('uri' => $admin->generateUrl('tablero')))
+                                            ->setExtra('admin', $admin)
+                                    ;
+                                }
+                            }
+                            if (in_array($ruta, array('matrizSeguimiento'))) {
+                                if ($admin->hasRoute('matrizSeguimiento') and ( $usuario->hasRole('ROLE_SUPER_ADMIN') or $usuario->hasRole('ROLE_USER_MATRIZ_SEGUIMIENTO'))) {
+                                    $menu['_reportes_']
+                                            ->addChild('_matriz_seguimiento_', array('uri' => $admin->generateUrl('matrizSeguimiento')))
                                             ->setExtra('admin', $admin)
                                     ;
                                 }
@@ -165,7 +174,9 @@ class MenuBuilder
                 $menu->removeChild($name);
             }
         }
-
+        if (0 === count($menu['_reportes_']->getChildren())) {
+            $menu->removeChild('_reportes_');
+        }
         $event = new ConfigureMenuEvent($this->factory, $menu);
         $this->eventDispatcher->dispatch(ConfigureMenuEvent::SIDEBAR, $event);
 

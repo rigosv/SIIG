@@ -249,6 +249,11 @@ class FichaTecnicaAdminController extends Controller {
         ));
     }
     
+    public function MatrizSeguimientoAction() {
+        $url = $this->container->get( 'router' )->generate( 'matriz-seguimiento' );
+        return new RedirectResponse( $url );
+    }
+    
     /**
      * @Route("/sala/{id}/fichas", name="fichas_sala", options={"expose"=true})
      */
