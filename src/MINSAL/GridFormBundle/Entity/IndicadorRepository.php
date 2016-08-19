@@ -273,21 +273,33 @@ class IndicadorRepository extends EntityRepository {
                             AVG(dato::numeric) AS calificacion
                             INTO TEMP datos_indicadores_tmp
                             FROM 
-                                (SELECT $campos, A.datos->'establecimiento' as establecimiento, 
-                                    A.id_formulario, C.indicador_id, B.area_id
-                                    FROM almacen_datos.repositorio A
-                                        INNER JOIN variable_captura B ON (A.datos->'codigo_variable' = B.codigo) 
-                                        INNER JOIN indicador_variablecaptura C ON (B.id = C.variablecaptura_id)
-                                    WHERE A.datos->'es_poblacion' = 'false'
-                                        AND A.id_formulario = '$frmId'                        
-                                        AND A.datos->'es_separador' = 'false'
-                                        AND A.datos->'anio' = '$anio'
-                                        $periodo_lectura
+                                (
+                                SELECT indicador_id, id_formulario,
+                                        codigo_variable, nombre_pivote, 
+                                        establecimiento, area_id,
+                                        CASE WHEN strpos(dato,'=>') = 0  
+                                            THEN dato::numeric
+                                            ELSE 
+                                                EXTRACT(HOUR FROM replace(dato,'=>', ':')::time)*60 + EXTRACT(MINUTES FROM replace(dato,'=>', ':')::time)
+                                        END AS dato
+                                FROM (SELECT $campos, A.datos->'establecimiento' as establecimiento, 
+                                        A.id_formulario, C.indicador_id, B.area_id
+                                        FROM almacen_datos.repositorio A
+                                            INNER JOIN variable_captura B ON (A.datos->'codigo_variable' = B.codigo) 
+                                            INNER JOIN indicador_variablecaptura C ON (B.id = C.variablecaptura_id)
+                                        WHERE A.datos->'es_poblacion' = 'false'
+                                            AND A.id_formulario = '$frmId'                        
+                                            AND A.datos->'es_separador' = 'false'
+                                            AND A.datos->'anio' = '$anio'
+                                            $periodo_lectura
+                                    ) AS AA
+                                    WHERE dato is not null
+                                        AND dato != ''
+                                        AND dato !~ 'NaN'
+                                        AND dato != 'Infinity'
+                                            
                                 ) AS A
                             WHERE A.dato is not null
-                                AND dato != ''
-                                AND dato != 'NaN'
-                                AND dato != 'Infinity'
                                 $where_
                             GROUP BY indicador_id, id_formulario,
                                     codigo_variable, establecimiento, area_id                    
@@ -297,12 +309,10 @@ class IndicadorRepository extends EntityRepository {
         $cons = $em->getConnection()->executeQuery($datos);
         if ($cons->rowCount() > 0){
             $sql = "DELETE FROM datos_evaluacion_calidad_num
-                        WHERE (id_formulario, id_indicador, codigo_criterio, 
-                                anio, mes, establecimiento, id_area_criterio)
+                        WHERE (id_formulario, anio, mes, establecimiento)
                                 IN 
-                                (SELECT id_formulario::integer, indicador_id::integer, 
-                                        codigo_criterio::text,
-                                        $anio::integer, '$mes'::text, establecimiento::text, area_id::integer
+                                (SELECT id_formulario::integer,
+                                        $anio::integer, '$mes'::text, establecimiento::text
                                     FROM datos_indicadores_tmp
                                 )";
             $em->getConnection()->executeQuery($sql);
