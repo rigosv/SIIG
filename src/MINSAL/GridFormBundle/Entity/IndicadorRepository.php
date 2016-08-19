@@ -828,7 +828,7 @@ class IndicadorRepository extends EntityRepository {
                     }
                 }
                 $campos = ($array) ? trim($campos, ', ') : $campos;
-                $campos .= ($array) ? "]) AS dato, " : '';
+                $campos .= ($array) ? "]::varchar[]) AS dato, " : '';
                 
                 //La parte del nombre del campo
                 $campos .= ($array) ? "unnest(array[" : '';                
@@ -841,7 +841,7 @@ class IndicadorRepository extends EntityRepository {
                     }                    
                 }
                 $campos = ($array) ? trim($campos, ', ') : $campos;
-                $campos .= ($array) ? "]) AS nombre_pivote, " : '';
+                $campos .= ($array) ? "]::varchar[]) AS nombre_pivote, " : '';
             } else {
                 $campos .= " datos->'$codigoCampo' AS $codigoCampo, ";
             }
