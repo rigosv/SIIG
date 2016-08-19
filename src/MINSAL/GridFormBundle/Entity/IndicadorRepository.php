@@ -280,7 +280,12 @@ class IndicadorRepository extends EntityRepository {
                                         CASE WHEN strpos(dato,'=>') = 0  
                                             THEN dato::numeric
                                             ELSE 
-                                                EXTRACT(HOUR FROM replace(dato,'=>', ':')::time)*60 + EXTRACT(MINUTES FROM replace(dato,'=>', ':')::time)
+                                                CASE WHEN strpos(dato, '-') = 0
+                                                THEN 
+                                                    split_part(dato,'=>', 1)::numeric * 60 + split_part(dato,'=>', 2)::numeric
+                                                ELSE
+                                                    (split_part(replace(dato, '-', ''),'=>', 1)::numeric * 60 + split_part(dato,'=>', 2)::numeric) * -1
+                                                END
                                         END AS dato
                                 FROM (SELECT $campos, A.datos->'establecimiento' as establecimiento, 
                                         A.id_formulario, C.indicador_id, B.area_id
