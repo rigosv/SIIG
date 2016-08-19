@@ -65,7 +65,13 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['serviciosGeneral',
                 );
             $scope.cambiar_periodo = function(){
                 $scope.subtitulo2 = 'Tablero General :: Periodo ' + $scope.periodoSeleccionado.etiqueta;
-                $scope.procesar();
+                //Verificar que ha cargado el nivel
+                if ($scope.filtroIndicador == '') {
+                    $('#modalConfiguracion').modal('toggle');
+                    $('#filtroIndicadorGrp').notify('Seleccione el nivel', {className: "error" });
+                } else {
+                    $scope.procesar($scope.filtroIndicador);
+                }                
             };
             
             $scope.procesar = function (nivel) {
