@@ -29,7 +29,8 @@ class IndicadorAdmin extends Admin
                             'cumplimiento_criterios'=>$this->getTranslator()->trans('_cumplimiento_criterios_'),
                             'promedio' => $this->getTranslator()->trans('_promedio_')
                             )
-                        ))            
+                        ))
+            ->add('unidadMedida', null, array('label'=> $this->getTranslator()->trans('_unidad_medida_')))
             ->add('porcentajeAceptacion', null, array('label'=> $this->getTranslator()->trans('_porcentaje_aceptacion_')))            
             ->add('criterios', null, 
                     array('label'=> $this->getTranslator()->trans('_criterios_'), 

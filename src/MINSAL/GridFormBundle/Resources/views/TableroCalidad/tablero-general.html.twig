@@ -196,12 +196,22 @@
                         </div>
                         <div class="panel-body">
                             <div class="panel-calificacion" >
-                                <span class="ng-scope"  title= "Valor periodo actual" style="color:[[ind.color]]; border: 2px solid [[ind.color]];">[[ind.calificacion]]</span>
+                                <span class="ng-scope"  title= "Valor periodo actual" style="color:[[ind.color]]; border: 2px solid [[ind.color]];">
+                                    <div ng-if="ind.unidad_medida != 'hh:mm'">[[ind.calificacion]]</div>
+                                    <div ng-if="ind.unidad_medida == 'hh:mm'">[[formatTime(ind.calificacion)]]</div>
+                                </span>
                             </div>
-                            <canvas title= 'Historial' id="grafico[[ind.codigo_indicador]]" class="chart-bar" style="margin-top: 40px;"
+                            <div class="panel-unidad-medida" >
+                                <span class="ng-scope"  title= "unidad medida" >[[ind.unidad_medida]]</span>
+                            </div>
+                            <canvas ng-if="ind.unidad_medida === 'hh:mm' " title= 'Historial' id="grafico[[ind.codigo_indicador]]" class="chart-bar" style="margin-top: 40px;"
                                 chart-data="ind.historial.valores" chart-labels="ind.historial.etiquetas"
-                                 >
-                            </canvas> 
+                                chart-options="options_bar_time">
+                            </canvas>
+                            <canvas ng-if="ind.unidad_medida !== 'hh:mm' " title= 'Historial' id="grafico[[ind.codigo_indicador]]" class="chart-bar" style="margin-top: 40px;"
+                                chart-data="ind.historial.valores" chart-labels="ind.historial.etiquetas"
+                                >
+                            </canvas>
                         </div>
                     </div>
                 </div>

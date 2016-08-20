@@ -98,6 +98,17 @@ label.active {
     text-transform: uppercase;
 }
 
+.panel-unidad-medida {
+    text-align: center;
+    width: 100%;
+}
+
+.panel-unidad-medida span {
+    display: inline-block;
+    font-size: 10pt;
+    line-height: 14px;
+}
+
 #pivotEvaluacionesComplementarias .rowTotal, #pivotEvaluacionesComplementarias th.pvtTotalLabel[rowspan], #pivotEvaluacionesComplementarias .pvtGrandTotal {display: none}
 table.pvtTable td{
     border: 1px solid black !important;

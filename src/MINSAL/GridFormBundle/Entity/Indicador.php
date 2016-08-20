@@ -58,6 +58,12 @@ class Indicador
      */
     private $porcentajeAceptacion;
     
+    /**
+     * @var string $unidadMedida
+     *
+     * @ORM\Column(name="unidad_medida", type="string", length=20, nullable=true)
+     */
+    private $unidadMedida;
     
     /**
      * @var \Doctrine\Common\Collections\ArrayCollection
@@ -278,5 +284,29 @@ class Indicador
     public function getAlertas()
     {
         return $this->alertas;
+    }
+
+    /**
+     * Set unidadMedida
+     *
+     * @param string $unidadMedida
+     *
+     * @return Indicador
+     */
+    public function setUnidadMedida($unidadMedida)
+    {
+        $this->unidadMedida = $unidadMedida;
+
+        return $this;
+    }
+
+    /**
+     * Get unidadMedida
+     *
+     * @return string
+     */
+    public function getUnidadMedida()
+    {
+        return $this->unidadMedida;
     }
 }

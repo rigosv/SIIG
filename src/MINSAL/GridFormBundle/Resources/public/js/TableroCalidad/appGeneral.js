@@ -49,6 +49,11 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['serviciosGeneral',
                     yAxes: [{ ticks: { min: 0, max: 100} }]
                 }
             };
+            $scope.options_bar_time = {
+                scales: {                                     
+                    yAxes: [{ ticks: { min: 0, max: 100}, scaleLabel: {labelString : 'minutos', display:true} }]
+                }
+            };
             
             
 
@@ -72,6 +77,12 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['serviciosGeneral',
                 } else {
                     $scope.procesar($scope.filtroIndicador);
                 }                
+            };
+            
+            $scope.formatTime = function(x) {
+                var hh = ~~(parseFloat(x) / 60); 
+                var mm = parseInt(parseFloat(x) % 60); 
+                return hh + ':' +  ('0'+mm).slice(-2);
             };
             
             $scope.procesar = function (nivel) {
@@ -153,6 +164,7 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['serviciosGeneral',
             };
             
             $scope.tablaDetalle = function(){
+                var promediofn = ($scope.detalleIndicador.unidad_medida === 'hh:mm') ? $.pivotUtilities.aggregatorTemplates.average($scope.formatTime) : $.pivotUtilities.aggregatorTemplates.average() ;
                 $("#pivotDetalleIndicador").pivotUI($scope.detalle.actual, {
                     unusedAttrsVertical: false,
                     rows: ["establecimiento"],
@@ -166,6 +178,9 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['serviciosGeneral',
                         "Gráfico de líneas": $.pivotUtilities.c3_renderers['Line Chart'],
                         "Gráfico de columnas": $.pivotUtilities.c3_renderers['Bar Chart']
                     },
+                    aggregators: {
+                        "Average": promediofn,
+                    },
                     onRefresh: $scope.arreglarValores0
                 }, true);
                 
@@ -174,12 +189,16 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['serviciosGeneral',
             };
             
             $scope.tablaHistorial = function(){
+                var promediofn = ($scope.detalleIndicador.unidad_medida === 'hh:mm') ? $.pivotUtilities.aggregatorTemplates.average($scope.formatTime) : $.pivotUtilities.aggregatorTemplates.average() ;
                 $("#pivotDetalleIndicador").pivotUI($scope.detalle.historico, {
                     renderers: {
                         "Tabla": $.pivotUtilities.renderers['Table'],
                         "Tabla y columnas": $.pivotUtilities.renderers['Table Barchart'],
                         "Gráfico de líneas": $.pivotUtilities.c3_renderers['Line Chart'],
                         "Gráfico de columnas": $.pivotUtilities.c3_renderers['Bar Chart']
+                    },
+                    aggregators: {
+                        "Average": promediofn,
                     },
                     unusedAttrsVertical: false,
                     rows: ["establecimiento"],

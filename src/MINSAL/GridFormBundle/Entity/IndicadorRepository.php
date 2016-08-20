@@ -149,7 +149,7 @@ class IndicadorRepository extends EntityRepository {
         $datos = array();
         $calificaciones = array();
                 
-        $sql = "SELECT B.id, B.codigo AS codigo_indicador, B.descripcion AS descripcion_indicador,
+        $sql = "SELECT B.unidad_medida, B.id, B.codigo AS codigo_indicador, B.descripcion AS descripcion_indicador,
                     A.calificacion,(SELECT color 
                                     FROM indicador_rangoalerta AA 
                                         INNER JOIN rango_alerta BB ON (AA.rangoalerta_id = BB.id)
