@@ -386,16 +386,16 @@
                                                 var element = $('<input type="date"></input>');
                                                 editor.append(element);                                                
                                                 var fecha = (moment(cellValue, "DD/MM/YYYY").isValid()) ? moment(cellValue, "DD/MM/YYYY") : moment();
-                                                element.jqxDateTimeInput({value:fecha.format("DD/MM/YYYY"), width: width, height: height, 
+                                                element.jqxDateTimeInput({value:fecha.toDate(), width: width, height: height, 
                                                     template: "info",
                                                     culture: 'es-SV',
                                                     formatString: 'dd/MM/yyyy',
                                                     showTimeButton: false}); 
                                             } else if (tipo_control == 'datetimeinput') {
                                                 var element = $('<input type="datetime"></input>');
-                                                editor.append(element);                                                
+                                                editor.append(element);
                                                 var fecha = (moment(cellValue).isValid()) ? moment(cellValue, "DD/MM/YYYY HH:mm") : moment();
-                                                element.jqxDateTimeInput({value:fecha.format("DD/MM/YYYY HH:mm"), width: width, height: height, 
+                                                element.jqxDateTimeInput({value:fecha.toDate(), width: width, height: height, 
                                                     template: "info",
                                                     culture: 'es-SV',
                                                     formatString: 'dd/MM/yyyy HH:mm',
@@ -465,9 +465,10 @@
                                                 var fecha = (moment(cellValue, "DD/MM/YYYY").isValid()) ? moment(cellValue, "DD/MM/YYYY") : moment();
                                                 dateElement.jqxDateTimeInput('val', fecha.format("DD/MM/YYYY"));
                                             } else if (tipo_control == 'datetimeinput'){
-                                                var dateElement = editor.find('div:first');    
-                                                var fecha = (moment(cellValue).isValid()) ? moment(cellValue, "DD/MM/YYYY HH:mm") : moment();
-                                                dateElement.jqxDateTimeInput('val', fecha.format("DD/MM/YYY HH:mm"));
+                                                var dateElement = editor.find('div:first');
+                                                //var fecha = (moment(cellValue).isValid()) ? moment(cellValue, "DD/MM/YYYY HH:mm") : moment();
+                                                //alert(fecha);
+                                                //dateElement.jqxDateTimeInput('setDate', fecha);
                                             } else if (tipo_control == 'time') {
                                                 var dateElement = editor.find('div:first');                                                
                                                 var hora =  cellValue.split(':');
@@ -670,7 +671,7 @@
                                     .replace(/&#039;/g, "'")
                                     .replace(/&lt;/g, '<');
                                     ;
-                            
+
                             result =  eval(operaciones);                           
                             if (datarow.codigo_tipo_control == 'time'){
 
