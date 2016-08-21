@@ -65,20 +65,35 @@ class IndicadorRepository extends EntityRepository {
                     FROM indicador A
                         INNER JOIN costos.formulario B ON (A.estandar_id = B.id)
                     WHERE B.forma_evaluacion = 'lista_chequeo'
-                        AND B.id 
-                           IN 
-                           (SELECT A.id_formulario 
-                                FROM (
-                                    SELECT DISTINCT ON  (id_formulario, datos->'establecimiento') 
-                                        id_formulario, datos->'establecimiento' AS establecimiento 
-                                    FROM almacen_datos.repositorio
-                                    ) AS A 
-                                    INNER JOIN ctl_establecimiento_simmow B ON (A.establecimiento = B.id::varchar) 
-                                WHERE B.id_tipo_establecimiento IN $niveles
+                        AND 
+                            (B.id 
+                                IN 
+                                (SELECT AA.id_formulario
+                                     FROM (
+                                         SELECT DISTINCT ON  (id_formulario, datos->'establecimiento') 
+                                             id_formulario, datos->'establecimiento' AS establecimiento 
+                                         FROM almacen_datos.repositorio
+                                         ) AS AA                                    
+                                         INNER JOIN ctl_establecimiento_simmow BB ON (AA.establecimiento = BB.id::varchar)
+                                     WHERE BB.id_tipo_establecimiento IN $niveles
+                                 )
+                                 OR
+                                 B.id 
+                                 IN
+                                 (SELECT CC.id_formulario_sup 
+                                     FROM (
+                                         SELECT DISTINCT ON  (id_formulario, datos->'establecimiento') 
+                                             id_formulario, datos->'establecimiento' AS establecimiento 
+                                         FROM almacen_datos.repositorio
+                                         ) AS AA                                    
+                                         INNER JOIN ctl_establecimiento_simmow BB ON (AA.establecimiento = BB.id::varchar)
+                                         INNER JOIN costos.formulario CC ON (AA.id_formulario = CC.id)
+                                     WHERE BB.id_tipo_establecimiento IN $niveles
+                                 )
                             )
                     ORDER BY posicion, codigo_estandar, codigo
                     ";
-        
+
         $indicadores = $em->getConnection()->executeQuery($sql)->fetchAll();
         foreach ($indicadores as $ind){
             $Frm = $em->getRepository('GridFormBundle:Formulario')->find($ind['estandar_id']);
@@ -181,7 +196,7 @@ class IndicadorRepository extends EntityRepository {
                         GROUP BY id_indicador
                     ) AS A
                     INNER JOIN indicador B ON (A.id_indicador = B.id)
-                    ORDER BY calificacion
+                    ORDER BY B.es_trazador, B.posicion, B.codigo
                     ";
         return $em->getConnection()->executeQuery($sql)->fetchAll();        
     }
@@ -790,7 +805,7 @@ class IndicadorRepository extends EntityRepository {
                         AND B.mes = '$mes'
                         AND B.establecimiento = '$establecimiento'
                     ORDER BY A.posicion, A.codigo
-                     ";
+                     ";        
         return $em->getConnection()->executeQuery($sql)->fetchAll();
           
     }
