@@ -66,6 +66,20 @@ class Indicador
     private $unidadMedida;
     
     /**
+     * @var string $esTrazador
+     *
+     * @ORM\Column(name="es_trazador", type="boolean", nullable=true)
+     */
+    private $esTrazador;
+    
+    /**
+     * @var string $posicion
+     *
+     * @ORM\Column(name="posicion", type="float", nullable=true)
+     */
+    private $posicion;
+    
+    /**
      * @var \Doctrine\Common\Collections\ArrayCollection
      *
      * @ORM\ManyToMany(targetEntity="VariableCaptura", inversedBy="indicadores")
@@ -308,5 +322,53 @@ class Indicador
     public function getUnidadMedida()
     {
         return $this->unidadMedida;
+    }
+
+    /**
+     * Set esTrazador
+     *
+     * @param boolean $esTrazador
+     *
+     * @return Indicador
+     */
+    public function setEsTrazador($esTrazador)
+    {
+        $this->esTrazador = $esTrazador;
+
+        return $this;
+    }
+
+    /**
+     * Get esTrazador
+     *
+     * @return boolean
+     */
+    public function getEsTrazador()
+    {
+        return $this->esTrazador;
+    }
+
+    /**
+     * Set posicion
+     *
+     * @param float $posicion
+     *
+     * @return Indicador
+     */
+    public function setPosicion($posicion)
+    {
+        $this->posicion = $posicion;
+
+        return $this;
+    }
+
+    /**
+     * Get posicion
+     *
+     * @return float
+     */
+    public function getPosicion()
+    {
+        return $this->posicion;
     }
 }

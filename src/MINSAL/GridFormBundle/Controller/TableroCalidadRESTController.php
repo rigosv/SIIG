@@ -239,7 +239,8 @@ class TableroCalidadRESTController extends Controller {
                 $etiquetas = array();
                 $valores = array();
                 foreach ($aux as $f){
-                    $etiquetas[] = $f['mes'];
+                    $periodo_ = split('/', $f['mes']);
+                    $etiquetas[] = $this->meses[$periodo_[0]].'/'.$periodo_[1];
                     $valores[] = $f['valor'];
                 }
                 $data[$k]['historial'] = array('etiquetas'=>$etiquetas, 'valores'=> $valores);

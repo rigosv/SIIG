@@ -30,8 +30,10 @@ class IndicadorAdmin extends Admin
                             'promedio' => $this->getTranslator()->trans('_promedio_')
                             )
                         ))
+            ->add('porcentajeAceptacion', null, array('label'=> $this->getTranslator()->trans('_porcentaje_aceptacion_')))
             ->add('unidadMedida', null, array('label'=> $this->getTranslator()->trans('_unidad_medida_')))
-            ->add('porcentajeAceptacion', null, array('label'=> $this->getTranslator()->trans('_porcentaje_aceptacion_')))            
+            ->add('esTrazador', null, array('label'=> $this->getTranslator()->trans('_es_trazador_')))
+            ->add('posicion', null, array('label'=> $this->getTranslator()->trans('_posicion_')))            
             ->add('criterios', null, 
                     array('label'=> $this->getTranslator()->trans('_criterios_'), 
                         'expanded' => false,
@@ -61,7 +63,9 @@ class IndicadorAdmin extends Admin
         ;
         $formMapper
             ->setHelps(array(
-                'estandar' => $this->getTranslator()->trans('_indicador_estandar_help_')                
+                'estandar' => $this->getTranslator()->trans('_indicador_estandar_help_'),
+                'esTrazador' => $this->getTranslator()->trans('_es_trazador_help_'),
+                'posicion' => $this->getTranslator()->trans('_posicion_help_')
             ));
     }
 
