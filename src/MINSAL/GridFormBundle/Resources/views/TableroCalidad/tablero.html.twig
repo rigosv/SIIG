@@ -205,7 +205,7 @@
                                     </TD>
                                     <TD class="indentacion_[[criterio.nivel_indentacion]]" style='width: "10px"' 
                                         ng-if="criterio.es_separador != 'true' && Formulario.forma_evaluacion == 'lista_chequeo'">
-                                        [[criterio.codigo_indicador.split('n1_').join('').split(' ').join(', ')]]
+                                        [[criterio.codigo_indicador.split('n1_').join('').split('pna_').join('').split(' ').join(', ')]]
                                     </TD>
                                     <TD class="indentacion_[[criterio.nivel_indentacion]]" ng-if="criterio.es_separador != 'true'" >
                                         [[criterio.descripcion_variable]]
@@ -312,7 +312,7 @@
                                 {{'_cumplimiento_criterios_'|trans}}
                             </span>
                         </div>
-                        <div class="col-md-4"><B>Código:</B> [[indicador.codigo.split('n1_').join('')]]</div>
+                        <div class="col-md-4"><B>Código:</B> [[indicador.codigo.split('n1_').join('').split('pna_').join('')]]</div>
                         </div>
                     </div>
                     <div class="panel-body">

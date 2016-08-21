@@ -552,7 +552,7 @@ class FormularioRepository extends EntityRepository {
                 SELECT $campos, $anio AS anio, $mes_ '$establecimiento' as establecimiento, 
                     A.datos->'es_poblacion' AS es_poblacion, A.datos->'codigo_tipo_control' AS tipo_control, 
                     A.datos->'es_separador' AS es_separador, A.datos->'posicion' AS posicion, id_formulario
-                 INTO datos_tmp 
+                 INTO TEMP datos_tmp 
                  FROM almacen_datos.repositorio A
                  WHERE id_formulario = '$idFrm'
                     AND A.datos->'establecimiento' = '$establecimiento'
@@ -673,32 +673,35 @@ class FormularioRepository extends EntityRepository {
                 ORDER BY codigo, datos->'es_poblacion' DESC, COALESCE(NULLIF(datos->'posicion', ''), '100000000')::numeric, datos->'descripcion_categoria_variable', datos->'descripcion_variable'
                 ";        
         try {            
-            $resp['datos'] =  $em->getConnection()->executeQuery($sql)->fetchAll();
-            if ($Frm->getFormaEvaluacion() == 'lista_chequeo' ) { 
-                $resumen = $this->getResumenEvaluacionCriterios($mes);
-                $resumenIndicadores = $em->getRepository("GridFormBundle:Indicador")->getResumenEvaluacionIndicadores($establecimiento, $periodo, $formulario);
-                $resp['resumen_expedientes'] = $resumen['pivote'];
-                $criterios = array();
-                foreach ($resumen['codigo_variable'] AS $r){
-                    $sql = "SELECT color FROM rangos_alertas_generales 
-                        WHERE $r[porc_cumplimiento] >= limite_inferior
-                            AND $r[porc_cumplimiento] <= limite_superior";
-                    $cons = $em->getConnection()->executeQuery($sql);
-                    
-                    $color = ($cons->rowCount() > 0 ) ? $cons->fetch(): array('color'=>'#0EAED8');
-                    $rr = $r;
-                    $rr['color'] = $color['color'];
-                    $criterios[] = $rr;
-                }
-                $resp['resumen_criterios'] = $criterios;
-                $resp['resumen_indicadores'] = $resumenIndicadores;
-            }
-            else{
-                $resp['resumen_expedientes'] = array();
-                $resp['resumen_criterios'] = array();
-                $resp['resumen_indicadores'] = array();
+            $datos_ =  $em->getConnection()->executeQuery($sql)->fetchAll();
+            $datos = array();
+            foreach ($datos_ as $d) {
+                $datos[$d['codigo']]['descripcion'] = $d['descripcion'];
+                $datos[$d['codigo']]['forma_evaluacion'] = $d['forma_evaluacion'];
+                $datos[$d['codigo']]['criterios'][] = json_decode('{' . str_replace('=>', ':', $d['datos'].', "codigo_indicador": "'.$d['codigo_indicador'].'"' ) . '}', true);
             }
             
+            $datosConEval = array();
+            foreach ($datos as $k => $d){
+                $aux = $d;                
+                $subFrm = $em->getRepository('GridFormBundle:Formulario')->findOneByCodigo($k);
+                $this->getDatosEvaluacion($subFrm, $establecimiento, $anio, $mes, true, true, true, false);                
+                
+                if ($d['forma_evaluacion'] == 'lista_chequeo' ) { 
+                    $resumen = $this->getResumenEvaluacionCriterios($mes);
+                    $resumen_expedientes = $resumen['pivote'];                               
+                    $resumen_criterios = $resumen['codigo_variable'];
+                }
+                else{
+                    $resumen_expedientes = array();
+                    $resumen_criterios = array();
+                }
+                $aux['resumen_expedientes'] = $resumen_expedientes;
+                $aux['resumen_criterios'] = $resumen_criterios;
+                $datosConEval[$k] = $aux;
+            }
+            
+            $resp['datos'] = $datosConEval;
             return $resp;
         } catch (\PDOException $e) {
             return $e->getMessage();
@@ -715,7 +718,7 @@ class FormularioRepository extends EntityRepository {
                                                 'campo'=> "ltrim(substring(nombre_pivote, '_[0-9]{1,}'),'_') as pivote",
                                                 'campo2'=> "pivote"
                                             ), 
-                            'codigo_variable'=>array('grupo'=> "GROUP BY codigo_variable, descripcion_variable $condicion ORDER BY ROUND((SUM(cumplimiento)::numeric / ( SUM(cumplimiento)::numeric + SUM(no_cumplimiento)::numeric ) * 100),0) ", 
+                            'codigo_variable'=>array('grupo'=> "GROUP BY id_formulario, codigo_variable, descripcion_variable, posicion $condicion ORDER BY id_formulario, ROUND((SUM(cumplimiento)::numeric / ( SUM(cumplimiento)::numeric + SUM(no_cumplimiento)::numeric ) * 100),0), posicion::numeric ", 
                                                 'campo'=>'codigo_variable, descripcion_variable',
                                                 'campo2'=>'codigo_variable, descripcion_variable'
                                                 )
@@ -723,10 +726,14 @@ class FormularioRepository extends EntityRepository {
         $resp = array();
         foreach ($opciones as $campo => $opc){
             $sql = "SELECT $opc[campo2], SUM(cumplimiento) as cumplimiento, 
-                    SUM(no_cumplimiento) AS no_cumplimiento,
-                    ROUND((SUM(cumplimiento)::numeric / ( SUM(cumplimiento)::numeric + SUM(no_cumplimiento)::numeric ) * 100),0) AS porc_cumplimiento 
+                    SUM(no_cumplimiento) AS no_cumplimiento, 
+                    ROUND((SUM(cumplimiento)::numeric / ( SUM(cumplimiento)::numeric + SUM(no_cumplimiento)::numeric ) * 100),0) AS porc_cumplimiento,
+                    (SELECT color FROM rangos_alertas_generales 
+                            WHERE ROUND((SUM(cumplimiento)::numeric / ( SUM(cumplimiento)::numeric + SUM(no_cumplimiento)::numeric ) * 100),0) >= limite_inferior
+                                AND ROUND((SUM(cumplimiento)::numeric / ( SUM(cumplimiento)::numeric + SUM(no_cumplimiento)::numeric ) * 100),0) <= limite_superior
+                    ) as color
                 FROM (
-                    SELECT $opc[campo], 
+                    SELECT $opc[campo], posicion::numeric, id_formulario,
                         CASE WHEN dato = 'true' OR dato = '1' THEN 1 ELSE 0 END AS cumplimiento, 
                         CASE WHEN tipo_control = 'checkbox' AND dato != 'true' and dato != '1' THEN 1 
                             WHEN tipo_control = 'checkbox_3_states' AND dato = 'false' or dato = '0' THEN 1

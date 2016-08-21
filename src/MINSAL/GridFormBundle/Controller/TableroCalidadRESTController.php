@@ -153,23 +153,21 @@ class TableroCalidadRESTController extends Controller {
     public function getCriteriosAction($establecimiento, $periodo, $formulario) {
         $response = new Response();
         $em = $this->getDoctrine()->getManager();
-
+        $Frm = $em->getRepository('GridFormBundle:Formulario')->findOneByCodigo($formulario);
+        
         $datos_resumen = $em->getRepository('GridFormBundle:Formulario')->getCriterios($establecimiento, $periodo, $formulario);
-        $datos = $datos_resumen['datos'];
+        $resumen_indicadores = ($Frm->getFormaEvaluacion() == 'lista_chequeo') ? 
+                                                        $em->getRepository("GridFormBundle:Indicador")->getResumenEvaluacionIndicadores($establecimiento, $periodo, $formulario)
+                                                        : array();
+        $data = $datos_resumen['datos'];
 
-        $data = array();
-        foreach ($datos as $d) {
-            $data[$d['codigo']]['descripcion'] = $d['descripcion'];
-            $data[$d['codigo']]['forma_evaluacion'] = $d['forma_evaluacion'];
-            $data[$d['codigo']]['criterios'][] = json_decode('{' . str_replace('=>', ':', $d['datos'].', "codigo_indicador": "'.$d['codigo_indicador'].'"' ) . '}', true);
-        }
-        $data_ = array();
-        foreach ($data as $d) {
-            $data_[] = array('descripcion' => $d['descripcion'], 'forma_evaluacion' => $d['forma_evaluacion'],
+        foreach ($data as $d) {            
+            $data_[] = array('descripcion' => $d['descripcion'], 
+                'forma_evaluacion' => $d['forma_evaluacion'],
                 'criterios' => $d['criterios'],
-                'resumen_expedientes' => $datos_resumen['resumen_expedientes'],
-                'resumen_criterios' => $datos_resumen['resumen_criterios'],
-                'resumen_indicadores' => $datos_resumen['resumen_indicadores'],
+                'resumen_expedientes' => $d['resumen_expedientes'],
+                'resumen_criterios' => $d['resumen_criterios'],
+                'resumen_indicadores' => $resumen_indicadores,
             );
         }
         $resp = json_encode($data_);

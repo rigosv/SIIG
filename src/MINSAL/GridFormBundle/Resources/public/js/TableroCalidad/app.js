@@ -251,7 +251,7 @@
                             evaluacion: evaluacionSel.codigo
                         })
                         .$promise.then(
-                        function (data) {                            
+                        function (data) {
                             $scope.criterios = data;
                             $scope.resumenIndicadores = data[0].resumen_indicadores;
                             $scope.labels_rec = [];
@@ -259,8 +259,8 @@
                             $scope.colors_rec = [];
                             $scope.series_rec = ['Series A'];
                             $scope.datasetOverride_rec = [{ xAxisID: 'x-axis-1' }, { xAxisID: 'x-axis-2' }];
-                            $scope.options_rec = {
-                              scales: {                                    
+                            $scope.options_rec = {                                
+                                scales: {
                                     xAxes: [
                                         {
                                           id: 'x-axis-1',
@@ -285,11 +285,17 @@
                                     ]
                                 }
                             };
-                            angular.forEach(data[0].resumen_criterios, function(value, key) {
-                                    this.push(value.descripcion_variable);
-                                    $scope.data_rec.push(value.porc_cumplimiento);
-                                    $scope.colors_rec.push(value.color);
-                            }, $scope.labels_rec);
+                          
+                            for (var i in data){
+                                var datos = data[i];
+                                for(var r in datos.resumen_criterios){
+                                    var res_criterios = datos.resumen_criterios[r];
+                                    var des = (res_criterios.descripcion_variable.length > 70) ? res_criterios.descripcion_variable.substring(0,70) + '...' : res_criterios.descripcion_variable;
+                                    $scope.labels_rec.push(des);
+                                    $scope.data_rec.push(res_criterios.porc_cumplimiento);
+                                    $scope.colors_rec.push(res_criterios.color);
+                                }
+                            }
                             
                         },
                         function (error) {
