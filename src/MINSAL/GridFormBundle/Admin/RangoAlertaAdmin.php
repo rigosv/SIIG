@@ -23,7 +23,7 @@ class RangoAlertaAdmin extends Admin {
                 ->add('color', 'choice', array('label' => $this->getTranslator()->trans('color'),
                         'choices' => array(
                             'green'=>$this->getTranslator()->trans('_green_'),
-                            'yellow' => $this->getTranslator()->trans('_yellow_'),
+                            'orange' => $this->getTranslator()->trans('_orange_'),
                             'red' => $this->getTranslator()->trans('_red_')
                             ),
                          'required' => true   
