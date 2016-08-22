@@ -169,6 +169,7 @@ class IndicadorRepository extends EntityRepository {
                                     FROM indicador_rangoalerta AA 
                                         INNER JOIN rango_alerta BB ON (AA.rangoalerta_id = BB.id)
                                     WHERE A.calificacion BETWEEN COALESCE(limite_inferior, -100000) AND COALESCE(limite_superior, 1000000)
+                                        AND indicador_id = B.id
                                     ) AS color, 
                                 array(
                                     SELECT COALESCE(limite_inferior::varchar,'')||'-'||COALESCE(limite_superior::varchar, '')||'-'||color  
