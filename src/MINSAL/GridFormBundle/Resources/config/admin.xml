@@ -141,6 +141,12 @@
                 <argument type="service" id="sonata.gridform.admin.plan_actividad" />
             </call>
         </service>
+        <service id="sonata.gridform.admin.dimension_calidad" class="MINSAL\GridFormBundle\Admin\DimensionCalidadAdmin">
+            <tag name="sonata.admin" manager_type="orm" group="_calidad_" label="_dimension_calidad_"/>
+            <argument />
+            <argument>MINSAL\GridFormBundle\Entity\DimensionCalidad</argument>
+            <argument />            
+        </service>
         <service id="sonata.gridform.admin.plan_actividad" class="MINSAL\GridFormBundle\Admin\PlanIntervencionActividadAdmin">
             <tag name="sonata.admin" manager_type="orm" group="_calidad_" show_in_dashboard="false" label="_plan_intervencion_actividades_"/>
             <argument />

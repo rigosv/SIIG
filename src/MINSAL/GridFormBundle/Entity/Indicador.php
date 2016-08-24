@@ -94,6 +94,12 @@ class Indicador
      **/
     private $alertas;
     
+    /**
+     * @ORM\ManyToOne(targetEntity="DimensionCalidad", inversedBy="indicadores")
+     * 
+     * */
+    private $dimension;
+    
     
 
     public function __toString()
@@ -370,5 +376,29 @@ class Indicador
     public function getPosicion()
     {
         return $this->posicion;
+    }
+
+    /**
+     * Set dimension
+     *
+     * @param \MINSAL\GridFormBundle\Entity\DimensionCalidad $dimension
+     *
+     * @return Indicador
+     */
+    public function setDimension(\MINSAL\GridFormBundle\Entity\DimensionCalidad $dimension = null)
+    {
+        $this->dimension = $dimension;
+
+        return $this;
+    }
+
+    /**
+     * Get dimension
+     *
+     * @return \MINSAL\GridFormBundle\Entity\DimensionCalidad
+     */
+    public function getDimension()
+    {
+        return $this->dimension;
     }
 }

@@ -23,6 +23,7 @@ class IndicadorAdmin extends Admin
             ->add('codigo', null, array('label'=> $this->getTranslator()->trans('_codigo_')))
             ->add('descripcion', null, array('label'=> $this->getTranslator()->trans('_descripcion_')))
             ->add('estandar', null, array('label'=> $this->getTranslator()->trans('_estandar_')))
+            ->add('dimension', null, array('label'=> $this->getTranslator()->trans('_dimension_calidad_')))
             ->add('formaEvaluacion', 'choice', array('label' => $this->getTranslator()->trans('_forma_evaluacion_'),
                         'choices' => array(
                             'cumplimiento_porcentaje_aceptacion'=>$this->getTranslator()->trans('_cumplimiento_porcentaje_aceptacion_'),
