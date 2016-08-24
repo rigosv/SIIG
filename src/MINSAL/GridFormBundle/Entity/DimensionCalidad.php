@@ -19,6 +19,7 @@ class DimensionCalidad
      *
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
+     * @ORM\GeneratedValue(strategy="SEQUENCE")
      */
     private $id;
 

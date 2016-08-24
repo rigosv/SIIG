@@ -48,8 +48,9 @@
         </div>
     </div>
     <ul class="nav nav-tabs" role="tablist">
-        <li role="presentation" class="active"><a href="#lista_chequeo" aria-controls="lista_chequeo" role="tab" data-toggle="tab" ng-if="indicadores.length > 0">Estándares 1-24</a></li>
-        <li role="presentation"><a href="#numericos" aria-controls="numericos" role="tab" data-toggle="tab" ng-if="indicadores2.length > 0">Estándares 25-29</a></li>
+        <li role="presentation" class="active"><a href="#lista_chequeo" aria-controls="lista_chequeo" role="tab" data-toggle="tab" ng-if="indicadores.length > 0">Conformidad</a></li>
+        <li role="presentation"><a href="#numericos" aria-controls="numericos" role="tab" data-toggle="tab" ng-if="indicadores2.length > 0">Servicio</a></li>
+        <li role="presentation"><a href="#satisfaccion" aria-controls="numericos" role="tab" data-toggle="tab" ng-if="indicadores2.length > 0">Satisfacción</a></li>
         <li role="presentation"><a href="#eval_complementarias" aria-controls="numericos" role="tab" data-toggle="tab" ng-if="evaluaciones_complementarias.nacional.length > 0" >Evaluaciones complementarias</a></li>
     </ul>
     <!-- Tab panes -->
@@ -189,7 +190,41 @@
                 <input type="text" class="form-control" size="10" ng-model="buscar_indicadores2" >
             </div>
             <div class="row row_tablero" ng-if="indicadores2.length > 0">
-                <DIV class="col-md-3" ng-repeat="ind in indicadores2 | filter : buscar_indicadores2">
+                <DIV class="col-md-3" ng-repeat="ind in indicadores2 | filter :{dimension:'!satisfaccion'} | filter : buscar_indicadores2 ">
+                    <div class="panel panel-info panel_" >
+                        <div class="panel-heading" style="text-align: center; cursor: pointer;" ng-click="detalleArea(ind)">
+                            <h3 class="panel-title">[[ind.descripcion_indicador]]</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="panel-calificacion" >
+                                <span class="ng-scope"  title= "Valor periodo actual" style="color:[[ind.color]]; border: 2px solid [[ind.color]];">
+                                    <div ng-if="ind.unidad_medida != 'hh:mm'">[[ind.calificacion]]</div>
+                                    <div ng-if="ind.unidad_medida == 'hh:mm'">[[formatTime(ind.calificacion)]]</div>
+                                </span>
+                            </div>
+                            <div class="panel-unidad-medida" >
+                                <span class="ng-scope"  title= "unidad medida" >[[ind.unidad_medida]]</span>
+                            </div>
+                            <canvas ng-if="ind.unidad_medida === 'hh:mm' " title= 'Historial' id="grafico[[ind.codigo_indicador]]" class="chart-bar" style="margin-top: 40px;"
+                                chart-data="ind.historial.valores" chart-labels="ind.historial.etiquetas"
+                                chart-options="options_bar_time">
+                            </canvas>
+                            <canvas ng-if="ind.unidad_medida !== 'hh:mm' " title= 'Historial' id="grafico[[ind.codigo_indicador]]" class="chart-bar" style="margin-top: 40px;"
+                                chart-data="ind.historial.valores" chart-labels="ind.historial.etiquetas"
+                                >
+                            </canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="satisfaccion">
+            <div class="input-group">
+                <div class="input-group-addon"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></div>
+                <input type="text" class="form-control" size="10" ng-model="buscar_indicadores3" >
+            </div>
+            <div class="row row_tablero" ng-if="indicadores2.length > 0">
+                <DIV class="col-md-3" ng-repeat="ind in indicadores2 | filter :{dimension:'satisfaccion'} | filter : buscar_indicadores3 ">
                     <div class="panel panel-info panel_" >
                         <div class="panel-heading" style="text-align: center; cursor: pointer;" ng-click="detalleArea(ind)">
                             <h3 class="panel-title">[[ind.descripcion_indicador]]</h3>
