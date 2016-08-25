@@ -262,7 +262,7 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['serviciosGeneral',
                       backgroundColor: coloresGrp2
                     },
                     {
-                      label: "Calificación estándar",
+                      label: "Promedio nacional",
                       borderWidth: 3,
                       hoverBackgroundColor: "rgba(255,99,132,0.4)",
                       hoverBorderColor: "rgba(255,99,132,1)",
