@@ -1,4 +1,46 @@
 {% extends 'IndicadoresBundle::standard_layout.html.twig' %}
 {% block content %}
-    matriz de seguimiento
+<style>
+    td{
+        min-width: 30px;
+        min-height: 90px;
+    }
+    td.valores{
+        text-align: right;
+    }
+    td.nombre_variable{
+        vertical-align: middle !important;
+    }
+    table{
+        background-color: white;
+    }
+</style>
+
+    <TABLE  class="table table-hover table-bordered">
+        <TBODY>
+            {% for variable in datosFrm %}
+                <TR>                    
+                    <TD rowspan="4" class="nombre_variable">{{variable.descripcion}}</TD>
+                </TR>
+                <TR>
+                    <Th>Real</Th>
+                    {% for real in variable.datos.real %}
+                        <TD class="valores {% if real == null %}vacio{% endif %}">{{real|default(' ')}}</TD>
+                    {% endfor %}
+                </TR>
+                <TR>
+                    <TH>Planificado</TH>
+                    {% for planificado in variable.datos.planificado %}
+                        <TD class="valores {% if planificado == null %}vacio{% endif %}">{{planificado|default(' ')}}</TD>
+                    {% endfor %}
+                </TR>
+                <TR>
+                    <TH>Estatus</TH>
+                    {% for estatus in variable.datos.estatus %}
+                        <TD class="valores {% if estatus == null %}vacio{% endif %}">{% if estatus != null %} {{estatus}}% {% endif %}</TD>
+                    {% endfor %}
+                </TR>
+            {% endfor %}
+        </TBODY>
+    </TABLE>
 {% endblock content%}
