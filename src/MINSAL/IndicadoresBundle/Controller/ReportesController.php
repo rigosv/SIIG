@@ -48,8 +48,6 @@ class ReportesController extends Controller {
                 }
             }
         }
-        
-        var_dump($datosFrmFormat['90_expe_revisados']['datos']);
 
         return $this->render('IndicadoresBundle:Reportes:matrizSeguimiento.html.twig', 
                                 array(
