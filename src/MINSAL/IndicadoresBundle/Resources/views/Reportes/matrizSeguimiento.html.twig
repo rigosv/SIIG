@@ -17,6 +17,16 @@
 </style>
 
     <TABLE  class="table table-hover table-bordered">
+        <THEAD>
+            <TR>
+                <TH COLSPAN=2 ></TH>
+                {% for anio, anios in parms %}
+                    {% for mes in anios %}
+                        <TH>{{ mes ~ '/' ~ anio}}</TH>
+                    {% endfor %}
+                {% endfor %}
+            </TR>
+        </THEAD>
         <TBODY>
             {% for variable in datosFrm %}
                 <TR>                    
