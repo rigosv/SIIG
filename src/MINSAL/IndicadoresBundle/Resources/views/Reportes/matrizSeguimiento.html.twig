@@ -34,20 +34,38 @@
                 </TR>
                 <TR>
                     <Th>Real</Th>
-                    {% for real in variable.datos.real %}
-                        <TD class="valores {% if real == null %}vacio{% endif %}">{{real|default(' ')}}</TD>
+                    {% for anio, anios in parms %}
+                        {% for mes in anios %}
+                            <TD class="valores">
+                                {% if variable['datos']['real'][mes ~ '/' ~ anio] is defined %}
+                                    {{variable['datos']['real'][mes ~ '/' ~ anio] }}
+                                {% endif %}
+                            </TD>
+                        {% endfor %}
                     {% endfor %}
                 </TR>
                 <TR>
                     <TH>Planificado</TH>
-                    {% for planificado in variable.datos.planificado %}
-                        <TD class="valores {% if planificado == null %}vacio{% endif %}">{{planificado|default(' ')}}</TD>
+                    {% for anio, anios in parms %}
+                        {% for mes in anios %}
+                            <TD class="valores">
+                                {% if variable['datos']['planificado'][mes ~ '/' ~ anio] is defined %}
+                                    {{variable['datos']['planificado'][mes ~ '/' ~ anio] }}
+                                {% endif %}
+                            </TD>
+                        {% endfor %}
                     {% endfor %}
                 </TR>
                 <TR>
                     <TH>Estatus</TH>
-                    {% for estatus in variable.datos.estatus %}
-                        <TD class="valores {% if estatus == null %}vacio{% endif %}">{% if estatus != null %} {{estatus}}% {% endif %}</TD>
+                    {% for anio, anios in parms %}
+                        {% for mes in anios %}
+                            <TD class="valores">
+                                {% if variable['datos']['estatus'][mes ~ '/' ~ anio] is defined and variable['datos']['estatus'][mes ~ '/' ~ anio] != null %}
+                                    {{variable['datos']['estatus'][mes ~ '/' ~ anio] }}%
+                                {% endif %}
+                            </TD>
+                        {% endfor %}
                     {% endfor %}
                 </TR>
             {% endfor %}
