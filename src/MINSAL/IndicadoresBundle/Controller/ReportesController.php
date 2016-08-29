@@ -29,12 +29,18 @@ class ReportesController extends Controller {
 //        foreach ($params)
         
         $anios_ = array();
-        
+        // **************** OBTENCION DE DATOS DESDE ORIGENES DE DATOS
         //Información de los datos del NUMERADOR, obtenidos de orígenes de datos del etab
         $idOrigenesR = array(array('id'=>131, 'descripcion'=>'Embarazadas captadas antes 12 semanas del total esperado', 
                                     'codigo'=>'emb_cap_12_sema_tot_espe', 'acumular'=>true),
                             array('id'=>193, 'descripcion'=>'# de parto institucional atendidos por todos los prestadores de salud en los 14 municipios (medico/enfermera)', 
-                                    'codigo'=>'partos_por_personal_calificado', 'acumular'=>true)
+                                    'codigo'=>'partos_por_personal_calificado', 'acumular'=>true),
+                            array('id'=>198, 'descripcion'=>'# de puérperas captadas antes de los 7 días', 
+                                    'codigo'=>'captadas_antes_7_dias', 'acumular'=>true),
+                            array('id'=>359, 'descripcion'=>'18376 niños de 12 a 59 meses reciben tratamiento dos dosis de tratamiento antiparasitarios al año', 
+                                    'codigo'=>'ninos_2_dosis_antipari_anual', 'acumular'=>true),
+                            array('id'=>195, 'descripcion'=>'% de niños con diarrea en UCSF y UROC tratados con SRO y Zinc', 
+                                    'codigo'=>'ninos_diarrea_sro_zinc', 'acumular'=>true)
                             );
         foreach ($idOrigenesR as $varR){
             $anios_[] = $this->getDatosFormateados($varR, 'real');
@@ -42,13 +48,30 @@ class ReportesController extends Controller {
         
         //Información de los datos del DENOMINADOR, obtenidos de orígenes de datos del etab
         $idOrigenesP = array(array('id'=>192, 'descripcion'=>'# de parto institucional atendidos por todos los prestadores de salud en los 14 municipios (medico/enfermera)', 
-                                    'codigo'=>'partos_por_personal_calificado', 'acumular'=>true)
+                                    'codigo'=>'partos_por_personal_calificado', 'acumular'=>true),
+                            array('id'=>199, 'descripcion'=>'# de puérperas captadas antes de los 7 días', 
+                                    'codigo'=>'captadas_antes_7_dias', 'acumular'=>true),
+                            array('id'=>362, 'descripcion'=>'18376 niños de 12 a 59 meses reciben tratamiento dos dosis de tratamiento antiparasitarios al año', 
+                                    'codigo'=>'ninos_2_dosis_antipari_anual', 'acumular'=>true),
+                            array('id'=>194, 'descripcion'=>'% de niños con diarrea en UCSF y UROC tratados con SRO y Zinc', 
+                                    'codigo'=>'ninos_diarrea_sro_zinc', 'acumular'=>true)
                             );
         foreach ($idOrigenesP as $varP){
             $anios_[] = $this->getDatosFormateados($varP, 'planificado');
         }
         
-        //Datos fijos
+        
+        // ********* OBTENCIÓN DE DATOS DESDE INDICADORES
+        //Información de los datos del NUMERADOR, obtenidos de orígenes de datos del etab
+        $idOrigenesIndR = array(array('id'=>140, 'descripcion'=>'% de cobertura de vacunación con SPR', 
+                                    'codigo'=>'vacunacion_spr', 'acumular'=>false, 'denominador'=>'NINIOS_12M_23M_SM2015')
+                            );
+        foreach ($idOrigenesIndR as $varR){
+            $anios_[] = $this->getFromIndicador($varR, 'real');
+        }
+        
+        
+        // ********* OBTENCIÓN DE DATOS FIJOS
         $idOrigenesFijosP = array(
                                 array('descripcion'=>'Embarazadas captadas antes 12 semanas del total esperado', 
                                         'codigo'=>'emb_cap_12_sema_tot_espe',
@@ -83,7 +106,24 @@ class ReportesController extends Controller {
                                                     array('anio'=>2016, 'mes'=> 'cant_mensual_calidad_11_p', 'calculo'=>37154),
                                                     array('anio'=>2016, 'mes'=> 'cant_mensual_calidad_12_p', 'calculo'=>40531)                                            
                                                 )
-                                    )
+                                    ),
+                                array('descripcion'=>'% de cobertura de vacunación con SPR', 
+                                        'codigo'=>'vacunacion_spr',
+                                        'datos'=>array(
+                                                    array('anio'=>2016, 'mes'=> 'cant_mensual_calidad_01_p', 'calculo'=>95),
+                                                    array('anio'=>2016, 'mes'=> 'cant_mensual_calidad_02_p', 'calculo'=>95),
+                                                    array('anio'=>2016, 'mes'=> 'cant_mensual_calidad_03_p', 'calculo'=>95),
+                                                    array('anio'=>2016, 'mes'=> 'cant_mensual_calidad_04_p', 'calculo'=>95),
+                                                    array('anio'=>2016, 'mes'=> 'cant_mensual_calidad_05_p', 'calculo'=>95),
+                                                    array('anio'=>2016, 'mes'=> 'cant_mensual_calidad_06_p', 'calculo'=>95),
+                                                    array('anio'=>2016, 'mes'=> 'cant_mensual_calidad_07_p', 'calculo'=>95),
+                                                    array('anio'=>2016, 'mes'=> 'cant_mensual_calidad_08_p', 'calculo'=>95),
+                                                    array('anio'=>2016, 'mes'=> 'cant_mensual_calidad_09_p', 'calculo'=>95),
+                                                    array('anio'=>2016, 'mes'=> 'cant_mensual_calidad_10_p', 'calculo'=>95),
+                                                    array('anio'=>2016, 'mes'=> 'cant_mensual_calidad_11_p', 'calculo'=>95),
+                                                    array('anio'=>2016, 'mes'=> 'cant_mensual_calidad_12_p', 'calculo'=>95)                                            
+                                                )
+                                    )            
                             );
         											
 
@@ -105,7 +145,7 @@ class ReportesController extends Controller {
                 foreach ($f as $k => $sf){
                     $mesVarR = str_replace('cant_mensual_calidad_', '', $k);
                     if (in_array($mesVarR, $params[$f['anio']])){
-                        $datos_[$f['codigo_variable']]['real'][$mesVarR.'/'.$f['anio']] = $sf;
+                        $datos_[$f['codigo_variable']]['real'][$mesVarR.'/'.$f['anio']] = $sf;                        
                     } else {
                         $mesVarP = str_replace('_p', '', str_replace('cant_mensual_calidad_', '', $k));
                         if (in_array($mesVarP, $params[$f['anio']])){
@@ -113,11 +153,17 @@ class ReportesController extends Controller {
                         }
                     }
                 }
+                //Si no existia el mes requerido, no se creó el arreglo, crearlo vacio
+                if (!array_key_exists($f['codigo_variable'],$datos_)){
+                    $datos_[$f['codigo_variable']] = array();
+                }
+
                 if (array_key_exists('planificado', $datos_[$f['codigo_variable']])){
                     foreach ($datos_[$f['codigo_variable']]['planificado'] as $k=>$v){
                         $datos_[$f['codigo_variable']]['estatus'][$k] = ($v > 0) ? 
-                        array_key_exists('real', $datos_[$f['codigo_variable']]) ? 
-                                number_format(($datos_[$f['codigo_variable']]['real'][$k] / $v) * 100,0): null : 
+                        array_key_exists('real', $datos_[$f['codigo_variable']]) ?
+                                array_key_exists($k, $datos_[$f['codigo_variable']]['real']) ? 
+                                number_format(($datos_[$f['codigo_variable']]['real'][$k] / $v) * 100,0): null: null : 
                                 null; 
                     }
                     $datosFrmFormat[$f['codigo_variable']]['datos']= $datos_[$f['codigo_variable']];
@@ -157,6 +203,33 @@ class ReportesController extends Controller {
         return $this->formatearDatos($datos, $var);
     }
     
+    
+    private function getFromIndicador($var, $tipo) {
+        $em = $this->getDoctrine()->getManager();
+        
+        $ind = $em->find("IndicadoresBundle:FichaTecnica", $var['id']);
+        $formula = str_replace(array('{', '}'), array('', ''), strtolower($ind->getFormula()));
+        $denominador = strtolower($var['denominador']);
+        
+        $planf = ($tipo=='planificado') ? "||'_p'" : '';
+        
+        $sql = "SELECT anio::integer, mes::varchar, id_mes::integer, SUM(calculo::numeric) AS calculo FROM 
+                       (SELECT anio, id_mes,
+                            'cant_mensual_calidad_'||lpad(id_mes, 2, '0')$planf AS mes, 
+                            $formula AS calculo 
+                        FROM tmp_ind_$var[id] 
+                        WHERE $denominador is not null 
+                            AND $denominador > 0 
+                        ) AS A  
+                    GROUP BY anio::integer, mes::varchar, id_mes::integer ";
+        if ($var['acumular']){
+            $sql = "SELECT anio, mes, (SELECT SUM(calculo) FROM ($sql) AS BB WHERE BB.id_mes <= AC.id_mes and BB.anio = AC.anio) AS calculo
+                        FROM ($sql) AS AC ";
+        }
+        $datos = $em->getConnection()->executeQuery($sql)->fetchAll();
+
+        return $this->formatearDatos($datos, $var);
+    }
     private function formatearDatos($datos, $var) {
         $resp = array();
         foreach ($datos as $d){
