@@ -18,56 +18,59 @@
 
     <TABLE  class="table table-hover table-bordered">
         <THEAD>
-            <TR>
-                <TH COLSPAN=2 ></TH>
-                {% for anio, anios in parms %}
-                    {% for mes in anios %}
-                        <TH>{{ mes ~ '/' ~ anio}}</TH>
-                    {% endfor %}
-                {% endfor %}
-            </TR>
+            
         </THEAD>
         <TBODY>
-            {% for variable in datosFrm %}
-                <TR>                    
-                    <TD rowspan="4" class="nombre_variable">{{variable.descripcion}}</TD>
-                </TR>
-                <TR>
-                    <Th>Real</Th>
+            {% for cat in categorias%}
+                <TR style="background-color: #C9E0D3">
+                    <TH COLSPAN=2 >{% for des in cat.descripcion %}{{des}}<BR/><BR/>{% endfor %}</TH>
                     {% for anio, anios in parms %}
                         {% for mes in anios %}
-                            <TD class="valores">
-                                {% if variable['datos']['real'][mes ~ '/' ~ anio] is defined %}
-                                    {{variable['datos']['real'][mes ~ '/' ~ anio] }}
-                                {% endif %}
-                            </TD>
+                            <TH>{{ mes ~ '/' ~ anio}}</TH>
                         {% endfor %}
                     {% endfor %}
                 </TR>
-                <TR>
-                    <TH>Planificado</TH>
-                    {% for anio, anios in parms %}
-                        {% for mes in anios %}
-                            <TD class="valores">
-                                {% if variable['datos']['planificado'][mes ~ '/' ~ anio] is defined %}
-                                    {{variable['datos']['planificado'][mes ~ '/' ~ anio] }}
-                                {% endif %}
-                            </TD>
+                {% for variable in cat.datos %}
+                    <TR>                    
+                        <TD rowspan="4" class="nombre_variable">{{datosFrm[variable].descripcion}}</TD>
+                    </TR>
+                    <TR>
+                        <Th>Real</Th>
+                        {% for anio, anios in parms %}
+                            {% for mes in anios %}
+                                <TD class="valores">
+                                    {% if datosFrm[variable]['datos']['real'][mes ~ '/' ~ anio] is defined %}
+                                        {{datosFrm[variable]['datos']['real'][mes ~ '/' ~ anio] }}
+                                    {% endif %}
+                                </TD>
+                            {% endfor %}
                         {% endfor %}
-                    {% endfor %}
-                </TR>
-                <TR>
-                    <TH>Estatus</TH>
-                    {% for anio, anios in parms %}
-                        {% for mes in anios %}
-                            <TD class="valores">
-                                {% if variable['datos']['estatus'][mes ~ '/' ~ anio] is defined and variable['datos']['estatus'][mes ~ '/' ~ anio] != null %}
-                                    {{variable['datos']['estatus'][mes ~ '/' ~ anio] }}%
-                                {% endif %}
-                            </TD>
+                    </TR>
+                    <TR>
+                        <TH>Planificado</TH>
+                        {% for anio, anios in parms %}
+                            {% for mes in anios %}
+                                <TD class="valores">
+                                    {% if datosFrm[variable]['datos']['planificado'][mes ~ '/' ~ anio] is defined %}
+                                        {{datosFrm[variable]['datos']['planificado'][mes ~ '/' ~ anio] }}
+                                    {% endif %}
+                                </TD>
+                            {% endfor %}
                         {% endfor %}
-                    {% endfor %}
-                </TR>
+                    </TR>
+                    <TR>
+                        <TH>Estatus</TH>
+                        {% for anio, anios in parms %}
+                            {% for mes in anios %}
+                                <TD class="valores">
+                                    {% if datosFrm[variable]['datos']['estatus'][mes ~ '/' ~ anio] is defined and datosFrm[variable]['datos']['estatus'][mes ~ '/' ~ anio] != null %}
+                                        {{datosFrm[variable]['datos']['estatus'][mes ~ '/' ~ anio] }}%
+                                    {% endif %}
+                                </TD>
+                            {% endfor %}
+                        {% endfor %}
+                    </TR>
+                {% endfor %}
             {% endfor %}
         </TBODY>
     </TABLE>

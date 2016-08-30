@@ -40,7 +40,11 @@ class ReportesController extends Controller {
                             array('id'=>359, 'descripcion'=>'18376 niños de 12 a 59 meses reciben tratamiento dos dosis de tratamiento antiparasitarios al año', 
                                     'codigo'=>'ninos_2_dosis_antipari_anual', 'acumular'=>true),
                             array('id'=>195, 'descripcion'=>'% de niños con diarrea en UCSF y UROC tratados con SRO y Zinc', 
-                                    'codigo'=>'ninos_diarrea_sro_zinc', 'acumular'=>true)
+                                    'codigo'=>'ninos_diarrea_sro_zinc', 'acumular'=>true),
+                            array('id'=>195, 'descripcion'=>'% de niños con diarrea en UCSF y UROC tratados con SRO y Zinc', 
+                                    'codigo'=>'ninos_diarrea_sro_zinc', 'acumular'=>true),
+                            array('id'=>385, 'descripcion'=>'Número de usuarias activas captadas para métodos de PF (anual)', 
+                                    'codigo'=>'usu_act_captadas_pf', 'acumular'=>true)
                             );
         foreach ($idOrigenesR as $varR){
             $anios_[] = $this->getDatosFormateados($varR, 'real');
@@ -52,9 +56,7 @@ class ReportesController extends Controller {
                             array('id'=>199, 'descripcion'=>'# de puérperas captadas antes de los 7 días', 
                                     'codigo'=>'captadas_antes_7_dias', 'acumular'=>true),
                             array('id'=>362, 'descripcion'=>'18376 niños de 12 a 59 meses reciben tratamiento dos dosis de tratamiento antiparasitarios al año', 
-                                    'codigo'=>'ninos_2_dosis_antipari_anual', 'acumular'=>true),
-                            array('id'=>194, 'descripcion'=>'% de niños con diarrea en UCSF y UROC tratados con SRO y Zinc', 
-                                    'codigo'=>'ninos_diarrea_sro_zinc', 'acumular'=>true)
+                                    'codigo'=>'ninos_2_dosis_antipari_anual', 'acumular'=>true)
                             );
         foreach ($idOrigenesP as $varP){
             $anios_[] = $this->getDatosFormateados($varP, 'planificado');
@@ -173,10 +175,57 @@ class ReportesController extends Controller {
             }
         }
         
+        $categorias = array(array('descripcion'=>array('Porcentaje de mujeres en edad reproductiva (15-49) que actualmente utilizan (o cuya pareja utiliza) un método moderno de planificación familia'),
+                                'datos'=> array('usu_act_captadas_pf', 'met_pla_fam', 'com_met_pf', 'met_pf_dist', 'car_didac_diu',
+                                            'per_cap_diu'
+                                        )
+                                ),
+                            array('descripcion'=>array('Porcentaje de mujeres en edad reproductiva (15-49) que recibieron su primer control prenatal por médico o enfermera antes de las 12 semanas de gestación en su embarazo más reciente en los últimos dos años.', 'Porcentaje de mujeres en edad reproductiva (15-49) que recibieron cuatro atenciones prenatales de acuerdo a las mejores prácticas por médico o enfermera según las mejores prácticas propuestas en su embarazo más reciente en los últimos dos años'),
+                                'datos'=> array('emb_cap_12_sema_tot_espe', '90_expe_revisados', 'prueba_emb', 'compra_pruebas_emb', 'insumos_diag_emb'
+                                        )
+                                ),
+                            array('descripcion'=>array('Porcentaje de embarazadas con atención institucional de parto referidas por los ECOS como parte de las actividades del plan de parto.', 
+                                                    'Porcentaje de mujeres en edad reproductiva (15-49) cuyo parto más reciente fue realizado por personal capacitado en una unidad de salud en los dos últimos años.', 
+                                                    'Porcentaje de mujeres en edad reproductiva (15-49) que en su embarazo más reciente tuvieron una visita por personal de salud, incluyendo personal médico y promotores, a la semana del parto.'),
+                                'datos'=> array('partos_por_personal_calificado', 'captadas_antes_7_dias', 'exp_plan_parto', 'lineamientos_sociali', 
+                                                'compra_insumos', 'recep_insumos'
+                                        )
+                                ),
+                            array('descripcion'=>array('Porcentaje de niños de 12 a 59 meses que recibieron dos dosis de tratamiento antiparasitario en el último año.',  
+                                                    'Porcentaje de niños de 6 a 23 meses de edad que tienen un valor de hemoglobina < 110 g/L ',
+                                                    '<BR/>Porcentaje de madres que dieron a sus niños de 0 a 59 meses SRO y zinc en el último episodio de diarrea.'),
+                                'datos'=> array('ninos_2_dosis_antipari_anual', 'atipar_necesarios', 'proceso_compra_ini', 'distribucion_ini', 
+                                                'zn_sro_imple', 'registro_consumo'
+                                        )
+                                ),
+                            array('descripcion'=>array('Porcentaje de niños de 12 a 24 meses de edad con vacuna para Sarampión, Paperas y Rubeola (SPR)'),
+                                'datos'=> array('vacunacion_spr', 'vigi_cartilla')
+                                ),
+                            array('descripcion'=>array('Aumento del gasto del primer nivel de atención'),
+                                'datos'=> array('asigna_presupu', 'ejecucion_presupu', 'presupu_aprob')
+                                ),
+                            array('descripcion'=>array('Fortalecidos los 75 Ecos-F y 3 Ecos-E de salud en su Gestión logística y Abastecidos'),
+                                'datos'=> array('ucsf_abastecidos', 'ucsf_abastecid_ninio')
+                                ),
+                            array('descripcion'=>array('Producto. Implementado el proceso de mejora continua de la calidad en los ECOS'),
+                                'datos'=> array('proc_mejora_conti', 'proc_mejora_funci', 'colab_desarr')
+                                ),
+                            array('descripcion'=>array('Piloto de reconocimiento al desempeño funcionando en los municipios de la SM2015'),
+                                'datos'=> array('piloto_firmado', 'medicios_semes')
+                                ),
+                            array('descripcion'=>array('Implementada la estrategia de comunicación para cambio de comportamiento'),
+                                'datos'=> array('compra_mat_educ', 'mat_educ_distri', 'cart_dic_ela', 'capa_facilitadores', 'capa_per_salud')
+                                ),
+                            array('descripcion'=>array('Ejecución Físico y Financiera'),
+                                'datos'=> array('eje_fisica', 'eje_finan')
+                                )
+                            ); 
+
         return $this->render('IndicadoresBundle:Reportes:matrizSeguimiento.html.twig', 
                                 array(
                                     'admin_pool' => $admin_pool,
                                     'datosFrm' => $datosFrmFormat,
+                                    'categorias' => $categorias,
                                     'parms' => $params
                                 ));
     }
