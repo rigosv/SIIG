@@ -4,17 +4,48 @@ namespace MINSAL\IndicadoresBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
 
 /**
 * @Route("/reportes")
 */
-class ReportesController extends Controller {
+class MatrizSeguimientoController extends Controller {
 
     /**
      * @Route("/matriz_seguimiento", name="matriz-seguimiento")
+     * 
      */
-    public function matrizSeguimientoAccion() {
+    public function matrizSeguimientoAccion(Request $request){
+        $admin_pool = $this->get('sonata.admin.pool');
+
+        $defaultData = array();
+        $form = $this->createFormBuilder($defaultData)
+            ->add('desde', HiddenType::class, array('label'=>$this->get('translator')->trans('_desde_')))
+            ->add('hasta', HiddenType::class, array('label'=>$this->get('translator')->trans('_hasta_')))
+            ->add('send', SubmitType::class, array('label'=>$this->get('translator')->trans('_cargar_reporte_')))
+            ->getForm();
+
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+            $data = $form->getData();
+
+            return $this->mostrarMatrizSeguimientoAccion($data['desde'], $data['hasta']);
+        }
+        return $this->render('IndicadoresBundle:Reportes:matrizSeguimientoParametros.html.twig',
+                    array ('form'=>$form->createView(),
+                            'admin_pool' => $admin_pool,
+                    ));
+    }
+    
+    /**
+     * @Route("/matriz_seguimiento/mostrar/{periodoInicio}/{peridoFin}", name="matriz-seguimiento-mostrar")
+     */
+    public function mostrarMatrizSeguimientoAccion($periodoInicio, $peridoFin) {
         $admin_pool = $this->get('sonata.admin.pool');
         
         $em = $this->getDoctrine()->getManager();
@@ -22,11 +53,10 @@ class ReportesController extends Controller {
         //Obtener todos los datos del webform 12
         $Frm = $em->find('GridFormBundle:Formulario', 12);
         $datosFrm = $em->getRepository('GridFormBundle:Formulario')->getDatosRAW($Frm);
+                
         
-        //Parámetros fijos por el momento, luego hacer el formulario para perdir periodo de inicio y fin del reporte
-        $params = array('2015'=>array('01', '02', '03'), '2016'=>array('01','02','03','04','05'));
-        $params2 = array();
-//        foreach ($params)
+        $params = $this->getParametros($periodoInicio, $peridoFin);
+        //var_dump($params); exit;
         
         $anios_ = array();
         // **************** OBTENCION DE DATOS DESDE ORIGENES DE DATOS
@@ -193,7 +223,7 @@ class ReportesController extends Controller {
                                 ),
                             array('descripcion'=>array('Porcentaje de niños de 12 a 59 meses que recibieron dos dosis de tratamiento antiparasitario en el último año.',  
                                                     'Porcentaje de niños de 6 a 23 meses de edad que tienen un valor de hemoglobina < 110 g/L ',
-                                                    '<BR/>Porcentaje de madres que dieron a sus niños de 0 a 59 meses SRO y zinc en el último episodio de diarrea.'),
+                                                    'Porcentaje de madres que dieron a sus niños de 0 a 59 meses SRO y zinc en el último episodio de diarrea.'),
                                 'datos'=> array('ninos_2_dosis_antipari_anual', 'atipar_necesarios', 'proceso_compra_ini', 'distribucion_ini', 
                                                 'zn_sro_imple', 'registro_consumo'
                                         )
@@ -289,5 +319,31 @@ class ReportesController extends Controller {
         }
         
         return $resp;
+    }
+    
+    protected function getParametros($periodoInicio, $periodoFin) {
+        list($mesInicio, $anioInicio) = explode('/', $periodoInicio);
+        list($mesFin, $anioFin) = explode('/', $periodoFin);
+        $params = array();
+        if ($anioInicio == $anioFin){
+            for($i = $mesInicio; $i <= $mesFin;  $i++){
+                $mes = str_pad($i, 2, "0", STR_PAD_LEFT);
+                $params[$anioInicio][] = $mes;
+            }
+        } else {
+            for($i = $mesInicio; $i <= 12;  $i++){
+                $mes = str_pad($i, 2, "0", STR_PAD_LEFT);
+                $params[$anioInicio][] = $mes;
+            }
+            for($i=$anioInicio + 1; $i <= $anioFin - 1; $i++){
+                $params[$i] = array('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12');
+            }
+            for($i=1; $i <= $mesFin; $i++){
+                $mes = str_pad($i, 2, "0", STR_PAD_LEFT);
+                $params[$anioFin][] = $mes;
+            }
+            
+        }
+        return $params;
     }
 }
