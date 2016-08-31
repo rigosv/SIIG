@@ -81,7 +81,8 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['serviciosGeneral',
             
             $scope.formatTime = function(x) {
                 var hh = ~~(parseFloat(x) / 60); 
-                var mm = parseInt(parseFloat(x) % 60); 
+                var mm = parseInt(parseFloat(x) % 60);
+                if (mm < 0) mm = mm * -1;
                 return hh + ':' +  ('0'+mm).slice(-2);
             };
             
@@ -150,7 +151,7 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['serviciosGeneral',
             $scope.detalleArea = function(indicador){
                 $scope.detalleIndicador = indicador;
 
-                DetalleIndicador.query({ periodo: $scope.periodoSeleccionado.periodo, id: indicador.id })
+                DetalleIndicador.query({ periodo: $scope.periodoSeleccionado.periodo, id: indicador.id, nivel: $scope.filtroIndicador })
                     .$promise.then(
                             function (data) {
                                 $scope.detalle = (data != '') ? data[0] : [];

@@ -255,16 +255,16 @@ class TableroCalidadRESTController extends Controller {
     
     /**
      * Obtener los datos del formulario
-     * @Get("/rest-service/calidad/indicador/{periodo}/{id}", options={"expose"=true})
+     * @Get("/rest-service/calidad/indicador/{periodo}/{id}/{nivel}", options={"expose"=true})
      * @Rest\View
      */
-    public function getDetalleIndicadorCalidadAction($periodo, $id) {
+    public function getDetalleIndicadorCalidadAction($periodo, $id, $nivel) {
         
         $response = new Response();
         $em = $this->getDoctrine()->getManager();
 
         
-        $data[] = $em->getRepository('GridFormBundle:Indicador')->getDetalleIndicador($periodo, $id);        
+        $data[] = $em->getRepository('GridFormBundle:Indicador')->getDetalleIndicador($periodo, $id, $nivel);        
         //$data[] = $em->getRepository('GridFormBundle:Indicador')->getDetalleIndicador($periodo, $id);
         
         $resp = (count($data) == 0)? array(): $data;

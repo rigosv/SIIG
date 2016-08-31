@@ -16,8 +16,8 @@ serviciosGeneral.factory('Indicadores', ['$resource',
   
 serviciosGeneral.factory('DetalleIndicador', ['$resource',
   function($resource){
-    return $resource(Routing.generate('get_detalle_indicador_calidad')+'/:periodo/:id', {}, {
-      query: {method:'GET', params:{periodo: '@_id', id: '@_idi'}, isArray:true}
+    return $resource(Routing.generate('get_detalle_indicador_calidad')+'/:periodo/:id/:nivel', {}, {
+      query: {method:'GET', params:{periodo: '@_id', id: '@_idi', nivel: '@_idn'}, isArray:true}
     });
   }]);
   

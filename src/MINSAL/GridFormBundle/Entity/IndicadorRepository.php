@@ -180,10 +180,12 @@ class IndicadorRepository extends EntityRepository {
                                     ) AS alertas,
                                 array(
                                     SELECT '{\"mes\":\"'||mes||'/'||anio||'\",\"valor\":\"'||ROUND(AVG(calificacion)::numeric,2)||'\"}'
-                                        FROM datos_evaluacion_calidad_num AA 
+                                        FROM datos_evaluacion_calidad_num AA
+                                            INNER JOIN ctl_establecimiento_simmow B ON (AA.establecimiento = B.id::varchar) 
                                         WHERE AA.id_indicador = A.id_indicador
                                             AND calificacion != 'NaN'
                                             AND (anio < $anio OR (anio = $anio AND mes::integer <= $mes ) )
+                                            AND B.id_tipo_establecimiento IN $niveles
                                         GROUP BY anio, mes, id_indicador
                                         ORDER BY anio, mes
                                         LIMIT 10
@@ -210,9 +212,11 @@ class IndicadorRepository extends EntityRepository {
      * @return type
      * Recupera el detalle de un indicador
      */
-    public function getDetalleIndicador($periodo, $id_indicador) {
+    public function getDetalleIndicador($periodo, $id_indicador, $nivel = 'todos') {
         $em = $this->getEntityManager();
-        list($anio, $mes) = explode('_', $periodo);        
+        list($anio, $mes) = explode('_', $periodo);
+        
+        $niveles = $this->getNivelesEstablecimiento($nivel);
 
         $datos = array();
         $calificaciones = array();
@@ -221,9 +225,11 @@ class IndicadorRepository extends EntityRepository {
                     FROM
                     (SELECT establecimiento, codigo_criterio, ROUND(AVG(calificacion)::numeric,2) AS calificacion
                         FROM  datos_evaluacion_calidad_num
+                        INNER JOIN ctl_establecimiento_simmow BB ON (datos_evaluacion_calidad_num.establecimiento = BB.id::varchar)
                         WHERE anio = $anio
                             AND (mes = '$mes' OR mes = '0$mes')
                             AND id_indicador = $id_indicador
+                            AND BB.id_tipo_establecimiento IN $niveles
                         GROUP BY anio, mes, establecimiento, codigo_criterio
                     ) AS A
                     INNER JOIN variable_captura B ON (A.codigo_criterio = B.codigo)
@@ -238,7 +244,9 @@ class IndicadorRepository extends EntityRepository {
                     FROM
                     (SELECT mes||'/'||anio as periodo, establecimiento, codigo_criterio, ROUND(AVG(calificacion)::numeric,2) AS calificacion
                         FROM  datos_evaluacion_calidad_num
+                        INNER JOIN ctl_establecimiento_simmow BB ON (datos_evaluacion_calidad_num.establecimiento = BB.id::varchar)
                         WHERE id_indicador = $id_indicador
+                            AND BB.id_tipo_establecimiento IN $niveles
                         GROUP BY anio, mes, establecimiento, codigo_criterio
                     ) AS A
                     INNER JOIN variable_captura B ON (A.codigo_criterio = B.codigo)
