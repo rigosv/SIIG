@@ -39,6 +39,66 @@ class IndicadorRepository extends EntityRepository {
         }
         return $niveles;
     }
+    /**
+     * 
+     * @param Formulario $Frm
+     * @param type $periodo
+     * @param type $idIndicador
+     * @return true si no ha cambiado y false si hubo algún cambio
+     */
+    private function checkSum($periodo, $tipoInd, $nivel ){
+        list($anio, $mes) = explode('_', $periodo);
+        $em = $this->getEntityManager();
+        
+        $simbolo = ($tipoInd == 'lista_chequeo') ? '!=' : '=';
+        
+        //Verificar si hay algún cambio en los datos
+        //Obtener la suma de verificación de los datos       
+        $sql = "SELECT md5(CAST((array_agg(f.* order by 1))AS text)) 
+            FROM (
+                    SELECT A.*, AC.indicador_id                    
+                    FROM almacen_datos.repositorio A
+                        INNER JOIN variable_captura AB ON (A.datos->'codigo_variable' = AB.codigo) 
+                        INNER JOIN indicador_variablecaptura AC ON (AB.id = AC.variablecaptura_id)
+                        INNER JOIN indicador I ON (AC.indicador_id = I.id)
+                     WHERE A.datos->'es_separador' != 'true'
+                        AND A.datos->'anio' = '$anio'        
+                        AND I.forma_evaluacion $simbolo 'promedio'
+                        AND (A.datos->'mes')::integer = '$mes'
+                    ) AS f
+             ";
+
+        $cons_checksum = $em->getConnection()->executeQuery($sql)->fetch();
+        $checksum = $cons_checksum['md5'];
+
+        //Verificar si ha cambiado
+        $sql = "SELECT * FROM suma_verificacion 
+                    WHERE anio = '$anio' 
+                        AND mes = '$mes'
+                        AND nivel = '$nivel'
+                        AND tipo_ind = '$tipoInd'
+                        AND checksum = '$checksum'
+                ";
+        
+        $check = $em->getConnection()->executeQuery($sql)->rowCount();
+        
+        if ($check == 0){
+            //Guardar la suma de verificación
+            $sql = "DELETE FROM suma_verificacion 
+                    WHERE anio = '$anio' 
+                        AND mes = '$mes'
+                        AND nivel = '$nivel'
+                        AND tipo_ind = '$tipoInd'
+                ";
+            $em->getConnection()->executeQuery($sql);
+            
+            $sql = "INSERT INTO suma_verificacion (anio, mes, tipo_ind, nivel, checksum)
+                        VALUES ('$anio', '$mes', '$tipoInd', '$nivel', '$checksum')  ";
+            $em->getConnection()->executeQuery($sql);
+        }
+        //create table suma_verificacion( anio integer, mes varchar(3), tipo_ind varchar(30), nivel varchar(30), checksum varchar(255))
+        return ($check > 0 ) ?  true: false;
+    }
     
     /**
      * 
@@ -52,6 +112,7 @@ class IndicadorRepository extends EntityRepository {
 
         $datos = array();
         $calificaciones = array();
+        list($anio, $mes) = explode('_', $periodo);
         
         $niveles = $this->getNivelesEstablecimiento($nivel);
         
@@ -95,9 +156,29 @@ class IndicadorRepository extends EntityRepository {
                     ";
 
         $indicadores = $em->getConnection()->executeQuery($sql)->fetchAll();
+
+        $checkAllInd = $this->checkSum($periodo, 'lista_chequeo', $nivel);
+
         foreach ($indicadores as $ind){
             $Frm = $em->getRepository('GridFormBundle:Formulario')->find($ind['estandar_id']);
-            $eval_ = $this->getDatosEvaluacionListaChequeo($Frm, $periodo, $ind);
+            
+            if ($checkAllInd){
+                //los datos no han cambiado, recuperar los que ya están calculados
+                $sql = "SELECT A.*, (SELECT color 
+                                    FROM rangos_alertas_generales
+                                    WHERE A.calificacion BETWEEN COALESCE(limite_inferior, -100000) AND COALESCE(limite_superior, 1000000)
+                                    ) AS color 
+                        FROM datos_evaluacion_calidad A
+                            WHERE codigo_indicador =  '$ind[codigo]'
+                                AND anio = '$anio'
+                                AND mes = '$mes'
+                        ";
+                $eval_ = $em->getConnection()->executeQuery($sql)->fetchAll();
+            } else {
+                //Volver a hacer los cálculos
+                $eval_ = $this->getDatosEvaluacionListaChequeo($Frm, $periodo, $ind);
+                
+            }
             
             $calificacion = 0;
             $eval = array();
