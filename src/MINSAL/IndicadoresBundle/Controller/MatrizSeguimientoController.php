@@ -24,9 +24,9 @@ class MatrizSeguimientoController extends Controller {
 
         $defaultData = array();
         $form = $this->createFormBuilder($defaultData)
-            ->add('desde', HiddenType::class, array('label'=>$this->get('translator')->trans('_desde_')))
-            ->add('hasta', HiddenType::class, array('label'=>$this->get('translator')->trans('_hasta_')))
-            ->add('send', SubmitType::class, array('label'=>$this->get('translator')->trans('_cargar_reporte_')))
+            ->add('desde', 'hidden', array('label'=>$this->get('translator')->trans('_desde_')))
+            ->add('hasta', 'hidden', array('label'=>$this->get('translator')->trans('_hasta_')))
+            ->add('send', 'submit', array('label'=>$this->get('translator')->trans('_cargar_reporte_')))
             ->getForm();
 
         $form->handleRequest($request);
@@ -56,7 +56,6 @@ class MatrizSeguimientoController extends Controller {
                 
         
         $params = $this->getParametros($periodoInicio, $peridoFin);
-        //var_dump($params); exit;
         
         $anios_ = array();
         // **************** OBTENCION DE DATOS DESDE ORIGENES DE DATOS
@@ -172,6 +171,8 @@ class MatrizSeguimientoController extends Controller {
         
         $datos_ = array();
         foreach ($datosFrm as $f){
+            $datosFrmFormat[$f['codigo_variable']]['descripcion'] = $f['descripcion_variable'];
+            //$datosFrmFormat[$f['codigo_variable']]['categoria'] = $f['descripcion_categoria_variable'];
             if (array_key_exists($f['anio'], $params)){
                 
                 foreach ($f as $k => $sf){
@@ -198,9 +199,7 @@ class MatrizSeguimientoController extends Controller {
                                 number_format(($datos_[$f['codigo_variable']]['real'][$k] / $v) * 100,0): null: null : 
                                 null; 
                     }
-                    $datosFrmFormat[$f['codigo_variable']]['datos']= $datos_[$f['codigo_variable']];
-                    $datosFrmFormat[$f['codigo_variable']]['descripcion'] = $f['descripcion_variable'];
-                    //$datosFrmFormat[$f['codigo_variable']]['categoria'] = $f['descripcion_categoria_variable'];
+                    $datosFrmFormat[$f['codigo_variable']]['datos']= $datos_[$f['codigo_variable']];                    
                 }
             }
         }
