@@ -58,6 +58,38 @@ class MatrizSeguimientoController extends Controller {
         $params = $this->getParametros($periodoInicio, $peridoFin);
         
         $anios_ = array();
+        // **************** OBTENCION DE DATOS DESDE FORMULARIOS DE CAPTURA
+        //Información de los datos del NUMERADOR, obtenidos de FORMULARIOS
+        $idOrigenesFrmR = array(
+                            array('descripcion'=>'7598 niños de 6 a 23 meses cuyas madres reciben 60 sobres de MNP', 
+                                    'codigo'=>'madres_rec_60_sobres_MNP', 'acumular'=>true,
+                                    'sql'=> $this->getSqlFromFrom(94, "'60MNP-1aEntrega', '60MNP-2aEntrega', '60MNP-3aEntrega'")
+                                ),
+                                array('descripcion'=>'18376 niños de 12 a 59 meses reciben tratamiento dos dosis de tratamiento antiparasitarios al año', 
+                                    'codigo'=>'ninos_2_dosis_antipari_anual', 'acumular'=>true,
+                                    'sql'=> $this->getSqlFromFrom(94, "'ninio_consumo_60MNP_1aEntrega', 'ninio_consumo_60MNP_2aEntrega', 'ninio_consumo_60MNP_3aEntrega'")                                        
+                                    ),
+                                    array('descripcion'=>'100% de niños con diarrea en UCSF y UROC tratados con SRO y Zinc', 
+                                    'codigo'=>'ninos_diarria_tratados_sro_zinc', 'acumular'=>true,
+                                    'sql'=> $this->getSqlFromFrom(94, "'entrega_zinc_sro'")
+                                    )
+                            );
+        foreach ($idOrigenesFrmR as $varR){
+            $anios_[] = $this->getDatosFormateados($varR, 'real', $varR['sql']);
+        }
+        
+        // **************** OBTENCION DE DATOS DESDE FORMULARIOS DE CAPTURA
+        //Información de los datos del DENOMINADOR, obtenidos de FORMULARIOS
+        $idOrigenesFrmP = array(
+                                    array('descripcion'=>'100% de niños con diarrea en UCSF y UROC tratados con SRO y Zinc', 
+                                    'codigo'=>'ninos_diarria_tratados_sro_zinc', 'acumular'=>true,
+                                    'sql'=> $this->getSqlFromFrom(94, "'ninio<59meses_diarrea'", 'planificado')
+                                    )
+                            );
+        foreach ($idOrigenesFrmP as $varP){
+            $anios_[] = $this->getDatosFormateados($varP, 'planificado', $varP['sql']);
+        }
+        
         // **************** OBTENCION DE DATOS DESDE ORIGENES DE DATOS
         //Información de los datos del NUMERADOR, obtenidos de orígenes de datos del etab
         $idOrigenesR = array(array('id'=>131, 'descripcion'=>'Embarazadas captadas antes 12 semanas del total esperado', 
@@ -65,9 +97,7 @@ class MatrizSeguimientoController extends Controller {
                             array('id'=>193, 'descripcion'=>'# de parto institucional atendidos por todos los prestadores de salud en los 14 municipios (medico/enfermera)', 
                                     'codigo'=>'partos_por_personal_calificado', 'acumular'=>true),
                             array('id'=>198, 'descripcion'=>'# de puérperas captadas antes de los 7 días', 
-                                    'codigo'=>'captadas_antes_7_dias', 'acumular'=>true),
-                            array('id'=>359, 'descripcion'=>'18376 niños de 12 a 59 meses reciben tratamiento dos dosis de tratamiento antiparasitarios al año', 
-                                    'codigo'=>'ninos_2_dosis_antipari_anual', 'acumular'=>true),
+                                    'codigo'=>'captadas_antes_7_dias', 'acumular'=>true),                            
                             array('id'=>195, 'descripcion'=>'% de niños con diarrea en UCSF y UROC tratados con SRO y Zinc', 
                                     'codigo'=>'ninos_diarrea_sro_zinc', 'acumular'=>true),
                             array('id'=>195, 'descripcion'=>'% de niños con diarrea en UCSF y UROC tratados con SRO y Zinc', 
@@ -83,9 +113,7 @@ class MatrizSeguimientoController extends Controller {
         $idOrigenesP = array(array('id'=>192, 'descripcion'=>'# de parto institucional atendidos por todos los prestadores de salud en los 14 municipios (medico/enfermera)', 
                                     'codigo'=>'partos_por_personal_calificado', 'acumular'=>true),
                             array('id'=>199, 'descripcion'=>'# de puérperas captadas antes de los 7 días', 
-                                    'codigo'=>'captadas_antes_7_dias', 'acumular'=>true),
-                            array('id'=>362, 'descripcion'=>'18376 niños de 12 a 59 meses reciben tratamiento dos dosis de tratamiento antiparasitarios al año', 
-                                    'codigo'=>'ninos_2_dosis_antipari_anual', 'acumular'=>true)
+                                    'codigo'=>'captadas_antes_7_dias', 'acumular'=>true)
                             );
         foreach ($idOrigenesP as $varP){
             $anios_[] = $this->getDatosFormateados($varP, 'planificado');
@@ -173,12 +201,13 @@ class MatrizSeguimientoController extends Controller {
         foreach ($datosFrm as $f){
             $datosFrmFormat[$f['codigo_variable']]['descripcion'] = $f['descripcion_variable'];
             //$datosFrmFormat[$f['codigo_variable']]['categoria'] = $f['descripcion_categoria_variable'];
+            
             if (array_key_exists($f['anio'], $params)){
                 
                 foreach ($f as $k => $sf){
-                    $mesVarR = str_replace('cant_mensual_calidad_', '', $k);
+                    $mesVarR = str_replace('cant_mensual_calidad_', '', $k);                    
                     if (in_array($mesVarR, $params[$f['anio']])){
-                        $datos_[$f['codigo_variable']]['real'][$mesVarR.'/'.$f['anio']] = $sf;                        
+                        $datos_[$f['codigo_variable']]['real'][$mesVarR.'/'.$f['anio']] = $sf;
                     } else {
                         $mesVarP = str_replace('_p', '', str_replace('cant_mensual_calidad_', '', $k));
                         if (in_array($mesVarP, $params[$f['anio']])){
@@ -191,7 +220,7 @@ class MatrizSeguimientoController extends Controller {
                     $datos_[$f['codigo_variable']] = array();
                 }
 
-                if (array_key_exists('planificado', $datos_[$f['codigo_variable']])){
+                if ( array_key_exists('planificado', $datos_[$f['codigo_variable']]) ){
                     foreach ($datos_[$f['codigo_variable']]['planificado'] as $k=>$v){
                         $datos_[$f['codigo_variable']]['estatus'][$k] = ($v > 0) ? 
                         array_key_exists('real', $datos_[$f['codigo_variable']]) ?
@@ -199,8 +228,8 @@ class MatrizSeguimientoController extends Controller {
                                 number_format(($datos_[$f['codigo_variable']]['real'][$k] / $v) * 100,0): null: null : 
                                 null; 
                     }
-                    $datosFrmFormat[$f['codigo_variable']]['datos']= $datos_[$f['codigo_variable']];                    
                 }
+                $datosFrmFormat[$f['codigo_variable']]['datos']= $datos_[$f['codigo_variable']];
             }
         }
         
@@ -223,7 +252,8 @@ class MatrizSeguimientoController extends Controller {
                             array('descripcion'=>array('Porcentaje de niños de 12 a 59 meses que recibieron dos dosis de tratamiento antiparasitario en el último año.',  
                                                     'Porcentaje de niños de 6 a 23 meses de edad que tienen un valor de hemoglobina < 110 g/L ',
                                                     'Porcentaje de madres que dieron a sus niños de 0 a 59 meses SRO y zinc en el último episodio de diarrea.'),
-                                'datos'=> array('ninos_2_dosis_antipari_anual', 'atipar_necesarios', 'proceso_compra_ini', 'distribucion_ini', 
+                                'datos'=> array('madres_rec_60_sobres_MNP' ,'ninos_2_dosis_antipari_anual', 'ninos_diarria_tratados_sro_zinc', 
+                                                'atipar_necesarios', 'proceso_compra_ini', 'distribucion_ini', 
                                                 'zn_sro_imple', 'registro_consumo'
                                         )
                                 ),
@@ -259,12 +289,12 @@ class MatrizSeguimientoController extends Controller {
                                 ));
     }
     
-    protected function getDatosFormateados($var,  $tipo = null) {
+    protected function getDatosFormateados($var,  $tipo = null, $sql = null) {
         $em = $this->getDoctrine()->getManager();
         
-        $planf = ($tipo=='planificado') ? "||'_p'" : '';
-        
-        $sql = "SELECT anio::integer, mes::varchar, id_mes::integer, SUM(calculo::numeric) AS calculo FROM 
+        $planf = ($tipo == 'planificado') ? "||'_p'" : '';
+        if ($sql == null){
+            $sql = "SELECT anio::integer, mes::varchar, id_mes::integer, SUM(calculo::numeric) AS calculo FROM 
                        (SELECT datos->'anio' as anio, datos->'id_mes' AS id_mes,
                             'cant_mensual_calidad_'||lpad(datos->'id_mes', 2, '0')$planf AS mes, 
                             datos->'calculo' AS calculo 
@@ -272,6 +302,7 @@ class MatrizSeguimientoController extends Controller {
                         WHERE datos->'calculo' != ''
                         ) AS A  
                     GROUP BY anio::integer, mes::varchar, id_mes::integer ";
+        }
         if ($var['acumular']){
             $sql = "SELECT anio, mes, (SELECT SUM(calculo) FROM ($sql) AS BB WHERE BB.id_mes <= AC.id_mes and BB.anio = AC.anio) AS calculo
                         FROM ($sql) AS AC ";
@@ -281,6 +312,30 @@ class MatrizSeguimientoController extends Controller {
         return $this->formatearDatos($datos, $var);
     }
     
+    protected function getSqlFromFrom($idFrm, $variables, $tipo=null) {
+        $planf = ($tipo == 'planificado') ? "||'_p'" : '';
+        
+        $sql = "SELECT anio::integer, mes_::integer as id_mes, 'cant_mensual_calidad_'||lpad((mes_::integer)::varchar, 2, '0')$planf AS mes,
+                        SUM(cantidad::integer) AS calculo
+                        FROM (
+                        SELECT datos->'anio' AS anio, 
+                            unnest(array['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']) AS mes_, 
+                            unnest(array[datos->'cant_mensual_01', datos->'cant_mensual_02',
+                                   datos->'cant_mensual_03' , datos->'cant_mensual_04' ,
+                                   datos->'cant_mensual_05' , datos->'cant_mensual_06' ,
+                                   datos->'cant_mensual_07' , datos->'cant_mensual_08' , 
+                                   datos->'cant_mensual_09' , datos->'cant_mensual_10' , 
+                                   datos->'cant_mensual_11' , datos->'cant_mensual_12']
+                                   ) AS cantidad
+                           FROM almacen_datos.repositorio A
+                           WHERE id_formulario = $idFrm
+                               AND datos->'codigo_variable' IN ($variables)
+                    ) AS AA
+                    WHERE AA.cantidad != ''
+                    GROUP BY anio::integer, mes_::integer 
+                ";
+        return $sql;
+    }
     
     private function getFromIndicador($var, $tipo) {
         $em = $this->getDoctrine()->getManager();
