@@ -536,7 +536,7 @@
                                         partes = cellValue.split(':');
                                         valor = parseInt(partes[0]) * 60 + parseInt(partes[1]);
                                     }
-                                    if (datarow.alertas != '' && datafield != 'descripcion_variable'){
+                                    if (datarow.alertas != undefined && datarow.alertas != '' && datafield != 'descripcion_variable'){
                                         var rangos = datarow.alertas.split(',');
                                         rangos.forEach(function(nodo, index){
                                             limites = nodo.split('-');
