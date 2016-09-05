@@ -58,7 +58,7 @@ class FormularioRepository extends EntityRepository {
         
         $params_string = $this->getParameterString( $Frm, $parametros, $periodoIngreso->getId(), $tipo_periodo, $user);
         
-        $this->origenes = $this->getOrigenes($Frm->getOrigenDatos());
+        $this->origenes = $this->getOrigenes($Frm->getOrigenDatos());        
         $this->campo = 'id_origen_dato';
         
         if ($this->area == 'almacen_datos' or $this->area == 'calidad'){
@@ -66,12 +66,18 @@ class FormularioRepository extends EntityRepository {
             
             $this->cargarNumerosExpedientes($Frm, $params_string, $periodoIngreso->getPeriodo(), $esta);
         }
+        if (in_array($this->area, array('ga_variables', 'ga_compromisosFinancieros', 'ga_distribucion'))){
+            $tabla =  'costos.fila_origen_dato_ga';
+            $origen = " area_costeo = '$this->area'  "; 
+        } else {
+            $tabla =  ($this->area == 'almacen_datos' or $this->area == 'calidad') ? 'almacen_datos.repositorio' : 'costos.fila_origen_dato_'.strtolower($this->area);
+            $origen = " $this->campo IN (" . implode(',', $this->origenes) . ") ";
+        }
         
-        $tabla =  ($this->area == 'almacen_datos' or $this->area == 'calidad') ? 'almacen_datos.repositorio' : 'costos.fila_origen_dato_'.strtolower($this->area);
         $sql = "
             SELECT datos
             FROM  $tabla
-            WHERE $this->campo IN (" . implode(',', $this->origenes) . ")
+            WHERE $origen
                 $params_string
                 $this->orden
             ;";
