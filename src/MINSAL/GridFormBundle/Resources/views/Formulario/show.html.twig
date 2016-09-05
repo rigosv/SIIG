@@ -69,7 +69,7 @@
             var initGrid{{Frm.id}} = function () {
                 var url = Routing.generate('{{url}}', {id: {{Frm.id}}, periodo_ingreso: '{{parametros.periodo_estructura}}',titulo_frm : '{{titulo}}', datos_frm: $('#frm_').serialize() });
                 var fila = 0;
-                var pk = '{{Frm.llave_primaria | default ('codigo_variable')}}'
+                var pk = '{{llave_primaria | default ('codigo_variable')}}'
                 
                 var camposFormulas = [];
                 var filasFormulas = [];
