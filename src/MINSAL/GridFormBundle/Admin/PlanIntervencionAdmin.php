@@ -59,7 +59,7 @@ class PlanIntervencionAdmin extends Admin
     protected function configureListFields(ListMapper $listMapper)
     {
         $listMapper
-            ->addIdentifier('id', null, array('label'=> $this->getTranslator()->trans('_codigo_')))
+            ->addIdentifier('codigo', null, array('label'=> $this->getTranslator()->trans('_codigo_')))
             ->add('estandar', null, array('label'=> $this->getTranslator()->trans('_estandar_')))
             ->add('fechaEvaluacion', null, array('label'=> $this->getTranslator()->trans('_fecha_evaluacion_')))
             ->add('establecimiento', null, array('label'=> $this->getTranslator()->trans('_establecimiento_')))
