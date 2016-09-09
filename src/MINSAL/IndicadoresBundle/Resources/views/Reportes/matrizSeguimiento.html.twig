@@ -1,14 +1,18 @@
 {% extends 'IndicadoresBundle::standard_layout.html.twig' %}
 {% block javascripts %}
     {{parent()}}
-    <script type="text/javascript" src="{{ app.request.schemeAndHttpHost ~ asset('bundles/indicadores/vendor/tableExport/jquery.base64.js') }}"></script>
-    <script type="text/javascript" src="{{ app.request.schemeAndHttpHost ~ asset('bundles/indicadores/vendor/tableExport/tableExport.js') }}"></script>
+    <script type="text/javascript" src="{{ app.request.schemeAndHttpHost ~ asset('bundles/indicadores/vendor/table2excel/jquery.table2excel.min.js') }}"></script>
+    
     <script type="text/javascript">
         $( document ).ready(function() {
             $('#exportar').click(function (e){
-                //$('#matrizSeguimiento').tableExport({type:'xml',escape:'false'});                
+                $("#matrizSeguimiento").table2excel({
+                    exclude: ".excludeThisClass",
+                    name: "Matriz seguimiento",
+                    filename: "matriz-seguimiento" //do not include extension
+                });             
             });
-        });
+                        });
     </script>
 {% endblock javascripts %}
 
@@ -32,34 +36,22 @@
         .sonata-ba-content{
             overflow: auto;
         }
-        .vacio {
-            background-color: #E6E6E6;
-        }
-        .rojo {
-            background-color: #FE4D4D;
-        }
-        .amarillo{
-            background-color: yellow;
-        }
-        
-        .verde{
-            background-color: #79CE79;
-        }
     </style>
 
 {% endblock stylesheets %}
     
 {% block content %}
-    
+    <button class="btn btn-default btn-lg dropdown-toggle" type="button" id="exportar" aria-expanded="false">
+    {{'_exportar_'|trans}}<span class="glyphicon glyphicon-export" aria-hidden="true"></span>
+    </button>
     <TABLE  class="table table-hover table-bordered" id="matrizSeguimiento">
         <THEAD>
             
-        </THEAD>
+       </THEAD>
         <TBODY>
             {% for cat in categorias%}
                 <TR style="background-color: #C9E0D3">
-                    <TH >{% for des in cat.descripcion %}{{des}}<BR/><BR/>{% endfor %}</TH>
-                    <TH ></TH>
+                    <TH colspan="2" >{% for des in cat.descripcion %}{{des}}<BR/><BR/>{% endfor %}</TH>
                     {% for anio, anios in parms %}
                         {% for mes in anios %}
                             <TH>{{ mes ~ '/' ~ anio}}</TH>
@@ -68,10 +60,8 @@
                 </TR>
                 {% for variable in cat.datos %}
                     <TR>                    
-                        <TD rowspan="4" class="nombre_variable">{{datosFrm[variable].descripcion}}</TD>
-                    </TR>
-                    <TR>
-                        <Th>Real</Th>
+                        <TD rowspan="3" class="nombre_variable">{{datosFrm[variable].descripcion}}</TD>
+                        <Th >Real</Th>
                         {% for anio, anios in parms %}
                             {% for mes in anios %}
                                 <TD class="valores">
@@ -103,10 +93,10 @@
                                         and datosFrm[variable]['datos']['estatus'][mes ~ '/' ~ anio] != null
                                     %}
                                     {% set v = datosFrm[variable]['datos']['estatus'][mes ~ '/' ~ anio] %}
-                                    <TD class="valores {% if v >= 0 and v<75 %}rojo{% elseif v < 85 %} amarillo {%else%} verde{% endif %}">
+                                    <TD class="valores" bgcolor="{% if v >= 0 and v<75 %}#FE4D4D{% elseif v < 85 %} #FFFF00 {%else%} #79CE79{% endif %}">
                                     {{datosFrm[variable]['datos']['estatus'][mes ~ '/' ~ anio]}}%
                                 {% else %}
-                                    <TD class="vacio">
+                                    <TD bgcolor="#E6E6E6">
                                 {% endif %}
                                 </TD>
                             {% endfor %}
