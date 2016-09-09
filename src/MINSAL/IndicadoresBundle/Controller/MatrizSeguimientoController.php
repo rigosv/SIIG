@@ -122,12 +122,12 @@ class MatrizSeguimientoController extends Controller {
         
         // ********* OBTENCIÓN DE DATOS DESDE INDICADORES
         //Información de los datos del NUMERADOR, obtenidos de orígenes de datos del etab
-        $idOrigenesIndR = array(array('id'=>140, 'descripcion'=>'% de cobertura de vacunación con SPR', 
+        /*$idOrigenesIndR = array(array('id'=>140, 'descripcion'=>'% de cobertura de vacunación con SPR', 
                                     'codigo'=>'vacunacion_spr', 'acumular'=>false, 'denominador'=>'NINIOS_12M_23M_SM2015')
                             );
         foreach ($idOrigenesIndR as $varR){
             $anios_[] = $this->getFromIndicador($varR, 'real');
-        }
+        }*/
         
         
         // ********* OBTENCIÓN DE DATOS FIJOS
