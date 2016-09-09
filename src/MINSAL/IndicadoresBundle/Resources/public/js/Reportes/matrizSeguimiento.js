@@ -1,6 +1,4 @@
 $(document).ready(function() {
-    //$('#form_desde').MonthPicker({ShowIcon: false });
-    //$('#form_hasta').MonthPicker({ShowIcon: false, MaxMonth: 0 });
     var i18nes = {
             year: 'Año',
             prevYear: 'Año previo',
@@ -12,8 +10,8 @@ $(document).ready(function() {
             buttonText: 'Open Month Chooser',
             jumpYears: 'Cambiar año',
             backTo: 'Regresar a',
-            months: ['Ene.', 'Feb.', 'Mar.', 'Apr.', 'May', 'Jun', 'Jul', 'Ago.', 'Sep.', 'Oct.', 'Nov.', 'Dec.']
-        }
+            months: ['Ene.', 'Feb.', 'Mar.', 'Apr.', 'May', 'Jun', 'Jul', 'Ago.', 'Sep.', 'Oct.', 'Nov.', 'Dic.']
+        };
     
     $('#inicio-div').MonthPicker({
         AltField: '#form_desde',

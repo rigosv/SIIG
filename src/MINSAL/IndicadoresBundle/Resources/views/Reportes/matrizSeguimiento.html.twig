@@ -1,29 +1,65 @@
 {% extends 'IndicadoresBundle::standard_layout.html.twig' %}
-{% block content %}
-<style>
-    td{
-        min-width: 30px;
-        min-height: 90px;
-    }
-    td.valores{
-        text-align: right;
-    }
-    td.nombre_variable{
-        vertical-align: middle !important;
-    }
-    table{
-        background-color: white;
-    }
-</style>
+{% block javascripts %}
+    {{parent()}}
+    <script type="text/javascript" src="{{ app.request.schemeAndHttpHost ~ asset('bundles/indicadores/vendor/tableExport/jquery.base64.js') }}"></script>
+    <script type="text/javascript" src="{{ app.request.schemeAndHttpHost ~ asset('bundles/indicadores/vendor/tableExport/tableExport.js') }}"></script>
+    <script type="text/javascript">
+        $( document ).ready(function() {
+            $('#exportar').click(function (e){
+                //$('#matrizSeguimiento').tableExport({type:'xml',escape:'false'});                
+            });
+        });
+    </script>
+{% endblock javascripts %}
 
-    <TABLE  class="table table-hover table-bordered">
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        td{
+            min-width: 30px;
+            min-height: 90px;
+        }
+        td.valores{
+            text-align: right;
+        }
+        td.nombre_variable{
+            vertical-align: middle !important;
+        }
+        table{
+            background-color: white;
+            border-color: black !important;
+        }
+        .sonata-ba-content{
+            overflow: auto;
+        }
+        .vacio {
+            background-color: #E6E6E6;
+        }
+        .rojo {
+            background-color: #FE4D4D;
+        }
+        .amarillo{
+            background-color: yellow;
+        }
+        
+        .verde{
+            background-color: #79CE79;
+        }
+    </style>
+
+{% endblock stylesheets %}
+    
+{% block content %}
+    
+    <TABLE  class="table table-hover table-bordered" id="matrizSeguimiento">
         <THEAD>
             
         </THEAD>
         <TBODY>
             {% for cat in categorias%}
                 <TR style="background-color: #C9E0D3">
-                    <TH COLSPAN=2 >{% for des in cat.descripcion %}{{des}}<BR/><BR/>{% endfor %}</TH>
+                    <TH >{% for des in cat.descripcion %}{{des}}<BR/><BR/>{% endfor %}</TH>
+                    <TH ></TH>
                     {% for anio, anios in parms %}
                         {% for mes in anios %}
                             <TH>{{ mes ~ '/' ~ anio}}</TH>
@@ -62,10 +98,16 @@
                         <TH>Estatus</TH>
                         {% for anio, anios in parms %}
                             {% for mes in anios %}
-                                <TD class="valores">
-                                    {% if datosFrm[variable]['datos']['estatus'][mes ~ '/' ~ anio] is defined and datosFrm[variable]['datos']['estatus'][mes ~ '/' ~ anio] != null %}
-                                        {{datosFrm[variable]['datos']['estatus'][mes ~ '/' ~ anio] }}%
-                                    {% endif %}
+                                
+                                {% if datosFrm[variable]['datos']['estatus'][mes ~ '/' ~ anio] is defined 
+                                        and datosFrm[variable]['datos']['estatus'][mes ~ '/' ~ anio] != null
+                                    %}
+                                    {% set v = datosFrm[variable]['datos']['estatus'][mes ~ '/' ~ anio] %}
+                                    <TD class="valores {% if v >= 0 and v<75 %}rojo{% elseif v < 85 %} amarillo {%else%} verde{% endif %}">
+                                    {{datosFrm[variable]['datos']['estatus'][mes ~ '/' ~ anio]}}%
+                                {% else %}
+                                    <TD class="vacio">
+                                {% endif %}
                                 </TD>
                             {% endfor %}
                         {% endfor %}
