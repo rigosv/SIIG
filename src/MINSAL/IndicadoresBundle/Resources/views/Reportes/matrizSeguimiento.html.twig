@@ -50,11 +50,11 @@
        </THEAD>
         <TBODY>
             {% for cat in categorias%}
-                <TR bgcolor="#C9E0D3">
-                    <TH colspan="2" >{% for des in cat.descripcion %}{{des}}<BR/><BR/>{% endfor %}</TH>
+                <TR >
+                    <TH bgcolor="#C9E0D3" colspan="2" >{% for des in cat.descripcion %}{{des}}<BR/><BR/>{% endfor %}</TH>
                     {% for anio, anios in parms %}
                         {% for mes in anios %}
-                            <TH>{{ mes ~ '/' ~ anio}}</TH>
+                            <TH bgcolor="#C9E0D3">{{ mes ~ '/' ~ anio}}</TH>
                         {% endfor %}
                     {% endfor %}
                 </TR>
