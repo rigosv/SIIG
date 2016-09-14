@@ -122,12 +122,12 @@ class MatrizSeguimientoController extends Controller {
         
         // ********* OBTENCIÓN DE DATOS DESDE INDICADORES
         //Información de los datos del NUMERADOR, obtenidos de orígenes de datos del etab
-        /*$idOrigenesIndR = array(array('id'=>140, 'descripcion'=>'% de cobertura de vacunación con SPR', 
+        $idOrigenesIndR = array(array('id'=>140, 'descripcion'=>'% de cobertura de vacunación con SPR', 
                                     'codigo'=>'vacunacion_spr', 'acumular'=>false, 'denominador'=>'NINIOS_12M_23M_SM2015')
                             );
         foreach ($idOrigenesIndR as $varR){
             $anios_[] = $this->getFromIndicador($varR, 'real');
-        }*/
+        }
         
         
         // ********* OBTENCIÓN DE DATOS FIJOS
@@ -403,9 +403,14 @@ class MatrizSeguimientoController extends Controller {
             $sql = "SELECT anio, mes, (SELECT SUM(calculo) FROM ($sql) AS BB WHERE BB.id_mes <= AC.id_mes and BB.anio = AC.anio) AS calculo
                         FROM ($sql) AS AC ";
         }
-        $datos = $em->getConnection()->executeQuery($sql)->fetchAll();
+        try {
+            $datos = $em->getConnection()->executeQuery($sql)->fetchAll();
 
-        return $this->formatearDatos($datos, $var);
+            return $this->formatearDatos($datos, $var);
+        } catch (\Exception $e){
+            echo '<h3>Error al cargar '. $var['descripcion']. ' ' . $tipo . '</H3>';
+            return array();
+        }
     }
     private function formatearDatos($datos, $var) {
         $resp = array();
