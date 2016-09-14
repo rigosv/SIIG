@@ -103,7 +103,7 @@ class MatrizSeguimientoController extends Controller {
                             array('id'=>195, 'descripcion'=>'% de niños con diarrea en UCSF y UROC tratados con SRO y Zinc', 
                                     'codigo'=>'ninos_diarrea_sro_zinc', 'acumular'=>true),
                             array('id'=>385, 'descripcion'=>'Número de usuarias activas captadas para métodos de PF (anual)', 
-                                    'codigo'=>'usu_act_captadas_pf', 'acumular'=>true)
+                                    'codigo'=>'usu_act_captadas_pf', 'acumular'=>false)
                             );
         foreach ($idOrigenesR as $varR){
             $anios_[] = $this->getDatosFormateados($varR, 'real');
