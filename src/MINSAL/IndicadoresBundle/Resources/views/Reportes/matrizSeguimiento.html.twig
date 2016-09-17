@@ -94,7 +94,7 @@
                                     %}
                                     {% set v = datosFrm[variable]['datos']['estatus'][mes ~ '/' ~ anio] %}
                                     <TD class="valores" bgcolor="{% if v >= 0 and v<75 %}#FE4D4D{% elseif v < 85 %} #FFFF00 {%else%} #79CE79{% endif %}">
-                                    {{datosFrm[variable]['datos']['estatus'][mes ~ '/' ~ anio]}}%
+                                    {# {{datosFrm[variable]['datos']['estatus'][mes ~ '/' ~ anio]}}% #}
                                 {% else %}
                                     <TD bgcolor="#E6E6E6">
                                 {% endif %}
