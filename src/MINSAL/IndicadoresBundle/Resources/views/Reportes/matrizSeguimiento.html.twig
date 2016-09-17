@@ -57,6 +57,7 @@
                             <TH bgcolor="#C9E0D3">{{ mes ~ '/' ~ anio}}</TH>
                         {% endfor %}
                     {% endfor %}
+                    <TH bgcolor="#C9E0D3" >Observaciones</TH>
                 </TR>
                 {% for variable in cat.datos %}
                     <TR>                    
@@ -71,6 +72,7 @@
                                 </TD>
                             {% endfor %}
                         {% endfor %}
+                        <TD rowspan="3" >{{datosFrm[variable].observaciones}}</TD>
                     </TR>
                     <TR>
                         <TH>Planificado</TH>
@@ -93,8 +95,8 @@
                                         and datosFrm[variable]['datos']['estatus'][mes ~ '/' ~ anio] != null
                                     %}
                                     {% set v = datosFrm[variable]['datos']['estatus'][mes ~ '/' ~ anio] %}
-                                    <TD class="valores" bgcolor="{% if v >= 0 and v<75 %}#FE4D4D{% elseif v < 85 %} #FFFF00 {%else%} #79CE79{% endif %}">
-                                    {# {{datosFrm[variable]['datos']['estatus'][mes ~ '/' ~ anio]}}% #}
+                                    <TD class="valores" bgcolor="{% if v >= 0 and v < 75 %}#FE4D4D{% elseif v < 85 %} #FFFF00 {% else %} #79CE79{% endif %}">
+                                    {# {{datosFrm[variable]['datos']['estatus'][mes ~ '/' ~ anio]|number_format}}% #}
                                 {% else %}
                                     <TD bgcolor="#E6E6E6">
                                 {% endif %}

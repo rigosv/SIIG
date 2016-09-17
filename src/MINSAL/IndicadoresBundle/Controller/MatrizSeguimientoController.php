@@ -102,8 +102,10 @@ class MatrizSeguimientoController extends Controller {
                                     'codigo'=>'ninos_diarrea_sro_zinc', 'acumular'=>true),
                             array('id'=>195, 'descripcion'=>'% de niños con diarrea en UCSF y UROC tratados con SRO y Zinc', 
                                     'codigo'=>'ninos_diarrea_sro_zinc', 'acumular'=>true),
-                            array('id'=>385, 'descripcion'=>'Número de usuarias activas captadas para métodos de PF (anual)', 
-                                    'codigo'=>'usu_act_captadas_pf', 'acumular'=>false)
+                            array('id'=>188, 'descripcion'=>'Número de usuarias activas captadas para métodos de PF (anual)', 
+                                    'codigo'=>'usu_act_captadas_pf', 'acumular'=>false),
+                            array('id'=>196, 'descripcion'=>'% de cobertura de vacunación con SPR', 
+                                    'codigo'=>'vacunacion_spr', 'acumular'=>true)
                             );
         foreach ($idOrigenesR as $varR){
             $anios_[] = $this->getDatosFormateados($varR, 'real');
@@ -122,12 +124,12 @@ class MatrizSeguimientoController extends Controller {
         
         // ********* OBTENCIÓN DE DATOS DESDE INDICADORES
         //Información de los datos del NUMERADOR, obtenidos de orígenes de datos del etab
-        $idOrigenesIndR = array(array('id'=>140, 'descripcion'=>'% de cobertura de vacunación con SPR', 
+        /*$idOrigenesIndR = array(array('id'=>140, 'descripcion'=>'% de cobertura de vacunación con SPR', 
                                     'codigo'=>'vacunacion_spr', 'acumular'=>false, 'denominador'=>'NINIOS_12M_23M_SM2015')
                             );
         foreach ($idOrigenesIndR as $varR){
             $anios_[] = $this->getFromIndicador($varR, 'real');
-        }
+        }*/
         
         
         // ********* OBTENCIÓN DE DATOS FIJOS
@@ -190,7 +192,7 @@ class MatrizSeguimientoController extends Controller {
             $anios_[] = $this->formatearDatos($var['datos'], $var); 
         }
         
-        // **************** OBTENCION DE DATOS FIJOS DENOMINADOR
+        // **************** OBTENCION DE DATOS ANUALES DENOMINADOR
         $sql = " SELECT anio, codigo_var, SUM(coalesce(nullif(valor, ''),'0')::integer) as valor
                     FROM (SELECT datos->'anio' AS anio, datos->'codigo_variable' AS codigo_var, datos->'cant_anual_01' AS valor
                         FROM almacen_datos.repositorio
@@ -200,12 +202,16 @@ class MatrizSeguimientoController extends Controller {
                     ORDER BY anio::integer
                         ";
         $datos = $em->getConnection()->executeQuery($sql)->fetchAll();
+        $datos_anuales = array();
         foreach ($datos as $d ){
             $datos_anuales[$d['anio']][$d['codigo_var']] = $d['valor']; 
         }
         
+        $ninios_12_23_meses = array();
+        $ninos_6_23_meses_programados_entrega_mnp = array();
         foreach ($datos_anuales as $k=> $da){
             $ninos_6_23_meses_programados_entrega_mnp[$k] = round(((($da['ninios_0_11_meses'] /2 ) + $da['ninios_12_23_meses'] ) * 2 ) / 12,0);
+            $ninios_12_23_meses[$k] = $da['ninios_12_23_meses'];
         }
         
         $datosOrigen = array();
@@ -213,10 +219,11 @@ class MatrizSeguimientoController extends Controller {
         foreach ($ninos_6_23_meses_programados_entrega_mnp as $k=>$d){
             $i = 1;
             foreach ($meses as $m){
-                $datosOrigen[] = array('anio'=>$k, 'mes'=>'cant_mensual_calidad_'.$m.'_p', 'calculo'=>$ninos_6_23_meses_programados_entrega_mnp[$k]*$i++); 
+                $datosOrigen[] = array('anio'=>$k, 'mes'=>'cant_mensual_calidad_'.$m.'_p', 'calculo'=>$ninos_6_23_meses_programados_entrega_mnp[$k]*$i++);
+                $datos_ninios_12_23_meses[] = array('anio'=>$k, 'mes'=>'cant_mensual_calidad_'.$m.'_p', 'calculo'=>$ninios_12_23_meses[$k]);
             }
         }
-        
+
         $idOrigenesFijosR = array(
                                 array('descripcion'=>'7598 niños de 6 a 23 meses cuyas madres reciben 60 sobres de MNP', 
                                         'codigo'=>'madres_rec_60_sobres_MNP',
@@ -225,6 +232,10 @@ class MatrizSeguimientoController extends Controller {
                                 array('descripcion'=>'18376 niños de 12 a 59 meses reciben tratamiento dos dosis de tratamiento antiparasitarios al año', 
                                     'codigo'=>'ninos_2_dosis_antipari_anual',
                                     'datos'=>$datosOrigen
+                                    ),
+                                array('descripcion'=>'ninios_12_23_meses', 
+                                    'codigo'=>'ninios_12_23_meses',
+                                    'datos'=>$datos_ninios_12_23_meses
                                     )
                             );
         
@@ -242,12 +253,17 @@ class MatrizSeguimientoController extends Controller {
         
         
         $datos_ = array();
+        $datosFrmFormat = array();
         foreach ($datosFrm as $f){
-            $datosFrmFormat[$f['codigo_variable']]['descripcion'] = $f['descripcion_variable'];
+            $datosFrmFormat[$f['codigo_variable']]['descripcion'] = $f['descripcion_variable'];            
             //$datosFrmFormat[$f['codigo_variable']]['categoria'] = $f['descripcion_categoria_variable'];
             
             if (array_key_exists($f['anio'], $params)){
-                
+                if (array_key_exists('observaciones', $f)){
+                    $datosFrmFormat[$f['codigo_variable']]['observaciones'] = ($f['observaciones'] != '') ?  $f['anio'].': '. $f['observaciones']. '. ' : '';
+                } else {
+                    $datosFrmFormat[$f['codigo_variable']]['observaciones'] = '';
+                }
                 foreach ($f as $k => $sf){
                     $mesVarR = str_replace('cant_mensual_calidad_', '', $k);                    
                     if (in_array($mesVarR, $params[$f['anio']])){
@@ -269,11 +285,21 @@ class MatrizSeguimientoController extends Controller {
                         $datos_[$f['codigo_variable']]['estatus'][$k] = ($v > 0) ? 
                         array_key_exists('real', $datos_[$f['codigo_variable']]) ?
                                 array_key_exists($k, $datos_[$f['codigo_variable']]['real']) ? 
-                                number_format(($datos_[$f['codigo_variable']]['real'][$k] / $v) * 100,0): null: null : 
+                                ($datos_[$f['codigo_variable']]['real'][$k] / $v) * 100: null: null : 
                                 null; 
                     }
                 }
                 $datosFrmFormat[$f['codigo_variable']]['datos']= $datos_[$f['codigo_variable']];
+            }
+        }
+        
+        //Combinar datos
+        
+        foreach ($datosFrmFormat['vacunacion_spr']['datos']['real'] as $k=>$f){
+            if (array_key_exists($k, $datosFrmFormat['ninios_12_23_meses']['datos']['planificado'])){
+                $datosFrmFormat['vacunacion_spr']['datos']['real'][$k] = number_format($f / $datosFrmFormat['ninios_12_23_meses']['datos']['planificado'][$k] * 100);
+            } else {
+                $datosFrmFormat['vacunacion_spr']['datos']['real'][$k] = 0;
             }
         }
         
