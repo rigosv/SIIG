@@ -15,7 +15,7 @@ class FormularioAdminController extends FormularioAdminControllerBase
     
     public function rrhhDistribucionHoraAction(Request $request)
     {        
-        return $this->mostrarPlantilla($request, 'GridFormBundle:Formulario:rrhhDistribucionHora', 'nit', '_rrhhDistribucionHora_', false, 'GridFormBundle:Formulario:parametros.html.twig');
+        return $this->mostrarPlantilla($request, 'rrhhDistribucionHora', 'nit', '_rrhhDistribucionHora_', false, 'GridFormBundle:Formulario:parametros.html.twig');
     }
     
     public function rrhhCostosAction(Request $request) {
