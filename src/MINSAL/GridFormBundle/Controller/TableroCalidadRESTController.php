@@ -160,7 +160,7 @@ class TableroCalidadRESTController extends Controller {
                                                         $em->getRepository("GridFormBundle:Indicador")->getResumenEvaluacionIndicadores($establecimiento, $periodo, $formulario)
                                                         : array();
         $data = $datos_resumen['datos'];
-
+        $data_ = array();
         foreach ($data as $d) {            
             $data_[] = array('descripcion' => $d['descripcion'], 
                 'forma_evaluacion' => $d['forma_evaluacion'],
