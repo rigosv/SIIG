@@ -102,7 +102,7 @@ class MatrizSeguimientoController extends Controller {
                                     'codigo'=>'ninos_diarrea_sro_zinc', 'acumular'=>true),
                             array('id'=>195, 'descripcion'=>'% de niños con diarrea en UCSF y UROC tratados con SRO y Zinc', 
                                     'codigo'=>'ninos_diarrea_sro_zinc', 'acumular'=>true),
-                            array('id'=>188, 'descripcion'=>'Número de usuarias activas captadas para métodos de PF (anual)', 
+                            array('id'=>385, 'descripcion'=>'Número de usuarias activas captadas para métodos de PF (anual)', 
                                     'codigo'=>'usu_act_captadas_pf', 'acumular'=>false),
                             array('id'=>196, 'descripcion'=>'% de cobertura de vacunación con SPR', 
                                     'codigo'=>'vacunacion_spr', 'acumular'=>true)
