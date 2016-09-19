@@ -739,7 +739,7 @@ class FormularioRepository extends EntityRepository {
                                 AND ROUND((SUM(cumplimiento)::numeric / ( SUM(cumplimiento)::numeric + SUM(no_cumplimiento)::numeric ) * 100),0) <= limite_superior
                     ) as color
                 FROM (
-                    SELECT $opc[campo], COALESCE(NULLIF(posicion, ''), '0')::numeric, id_formulario,
+                    SELECT $opc[campo], COALESCE(NULLIF(posicion, ''), '0')::numeric AS posicion, id_formulario,
                         CASE WHEN dato = 'true' OR dato = '1' THEN 1 ELSE 0 END AS cumplimiento, 
                         CASE WHEN tipo_control = 'checkbox' AND dato != 'true' and dato != '1' THEN 1 
                             WHEN tipo_control = 'checkbox_3_states' AND dato = 'false' or dato = '0' THEN 1
