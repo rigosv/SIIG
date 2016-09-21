@@ -36,7 +36,8 @@
                 $scope.barValue = d;
                 $scope.$apply();
             };
-            $scope.nivel = 'hosp';            
+            $scope.nivel = 'hosp';
+            $scope.deptoSeleccionado = 'todos';
             $scope.periodoSeleccionado = '';
             $scope.mostrarListadoEstablecimientos = true;
             $scope.fila = 1;
@@ -124,6 +125,11 @@
                 $scope.nivel = $(this).val();                
                 $scope.getEstablecimientos();
             });
+            
+            $( "#departamento" ).change(function() {                
+                $scope.deptoSeleccionado = $(this).val();                
+                $scope.getEstablecimientos();
+            });
 
             
             $scope.getEstablecimientos = function() {
@@ -131,10 +137,10 @@
                 if ($scope.periodoSeleccionado == ''){
                     $('#s2id_periodo').notify('Seleccione un periodo', {className: "error" });
                     return;
-                }
+                }                
                 $scope.mes_ = ($scope.periodoSeleccionado.mes < 10) ? '0' + $scope.periodoSeleccionado.mes : $scope.periodoSeleccionado.mes ;
                 
-                Establecimientos.query({ periodo: $scope.periodoSeleccionado.periodo, nivel: $scope.nivel })
+                Establecimientos.query({ periodo: $scope.periodoSeleccionado.periodo, nivel: $scope.nivel, departamento: $scope.deptoSeleccionado })
                     .$promise.then(
                         function (data) {                            
                             $scope.establecimientos = (data != '') ? data : [];

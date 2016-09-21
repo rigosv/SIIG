@@ -25,14 +25,14 @@
                     <!-- Default panel contents -->
                     <div class="panel-heading">
                         <div class="form_row row">
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <strong>{{'_periodo_evaluacion_'|trans}}</strong>
                                 <select class="form-control" id ='periodo'
                                         data-ng-options="periodo as periodo.etiqueta for periodo in periodos track by periodo.periodo"
                                         ng-model="periodoSeleccionado" ng-change="getEstablecimientos(periodoSeleccionado)" required >
                                 </select>                                
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <div class="btn-group" data-toggle="buttons">
                                     <label class="btn btn-default active">
                                         <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
@@ -50,8 +50,14 @@
                                                autocomplete="off"> Todos
                                     </label>
                                 </div>
+                                <SELECT class="form-control" id ='departamento' ng-model="deptoSeleccionado">
+                                    <OPTION VALUE="todos">Todos</OPTION>
+                                    {% for depto in departamentos %}
+                                        <OPTION VALUE="{{depto.id}}">{{depto.descripcion}}</OPTION>
+                                    {% endfor %}
+                                </SELECT>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <div class="input-group">
                                     <div class="input-group-addon"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></div>
                                     <input type="text" class="form-control" size="10" ng-model="buscar" >

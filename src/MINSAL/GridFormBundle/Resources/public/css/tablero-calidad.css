@@ -29,7 +29,7 @@ DIV.row_tablero {
     height: 350px !important;
 }
 .listado .panel-body:not(.panel-body-2_1){
-    max-height: 273px !important;
+    max-height: 255px !important;
     overflow-y: auto;
 }
 .panel-body-2_1{

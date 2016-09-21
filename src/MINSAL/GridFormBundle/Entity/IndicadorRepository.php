@@ -801,7 +801,7 @@ class IndicadorRepository extends EntityRepository {
         return $em->getConnection()->executeQuery($sql)->fetchAll();
     }
     
-    public function getEvaluacionEstablecimiento($periodo, $nivel) {
+    public function getEvaluacionEstablecimiento($periodo, $nivel, $departamento = 'todos') {
         $em = $this->getEntityManager();
         list($anio, $mes) = explode('_', $periodo);
         
@@ -809,6 +809,12 @@ class IndicadorRepository extends EntityRepository {
         $sqlEvalEstablecimiento = $this->getSQLEvaluacionEstablecimiento($sqlEvalEstandar);
         $niveles = $this->getNivelesEstablecimiento($nivel);
         
+        $whereDepto = '';
+        $joinDepto = '';
+        if ($departamento != 'todos'){
+            $joinDepto =  " INNER JOIN ctl_municipios D ON (C.idmunicipio = D.id) "; 
+            $whereDepto = " AND D.id_departamento = $departamento ";
+        }
         
         $sql_lc = "SELECT A.establecimiento, nombre_corto, nombre_establecimiento, ROUND(B.calificacion::numeric,2) as calificacion
                     INTO  TEMP esta_lc_tmp
@@ -817,8 +823,10 @@ class IndicadorRepository extends EntityRepository {
                                                                 AND B.anio = A.anio
                                                                 AND B.mes = A.mes)
                     INNER JOIN ctl_establecimiento_simmow C ON (A.establecimiento = C.id::varchar)
+                    $joinDepto
                     WHERE A.anio=$anio AND A.mes = '$mes'
                         AND C.id_tipo_establecimiento IN $niveles
+                        $whereDepto
                      ";
 
         $em->getConnection()->executeQuery($sql_lc);
@@ -829,8 +837,10 @@ class IndicadorRepository extends EntityRepository {
                     FROM datos_evaluacion_calidad_num A
                     INNER JOIN costos.estructura B ON (A.establecimiento = B.codigo)
                     INNER JOIN ctl_establecimiento_simmow C ON (A.establecimiento::integer = C.id)
+                    $joinDepto
                     WHERE anio=$anio AND mes = '$mes'
                         AND C.id_tipo_establecimiento IN $niveles
+                            $whereDepto
                         AND A.establecimiento 
                             NOT IN
                         (SELECT establecimiento FROM esta_lc_tmp) 
