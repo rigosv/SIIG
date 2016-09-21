@@ -30,6 +30,7 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['serviciosGeneral',
         .controller('mainCtrl', function AppCtrl($scope, Indicadores, Periodos, DetalleIndicador, EvaluacionesComplementarias) {
             $scope.options = {width: 300, height: 250, 'bar': 'aaa'};
             $scope.data = [0];
+            $scope.deptoSeleccionado = 'todos';
             $scope.hovered = function (d) {
                 $scope.barValue = d;
                 $scope.$apply();
@@ -69,16 +70,9 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['serviciosGeneral',
                     }
                 );
             $scope.cambiar_periodo = function(){
-                $scope.subtitulo2 = 'Tablero General :: Periodo ' + $scope.periodoSeleccionado.etiqueta;
-                //Verificar que ha cargado el nivel
-                if ($scope.filtroIndicador == '') {
-                    $('#modalConfiguracion').modal('toggle');
-                    $('#filtroIndicadorGrp').notify('Seleccione el nivel', {className: "error" });
-                } else {
-                    $scope.procesar($scope.filtroIndicador);
-                }                
+                $scope.procesar();
             };
-            
+                        
             $scope.formatTime = function(x) {
                 var hh = ~~(parseFloat(x) / 60); 
                 var mm = parseInt(parseFloat(x) % 60);
@@ -86,12 +80,17 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['serviciosGeneral',
                 return hh + ':' +  ('0'+mm).slice(-2);
             };
             
-            $scope.procesar = function (nivel) {
+            $scope.procesar = function () {
                 $scope.indicadores = [];
                 $scope.indicadores2 = [];
                 $scope.evaluaciones_complementarias = [];
+                var nivel = $scope.filtroIndicador;
+                if (nivel === '') {
+                    $('#filtroIndicadorGrp').notify('Seleccione el nivel', {className: "error" });
+                    return;
+                }
                 $scope.mostrarInfoIndicador = false;
-                Indicadores.query({ periodo: $scope.periodoSeleccionado.periodo, tipo:1, nivel:nivel })
+                Indicadores.query({ periodo: $scope.periodoSeleccionado.periodo, tipo:1, nivel:nivel, departamento: $scope.deptoSeleccionado })
                     .$promise.then(
                             function (data) {
                                 $scope.indicadores = (data != '') ? data[0].datos : [];
@@ -115,7 +114,7 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['serviciosGeneral',
                             }
                     );
             
-                 Indicadores.query({ periodo: $scope.periodoSeleccionado.periodo, tipo:2, nivel:nivel })
+                 Indicadores.query({ periodo: $scope.periodoSeleccionado.periodo, tipo:2, nivel:nivel, departamento: $scope.deptoSeleccionado })
                     .$promise.then(
                             function (data) {
                                 $scope.indicadores2 = (data != '') ? data : [];
@@ -124,7 +123,7 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['serviciosGeneral',
                                 alert(error);
                             }
                     );
-                EvaluacionesComplementarias.query({ nivel:nivel })
+                EvaluacionesComplementarias.query({ nivel:nivel, departamento: $scope.deptoSeleccionado })
                 .$promise.then(
                         function (data) {
                             $scope.evaluaciones_complementarias = (data != '') ? data[0] : [];
@@ -151,7 +150,7 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['serviciosGeneral',
             $scope.detalleArea = function(indicador){
                 $scope.detalleIndicador = indicador;
 
-                DetalleIndicador.query({ periodo: $scope.periodoSeleccionado.periodo, id: indicador.id, nivel: $scope.filtroIndicador })
+                DetalleIndicador.query({ periodo: $scope.periodoSeleccionado.periodo, id: indicador.id, nivel: $scope.filtroIndicador, departamento: $scope.deptoSeleccionado })
                     .$promise.then(
                             function (data) {
                                 $scope.detalle = (data != '') ? data[0] : [];

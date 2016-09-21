@@ -56,18 +56,18 @@ class TableroCalidadRESTController extends Controller {
     
     /**
      * Obtener los datos del formulario
-     * @Get("/rest-service/tablero-calidad/evaluaciones_comple/{nivel}", options={"expose"=true})
+     * @Get("/rest-service/tablero-calidad/evaluaciones_comple/{nivel}/{departamento}", options={"expose"=true})
      * @Rest\View
      */
-    public function getEvaluacionesComplementariasAction($nivel) {
+    public function getEvaluacionesComplementariasAction($nivel, $departamento) {
         $response = new Response();
 
         $resp = array();
 
         $em = $this->getDoctrine()->getManager();
         
-        $data[0]['nacional'] = $em->getRepository('GridFormBundle:Indicador')->getEvaluacionesComplementariasNacional($nivel);
-        $data[0]['establecimiento'] = $em->getRepository('GridFormBundle:Indicador')->getEvaluacionesComplementarias(null, true, $nivel);
+        $data[0]['nacional'] = $em->getRepository('GridFormBundle:Indicador')->getEvaluacionesComplementariasNacional($nivel, $departamento);
+        $data[0]['establecimiento'] = $em->getRepository('GridFormBundle:Indicador')->getEvaluacionesComplementarias(null, true, $nivel, $departamento);
         
         $response->setContent(json_encode($data));
         
@@ -221,16 +221,16 @@ class TableroCalidadRESTController extends Controller {
     
     /**
      * Obtener los datos del formulario
-     * @Get("/rest-service/calidad/indicadores/{periodo}/{tipo}/{nivel}", options={"expose"=true})
+     * @Get("/rest-service/calidad/indicadores/{periodo}/{tipo}/{nivel}/{departamento}", options={"expose"=true})
      * @Rest\View
      */
-    public function getIndicadoresCalidadEvaluadosAction($periodo, $tipo, $nivel) {
+    public function getIndicadoresCalidadEvaluadosAction($periodo, $tipo, $nivel, $departamento = 'todos') {
         
         $response = new Response();
         $em = $this->getDoctrine()->getManager();
 
         if ($tipo == 2){
-            $data = $em->getRepository('GridFormBundle:Indicador')->getIndicadoresEvaluadosNumericos($periodo, $nivel);
+            $data = $em->getRepository('GridFormBundle:Indicador')->getIndicadoresEvaluadosNumericos($periodo, $nivel, $departamento);
             $aux = array();
             foreach ($data as $k=>$d){
                 $aux = json_decode(str_replace(array('\\', '"{', '}"', '{{', '}}'), array('', '{', '}', '[{', '}]'), $d['historial']), true);
@@ -245,7 +245,7 @@ class TableroCalidadRESTController extends Controller {
             }
         }
         else {
-            $data = $em->getRepository('GridFormBundle:Indicador')->getIndicadoresEvaluadosListaChequeo($periodo, $nivel);
+            $data = $em->getRepository('GridFormBundle:Indicador')->getIndicadoresEvaluadosListaChequeo($periodo, $nivel, $departamento);
         }
         $resp = (count($data) == 0)? array(): $data;
         
@@ -255,17 +255,16 @@ class TableroCalidadRESTController extends Controller {
     
     /**
      * Obtener los datos del formulario
-     * @Get("/rest-service/calidad/indicador/{periodo}/{id}/{nivel}", options={"expose"=true})
+     * @Get("/rest-service/calidad/indicador/{periodo}/{id}/{nivel}/{departamento}", options={"expose"=true})
      * @Rest\View
      */
-    public function getDetalleIndicadorCalidadAction($periodo, $id, $nivel) {
+    public function getDetalleIndicadorCalidadAction($periodo, $id, $nivel, $departamento) {
         
         $response = new Response();
         $em = $this->getDoctrine()->getManager();
 
         
-        $data[] = $em->getRepository('GridFormBundle:Indicador')->getDetalleIndicador($periodo, $id, $nivel);        
-        //$data[] = $em->getRepository('GridFormBundle:Indicador')->getDetalleIndicador($periodo, $id);
+        $data[] = $em->getRepository('GridFormBundle:Indicador')->getDetalleIndicador($periodo, $id, $nivel, $departamento);
         
         $resp = (count($data) == 0)? array(): $data;
         

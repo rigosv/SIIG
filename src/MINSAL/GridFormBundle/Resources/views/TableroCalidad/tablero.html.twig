@@ -50,7 +50,7 @@
                                                autocomplete="off"> Todos
                                     </label>
                                 </div>
-                                <SELECT class="form-control" id ='departamento' ng-model="deptoSeleccionado">
+                                <SELECT class="form-control" id ='departamento' ng-model="deptoSeleccionado" ng-change="getEstablecimientos()">
                                     <OPTION VALUE="todos">Todos</OPTION>
                                     {% for depto in departamentos %}
                                         <OPTION VALUE="{{depto.id}}">{{depto.descripcion}}</OPTION>

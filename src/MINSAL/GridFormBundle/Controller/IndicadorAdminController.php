@@ -18,6 +18,9 @@ class IndicadorAdminController extends Controller
     
     public function tableroGeneralCalidadAction(Request $request)
     {                
-        return $this->render('GridFormBundle:TableroCalidad:tablero-general.html.twig', array());
+        $em = $this->getDoctrine()->getManager();
+        $deptosC = $em->getConnection()->query("SELECT id, descripcion FROM ctl_departamentos WHERE id <= 14")->fetchAll();
+        
+        return $this->render('GridFormBundle:TableroCalidad:tablero-general.html.twig', array('departamentos'=>$deptosC));
     }
 }

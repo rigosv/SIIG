@@ -51,7 +51,7 @@ DIV.row_tablero {
     height: 350px !important;
 }
 .listado .panel-body{
-    max-height: 290px !important;
+    max-height: 280px !important;
     overflow-y: auto;
 }
 .menu label{
@@ -135,4 +135,11 @@ label.active span.glyphicon-ok{
 }
 label.btn span.glyphicon-ok{
     display: none;
+}
+.scheduler-border{
+    font-size: 11pt;
+}
+.btn-group{
+    padding-left: 16px;
+    padding-bottom: 10px;
 }

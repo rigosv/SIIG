@@ -28,23 +28,43 @@
 {% block content %}
     <div class="btn-toolbar menu" role="toolbar" aria-label="...">
         <div class="btn-group">
-            <label class="btn btn-success" title='Configuración' data-toggle="modal" data-target="#modalConfiguracion">
-                <span class="glyphicon glyphicon-cog" aria-hidden="true" title="Configuración"></span>
-            </label>
+            <fieldset class="scheduler-border">
+                <legend class="scheduler-border">{{'_periodo_evaluacion_'|trans}}</legend>
+                    <select class="form-control"
+                            data-ng-options="periodo as periodo.etiqueta for periodo in periodos track by periodo.periodo"
+                            ng-model="periodoSeleccionado" required id='selectPeriodo'
+                            ng-change="cambiar_periodo()">
+                    </select>
+            </fieldset>
         </div>
+        
         <div class="btn-group" id='filtroIndicadorGrp'>
-            <label class="btn btn-default" ng-model="filtroIndicador" uib-btn-radio="'hosp'" ng-click="procesar('hosp')">
-                <span class="glyphicon glyphicon-ok" aria-hidden="true" title="Hospitales"></span>
-                <span class="glyphicon-class">HOSP.</span>
-            </label>
-            <label class="btn btn-default" ng-model="filtroIndicador" uib-btn-radio="'pna'" ng-click="procesar('pna')">
-                <span class="glyphicon glyphicon-ok" aria-hidden="true" title="Primer Nivel de Atención"></span>
-                <span class="glyphicon-class">PNA</span>
-            </label>
-            <label class="btn btn-default" ng-model="filtroIndicador" uib-btn-radio="'todos'" ng-click="procesar('todos')">
-                <span class="glyphicon glyphicon-ok" aria-hidden="true" title="Todos"></span>
-                <span class="glyphicon-class">Todos</span>
-            </label>
+            <fieldset class="scheduler-border">
+                <legend class="scheduler-border">Nivel</legend>
+                <label class="btn btn-default" ng-model="filtroIndicador" uib-btn-radio="'hosp'" ng-click="procesar('hosp')">
+                    <span class="glyphicon glyphicon-ok" aria-hidden="true" title="Hospitales"></span>
+                    <span class="glyphicon-class">HOSP.</span>
+                </label>
+                <label class="btn btn-default" ng-model="filtroIndicador" uib-btn-radio="'pna'" ng-click="procesar('pna')">
+                    <span class="glyphicon glyphicon-ok" aria-hidden="true" title="Primer Nivel de Atención"></span>
+                    <span class="glyphicon-class">PNA</span>
+                </label>
+                <label class="btn btn-default" ng-model="filtroIndicador" uib-btn-radio="'todos'" ng-click="procesar('todos')">
+                    <span class="glyphicon glyphicon-ok" aria-hidden="true" title="Todos"></span>
+                    <span class="glyphicon-class">Todos</span>
+                </label>
+            </fieldset>
+        </div>
+        <div class="btn-group">
+            <fieldset class="scheduler-border">
+                <legend class="scheduler-border">Departamento</legend>
+                <SELECT class="form-control" id ='departamento' ng-model="deptoSeleccionado" ng-change="procesar()">
+                    <OPTION VALUE="todos">Todos</OPTION>
+                    {% for depto in departamentos %}
+                        <OPTION VALUE="{{depto.id}}">{{depto.descripcion}}</OPTION>
+                    {% endfor %}
+                </SELECT>
+            </fieldset>    
         </div>
     </div>
     <ul class="nav nav-tabs" role="tablist">
@@ -274,28 +294,6 @@
             </table>
             <DIV id="pivotEvaluacionesComplementarias"></DIV>
         </DIV>
-    </div>
-    <!-- Modal Configuración -->
-    <div class="modal fade" id="modalConfiguracion" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-
-                <div class="modal-header">
-                    <h3 class="modal-title">Configuración</h3>
-                </div>
-                <div class="modal-body">
-                    <strong>{{'_periodo_evaluacion_'|trans}}</strong>
-                    <select class="form-control"
-                            data-ng-options="periodo as periodo.etiqueta for periodo in periodos track by periodo.periodo"
-                            ng-model="periodoSeleccionado" required id='selectPeriodo'
-                            ng-change="cambiar_periodo()">
-                    </select>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                </div>
-            </div>
-        </div>
     </div>
     
     <div class="modal fade" id="modalDetalleIndicador" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">

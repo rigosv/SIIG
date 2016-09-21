@@ -126,12 +126,6 @@
                 $scope.getEstablecimientos();
             });
             
-            $( "#departamento" ).change(function() {                
-                $scope.deptoSeleccionado = $(this).val();                
-                $scope.getEstablecimientos();
-            });
-
-            
             $scope.getEstablecimientos = function() {
                 
                 if ($scope.periodoSeleccionado == ''){
