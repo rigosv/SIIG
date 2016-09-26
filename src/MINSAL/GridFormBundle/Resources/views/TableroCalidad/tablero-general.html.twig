@@ -30,7 +30,7 @@
         <div class="btn-group">
             <fieldset class="scheduler-border">
                 <legend class="scheduler-border">{{'_periodo_evaluacion_'|trans}}</legend>
-                    <select class="form-control"
+                    <select class="form-control" autocomplete="off"
                             ng-init="periodoSeleccionado = '{{periodos[0].periodo}}'" 
                             ng-model="periodoSeleccionado" required id='selectPeriodo'
                             >
@@ -61,7 +61,7 @@
         <div class="btn-group">
             <fieldset class="scheduler-border">
                 <legend class="scheduler-border">Departamento</legend>
-                <SELECT class="form-control" id ='departamento' ng-model="deptoSeleccionado" >
+                <SELECT class="form-control" id ='departamento' autocomplete="off" ng-model="deptoSeleccionado" >
                     <OPTION VALUE="todos">Todos</OPTION>
                     {% for depto in departamentos %}
                         <OPTION VALUE="{{depto.id}}">{{depto.descripcion}}</OPTION>
@@ -318,7 +318,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="btn-group" role="group" aria-label="...">
-                        <button type="button" class="btn btn-success" ng-click="tablaDetalle()">[[periodoSeleccionado.etiqueta]]</button>
+                        <button type="button" class="btn btn-success" ng-click="tablaDetalle()">[[periodoDetalle]]</button>
                         <button type="button" id='export_grp' class="btn btn-success" title="{{'_historial_establecimiento_'|trans}}" ng-click="tablaHistorial()"><span class="glyphicon glyphicon-calendar"></span></button> 
                     </div>
                     <DIV id="pivotDetalleIndicador"></DIV>

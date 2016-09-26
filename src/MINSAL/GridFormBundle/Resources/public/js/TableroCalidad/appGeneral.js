@@ -41,7 +41,6 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['serviciosGeneral',
             $scope.titulo = 'Monitoreo y Evaluación de la Gestión de la Calidad en RIISS';
             $scope.subtitulo = 'Unidad Nacional Gestión de Calidad de la RIISS - VMSS';
             $scope.subtitulo2 = '';
-            //$scope.periodoSeleccionado = [];
             $scope.indicadorSeleccionado = [];
             $scope.datosGrafico2 = [];
             $scope.mostrarInfoIndicador = false;
@@ -55,23 +54,6 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['serviciosGeneral',
                     yAxes: [{ ticks: { min: 0, max: 100}, scaleLabel: {labelString : 'minutos', display:true} }]
                 }
             };
-            
-            
-
-            /*$scope.periodos = Periodos.query()
-                .$promise.then(
-                    function (data) {
-                        $scope.periodos = (data != '') ? data : [];
-
-                        if (data.length > 0){
-                            $scope.periodoSeleccionado = $scope.periodos[0];
-                            $scope.subtitulo2 = 'Tablero de Mando :: Periodo ' + $scope.periodoSeleccionado.etiqueta;
-                        }
-                    }
-                );
-            $scope.cambiar_periodo = function(){
-                $scope.procesar();
-            };*/
                         
             $scope.formatTime = function(x) {
                 var hh = ~~(parseFloat(x) / 60); 
@@ -153,7 +135,7 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['serviciosGeneral',
             $scope.detalleArea = function(indicador){
                 $scope.detalleIndicador = indicador;
 
-                DetalleIndicador.query({ periodo: $scope.periodoSeleccionado.periodo, id: indicador.id, nivel: $scope.filtroIndicador, departamento: $scope.deptoSeleccionado })
+                DetalleIndicador.query({ periodo: $scope.periodoSeleccionado, id: indicador.id, nivel: $scope.filtroIndicador, departamento: $scope.deptoSeleccionado })
                     .$promise.then(
                             function (data) {
                                 $scope.detalle = (data != '') ? data[0] : [];
@@ -187,7 +169,7 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['serviciosGeneral',
                     onRefresh: $scope.arreglarValores0
                 }, true);
                 
-                $scope.periodoDetalle = $scope.periodoSeleccionado.etiqueta;
+                $scope.periodoDetalle = $('#selectPeriodo option:selected').text();
                 
             };
             
