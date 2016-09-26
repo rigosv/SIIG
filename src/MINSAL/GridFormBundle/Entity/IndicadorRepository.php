@@ -189,7 +189,7 @@ class IndicadorRepository extends EntityRepository {
                 $eval_ = $em->getConnection()->executeQuery($sql)->fetchAll();
             } else {
                 //Volver a hacer los cálculos
-                $eval_ = $this->getDatosEvaluacionListaChequeo($Frm, $periodo, $ind);
+                $eval_ = $this->getDatosEvaluacionListaChequeo($Frm, $periodo, $ind, $departamento);
                 
             }
             
@@ -476,7 +476,7 @@ class IndicadorRepository extends EntityRepository {
             
         }
     }
-    protected function getDatosEvaluacionListaChequeo(Formulario $Frm, $periodo, $datosIndicador){
+    protected function getDatosEvaluacionListaChequeo(Formulario $Frm, $periodo, $datosIndicador, $departamento = 'todos'){
 
         $porcentajeAprobacion = $datosIndicador['porcentaje_aceptacion']; 
         $formaEvaluacion = $datosIndicador['forma_evaluacion'] ;
@@ -493,6 +493,12 @@ class IndicadorRepository extends EntityRepository {
         
         $this->prepararTabla($datosIndicador['codigo_estandar'], $datosIndicador['codigo'], $anio, $mes);
         
+        $joinDepto = '';
+        $whereDepto = '';
+        if ($departamento != 'todos'){
+            $joinDepto =  " INNER JOIN ctl_municipios DD ON (ES.idmunicipio = DD.id) "; 
+            $whereDepto = " AND DD.id_departamento = $departamento ";
+        }
         
         $sql = "DROP TABLE IF EXISTS auxiliar_tmp";
         $em->getConnection()->executeQuery($sql);
@@ -522,6 +528,9 @@ class IndicadorRepository extends EntityRepository {
                         ) AS B 
                         ON (A.establecimiento = B.establecimiento)                    
                     INNER JOIN ctl_establecimiento_simmow ES ON (A.establecimiento = ES.id::text)
+                    $joinDepto
+                    WHERE 1 =1 
+                        $whereDepto
                 ) AS F
                     INNER JOIN costos.estructura CE ON (F.establecimiento = CE.codigo)
                 ORDER BY calificacion DESC
