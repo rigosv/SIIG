@@ -25,37 +25,6 @@ class TableroCalidadRESTController extends Controller {
         );
     /**
      * Obtener los datos del formulario
-     * @Get("/rest-service/tablero-calidad/evaluaciones", options={"expose"=true})
-     * @Rest\View
-     */
-    public function getPeriodosEvaluacionAction() {
-        $response = new Response();
-
-        $resp = array();
-
-        $em = $this->getDoctrine()->getManager();
-        
-        $data = $em->getRepository('GridFormBundle:Formulario')->getPeriodosEvaluacion();
-        //Verificar que existen las tablas necesarias
-        $em->getRepository('GridFormBundle:Indicador')->crearTabla();
-        
-        $data_ = array();
-        foreach ($data as $f) {
-            $f['etiqueta'] = $this->meses[$f['mes']] . '/' . $f['anio'];
-            $data_[] = $f;
-        }
-        if (count($data_) == 0) {
-            $response->setContent('{"estado" : "error", "msj": "' . $this->get('translator')->trans('_no_datos_') . '"}');
-        } else {
-            $response->setContent(json_encode($data_));
-        }
-
-        return $response;
-        //}
-    }
-    
-    /**
-     * Obtener los datos del formulario
      * @Get("/rest-service/tablero-calidad/evaluaciones_comple/{nivel}/{departamento}", options={"expose"=true})
      * @Rest\View
      */

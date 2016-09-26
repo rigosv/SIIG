@@ -27,7 +27,7 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['serviciosGeneral',
                 $interpolateProvider.endSymbol(']]');
             }])
         .directive('ifLoading', ifLoading)
-        .controller('mainCtrl', function AppCtrl($scope, Indicadores, Periodos, DetalleIndicador, EvaluacionesComplementarias) {
+        .controller('mainCtrl', function AppCtrl($scope, Indicadores, DetalleIndicador, EvaluacionesComplementarias) {
             $scope.options = {width: 300, height: 250, 'bar': 'aaa'};
             $scope.data = [0];
             $scope.deptoSeleccionado = 'todos';
@@ -41,7 +41,7 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['serviciosGeneral',
             $scope.titulo = 'Monitoreo y Evaluación de la Gestión de la Calidad en RIISS';
             $scope.subtitulo = 'Unidad Nacional Gestión de Calidad de la RIISS - VMSS';
             $scope.subtitulo2 = '';
-            $scope.periodoSeleccionado = [];
+            //$scope.periodoSeleccionado = [];
             $scope.indicadorSeleccionado = [];
             $scope.datosGrafico2 = [];
             $scope.mostrarInfoIndicador = false;
@@ -58,7 +58,7 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['serviciosGeneral',
             
             
 
-            $scope.periodos = Periodos.query()
+            /*$scope.periodos = Periodos.query()
                 .$promise.then(
                     function (data) {
                         $scope.periodos = (data != '') ? data : [];
@@ -71,7 +71,7 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['serviciosGeneral',
                 );
             $scope.cambiar_periodo = function(){
                 $scope.procesar();
-            };
+            };*/
                         
             $scope.formatTime = function(x) {
                 var hh = ~~(parseFloat(x) / 60); 
@@ -89,8 +89,11 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['serviciosGeneral',
                     $('#filtroIndicadorGrp').notify('Seleccione el nivel', {className: "error" });
                     return;
                 }
+                
+                $scope.subtitulo2 = 'Tablero de Mando :: Periodo ' + $('#selectPeriodo option:selected').text();
+                
                 $scope.mostrarInfoIndicador = false;
-                Indicadores.query({ periodo: $scope.periodoSeleccionado.periodo, tipo:1, nivel:nivel, departamento: $scope.deptoSeleccionado })
+                Indicadores.query({ periodo: $scope.periodoSeleccionado, tipo:1, nivel:nivel, departamento: $scope.deptoSeleccionado })
                     .$promise.then(
                             function (data) {
                                 $scope.indicadores = (data != '') ? data[0].datos : [];
@@ -114,7 +117,7 @@ var tableroCalidadApp = angular.module('tableroCalidadApp', ['serviciosGeneral',
                             }
                     );
             
-                 Indicadores.query({ periodo: $scope.periodoSeleccionado.periodo, tipo:2, nivel:nivel, departamento: $scope.deptoSeleccionado })
+                 Indicadores.query({ periodo: $scope.periodoSeleccionado, tipo:2, nivel:nivel, departamento: $scope.deptoSeleccionado })
                     .$promise.then(
                             function (data) {
                                 $scope.indicadores2 = (data != '') ? data : [];

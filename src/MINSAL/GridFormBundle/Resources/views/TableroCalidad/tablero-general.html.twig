@@ -31,9 +31,12 @@
             <fieldset class="scheduler-border">
                 <legend class="scheduler-border">{{'_periodo_evaluacion_'|trans}}</legend>
                     <select class="form-control"
-                            data-ng-options="periodo as periodo.etiqueta for periodo in periodos track by periodo.periodo"
+                            ng-init="periodoSeleccionado = '{{periodos[0].periodo}}'" 
                             ng-model="periodoSeleccionado" required id='selectPeriodo'
-                            ng-change="cambiar_periodo()">
+                            >
+                        {% for p in periodos %}
+                            <OPTION VALUE="{{p.periodo}}" {% if loop.index == 1%} selected="selected"{%endif%}>{{p.etiqueta}}</OPTION>
+                        {% endfor %}
                     </select>
             </fieldset>
         </div>
@@ -41,15 +44,15 @@
         <div class="btn-group" id='filtroIndicadorGrp'>
             <fieldset class="scheduler-border">
                 <legend class="scheduler-border">Nivel</legend>
-                <label class="btn btn-default" ng-model="filtroIndicador" uib-btn-radio="'hosp'" ng-click="procesar('hosp')">
+                <label class="btn btn-default" ng-model="filtroIndicador" uib-btn-radio="'hosp'" >
                     <span class="glyphicon glyphicon-ok" aria-hidden="true" title="Hospitales"></span>
                     <span class="glyphicon-class">HOSP.</span>
                 </label>
-                <label class="btn btn-default" ng-model="filtroIndicador" uib-btn-radio="'pna'" ng-click="procesar('pna')">
+                <label class="btn btn-default" ng-model="filtroIndicador" uib-btn-radio="'pna'" >
                     <span class="glyphicon glyphicon-ok" aria-hidden="true" title="Primer Nivel de Atención"></span>
                     <span class="glyphicon-class">PNA</span>
                 </label>
-                <label class="btn btn-default" ng-model="filtroIndicador" uib-btn-radio="'todos'" ng-click="procesar('todos')">
+                <label class="btn btn-default" ng-model="filtroIndicador" uib-btn-radio="'todos'" >
                     <span class="glyphicon glyphicon-ok" aria-hidden="true" title="Todos"></span>
                     <span class="glyphicon-class">Todos</span>
                 </label>
@@ -58,12 +61,21 @@
         <div class="btn-group">
             <fieldset class="scheduler-border">
                 <legend class="scheduler-border">Departamento</legend>
-                <SELECT class="form-control" id ='departamento' ng-model="deptoSeleccionado" ng-change="procesar()">
+                <SELECT class="form-control" id ='departamento' ng-model="deptoSeleccionado" >
                     <OPTION VALUE="todos">Todos</OPTION>
                     {% for depto in departamentos %}
                         <OPTION VALUE="{{depto.id}}">{{depto.descripcion}}</OPTION>
                     {% endfor %}
                 </SELECT>
+            </fieldset>    
+        </div>
+        <div class="btn-group">
+            <fieldset class="scheduler-border">
+                <legend class="scheduler-border">Acciones</legend>
+                <label class="btn btn-default"  ng-click="procesar('todos')">
+                    <span class="glyphicon glyphicon-share-alt" aria-hidden="true" title="Todos"></span>
+                    <span class="glyphicon-class">Cargar</span>
+                </label>
             </fieldset>    
         </div>
     </div>
