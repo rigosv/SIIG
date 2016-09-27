@@ -96,6 +96,14 @@ class MenuBuilder
                                     ;
                                 }
                             }
+                            if (in_array($ruta, array('getFromKobo'))) {
+                                if ($admin->hasRoute('getFromKobo') and ( $usuario->hasRole('ROLE_SUPER_ADMIN'))) {
+                                    $menu['_calidad_']
+                                            ->addChild('_cargar_from_kobo_', array('uri' => $admin->generateUrl('getFromKobo')))
+                                            ->setExtra('admin', $admin)
+                                    ;
+                                }
+                            }
                             if (in_array($ruta, array('tablero'))) {
                                 if ($admin->hasRoute('tablero') and ( $usuario->hasRole('ROLE_SUPER_ADMIN') or $usuario->hasRole('ROLE_USER_TABLERO'))) {
                                     $menu[$name]

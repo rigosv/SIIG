@@ -250,4 +250,103 @@ class FormularioAdminController extends Controller
             'periodo_estructura' => $r->get('periodo_estructura')
             );
     }
+    
+    public function getFromKoboAction(){
+        $em = $this->getDoctrine()->getManager();
+        $ch = curl_init();
+        $datos_capturados = array();
+        
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-type: application/json'));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_USERPWD, 'pna:pr1mern1vel');
+        
+        // Estándares         1       3        4         5
+        $estandares = array(11=>96, 13=>98, 14 => 99, 15=>103);
+        
+        foreach ($estandares as $idFrmKobo => $idFrmCalidad){
+            curl_setopt($ch, CURLOPT_URL, "https://kc.kobo.salud.gob.sv/api/v1/data/$idFrmKobo?format=json");        
+            $response = curl_exec($ch);
+            $data = json_decode($response, true);
+
+            foreach ($data as $datos){
+
+                $formulario = $idFrmCalidad;
+                $fechaEval = explode('-', $datos['group_xf0ku39/fech_fin_periodo_eval']);
+                $mes = $fechaEval[1];
+                $anio = $fechaEval[0];
+                $establecimiento = $datos['establecimiento'];
+
+                if (array_key_exists('group_wq75w66/group_ob8oa66', $datos)){
+                    //4.1
+                    $expedientes = $this->getExpedientesKobo($datos['group_wq75w66/group_ob8oa66']);
+                    $em->getRepository("GridFormBundle:Formulario")->setDatosFromKobo(100, $mes, $anio, $establecimiento, $expedientes);
+                } 
+                if (array_key_exists('group_tc5rp93/group_hj5rv58', $datos)){
+                    //4.2 
+                    $expedientes = $this->getExpedientesKobo($datos['group_tc5rp93/group_hj5rv58'], true);
+                    $em->getRepository("GridFormBundle:Formulario")->setDatosFromKobo(101, $mes, $anio, $establecimiento, $expedientes);
+                } 
+                if (array_key_exists('group_nb8hj79/group_vy9cx98', $datos)){
+                    //4.3
+                    $expedientes = $this->getExpedientesKobo($datos['group_nb8hj79/group_vy9cx98']);
+                    $em->getRepository("GridFormBundle:Formulario")->setDatosFromKobo(102, $mes, $anio, $establecimiento, $expedientes);
+                } 
+                if (array_key_exists('group_expedientes', $datos)){
+                    $expedientes = $this->getExpedientesKobo($datos['group_expedientes']);
+                    $em->getRepository("GridFormBundle:Formulario")->setDatosFromKobo($formulario, $mes, $anio, $establecimiento, $expedientes);
+                } 
+                if (array_key_exists('group_jo9ui64', $datos)){
+                    $expedientes = $this->getExpedientesKobo($datos['group_jo9ui64']);
+
+                    $em->getRepository("GridFormBundle:Formulario")->setDatosFromKobo($formulario, $mes, $anio, $establecimiento, $expedientes);
+                }
+            }
+            
+        }
+        
+        //******* Estándar 6
+        curl_setopt($ch, CURLOPT_URL, 'https://kc.kobo.salud.gob.sv/api/v1/data/16?format=json');        
+        $response = curl_exec($ch);
+        $data = json_decode($response, true);
+        
+        if (count($data) > 0){
+            foreach ($data as $datos){
+            
+                $formulario = 104;
+                $fechaEval = explode('-', $datos['group_xf0ku39/fech_fin_periodo_eval']);
+                $mes = $fechaEval[1];
+                $anio = $fechaEval[0];
+                $establecimiento = $datos['establecimiento'];                
+                $expedientes = $this->getDatosMensualKobo($datos, $mes);
+
+                $em->getRepository("GridFormBundle:Formulario")->setDatosFromKobo($formulario, $mes, $anio, $establecimiento, $expedientes);
+            }
+        }
+        return $this->render('GridFormBundle:Formulario:carga-from-kobo.html.twig', array());
+    }
+    
+    protected function getExpedientesKobo($expedientesKobo, $agregarExpe = false) {
+        $expedientes = array();
+        foreach ($expedientesKobo as $num => $exp){
+            foreach ($exp as $k => $v){
+                $var = array_pop(explode('/', $k));
+                $expedientes[$var]['num_expe5_'.($num + 1)] = $v;
+                if ($agregarExpe)
+                    $expedientes['n1_e4_2_num_expe']['num_expe5_'.($num + 1)] = 'Exp-'.($num+1);
+            }
+        }
+        return $expedientes;
+    }
+    
+    protected function getDatosMensualKobo($datosKobo, $mes) {
+        $dm = array();
+        foreach ($datosKobo as $k => $valor){
+            if (strpos($k, 'n1_e6_grupo_c1') !== false){
+                $var = array_pop(explode('/', $k));
+                $dm[$var]['cant_mensual_'.$mes] = $valor;
+            }
+            
+        }
+        return $dm;
+    }
 }

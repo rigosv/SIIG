@@ -832,4 +832,48 @@ class FormularioRepository extends EntityRepository {
         
         return $datos;
     }
+    
+    public function setDatosFromKobo($frm, $mes, $anio, $establecimiento, $datosExpe) {
+        $em = $this->getEntityManager();
+        
+        $em->beginTransaction();
+        
+        //Borrar los datos anteriores
+        $sql = "DELETE FROM almacen_datos.repositorio 
+                    WHERE id_formulario =  $frm
+                        AND datos->'mes' = '$mes'
+                        AND datos->'anio' = '$anio'
+                        AND datos->'establecimiento' = '$establecimiento'
+                        AND datos->'fuente' = 'kobo'
+                ";
+        $em->getConnection()->executeQuery($sql);
+        
+        $catalCod = array('num_expediente_4_3'=>'n1_e4_3_num_expe',
+                            'num_expediente_4_2'=>'n1_e4_2_num_expe');
+        if ($frm == 100){
+            $catalCod['N1_E1_num_expe'] = 'n1_e4_1_num_expe';
+        } elseif($frm == 98){
+            $catalCod['N1_E1_num_expe'] = 'n1_e3_num_expe';
+        }
+        
+        foreach ($datosExpe as $cod_var => $e){
+            $codigo_variable = (array_key_exists($cod_var, $catalCod)) ? $catalCod[$cod_var] : $cod_var;
+            
+            //Si es variable del estándar 4, arreglar el nombre
+            $codigo_variable = str_replace(array('n1_e41', 'n1_e42', 'n1_e43', 'n1_e6_1_'), array('n1_e4_1', 'n1_e4_2', 'n1_e4_3', 'n1_e6_criterio') , $codigo_variable, $reemplazos);
+            
+            if ($reemplazos > 0 or $frm==103 or $frm == 98){
+                //Adaptar el código de la variable
+                $codigo_variable .='0';
+            }
+            $sql = "INSERT INTO almacen_datos.repositorio(id_formulario, datos)
+                        VALUES ($frm, hstore(ARRAY['" . implode("', '", array_keys($e)) . "', 'mes', 'anio', 'establecimiento', 'codigo_variable', 'fuente'], 
+                            ARRAY['" . implode("', '", $e) . "', '$mes', '$anio', '$establecimiento', '$codigo_variable', 'kobo'])) ";
+            $em->getConnection()->executeQuery($sql);
+        }
+        $this->actualizarVariables($frm);
+        
+        $em->commit();
+    }
+    
 }

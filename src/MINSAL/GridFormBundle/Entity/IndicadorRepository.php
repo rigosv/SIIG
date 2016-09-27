@@ -171,7 +171,7 @@ class IndicadorRepository extends EntityRepository {
 
         foreach ($indicadores as $ind){
             $Frm = $em->getRepository('GridFormBundle:Formulario')->find($ind['estandar_id']);
-            
+
             if ($checkAllInd){
                 //los datos no han cambiado, recuperar los que ya están calculados
                 $sql = "SELECT A.*, (SELECT color 
@@ -555,7 +555,7 @@ class IndicadorRepository extends EntityRepository {
                         establecimiento, total_expedientes, expedientes_cumplimiento, criterios_aplicables, 
                         criterios_cumplidos, criterios_no_cumplidos) 
                     SELECT codigo_estandar, codigo_indicador, anio, mes,
-                            descripcion_indicador, calificacion, nombre_establecimiento, nombre_corto, 
+                            descripcion_indicador, calificacion, nombre_establecimiento, substring(nombre_corto from 1 for 29) as nombre_corto, 
                             establecimiento, total_expedientes, expedientes_cumplimiento, criterios_aplicables, 
                             criterios_cumplidos, criterios_no_cumplidos
                     FROM auxiliar_tmp
@@ -970,7 +970,7 @@ class IndicadorRepository extends EntityRepository {
                         AND B.mes = '$mes'
                         AND B.establecimiento = '$establecimiento'
                     ORDER BY A.posicion, A.codigo
-                     ";        
+                     ";
         return $em->getConnection()->executeQuery($sql)->fetchAll();
           
     }
