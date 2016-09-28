@@ -100,7 +100,7 @@ class IndicadorRESTController extends Controller {
         //Guardar los datos en caché de redis            
         $response->setContent($respj);
         
-        if ( is_array($resp['datos']) ){
+        if ( is_array($resp) ){
             $redis->set('indicador_'.$fichaTec->getId(), $respj);
         }        
 
