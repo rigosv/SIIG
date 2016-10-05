@@ -258,6 +258,7 @@ class FormularioRepository extends EntityRepository {
                                     $mes_condicion
                             )
                         AND A.formulario_id =  ".$Frm->getId()."
+                        AND A.codigo !~* 'kobo'
                 )";
         $this->orden = "ORDER BY datos->'es_poblacion' DESC, COALESCE(NULLIF(datos->'posicion', ''), '100000000')::numeric, datos->'descripcion_categoria_variable', datos->'descripcion_variable'";
         $em->getConnection()->executeQuery($sql);                
@@ -676,7 +677,7 @@ class FormularioRepository extends EntityRepository {
                 FROM (
                     $sql_forms
                 ) AS AA
-                ORDER BY codigo, datos->'es_poblacion' DESC, COALESCE(NULLIF(datos->'posicion', ''), '100000000')::numeric, datos->'descripcion_categoria_variable', datos->'descripcion_variable'
+                ORDER BY COALESCE(NULLIF(datos->'posicion', ''), '100000000')::numeric, codigo, datos->'es_poblacion' DESC,  datos->'descripcion_categoria_variable', datos->'descripcion_variable'
                 ";        
         try {            
             $datos_ =  $em->getConnection()->executeQuery($sql)->fetchAll();
@@ -865,6 +866,9 @@ class FormularioRepository extends EntityRepository {
             if ($reemplazos > 0 or $frm==103 or $frm == 98){
                 //Adaptar el código de la variable
                 $codigo_variable .='0';
+            }
+            if ($frm == 97){
+                $codigo_variable ='kobo_'.$codigo_variable;
             }
             $sql = "INSERT INTO almacen_datos.repositorio(id_formulario, datos)
                         VALUES ($frm, hstore(ARRAY['" . implode("', '", array_keys($e)) . "', 'mes', 'anio', 'establecimiento', 'codigo_variable', 'fuente'], 
