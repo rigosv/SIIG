@@ -260,8 +260,8 @@ class FormularioAdminController extends Controller
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_USERPWD, 'pna:pr1mern1vel');
         
-        // Estándares         1       3        4         5
-        $estandares = array(11=>96, 13=>98, 14 => 99, 15=>103);
+        // Estándares         1       2       3        4         5
+        $estandares = array(11=>96, 12=>97, 13=>98, 14 => 99, 15=>103);
         
         foreach ($estandares as $idFrmKobo => $idFrmCalidad){
             curl_setopt($ch, CURLOPT_URL, "https://kc.kobo.salud.gob.sv/api/v1/data/$idFrmKobo?format=json");        
@@ -271,7 +271,10 @@ class FormularioAdminController extends Controller
             foreach ($data as $datos){
 
                 $formulario = $idFrmCalidad;
-                $fechaEval = explode('-', $datos['group_xf0ku39/fech_fin_periodo_eval']);
+                if ($idFrmKobo == 12)
+                    $fechaEval = explode('-', $datos['fech_fin_eval']);
+                else
+                    $fechaEval = explode('-', $datos['group_xf0ku39/fech_fin_periodo_eval']);
                 $mes = $fechaEval[1];
                 $anio = $fechaEval[0];
                 $establecimiento = $datos['establecimiento'];
