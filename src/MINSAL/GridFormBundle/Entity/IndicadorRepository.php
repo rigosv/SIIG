@@ -931,11 +931,13 @@ class IndicadorRepository extends EntityRepository {
         
         //Si el nivel de aprovación es 0 se hará un promedio normal
         $eval = ($nivel['valor'] == 0 ) ? 
-                " ROUND(avg(calificacion)::numeric,2) " :
-                " COUNT(CASE WHEN calificacion >= $nivel[valor] THEN 1 END)::numeric / COUNT(calificacion)::numeric * 100 ";
-        return "SELECT anio, mes, establecimiento, codigo_estandar, 
+                " ROUND(avg(DC.calificacion)::numeric,2) " :
+                " COUNT(CASE WHEN DC.calificacion >= $nivel[valor] THEN 1 END)::numeric / COUNT(DC.calificacion)::numeric * 100 ";
+        return "SELECT DC.anio, DC.mes, DC.establecimiento, DC.codigo_estandar, 
                             $eval AS calificacion
-                    FROM datos_evaluacion_calidad
+                    FROM datos_evaluacion_calidad DC
+                        INNER JOIN indicador I ON (DC.codigo_indicador = I.codigo)
+                    WHERE I.pondera_estandar = true
                     GROUP BY anio, mes, establecimiento, codigo_estandar
                      ";
     }

@@ -73,6 +73,13 @@ class Indicador
     private $esTrazador;
     
     /**
+     * @var string $ponderaEstandar
+     *
+     * @ORM\Column(name="pondera_estandar", type="boolean", nullable=true)
+     */
+    private $ponderaEstandar;
+    
+    /**
      * @var string $posicion
      *
      * @ORM\Column(name="posicion", type="float", nullable=true)
@@ -400,5 +407,29 @@ class Indicador
     public function getDimension()
     {
         return $this->dimension;
+    }
+
+    /**
+     * Set ponderaEstandar
+     *
+     * @param boolean $ponderaEstandar
+     *
+     * @return Indicador
+     */
+    public function setPonderaEstandar($ponderaEstandar)
+    {
+        $this->ponderaEstandar = $ponderaEstandar;
+
+        return $this;
+    }
+
+    /**
+     * Get ponderaEstandar
+     *
+     * @return boolean
+     */
+    public function getPonderaEstandar()
+    {
+        return $this->ponderaEstandar;
     }
 }

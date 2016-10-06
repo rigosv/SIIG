@@ -16,6 +16,14 @@ class IndicadorAdmin extends Admin
         '_sort_order' => 'ASC', // Descendant ordering (default = 'ASC')
         '_sort_by' => 'codigo' // name of the ordered field (default = the model id field, if any)
     );
+    
+    public function getNewInstance()
+    {
+        $instance = parent::getNewInstance();
+        $instance->setPonderaEstandar(true);
+
+        return $instance;
+    }
 
     protected function configureFormFields(FormMapper $formMapper)
     {
@@ -34,6 +42,7 @@ class IndicadorAdmin extends Admin
             ->add('porcentajeAceptacion', null, array('label'=> $this->getTranslator()->trans('_porcentaje_aceptacion_')))
             ->add('unidadMedida', null, array('label'=> $this->getTranslator()->trans('_unidad_medida_')))
             ->add('esTrazador', null, array('label'=> $this->getTranslator()->trans('_es_trazador_')))
+            ->add('ponderaEstandar', null, array('label'=> $this->getTranslator()->trans('_pondera_estandar_')))
             ->add('posicion', null, array('label'=> $this->getTranslator()->trans('_posicion_')))            
             ->add('criterios', null, 
                     array('label'=> $this->getTranslator()->trans('_criterios_'), 
@@ -66,6 +75,7 @@ class IndicadorAdmin extends Admin
             ->setHelps(array(
                 'estandar' => $this->getTranslator()->trans('_indicador_estandar_help_'),
                 'esTrazador' => $this->getTranslator()->trans('_es_trazador_help_'),
+                'ponderaEstandar' => $this->getTranslator()->trans('_pondera_estandar_help_'),
                 'posicion' => $this->getTranslator()->trans('_posicion_help_')
             ));
     }
