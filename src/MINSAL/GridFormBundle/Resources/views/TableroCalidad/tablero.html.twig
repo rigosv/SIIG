@@ -243,12 +243,19 @@
                                 </TR>
                             </tbody>
                             <Tfoot class="resumen" ng-if="Formulario.resumen_expedientes.length > 0">
+                                <TR>
+                                    <TD colspan="[[Formulario.resumen_expedientes.length + 2]]"></TD>
+                                    <TD align="center">Total</TD>
+                                </TR>
                                 <TR class="criterios_cumplidos">
                                     <TD style="text-align: right;" colspan='2'>
                                         {{'_criterios_cumplidos_'|trans}}
                                     </TD>
                                     <TD ng-repeat="resumen in Formulario.resumen_expedientes">
                                         [[resumen.cumplimiento]]
+                                    </TD>
+                                    <TD>
+                                        [[criteriosCumplimientoG]]
                                     </TD>
                                 </TR>
                                 <TR class="criterios_no_cumplidos">
@@ -258,6 +265,9 @@
                                     <TD ng-repeat="resumen in Formulario.resumen_expedientes">
                                         [[resumen.no_cumplimiento]]
                                     </TD>
+                                    <TD>
+                                        [[criteriosNoCumplimientoG]]
+                                    </TD>
                                 </TR>
                                 <TR class="porc_cumplimiento">
                                     <TD style="text-align: right;" colspan='2'>
@@ -266,7 +276,10 @@
                                     <TD ng-repeat="resumen in Formulario.resumen_expedientes">
                                         [[resumen.porc_cumplimiento]]%
                                     </TD>
-                                </TR>
+                                    <TD>
+                                        [[criteriosResultadoG]]%
+                                    </TD>                                    
+                                </TR>                                
                                 <TR class="cumplimiento_100_porc" ng-if="evaluacionSeleccionada.evalua_expedientes">
                                     <TD style="text-align: right;" colspan='2'>
                                         {{'_cant_expedientes_evaluados_'|trans}}

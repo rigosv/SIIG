@@ -285,7 +285,8 @@
                                     ]
                                 }
                             };
-                          
+                            var cumpleG = 0;
+                            var noCumpleG = 0;
                             for (var i in data){
                                 var datos = data[i];
                                 for(var r in datos.resumen_criterios){
@@ -295,7 +296,15 @@
                                     $scope.data_rec.push(res_criterios.porc_cumplimiento);
                                     $scope.colors_rec.push(res_criterios.color);
                                 }
+
+                                for (var r in datos.resumen_expedientes){
+                                    cumpleG = parseInt(cumpleG) + parseInt(datos.resumen_expedientes[r].cumplimiento);
+                                    noCumpleG += parseInt(datos.resumen_expedientes[r].no_cumplimiento);
+                                }
                             }
+                            $scope.criteriosCumplimientoG = cumpleG;
+                            $scope.criteriosNoCumplimientoG = noCumpleG;
+                            $scope.criteriosResultadoG = Math.round(cumpleG / (cumpleG + noCumpleG) * 100);
                             
                         },
                         function (error) {
