@@ -732,6 +732,16 @@ class FormularioRepository extends EntityRepository {
                             );
         $resp = array();
         foreach ($opciones as $campo => $opc){
+            //Contar solo los que son criterios de indicadores
+            $soloCriteriosInd = ($campo == 'pivote') ? 
+                    " AND codigo_variable 
+                        IN 
+                        (SELECT AA.codigo 
+                            FROM variable_captura AA 
+                                INNER JOIN indicador_variablecaptura BB ON (AA.id = BB.variablecaptura_id)) "
+                    : '';
+            
+            
             $sql = "SELECT $opc[campo2], SUM(cumplimiento) as cumplimiento, 
                     SUM(no_cumplimiento) AS no_cumplimiento, 
                     ROUND((SUM(cumplimiento)::numeric / ( SUM(cumplimiento)::numeric + SUM(no_cumplimiento)::numeric ) * 100),0) AS porc_cumplimiento,
@@ -749,6 +759,7 @@ class FormularioRepository extends EntityRepository {
                         FROM datos_tmp 
                         WHERE es_poblacion='false'
                             AND es_separador != 'true'
+                            $soloCriteriosInd
                     ) AS A 
                 $opc[grupo]";
             $resp[$campo] =  $em->getConnection()->executeQuery($sql)->fetchAll();
