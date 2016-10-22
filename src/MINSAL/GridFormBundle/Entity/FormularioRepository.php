@@ -848,32 +848,19 @@ class FormularioRepository extends EntityRepository {
                         AND datos->'fuente' = 'kobo'
                 ";
         $em->getConnection()->executeQuery($sql);
-        
-        $catalCod = array('num_expediente_4_3'=>'n1_e4_3_num_expe',
-                            'num_expediente_4_2'=>'n1_e4_2_num_expe');
-        if ($frm == 100){
-            $catalCod['N1_E1_num_expe'] = 'n1_e4_1_num_expe';
-        } elseif($frm == 98){
-            $catalCod['N1_E1_num_expe'] = 'n1_e3_num_expe';
-        }
-        
+                
         foreach ($datosExpe as $cod_var => $e){
-            $codigo_variable = (array_key_exists($cod_var, $catalCod)) ? $catalCod[$cod_var] : $cod_var;
-            
-            //Si es variable del estándar 4, arreglar el nombre
-            $codigo_variable = str_replace(array('n1_e41', 'n1_e42', 'n1_e43', 'n1_e6_1_'), array('n1_e4_1', 'n1_e4_2', 'n1_e4_3', 'n1_e6_criterio') , $codigo_variable, $reemplazos);
-            
-            if ($reemplazos > 0 or $frm==103 or $frm == 98){
-                //Adaptar el código de la variable
-                $codigo_variable .='0';
-            }
-            if ($frm == 97){
-                $codigo_variable ='kobo_'.$codigo_variable;
-            }
-            $sql = "INSERT INTO almacen_datos.repositorio(id_formulario, datos)
+            $codigo_variable = $cod_var;
+            try{
+                $sql = "INSERT INTO almacen_datos.repositorio(id_formulario, datos)
                         VALUES ($frm, hstore(ARRAY['" . implode("', '", array_keys($e)) . "', 'mes', 'anio', 'establecimiento', 'codigo_variable', 'fuente'], 
                             ARRAY['" . implode("', '", $e) . "', '$mes', '$anio', '$establecimiento', '$codigo_variable', 'kobo'])) ";
-            $em->getConnection()->executeQuery($sql);
+
+                $em->getConnection()->executeQuery($sql);
+            }  catch (\Exception $ex) {
+                //var_dump($e);
+            }
+            
         }
         $this->actualizarVariables($frm);
         
