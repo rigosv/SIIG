@@ -759,6 +759,7 @@ class FormularioRepository extends EntityRepository {
                         FROM datos_tmp 
                         WHERE es_poblacion='false'
                             AND es_separador != 'true'
+                            AND tipo_control != 'dropdownlist'
                             $soloCriteriosInd
                     ) AS A 
                 $opc[grupo]";
