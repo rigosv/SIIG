@@ -864,7 +864,7 @@ class IndicadorRepository extends EntityRepository {
         return $em->getConnection()->executeQuery($sql)->fetchAll();
     }
     
-    public function getEvaluacionEstablecimiento($periodo, $nivel, $departamento = 'todos') {
+    public function getEvaluacionEstablecimiento($periodo, $nivel, $departamento = 'todos', $userGroupIds = null) {
         $em = $this->getEntityManager();
         list($anio, $mes) = explode('_', $periodo);
         
@@ -911,14 +911,30 @@ class IndicadorRepository extends EntityRepository {
         
         $em->getConnection()->executeQuery($sql_nm);
         
+        $establecimientosAutorizadosCod = '';
+        if ($userGroupIds != null){
+            // Verificar si el grupo del usuario está restringido a ciertos establecimientos 
+            $sql = "SELECT codigo_establecimiento FROM grupo_establecimiento WHERE id_grupo IN (".implode(', ', $userGroupIds).")";
+            $establecimientosAutorizados = array();
+            foreach($em->getConnection()->executeQuery($sql)->fetchAll() as $e ){
+                $establecimientosAutorizados[] = $e['codigo_establecimiento'];
+            }
+            
+            if (count($establecimientosAutorizados) > 0){
+                $establecimientosAutorizadosCod = " WHERE establecimiento IN ('".implode("', '", $establecimientosAutorizados)."') ";
+            }
+        }
+        
         $sql = "SELECT 'LISTA_CHECK' AS tipo, establecimiento, nombre_corto, 
                         nombre_establecimiento, calificacion, 
                         (SELECT color FROM rangos_alertas_generales WHERE calificacion >= limite_inferior AND calificacion <= limite_superior LIMIT 1) AS color
                     FROM esta_lc_tmp
+                    $establecimientosAutorizadosCod
                 UNION    
                 SELECT 'NUMERIC' AS tipo, establecimiento, nombre_corto,
                         nombre_establecimiento, 0 as calificacion, '#0EAED8' AS color 
                     FROM esta_num_tmp
+                    $establecimientosAutorizadosCod
                 ORDER BY tipo";
         return $em->getConnection()->executeQuery($sql)->fetchAll();
     }

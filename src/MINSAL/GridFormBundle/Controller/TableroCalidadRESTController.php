@@ -53,12 +53,18 @@ class TableroCalidadRESTController extends Controller {
     public function getEstablecimientosEvaluadosAction($periodo, $nivel, $departamento) {
 
         $response = new Response();
+        
+        $userGroupIds = array();
+        foreach ($this->getUser()->getGroups() as $g){
+            $userGroupIds[] = $g->getId();
+        }
+        
         $em = $this->getDoctrine()->getManager();
 
         $eval_compl = $em->getRepository('GridFormBundle:Indicador')->getEvaluacionesComplementarias(null, false, $nivel);
         $em->getRepository('GridFormBundle:Indicador')->getIndicadoresEvaluadosListaChequeo($periodo, $nivel);
         
-        $establecimientos = $em->getRepository('GridFormBundle:Indicador')->getEvaluacionEstablecimiento($periodo, $nivel, $departamento);
+        $establecimientos = $em->getRepository('GridFormBundle:Indicador')->getEvaluacionEstablecimiento($periodo, $nivel, $departamento, $userGroupIds);
         
         $resp = array();
         foreach ($establecimientos as $f){
