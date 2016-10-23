@@ -136,6 +136,7 @@ class TableroCalidadRESTController extends Controller {
                 'criterios' => $d['criterios'],
                 'resumen_expedientes' => $d['resumen_expedientes'],
                 'resumen_criterios' => $d['resumen_criterios'],
+                'resumen_general_criterios' => $d['resumen_general_criterios'],
                 'resumen_indicadores' => $resumen_indicadores,
             );
         }

@@ -705,6 +705,17 @@ class FormularioRepository extends EntityRepository {
                 }
                 $aux['resumen_expedientes'] = $resumen_expedientes;
                 $aux['resumen_criterios'] = $resumen_criterios;
+                
+                $cumpleG = 0;
+                $noCumpleG = 0;
+                foreach ($resumen_expedientes as $r){
+                    $cumpleG += $r['cumplimiento'];
+                    $noCumpleG += $r['no_cumplimiento'];
+                }
+                $aux['resumen_general_criterios'] = array('criteriosCumplimientoG'=> $cumpleG, 
+                                                            'criteriosNoCumplimientoG' => $noCumpleG, 
+                                                            'criteriosResultadoG'=> number_format(($cumpleG / ($cumpleG + $noCumpleG) * 100) ,0 )
+                                                        );
                 $datosConEval[$k] = $aux;
             }
             
