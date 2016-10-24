@@ -107,7 +107,7 @@ class IndicadorRepository extends EntityRepository {
      * Recupera los indicadores que son por lista de chequeo
      * 
      */
-    public function getIndicadoresEvaluadosListaChequeo($periodo, $nivel, $departamento =  'todos') {
+    public function getIndicadoresEvaluadosListaChequeo($periodo, $nivel, $departamento =  'todos', $userGroupIds = null) {
         $em = $this->getEntityManager();
 
         $datos = array();
@@ -121,6 +121,14 @@ class IndicadorRepository extends EntityRepository {
         if ($departamento != 'todos'){
             $joinDepto =  " INNER JOIN ctl_municipios DD ON (BB.idmunicipio = DD.id) "; 
             $whereDepto = " AND DD.id_departamento = $departamento ";
+        }
+        
+        $whereEsta = '';
+        if ($userGroupIds != null){
+            $establecimientosAutorizados = $this->getEstablecimientosAutorizados($userGroupIds);
+            if (count($establecimientosAutorizados) > 0){
+                $whereEsta = " AND establecimiento IN ('".implode("', '", $establecimientosAutorizados)."') ";
+            }
         }
         
         $sql = "SELECT B.posicion, A.codigo, A.descripcion, A.forma_evaluacion,  
@@ -144,7 +152,8 @@ class IndicadorRepository extends EntityRepository {
                                          INNER JOIN ctl_establecimiento_simmow BB ON (AA.establecimiento = BB.id::varchar)
                                          $joinDepto
                                      WHERE BB.id_tipo_establecimiento IN $niveles
-                                         $whereDepto
+                                        $whereDepto
+                                        $whereEsta
                                  )
                                  OR
                                  B.id 
@@ -159,7 +168,8 @@ class IndicadorRepository extends EntityRepository {
                                          $joinDepto
                                          INNER JOIN costos.formulario CC ON (AA.id_formulario = CC.id)
                                      WHERE BB.id_tipo_establecimiento IN $niveles
-                                         $whereDepto
+                                        $whereDepto
+                                        $whereEsta
                                  )
                             )
                     ORDER BY posicion, codigo_estandar, codigo
@@ -249,7 +259,7 @@ class IndicadorRepository extends EntityRepository {
      * Recupera los indicadores que tienen indicadores hijos asociados
      * datos numéricos
      */
-    public function getIndicadoresEvaluadosNumericos($periodo, $nivel, $departamento = 'todos') {
+    public function getIndicadoresEvaluadosNumericos($periodo, $nivel, $departamento = 'todos', $userGroupIds = null) {
         $em = $this->getEntityManager();
         list($anio, $mes) = explode('_', $periodo);
         
@@ -264,6 +274,14 @@ class IndicadorRepository extends EntityRepository {
         if ($departamento != 'todos'){
             $joinDepto =  " INNER JOIN ctl_municipios C ON (B.idmunicipio = C.id) "; 
             $whereDepto = " AND C.id_departamento = $departamento ";
+        }
+        
+        $whereEsta = '';
+        if ($userGroupIds != null){
+            $establecimientosAutorizados = $this->getEstablecimientosAutorizados($userGroupIds);
+            if (count($establecimientosAutorizados) > 0){
+                $whereEsta = " AND establecimiento IN ('".implode("', '", $establecimientosAutorizados)."') ";
+            }
         }
                 
         $sql = "SELECT B.unidad_medida, C.codigo as dimension, B.id, 
@@ -290,6 +308,7 @@ class IndicadorRepository extends EntityRepository {
                                             AND (anio < $anio OR (anio = $anio AND mes::integer <= $mes ) )
                                             AND B.id_tipo_establecimiento IN $niveles
                                             $whereDepto
+                                            $whereEsta
                                         GROUP BY anio, mes, id_indicador
                                         ORDER BY anio, mes
                                         LIMIT 10
@@ -303,6 +322,7 @@ class IndicadorRepository extends EntityRepository {
                             AND (A.mes = '$mes' OR A.mes = '0$mes')
                             AND B.id_tipo_establecimiento IN $niveles
                             $whereDepto
+                            $whereEsta
                         GROUP BY id_indicador
                     ) AS A
                     INNER JOIN indicador B ON (A.id_indicador = B.id)
@@ -913,13 +933,7 @@ class IndicadorRepository extends EntityRepository {
         
         $establecimientosAutorizadosCod = '';
         if ($userGroupIds != null){
-            // Verificar si el grupo del usuario está restringido a ciertos establecimientos 
-            $sql = "SELECT codigo_establecimiento FROM grupo_establecimiento WHERE id_grupo IN (".implode(', ', $userGroupIds).")";
-            $establecimientosAutorizados = array();
-            foreach($em->getConnection()->executeQuery($sql)->fetchAll() as $e ){
-                $establecimientosAutorizados[] = $e['codigo_establecimiento'];
-            }
-            
+            $establecimientosAutorizados = $this->getEstablecimientosAutorizados($userGroupIds);
             if (count($establecimientosAutorizados) > 0){
                 $establecimientosAutorizadosCod = " WHERE establecimiento IN ('".implode("', '", $establecimientosAutorizados)."') ";
             }
@@ -1111,5 +1125,16 @@ class IndicadorRepository extends EntityRepository {
                 ";
 
         return $em->getConnection()->executeQuery($sql)->fetchAll();
+    }
+    
+    protected function getEstablecimientosAutorizados($userGroupIds) {
+        $em = $this->getEntityManager();
+        // Verificar si el grupo del usuario está restringido a ciertos establecimientos 
+        $sql = "SELECT codigo_establecimiento FROM grupo_establecimiento WHERE id_grupo IN (".implode(', ', $userGroupIds).")";
+        $establecimientosAutorizados = array();
+        foreach($em->getConnection()->executeQuery($sql)->fetchAll() as $e ){
+            $establecimientosAutorizados[] = $e['codigo_establecimiento'];
+        }
+        return $establecimientosAutorizados;
     }
 }

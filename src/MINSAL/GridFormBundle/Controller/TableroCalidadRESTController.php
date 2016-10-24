@@ -54,10 +54,7 @@ class TableroCalidadRESTController extends Controller {
 
         $response = new Response();
         
-        $userGroupIds = array();
-        foreach ($this->getUser()->getGroups() as $g){
-            $userGroupIds[] = $g->getId();
-        }
+        $userGroupIds = $this->getUserGroupIds();
         
         $em = $this->getDoctrine()->getManager();
 
@@ -204,9 +201,11 @@ class TableroCalidadRESTController extends Controller {
         
         $response = new Response();
         $em = $this->getDoctrine()->getManager();
+        
+        $userGroupIds = $this->getUserGroupIds();
 
         if ($tipo == 2){
-            $data = $em->getRepository('GridFormBundle:Indicador')->getIndicadoresEvaluadosNumericos($periodo, $nivel, $departamento);
+            $data = $em->getRepository('GridFormBundle:Indicador')->getIndicadoresEvaluadosNumericos($periodo, $nivel, $departamento, $userGroupIds);
             $aux = array();
             foreach ($data as $k=>$d){
                 $aux = json_decode(str_replace(array('\\', '"{', '}"', '{{', '}}'), array('', '{', '}', '[{', '}]'), $d['historial']), true);
@@ -221,7 +220,7 @@ class TableroCalidadRESTController extends Controller {
             }
         }
         else {
-            $data = $em->getRepository('GridFormBundle:Indicador')->getIndicadoresEvaluadosListaChequeo($periodo, $nivel, $departamento);
+            $data = $em->getRepository('GridFormBundle:Indicador')->getIndicadoresEvaluadosListaChequeo($periodo, $nivel, $departamento, $userGroupIds);
         }
         $resp = (count($data) == 0)? array(): $data;
         
@@ -246,6 +245,14 @@ class TableroCalidadRESTController extends Controller {
         
         $response->setContent(json_encode($resp));
         return $response;
+    }
+    
+    protected function getUserGroupIds() {
+        $userGroupIds = array();
+        foreach ($this->getUser()->getGroups() as $g){
+            $userGroupIds[] = $g->getId();
+        }
+        return $userGroupIds;
     }
 
 }
