@@ -335,8 +335,7 @@ class FormularioAdminController extends Controller {
         foreach ($expedientesKobo as $num => $exp) {
             foreach ($exp as $k => $v) {
                 $var = array_pop(explode('/', $k));
-                $valor = ($v == 'Infinity') ? 0 : $v;
-                
+                $valor = $this->procesarValor($v);
                 $expedientes[$var]['num_expe5_' . ($num + 1)] = $valor;
             }
         }
@@ -347,10 +346,20 @@ class FormularioAdminController extends Controller {
         $dm = array();
         foreach ($datosKobo as $k => $valor) {
             $var = array_pop(explode('/', $k));
-            $v = ($valor == 'Infinity') ? 0 : $valor;
+            $v = $this->procesarValor($valor);
             $dm[$var]['cant_mensual_' . $mes] = $v;
         }
         return $dm;
+    }
+    
+    protected function procesarValor($valor) {
+        $v = ($valor == 'Infinity') ? 0 : $valor;
+        
+        if (!(is_array($valor)) and preg_match('/^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$/', $valor) === 1){
+            $f = explode('-', $valor);
+            $v = $f[2].'/'.$f[1].'/'.$f[0];
+        }
+        return $v;
     }
 
 }
