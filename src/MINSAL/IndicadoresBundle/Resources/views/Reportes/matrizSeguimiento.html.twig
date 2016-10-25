@@ -36,6 +36,9 @@
         .sonata-ba-content{
             overflow: auto;
         }
+        #matrizSeguimiento table{
+            font-size: 14pt;
+        }
     </style>
 
 {% endblock stylesheets %}
@@ -46,12 +49,21 @@
     </button>
     <TABLE  class="table table-hover table-bordered" id="matrizSeguimiento">
         <THEAD>
-            
+            <TR>
+                <TH align="center" colspan="{{ 3 + cantMeses }}" >Matríz de Seguimiento: El Salvador</TH>
+            </TR>
+            <TR>
+                <TH align = "center" colspan = "{{3 + cantMeses }}" >Periodo: {{periodoInicio}} a {{periodoFin}}</TH>
+            </TR>
+            <TR>
+                <TH align = "center" colspan = "{{3 + cantMeses }}" >Rangos de colores:  0 - 75 - Rojo ; 76 - 85 - Amarillo;  > 85 Verde </TH>
+            </TR>
        </THEAD>
         <TBODY>
             {% for cat in categorias%}
                 <TR >
-                    <TH bgcolor="#C9E0D3" colspan="2" >{% for des in cat.descripcion %}{{des}}<BR/><BR/>{% endfor %}</TH>
+                    <TH bgcolor="#C9E0D3" >{% for des in cat.descripcion %}{{des}}<BR/><BR/>{% endfor %}</TH>
+                    <TD bgcolor="#C9E0D3"></TD>
                     {% for anio, anios in parms %}
                         {% for mes in anios %}
                             <TH bgcolor="#C9E0D3">{{ mes ~ '/' ~ anio}}</TH>
@@ -62,6 +74,7 @@
                 {% for variable in cat.datos %}
                     <TR>                    
                         <TD rowspan="3" class="nombre_variable">{{datosFrm[variable].descripcion}}</TD>
+                        
                         <Th >Real</Th>
                         {% for anio, anios in parms %}
                             {% for mes in anios %}
@@ -75,6 +88,7 @@
                         <TD rowspan="3" >{{datosFrm[variable].observaciones}}</TD>
                     </TR>
                     <TR>
+                        
                         <TH>Planificado</TH>
                         {% for anio, anios in parms %}
                             {% for mes in anios %}
@@ -87,6 +101,7 @@
                         {% endfor %}
                     </TR>
                     <TR>
+                        
                         <TH>Estatus</TH>
                         {% for anio, anios in parms %}
                             {% for mes in anios %}

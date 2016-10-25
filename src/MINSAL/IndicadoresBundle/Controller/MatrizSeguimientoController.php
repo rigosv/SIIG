@@ -45,7 +45,7 @@ class MatrizSeguimientoController extends Controller {
     /**
      * @Route("/matriz_seguimiento/mostrar/{periodoInicio}/{peridoFin}", name="matriz-seguimiento-mostrar")
      */
-    public function mostrarMatrizSeguimientoAccion($periodoInicio, $peridoFin) {
+    public function mostrarMatrizSeguimientoAccion($periodoInicio, $periodoFin) {
         $admin_pool = $this->get('sonata.admin.pool');
         
         $em = $this->getDoctrine()->getManager();
@@ -55,21 +55,24 @@ class MatrizSeguimientoController extends Controller {
         $datosFrm = $em->getRepository('GridFormBundle:Formulario')->getDatosRAW($Frm);
                 
         
-        $params = $this->getParametros($periodoInicio, $peridoFin);
+        $params = $this->getParametros($periodoInicio, $periodoFin);
         
         $anios_ = array();
         // **************** OBTENCION DE DATOS DESDE FORMULARIOS DE CAPTURA
         //Información de los datos del NUMERADOR, obtenidos de FORMULARIOS
         $idOrigenesFrmR = array(
                             array('descripcion'=>'7598 niños de 6 a 23 meses cuyas madres reciben 60 sobres de MNP', 
+                                    'fuente'=>'',
                                     'codigo'=>'madres_rec_60_sobres_MNP', 'acumular'=>true,
                                     'sql'=> $this->getSqlFromForm(94, "'60MNP-1aEntrega', '60MNP-2aEntrega', '60MNP-3aEntrega'")
                                 ),
                                 array('descripcion'=>'18376 niños de 12 a 59 meses reciben tratamiento dos dosis de tratamiento antiparasitarios al año', 
+                                    'fuente'=>'',
                                     'codigo'=>'ninos_2_dosis_antipari_anual', 'acumular'=>true,
                                     'sql'=> $this->getSqlFromForm(94, "'ninio_consumo_60MNP_1aEntrega', 'ninio_consumo_60MNP_2aEntrega', 'ninio_consumo_60MNP_3aEntrega'")                                        
                                     ),
                                     array('descripcion'=>'100% de niños con diarrea en UCSF y UROC tratados con SRO y Zinc', 
+                                    'fuente'=>'',
                                     'codigo'=>'ninos_diarria_tratados_sro_zinc', 'acumular'=>true,
                                     'sql'=> $this->getSqlFromForm(94, "'entrega_zinc_sro'")
                                     )
@@ -82,6 +85,7 @@ class MatrizSeguimientoController extends Controller {
         //Información de los datos del DENOMINADOR, obtenidos de FORMULARIOS
         $idOrigenesFrmP = array(
                                     array('descripcion'=>'100% de niños con diarrea en UCSF y UROC tratados con SRO y Zinc', 
+                                    'fuente'=>'',
                                     'codigo'=>'ninos_diarria_tratados_sro_zinc', 'acumular'=>true,
                                     'sql'=> $this->getSqlFromForm(94, "'ninio<59meses_diarrea'", 'planificado')
                                     )
@@ -92,19 +96,26 @@ class MatrizSeguimientoController extends Controller {
         
         // **************** OBTENCION DE DATOS DESDE ORIGENES DE DATOS
         //Información de los datos del NUMERADOR, obtenidos de orígenes de datos del etab
-        $idOrigenesR = array(array('id'=>131, 'descripcion'=>'Embarazadas captadas antes 12 semanas del total esperado', 
+        $idOrigenesR = array(array('id'=>131, 'descripcion'=>'Embarazadas captadas antes 12 semanas del total esperado',
+                                    'fuente'=>'eTAB',
                                     'codigo'=>'emb_cap_12_sema_tot_espe', 'acumular'=>true),
                             array('id'=>193, 'descripcion'=>'# de parto institucional atendidos por todos los prestadores de salud en los 14 municipios (medico/enfermera)', 
+                                    'fuente'=>'eTAB',
                                     'codigo'=>'partos_por_personal_calificado', 'acumular'=>true),
                             array('id'=>198, 'descripcion'=>'# de puérperas captadas antes de los 7 días', 
+                                'fuente'=>'eTAB',
                                     'codigo'=>'captadas_antes_7_dias', 'acumular'=>true),                            
                             array('id'=>195, 'descripcion'=>'% de niños con diarrea en UCSF y UROC tratados con SRO y Zinc', 
+                                'fuente'=>'eTAB',
                                     'codigo'=>'ninos_diarrea_sro_zinc', 'acumular'=>true),
                             array('id'=>195, 'descripcion'=>'% de niños con diarrea en UCSF y UROC tratados con SRO y Zinc', 
+                                'fuente'=>'eTAB',
                                     'codigo'=>'ninos_diarrea_sro_zinc', 'acumular'=>true),
                             array('id'=>385, 'descripcion'=>'Número de usuarias activas captadas para métodos de PF (anual)', 
+                                'fuente'=>'eTAB',
                                     'codigo'=>'usu_act_captadas_pf', 'acumular'=>false),
                             array('id'=>196, 'descripcion'=>'% de cobertura de vacunación con SPR', 
+                                'fuente'=>'eTAB',
                                     'codigo'=>'vacunacion_spr', 'acumular'=>true)
                             );
         foreach ($idOrigenesR as $varR){
@@ -113,8 +124,10 @@ class MatrizSeguimientoController extends Controller {
         
         //Información de los datos del DENOMINADOR, obtenidos de orígenes de datos del etab
         $idOrigenesP = array(array('id'=>192, 'descripcion'=>'# de parto institucional atendidos por todos los prestadores de salud en los 14 municipios (medico/enfermera)', 
+                                    'fuente'=>'eTAB',
                                     'codigo'=>'partos_por_personal_calificado', 'acumular'=>true),
                             array('id'=>199, 'descripcion'=>'# de puérperas captadas antes de los 7 días', 
+                                    'fuente'=>'eTAB',
                                     'codigo'=>'captadas_antes_7_dias', 'acumular'=>true)
                             );
         foreach ($idOrigenesP as $varP){
@@ -135,6 +148,7 @@ class MatrizSeguimientoController extends Controller {
         // ********* OBTENCIÓN DE DATOS FIJOS
         $idOrigenesFijosP = array(
                                 array('descripcion'=>'Embarazadas captadas antes 12 semanas del total esperado', 
+                                        'fuente'=>'',
                                         'codigo'=>'emb_cap_12_sema_tot_espe',
                                         'datos'=>array(
                                                     array('anio'=>2016, 'mes'=> 'cant_mensual_calidad_01_p', 'calculo'=>200),
@@ -152,6 +166,7 @@ class MatrizSeguimientoController extends Controller {
                                                 )
                                     ),
                                 array('descripcion'=>'Número de usuarias activas captadas para métodos de PF (anual)', 
+                                        'fuente'=>'',
                                         'codigo'=>'usu_act_captadas_pf',
                                         'datos'=>array(
                                                     array('anio'=>2016, 'mes'=> 'cant_mensual_calidad_01_p', 'calculo'=>2154),
@@ -168,7 +183,8 @@ class MatrizSeguimientoController extends Controller {
                                                     array('anio'=>2016, 'mes'=> 'cant_mensual_calidad_12_p', 'calculo'=>40531)                                            
                                                 )
                                     ),
-                                array('descripcion'=>'% de cobertura de vacunación con SPR', 
+                                array('descripcion'=>'% de cobertura de vacunación con SPR',
+                                        'fuente'=>'',
                                         'codigo'=>'vacunacion_spr',
                                         'datos'=>array(
                                                     array('anio'=>2016, 'mes'=> 'cant_mensual_calidad_01_p', 'calculo'=>95),
@@ -226,14 +242,17 @@ class MatrizSeguimientoController extends Controller {
 
         $idOrigenesFijosR = array(
                                 array('descripcion'=>'7598 niños de 6 a 23 meses cuyas madres reciben 60 sobres de MNP', 
+                                        'fuente'=>'',
                                         'codigo'=>'madres_rec_60_sobres_MNP',
                                         'datos'=>$datosOrigen
                                     ),
                                 array('descripcion'=>'18376 niños de 12 a 59 meses reciben tratamiento dos dosis de tratamiento antiparasitarios al año', 
+                                    'fuente'=>'',
                                     'codigo'=>'ninos_2_dosis_antipari_anual',
                                     'datos'=>$datosOrigen
                                     ),
                                 array('descripcion'=>'ninios_12_23_meses', 
+                                    'fuente'=>'',
                                     'codigo'=>'ninios_12_23_meses',
                                     'datos'=>$datos_ninios_12_23_meses
                                     )
@@ -254,9 +273,15 @@ class MatrizSeguimientoController extends Controller {
         
         $datos_ = array();
         $datosFrmFormat = array();
+        $cantMeses = 0;
+        foreach ($params as $anio){
+            foreach ($anio as $mes){
+                $cantMeses++;
+            }
+        }
         foreach ($datosFrm as $f){
             $datosFrmFormat[$f['codigo_variable']]['descripcion'] = $f['descripcion_variable'];            
-            //$datosFrmFormat[$f['codigo_variable']]['categoria'] = $f['descripcion_categoria_variable'];
+            $datosFrmFormat[$f['codigo_variable']]['fuente'] = ( array_key_exists('fuente', $f)) ?  $f['fuente'] : 'PEP';
             
             if (array_key_exists($f['anio'], $params)){
                 if (array_key_exists('observaciones', $f)){
@@ -355,8 +380,11 @@ class MatrizSeguimientoController extends Controller {
                                     'admin_pool' => $admin_pool,
                                     'datosFrm' => $datosFrmFormat,
                                     'categorias' => $categorias,
-                                    'parms' => $params
-                                ));
+                                    'parms' => $params,
+                                    'periodoInicio' => $periodoInicio,
+                                    'periodoFin' => $periodoFin,
+                                    'cantMeses' =>$cantMeses
+                                    ));
     }
     
     protected function getDatosFormateados($var,  $tipo = null, $sql = null) {
@@ -444,6 +472,7 @@ class MatrizSeguimientoController extends Controller {
             $resp[$d['anio']]['anio'] = $d['anio'];
             $resp[$d['anio']]['codigo_variable'] = $var['codigo'];
             $resp[$d['anio']]['descripcion_variable'] = $var['descripcion'];
+            $resp[$d['anio']]['fuente'] = (array_key_exists('fuente', $var) ) ? $var['fuente'] : '';
             $resp[$d['anio']][$d['mes']] = $d['calculo'];
         }
         
