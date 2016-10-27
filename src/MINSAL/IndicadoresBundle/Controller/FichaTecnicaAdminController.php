@@ -137,9 +137,18 @@ class FichaTecnicaAdminController extends Controller {
                         'src="' . $http . '://' . $_SERVER['HTTP_HOST']. $this->container->getParameter('directorio') . '/bundles',
                         'src="' . $http . '://'. $_SERVER['HTTP_HOST'] . $this->container->getParameter('directorio') . '/app_dev.php'), $html);
         $html .= $info_indicador;
-        //echo $html; exit;
         
-        $html = $this->get('knp_snappy.pdf')->getOutputFromHtml($html);
+        try {
+            $html = $this->get('knp_snappy.pdf')->getOutputFromHtml($html);
+        } catch (\RuntimeException $e) {
+            $matches = [];
+            if (preg_match('/([^\']+)\'.$/', $e->getMessage(), $matches)) {
+                $html = file_get_contents($matches[1]);
+                unlink($matches[1]);
+            } else  {
+                throw $e;
+            }
+        }
 
         return new Response(
                 $html, 200, array(
