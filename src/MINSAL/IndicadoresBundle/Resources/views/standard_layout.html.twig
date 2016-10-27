@@ -22,7 +22,7 @@
 {% block sonata_breadcrumb %}{% endblock %}
 
 {% block sonata_top_nav_menu %}
-    {% if app.security.token %}
+    {% if app.user %}
         {{ knp_menu_render('sonata_admin_sidebar', {template: admin_pool.getTemplate('knp_menu_template')}) }}
     {% endif %}
     <div class="navbar-custom-menu">        
