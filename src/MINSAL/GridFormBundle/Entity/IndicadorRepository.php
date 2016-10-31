@@ -1041,7 +1041,7 @@ class IndicadorRepository extends EntityRepository {
         }
         $em->getRepository("GridFormBundle:Formulario")->getDatosEvaluacion($frm);
         
-        $sql = "SELECT anio, mes, COALESCE(B.nombre_corto, establecimiento) AS establecimiento, C.nombre AS estandar, descripcion_variable AS criterio, SUM(cumplimiento) as cumplimiento, 
+        $sql = "SELECT anio, mes, COALESCE(B.nombre_corto, B.nombre) AS establecimiento, C.nombre AS estandar, descripcion_variable AS criterio, SUM(cumplimiento) as cumplimiento, 
                     SUM(no_cumplimiento) AS no_cumplimiento, 
                     ROUND((SUM(cumplimiento)::numeric / ( SUM(cumplimiento)::numeric + SUM(no_cumplimiento)::numeric ) * 100),0) AS porc_cumplimiento                    
                 FROM (
@@ -1060,7 +1060,7 @@ class IndicadorRepository extends EntityRepository {
                     ) AS A 
                     INNER JOIN costos.estructura B ON (A.establecimiento = B.codigo)
                     INNER JOIN costos.formulario C ON (A.formulario = C.id)
-                GROUP BY anio, mes, B.nombre_corto, establecimiento, A.formulario, C.nombre, codigo_variable, descripcion_variable, A.posicion 
+                GROUP BY anio, mes, B.nombre_corto, B.nombre, establecimiento, A.formulario, C.nombre, codigo_variable, descripcion_variable, A.posicion 
                 HAVING (SUM(cumplimiento)::numeric + SUM(no_cumplimiento)::numeric) > 0 
                 ORDER BY A.formulario, A.posicion::numeric";
         
