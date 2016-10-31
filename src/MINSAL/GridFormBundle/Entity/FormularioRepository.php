@@ -539,14 +539,25 @@ class FormularioRepository extends EntityRepository {
         }
     }
     
-    protected function getDatosEvaluacion(Formulario $Frm, $establecimiento, $anio, $mes, $arreglo=true, $crear_tabla = true, $criteriosTodos = false, $eliminar_vacios = true) {
+    public function getDatosEvaluacion(Formulario $Frm, $establecimiento = null, $anio = null, $mes = null, $arreglo=true, $crear_tabla = true, $criteriosTodos = false, $eliminar_vacios = true) {
         $em = $this->getEntityManager();
         $periodo_lectura = '';
         $idFrm = $Frm->getId();
         $mes_ = '';
-        if ($Frm->getPeriodoLecturaDatos() == 'mensual' and $mes != null){
+        if ($Frm->getPeriodoLecturaDatos() == 'mensual' ){
+            $mes_ = " A.datos->'mes' AS mes, ";
+        }
+        if ($mes != null){
             $periodo_lectura = " AND (A.datos->'mes')::integer = '$mes' ";
-            $mes_ = " '$mes' AS mes, ";
+        }
+        $whereAnio = '';
+        if ($anio != null){
+            $whereAnio = " AND A.datos->'anio' = '$anio' ";
+        }
+        
+        $whereEstablecimiento = '';
+        if ($establecimiento != null){
+           $whereEstablecimiento = " AND A.datos->'establecimiento' = '$establecimiento' "; 
         }
         $campos = $em->getRepository('GridFormBundle:Indicador')->getListaCampos($Frm, $arreglo, $mes);
         
@@ -556,14 +567,15 @@ class FormularioRepository extends EntityRepository {
         $excluirCriterios = ($criteriosTodos) ? '': " AND A.datos->'es_separador' != 'true' ";
 
         $sql = "
-                SELECT $campos, $anio AS anio, $mes_ '$establecimiento' as establecimiento, 
+                SELECT $campos, A.datos->'anio' AS anio, $mes_ A.datos->'establecimiento' as establecimiento, 
                     A.datos->'es_poblacion' AS es_poblacion, A.datos->'codigo_tipo_control' AS tipo_control, 
                     A.datos->'es_separador' AS es_separador, A.datos->'posicion' AS posicion, id_formulario
-                 INTO TEMP datos_tmp 
+                 INTO  TEMP datos_tmp 
                  FROM almacen_datos.repositorio A
-                 WHERE id_formulario = '$idFrm'
-                    AND A.datos->'establecimiento' = '$establecimiento'
-                    AND A.datos->'anio' = '$anio'
+                 WHERE (id_formulario = '$idFrm'
+                     OR id_formulario IN (SELECT id FROM costos.formulario WHERE id_formulario_sup = '$idFrm') )
+                    $whereEstablecimiento
+                    $whereAnio
                     $excluirCriterios
                     $periodo_lectura
                  ";
@@ -726,10 +738,12 @@ class FormularioRepository extends EntityRepository {
         }
     }
     
-    public function getResumenEvaluacionCriterios($mes) {
+    public function getResumenEvaluacionCriterios($mes = null) {
         $em = $this->getEntityManager();
         
-        $em->getRepository('GridFormBundle:Indicador')->borrarVacios($mes);
+        if ($mes != null){
+            $em->getRepository('GridFormBundle:Indicador')->borrarVacios($mes);
+        }
         
         $condicion = " HAVING (SUM(cumplimiento)::numeric + SUM(no_cumplimiento)::numeric) > 0 ";
         $opciones = array ('pivote'=> array('grupo'=> "GROUP BY pivote $condicion ORDER BY pivote::numeric", 

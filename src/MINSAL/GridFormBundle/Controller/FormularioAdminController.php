@@ -257,7 +257,7 @@ class FormularioAdminController extends Controller {
         // Estándares         1       2       3        4         5
         //$estandares = array(11=>96, 12=>97, 13=>98, 14 => 99, 15=>103);
         // Versión 2
-        // Estándares         1       2       3        4         5
+        // Estándares         1           2        3         4         5
         $estandares = array(28 => 96, 41 => 97, 31 => 98, 32 => 99, 29 => 103);
 
         foreach ($estandares as $idFrmKobo => $idFrmCalidad) {

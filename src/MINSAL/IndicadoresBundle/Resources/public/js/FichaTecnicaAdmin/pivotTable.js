@@ -147,8 +147,8 @@ $(document).ready(function() {
     
     $('A.calidad_datos_item').click(function() {        
         var nombre_elemento = $(this).html();
-        
-        $.getJSON(Routing.generate('get_datos_evaluacion_calidad'), function(mps) {
+        var idFrm = $(this).attr('data-id');
+        $.getJSON(Routing.generate('get_datos_evaluacion_calidad', {id: idFrm}), function(mps) {
                 datos_ = mps;
                 tipoElemento = 'calidad';
                 identificadorElemento = 'calidad';

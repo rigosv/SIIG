@@ -1025,12 +1025,45 @@ class IndicadorRepository extends EntityRepository {
           
     }
     
-    public function getDatosCalidad() {
+    public function getDatosCalidad($idFormulario) {
         $em = $this->getEntityManager();
         
-        $sql = "SELECT * 
-                    FROM datos_evaluacion_calidad                     
-                     ";
+        $frm = $em->getRepository("GridFormBundle:Formulario")->find($idFormulario);
+        
+        if ($frm->getPeriodoLecturaDatos() == 'mensual' ){
+            $per = " mes";
+        } else {
+            $per = " nombre_pivote ";
+        }
+        $whereFrm6 = '';
+        if ($idFormulario == 104){
+            $whereFrm6 = " AND tipo_control = 'checkbox' ";
+        }
+        $em->getRepository("GridFormBundle:Formulario")->getDatosEvaluacion($frm);
+        
+        $sql = "SELECT anio, mes, COALESCE(B.nombre_corto, establecimiento) AS establecimiento, C.nombre AS estandar, descripcion_variable AS criterio, SUM(cumplimiento) as cumplimiento, 
+                    SUM(no_cumplimiento) AS no_cumplimiento, 
+                    ROUND((SUM(cumplimiento)::numeric / ( SUM(cumplimiento)::numeric + SUM(no_cumplimiento)::numeric ) * 100),0) AS porc_cumplimiento                    
+                FROM (
+                    SELECT anio, $per as mes, establecimiento, id_formulario as formulario, codigo_variable, descripcion_variable, COALESCE(NULLIF(posicion, ''), '0')::numeric AS posicion, id_formulario,
+                        CASE WHEN dato = 'true' OR dato = '1' THEN 1 ELSE 0 END AS cumplimiento, 
+                        CASE WHEN tipo_control = 'checkbox' AND dato != 'true' and dato != '1' THEN 1 
+                            WHEN tipo_control = 'checkbox_3_states' AND dato = 'false' or dato = '0' THEN 1
+                            ELSE 0 
+                        END AS no_cumplimiento
+                        FROM datos_tmp 
+                        WHERE es_poblacion='false'
+                            AND es_separador != 'true'
+                            AND tipo_control != 'dropdownlist'
+                            $whereFrm6
+                            
+                    ) AS A 
+                    INNER JOIN costos.estructura B ON (A.establecimiento = B.codigo)
+                    INNER JOIN costos.formulario C ON (A.formulario = C.id)
+                GROUP BY anio, mes, B.nombre_corto, establecimiento, A.formulario, C.nombre, codigo_variable, descripcion_variable, A.posicion 
+                HAVING (SUM(cumplimiento)::numeric + SUM(no_cumplimiento)::numeric) > 0 
+                ORDER BY A.formulario, A.posicion::numeric";
+        
         return $em->getConnection()->executeQuery($sql)->fetchAll();
           
     }
