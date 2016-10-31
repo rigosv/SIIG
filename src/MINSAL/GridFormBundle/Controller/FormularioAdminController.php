@@ -257,17 +257,18 @@ class FormularioAdminController extends Controller {
         // Estándares         1       2       3        4         5
         //$estandares = array(11=>96, 12=>97, 13=>98, 14 => 99, 15=>103);
         // Versión 2
-        // Estándares         1           2        3         4         5
-        $estandares = array(28 => 96, 41 => 97, 31 => 98, 32 => 99, 29 => 103);
+        // Estándares         1           2        3         4         5        29
+        $estandares = array(28 => 96, 41 => 97, 31 => 98, 32 => 99, 29 => 103, 44=>93);
 
         foreach ($estandares as $idFrmKobo => $idFrmCalidad) {
             curl_setopt($ch, CURLOPT_URL, "https://kc.kobo.salud.gob.sv/api/v1/data/$idFrmKobo?format=json");
             $response = curl_exec($ch);
             $data = json_decode($response, true);
-
+            
             foreach ($data as $datos) {
                 //Buscar llave del periodo evaluado
                 $kFechaPeriodo = '';
+                
                 foreach ($datos as $k => $v) {
                     if (array_pop(explode('/', $k)) == 'fech_fin_periodo_eval')
                         $kFechaPeriodo = $k;
