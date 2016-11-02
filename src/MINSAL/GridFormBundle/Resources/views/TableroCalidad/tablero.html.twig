@@ -204,7 +204,9 @@
                                     <Th colspan="[[Formulario.resumen_expedientes.length]]" style="text-align: center;">{{'_elementos_evaluados_'|trans}}</Th>
                                     <Th style="text-align: center;" ng-if="Formulario.resumen_criterios.length > 0">{{'_resumen_eval_criterio_'|trans}}</Th>
                                 </tr>
-                                <TR  class="fila_criterios [[criterio.codigo_indicador | quitarpunto]]" ng-repeat="criterio in Formulario.criterios | filter : buscar_criterios" >
+                                <TR  class="fila_criterios [[criterio.codigo_indicador | quitarpunto]]" 
+                                     ng-repeat="criterio in Formulario.criterios | filter : buscar_criterios" 
+                                     ng-init="rCriterio = Formulario.resumen_criterios[criterio.codigo_variable]">
                                     <TD class="separador indentacion_[[criterio.nivel_indentacion]]"
                                         ng-if="criterio.es_separador == 'true'" colspan="20" >
                                         [[criterio.descripcion_variable]]
@@ -237,8 +239,9 @@
                                         </button>
                                         <span ng-if="criterio.codigo_tipo_control != 'checkbox' && criterio.codigo_tipo_control != 'checkbox_3_states' ">[[getValorExpediente(exp)]]</span>
                                     </TD>
-                                    <TD align=center ng-if="criterio.es_separador == 'false' && criterio.es_poblacion == 'false' && $first" ng-repeat="resumen_criterio in Formulario.resumen_criterios | filter:{codigo_variable:criterio.codigo_variable}" >
-                                        <span class="porc_cumplimiento_criterio">[[resumen_criterio.porc_cumplimiento]]% </span>([[resumen_criterio.cumplimiento]]/[[resumen_criterio.cumplimiento + resumen_criterio.no_cumplimiento]])
+                                    <TD align=center ng-if="criterio.es_separador == 'false' && criterio.es_poblacion == 'false' && (rCriterio.cumplimiento + rCriterio.no_cumplimiento ) > 0"
+                                        >
+                                        <span class="porc_cumplimiento_criterio">[[rCriterio.porc_cumplimiento]]% </span>([[rCriterio.cumplimiento]]/[[rCriterio.cumplimiento + rCriterio.no_cumplimiento]])
                                     </TD>
                                 </TR>
                             </tbody>

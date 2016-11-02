@@ -570,7 +570,7 @@ class FormularioRepository extends EntityRepository {
                 SELECT $campos, A.datos->'anio' AS anio, $mes_ A.datos->'establecimiento' as establecimiento, 
                     A.datos->'es_poblacion' AS es_poblacion, A.datos->'codigo_tipo_control' AS tipo_control, 
                     A.datos->'es_separador' AS es_separador, A.datos->'posicion' AS posicion, id_formulario
-                 INTO  TEMP datos_tmp 
+                 INTO  datos_tmp 
                  FROM almacen_datos.repositorio A
                  WHERE (id_formulario = '$idFrm'
                      OR id_formulario IN (SELECT id FROM costos.formulario WHERE id_formulario_sup = '$idFrm') )
@@ -788,7 +788,17 @@ class FormularioRepository extends EntityRepository {
                             $soloCriteriosInd
                     ) AS A 
                 $opc[grupo]";
-            $resp[$campo] =  $em->getConnection()->executeQuery($sql)->fetchAll();
+            $dat = $em->getConnection()->executeQuery($sql)->fetchAll();
+            
+            if ($campo == 'codigo_variable'){
+                $aux = array();
+                foreach ($dat as $d){
+                    $aux[$d['codigo_variable']] = $d;
+                }
+                $dat = $aux;
+            }
+            
+            $resp[$campo] =  $dat;
         }
         return $resp;
     }
