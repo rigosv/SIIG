@@ -1,4 +1,5 @@
 var idIndicadorActivo;
+var esCalidad = false;
 
 $(document).ready(function() {
     var datos_ = '';
@@ -101,6 +102,7 @@ $(document).ready(function() {
     $("#FiltroNoClasificados").searchFilter({targetSelector: ".indicador", charCount: 2});
     
     $('A.indicador').click(function() {
+        esCalidad = false;
         var id_indicador = $(this).attr('data-id');
         var nombre_indicador = $(this).html();
         
@@ -116,6 +118,7 @@ $(document).ready(function() {
     });
     
     $('A.elemento_costeo').click(function() {
+        esCalidad = false;
         var codigo = $(this).attr('data-id');
         var nombre_elemento = $(this).html();
         
@@ -130,6 +133,7 @@ $(document).ready(function() {
     });
     
     $('A.formulario_captura_datos').click(function() {
+        esCalidad = false;
         var codigo = $(this).attr('data-id');
         var nombre_elemento = $(this).html();
 
@@ -149,6 +153,7 @@ $(document).ready(function() {
     });
     
     $('A.calidad_datos_item').click(function() {        
+        esCalidad = true;
         var nombre_elemento = $(this).html();
         var idFrm = $(this).attr('data-id');
         $.getJSON(Routing.generate('get_datos_evaluacion_calidad', {id: idFrm}), function(mps) {
@@ -165,13 +170,39 @@ $(document).ready(function() {
     function cargarTablaDinamica(datos){
         var renderers = $.extend($.pivotUtilities.renderers,
             $.pivotUtilities.c3_renderers);
-                
-        $("#output").pivotUI(datos, {
-            renderers: renderers,
-            menuLimit: 500,
-            unusedAttrsVertical: false,
-            onRefresh: onChangeTable
-        }, false, 'es');
+
+        if (esCalidad){
+            $("#output").pivotUI(datos, {
+                renderers: renderers,
+                menuLimit: 500,
+                unusedAttrsVertical: false,
+                onRefresh: onChangeTable,
+                rendererOptions: {
+                    heatmap: {
+                        colorScaleGenerator : function(values) {
+                            var max, min;
+                            min = Math.min.apply(Math, values);
+                            max = Math.max.apply(Math, values);
+                            return function(x) {
+                                if (x < 59.9)
+                                    return "#D73925";
+                                else if (x < 79.9)
+                                    return "#ffa500";
+                                else
+                                    return "#008D4C";
+                            };
+                        }
+                    }
+                }
+            }, true, 'es');
+        } else {
+            $("#output").pivotUI(datos, {
+                renderers: renderers,
+                menuLimit: 500,
+                unusedAttrsVertical: false,
+                onRefresh: onChangeTable
+            }, true, 'es');
+        }
     }
     
     var onChangeTable = (function(config) {
