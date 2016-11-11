@@ -1028,6 +1028,34 @@ class IndicadorRepository extends EntityRepository {
     public function getDatosCalidad($idFormulario) {
         $em = $this->getEntityManager();
         
+        if ($idFormulario == 'general'){
+            $sql = "SELECT codigo_estandar, codigo_indicador, anio, mes, 
+                        descripcion_indicador, calificacion AS calificacion_indicador, 
+                        nombre_establecimiento, nombre_corto AS establecimiento_nombre_corto,
+                        ( ( SELECT COUNT(calificacion)
+                            FROM  datos_evaluacion_calidad AA
+                            WHERE AA.codigo_estandar = A.codigo_estandar
+                                AND AA.anio = A.anio
+                                AND AA.mes = A.mes
+                                AND AA.establecimiento = A.establecimiento
+                                AND AA.calificacion >= 80
+                            GROUP BY codigo_estandar, anio, mes, establecimiento
+                        ) / 
+                        ( SELECT COUNT(calificacion)
+                            FROM  datos_evaluacion_calidad AA
+                            WHERE AA.codigo_estandar = A.codigo_estandar
+                                AND AA.anio = A.anio
+                                AND AA.mes = A.mes
+                                AND AA.establecimiento = A.establecimiento
+                            GROUP BY codigo_estandar, anio, mes, establecimiento
+                        ) * 100) AS calificacion_estandar
+                    FROM datos_evaluacion_calidad A
+                        INNER JOIN costos.formulario B ON (A.codigo_estandar = B.codigo)
+                    WHERE B.id IN (96, 97, 98, 99, 103, 104)
+                        ";
+            return $em->getConnection()->executeQuery($sql)->fetchAll();
+        }
+        
         $frm = $em->getRepository("GridFormBundle:Formulario")->find($idFormulario);
         
         if ($frm->getPeriodoLecturaDatos() == 'mensual' ){

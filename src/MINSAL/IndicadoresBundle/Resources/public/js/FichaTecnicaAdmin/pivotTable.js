@@ -176,7 +176,7 @@ $(document).ready(function() {
                 renderers: renderers,
                 menuLimit: 500,
                 unusedAttrsVertical: false,
-                onRefresh: onChangeTable,
+                onRefresh: arreglarValores0,
                 rendererOptions: {
                     heatmap: {
                         colorScaleGenerator : function(values) {
@@ -215,4 +215,10 @@ $(document).ready(function() {
                 delete config_copy["localeStrings"];
                 configuracion = config_copy;
             });   
+            
+    var arreglarValores0 = function(){
+                $('.pvtVal[data-value="0"]').html('0.00');
+                $('.pvtTotal[data-value="0"]').html('0.00');
+                $('.pvtTotalLabel').html('Totales');
+            };
 });
