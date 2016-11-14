@@ -1032,7 +1032,7 @@ class IndicadorRepository extends EntityRepository {
             $sql = "SELECT codigo_estandar, codigo_indicador, anio, mes, 
                         descripcion_indicador, calificacion AS calificacion_indicador, 
                         nombre_establecimiento, nombre_corto AS establecimiento_nombre_corto,
-                        ( ( SELECT COUNT(calificacion)
+                        (COALESCE(( SELECT COUNT(calificacion)
                             FROM  datos_evaluacion_calidad AA
                             WHERE AA.codigo_estandar = A.codigo_estandar
                                 AND AA.anio = A.anio
@@ -1040,7 +1040,7 @@ class IndicadorRepository extends EntityRepository {
                                 AND AA.establecimiento = A.establecimiento
                                 AND AA.calificacion >= 80
                             GROUP BY codigo_estandar, anio, mes, establecimiento
-                        ) / 
+                        ), 0) / 
                         ( SELECT COUNT(calificacion)
                             FROM  datos_evaluacion_calidad AA
                             WHERE AA.codigo_estandar = A.codigo_estandar
