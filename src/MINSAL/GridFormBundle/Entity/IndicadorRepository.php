@@ -1029,10 +1029,10 @@ class IndicadorRepository extends EntityRepository {
         $em = $this->getEntityManager();
         
         if ($idFormulario == 'general'){
-            $sql = "SELECT codigo_estandar, codigo_indicador, anio, mes, 
+            $sql = "SELECT codigo_estandar, B.nombre AS estandar, codigo_indicador, anio, mes, 
                         descripcion_indicador, calificacion AS calificacion_indicador, 
                         nombre_establecimiento, nombre_corto AS establecimiento_nombre_corto,
-                        (COALESCE(( SELECT COUNT(calificacion)
+                        ROUND(COALESCE(( SELECT COUNT(calificacion)
                             FROM  datos_evaluacion_calidad AA
                             WHERE AA.codigo_estandar = A.codigo_estandar
                                 AND AA.anio = A.anio
@@ -1040,7 +1040,7 @@ class IndicadorRepository extends EntityRepository {
                                 AND AA.establecimiento = A.establecimiento
                                 AND AA.calificacion >= 80
                             GROUP BY codigo_estandar, anio, mes, establecimiento
-                        ), 0) / 
+                        ), 0)::numeric / 
                         ( SELECT COUNT(calificacion)
                             FROM  datos_evaluacion_calidad AA
                             WHERE AA.codigo_estandar = A.codigo_estandar
@@ -1048,7 +1048,7 @@ class IndicadorRepository extends EntityRepository {
                                 AND AA.mes = A.mes
                                 AND AA.establecimiento = A.establecimiento
                             GROUP BY codigo_estandar, anio, mes, establecimiento
-                        ) * 100) AS calificacion_estandar
+                        )::numeric * 100,2) AS calificacion_estandar
                     FROM datos_evaluacion_calidad A
                         INNER JOIN costos.formulario B ON (A.codigo_estandar = B.codigo)
                     WHERE B.id IN (96, 97, 98, 99, 103, 104)
