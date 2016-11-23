@@ -53,12 +53,9 @@
     {% if periodoSeleccionado != null and parametros.periodo_estructura != '-1' %}
     {% set titulos = Frm.tituloColumnas | jsonDecode(true) %}
     <script type="text/javascript">
-        function decimal_date(){
-            return moment('01/01/1900' , 'DD/MM/YYYY').diff(moment(fecha, 'DD/MM/YYYY'), 'days')
-        }
-        
-        function decimal_date_time(fecha){
-            return decimal-date(fecha);
+        function decimal_date_time(fechaEnms){
+            //convertirlo a días
+            return fechaEnms / 1000 / 60 / 60 / 24;
         }
         
         $(document).ready(function () {
@@ -657,11 +654,16 @@
                         operadores.forEach(function(nodo2, index){
                             fil = nodo2.toString().replace(/\$\{F|\}/gi,'');
                             valor_oper = (fil == fila) ? valor_celda_actual :  $('#jqxgrid{{Frm.id}}').jqxGrid('getcellvalue', fil, columna);
-                            if (datarow.codigo_tipo_control == 'time'){
+                            var datarow_celda = $("#jqxgrid{{Frm.id}}").jqxGrid('getrowdata', fil);
+                            if (datarow_celda.codigo_tipo_control == 'time'){
                                 hora =  valor_oper.split(':');
                                 valor_oper =  parseInt(hora[0]) * 60 + parseInt(hora[1]);
-                            } else if (datarow.codigo_tipo_control == 'datetimeinput'){
+                            } else if (datarow_celda.codigo_tipo_control == 'datetimeinput'){
                                 fecha = moment(valor_oper, "DD/MM/YYYY HH:mm")
+                                //valor de la fecha en milisegundos
+                                valor_oper =  fecha.valueOf();
+                            } else if (datarow_celda.codigo_tipo_control == 'date'){
+                                fecha = moment(valor_oper, "DD/MM/YYYY")
                                 //valor de la fecha en milisegundos
                                 valor_oper =  fecha.valueOf();
                             }
@@ -670,31 +672,14 @@
                         try {
                             operaciones = operaciones.replace(/amp;/g, '')
                                     .replace(/&#039;/g, "'")
-                                    .replace(/&lt;/g, '<');
+                                    .replace(/&lt;/g, '<')
+                                    .replace(/ and /g, ' && ')
+                                    .replace(/ or /g, ' || ')
+                                    .replace(/\$\{fecha_medicion\}/g, moment($('#fechaEvaluacion').val(), 'DD/MM/YYYY').valueOf())
+                                    .replace(/decimal-date-time/g, 'decimal_date_time')
                                     ;
-
-                            result =  eval(operaciones);                           
-                            if (datarow.codigo_tipo_control == 'time'){
-
-                                horas = ~~(parseInt(result) / 60);
-                                horas = ( horas >=0 && horas < 10 ) ? '0'+horas : horas;
-
-                                minutos = (parseInt(result) % 60)
-                                minutos = ( minutos >= 0 && minutos < 10 ) ? '0'+Math.abs(minutos) : Math.abs(minutos);
-
-                                result =  horas+ ':' + minutos;
-                            } else if (datarow.codigo_tipo_control == 'datetimeinput'){
-                                //El resultado está en milisegundos, pasarlo a formato hora:minutos                                        
-                                horas_ = result / 1000 / 60 / 60 ;
-                                horas = ~~(horas_);
-                                horas = ( horas >=0 && horas < 10 ) ? '0'+horas : horas;
-
-                                minutos = parseInt((horas_ - horas) * 60);
-                                minutos = ( minutos >= 0 && minutos < 10 ) ? '0'+Math.abs(minutos) : Math.abs(minutos);
-                                result =  horas+ ':' + minutos;
-                            } else if (datarow.codigo_tipo_control == 'Number'){ 
-                                result = result.toFixed(2);
-                            }
+                            
+                            var result =  eval(operaciones);
                             return result;
                         }
                         catch(err) {
@@ -724,7 +709,31 @@
                                     lados_formula = formula.split(':=');
                                     fila_destino = filasp.exec(lados_formula[0]).toString().replace(/\$\{F|\}/gi,'');
                                     operaciones = lados_formula[1];
-                                    result = evalLadoDerecho(fila, columna, valor_celda_actual, datarow, operaciones); 
+                                    result = evalLadoDerecho(fila, columna, valor_celda_actual, datarow, operaciones);
+                                    
+                                    //Convertir el valor de acuerdo al tipo de dato de la celda destino
+                                    var datarow_dest = $("#jqxgrid{{Frm.id}}").jqxGrid('getrowdata', fila_destino);
+                                    if (datarow_dest.codigo_tipo_control == 'time'){
+                                        horas = ~~(parseInt(result) / 60);
+                                        horas = ( horas >=0 && horas < 10 ) ? '0'+horas : horas;
+
+                                        minutos = (parseInt(result) % 60)
+                                        minutos = ( minutos >= 0 && minutos < 10 ) ? '0'+Math.abs(minutos) : Math.abs(minutos);
+
+                                        result =  horas+ ':' + minutos;
+                                    } else if (datarow_dest.codigo_tipo_control == 'datetimeinput'){
+                                        //El resultado está en milisegundos, pasarlo a formato hora:minutos                                        
+                                        horas_ = result / 1000 / 60 / 60 ;
+                                        horas = ~~(horas_);
+                                        horas = ( horas >=0 && horas < 10 ) ? '0'+horas : horas;
+
+                                        minutos = parseInt((horas_ - horas) * 60);
+                                        minutos = ( minutos >= 0 && minutos < 10 ) ? '0'+Math.abs(minutos) : Math.abs(minutos);
+                                        result =  horas+ ':' + minutos;
+                                    } else if (datarow_dest.codigo_tipo_control == 'Number'){ 
+                                        result = result.toFixed(2);
+                                    }
+                                    
                                     var valor;
                                     if ( lados_formula[0].replace(/\$\{F|\}/g,'').trim() == fila_destino+'_LS'){
                                         valor = (result) ? null : 'N/A'; 
