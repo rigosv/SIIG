@@ -61,9 +61,9 @@ class FormularioAdminController extends FormularioAdminControllerBase
                 
         //Agrupar los periodos por formulario
         $periodos_aux = array();
-        foreach($periodos as $p){
-            $periodos_aux[$p['formulario']->getCodigo()]['nombre'] = $p['formulario']->getNombre();
-            $periodos_aux[$p['formulario']->getCodigo()]['datos'][] = $p;
+        foreach ($periodos as $p) {
+            $periodos_aux[$p['unidad']->getCodigo()]['unidad'] = $p['unidad'];
+            $periodos_aux[$p['unidad']->getCodigo()]['datos'][] = $p;
         }
         
         $campos = array('nit'=>10, 
@@ -146,13 +146,8 @@ class FormularioAdminController extends FormularioAdminControllerBase
         }
         
         $Frm_aux->addCampo($distribucion);
-        
-        $origenes = $this->getOrigenes($Frm, $parametros) + $this->getOrigenes($Frm2, $parametros);
-        $pivotes = $this->getPivotes($Frm, $parametros) + $this->getPivotes($Frm2, $parametros);
-        
-        return $this->render('GridFormBundle:Formulario:parametros.html.twig', array('Frm' => $Frm_aux, 
-            'origenes' => $origenes,
-            'pivotes' => $pivotes,
+                
+        $parametrosPlantilla = array(
             'url' => 'get_grid_data',
             'url_save' => 'set_grid_data',
             'estructura' => $estructura,
@@ -163,7 +158,35 @@ class FormularioAdminController extends FormularioAdminControllerBase
             'titulo' => '_rrhhCostos_',
             'mostrar_resumen' => true,
             'editable' => false,
-            'pk' => 'nit'));
+            'cantidad_formularios' => 0,
+            'pk' => 'nit');
+        
+        if ($periodo != '-1') {
+            
+            $formularios[] = $Frm_aux;
+
+            $parametrosPlantilla['Frm'] = $Frm_aux;
+            $parametrosPlantilla['llave_primaria'] = 'nit';
+            $parametrosPlantilla['cantidad_formularios'] = count($formularios);
+            $parametrosPlantilla['Formularios'] = $this->ajustarFormulas($formularios);
+            $parametrosPlantilla['meses_activos'] = $meses[$periodoSeleccionado->getPeriodo()->getAnio()];
+            //Recuperar los datos de encabezado, si los tiene
+            if ($tipo_periodo == 'pg') {
+                $unidad = $this->getUser()->getEstablecimientoPrincipal()->getCodigo();
+            } else {
+                $unidad = $periodoSeleccionado->getUnidad()->getCodigo();
+            }
+            $parametrosPlantilla['encabezado'] = $em->getRepository("GridFormBundle:Formulario")->obtenerEncabezado($periodoSeleccionado, $unidad);
+
+            foreach ($formularios as $frm) {
+                $parametrosPlantilla['origenes'][$frm->getId()] = $this->getOrigenes($Frm, $parametros) + $this->getOrigenes($Frm2, $parametros);
+                $parametrosPlantilla['pivotes'][$frm->getId()] = $this->getPivotes($Frm, $parametros) + $this->getPivotes($Frm2, $parametros);
+                $parametrosPlantilla['tipos_datos_por_filas'][$frm->getId()] = false;
+            }
+        }
+        
+        return $this->render('GridFormBundle:Formulario:parametros.html.twig', $parametrosPlantilla);
+        
     }
     
     public function gaAfAction(Request $request)
