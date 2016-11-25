@@ -354,8 +354,10 @@ class FichaTecnicaRepository extends EntityRepository {
                 $filtros .= " AND A." . $campo . " = '$valor' ";
             }
         }
-        
-        if ($acumulado){
+
+        if ($acumulado and in_array($significado->getCodigo(), array('anio', 'mes', 'trimestre'))){
+            //echo $significado->getCodigo();
+            //var_dump($significado->getAcumulable());
             $em = $this->getEntityManager();
             $var_n = array_pop(str_replace(array('{','}'), array('',''), $variables[0]));
             $var_d = array_pop(str_replace(array('{','}'), array('',''), $variables[1]));
@@ -363,7 +365,7 @@ class FichaTecnicaRepository extends EntityRepository {
             
             //leer la primera fila para determinar el tipo de dato de la dimensión actual
             $sql2 = "SELECT $dimension FROM $tabla_indicador LIMIT 1";
-            $operador = (is_numeric(array_pop($em->getConnection()->executeQuery($sql2)->fetch()))) ? '<=' : '=';                       
+            $operador = '<=';
             
             $formula = str_replace(
                     array('SUM('.$var_n.')', 'SUM('.$var_d.')'), 
