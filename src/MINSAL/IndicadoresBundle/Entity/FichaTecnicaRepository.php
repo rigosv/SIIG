@@ -327,12 +327,13 @@ class FichaTecnicaRepository extends EntityRepository {
         $rel_catalogo = '';
         $otros_campos = '';
         $grupo_extra = '';
+        $dimension_ = $dimension;
         $significado = $this->getEntityManager()->getRepository('IndicadoresBundle:SignificadoCampo')
                 ->findOneBy(array('codigo' => $dimension));
         $catalogo = $significado->getCatalogo();
         if ($catalogo != '') {
             $rel_catalogo = " INNER JOIN  $catalogo  B ON (A.$dimension::text = B.id::text) ";
-            $dimension = 'B.descripcion';
+            $dimension_ = 'B.descripcion';
             $otros_campos = ' B.id AS id_category, ';
             $grupo_extra = ', B.id ';
         }
@@ -358,7 +359,7 @@ class FichaTecnicaRepository extends EntityRepository {
             $em = $this->getEntityManager();
             $var_n = array_pop(str_replace(array('{','}'), array('',''), $variables[0]));
             $var_d = array_pop(str_replace(array('{','}'), array('',''), $variables[1]));
-            $filtros_ = str_replace('A.', 'AA.', $filtros_);
+            $filtros_ = str_replace('A.', 'AA.', $filtros);
             
             //leer la primera fila para determinar el tipo de dato de la dimensión actual
             $sql2 = "SELECT $dimension FROM $tabla_indicador LIMIT 1";
@@ -378,7 +379,7 @@ class FichaTecnicaRepository extends EntityRepository {
                     );
         }
         
-        $sql = "SELECT $dimension AS category, $otros_campos $variables_query, round(($formula)::numeric,2) AS measure
+        $sql = "SELECT $dimension_ AS category, $otros_campos $variables_query, round(($formula)::numeric,2) AS measure
             FROM $tabla_indicador A" . $rel_catalogo;
         $sql .= ' WHERE 1=1 ' . $evitar_div_0 . ' ' . $filtros;
         
@@ -386,7 +387,7 @@ class FichaTecnicaRepository extends EntityRepository {
             GROUP BY $dimension $grupo_extra";
         $sql .= ($acumulado)?'':"HAVING (($formula)::numeric) > 0";
         $sql .= "ORDER BY $dimension";
-
+        
         try {
             if ($ver_sql == true)
                 return $sql;
