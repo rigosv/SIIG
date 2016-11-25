@@ -128,6 +128,13 @@ class VariableCaptura
     private $formulaCalculo;
     
     /**
+     * @var string $logicaSalto
+     *
+     * @ORM\Column(name="logica_salto", type="text", nullable=true)
+     */
+    private $logicaSalto;
+    
+    /**
      * @var string $origen_fila
      *
      * @ORM\Column(name="origen_fila", type="text", nullable=true)
@@ -549,5 +556,29 @@ class VariableCaptura
     public function getOrigenFila()
     {
         return $this->origenFila;
+    }
+
+    /**
+     * Set logicaSalto
+     *
+     * @param string $logicaSalto
+     *
+     * @return VariableCaptura
+     */
+    public function setLogicaSalto($logicaSalto)
+    {
+        $this->logicaSalto = $logicaSalto;
+
+        return $this;
+    }
+
+    /**
+     * Get logicaSalto
+     *
+     * @return string
+     */
+    public function getLogicaSalto()
+    {
+        return $this->logicaSalto;
     }
 }

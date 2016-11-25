@@ -163,11 +163,24 @@ class FormularioAdminController extends Controller {
             $busqueda = array();
             $reemplazo = array();
             foreach ($var_ as $v) {
-                $f_ = $v->getFormulaCalculo();
+                //Fórmula de cálculo
+                //Si hay varios espacios en blanco sustituirlo por uno solo
+                $f_aux = str_replace (array('if(', 'if ('), 'ifX(' , preg_replace ('/[ ]+/', ' ', $v->getFormulaCalculo()) );                 
+                //Verificar si se ingresó la fórmula completa (cuando existe la combinación := )
+                $f_ = ( ( $f_aux !=  '' and strpos($f_aux, ':=') === false  ) ? '${'.$v->getCodigo().'} := ' : '' ) . $f_aux;
                 $formulaVariable = ( $f_ != '') ? '::' . $f_ : '';
+                
+                //Lógica de salto
+                //Si hay varios espacios en blanco sustituirlo por uno solo
+                $l_aux = str_replace (array('if(', 'if ('), 'ifX(' , preg_replace ('/[ ]+/', ' ', $v->getLogicaSalto()) );                 
+                //Verificar si se ingresó la fórmula completa (cuando existe la combinación := )
+                $l_ = ( ( $l_aux !=  '' and strpos($l_aux, ':=') === false  ) ? '${'.$v->getCodigo().'}_LS := ' : '' ) . $l_aux;
+                $logicaSalto = ( $l_ != '') ? '::' . $l_ : '';
+                
                 $busqueda[] = '{' . $v->getCodigo() . '}';
                 $reemplazo[] = '{F' . $i++ . '}';
                 $formula = str_replace($busqueda, $reemplazo, $formula . $formulaVariable);
+                $formula = str_replace($busqueda, $reemplazo, $formula . $logicaSalto);
             }
             $formula = trim($formula, '::');
             $f->setCalculoFilas($formula);

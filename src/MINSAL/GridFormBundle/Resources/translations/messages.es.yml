@@ -216,7 +216,9 @@ _area_: Área
 _historial_establecimiento_: Historial por establecimiento
 _limites_aceptacion_: Limites de aceptación
 _formula_campo_calculado_: Fórmula para campo calculado
-_formula_calculo_help_ : 'Cálculo por filas, se hará sobre la misma columna. Ej.Cálculo sobre dos columnas: {codigo_variable_dest}:={codigo_variable1}/{codigo_variable2}. También se puede utilizar para lógica de saltos agregando _LS a la variable destino. Ej.: Permitir el ingreso de datos en cod_var_dest si la variableX es true, de lo contrario se asignará N/A: {cod_var_dest}_LS := {variableX} == true'
+_logica_salto_: Lógica de salto
+_formula_calculo_help_ : 'Cálculo por filas, se hará sobre la misma columna. Ej.Cálculo sobre dos columnas: ${codigo_variable_dest}:=${codigo_variable1}/${codigo_variable2}.'
+_logica_salto_help_ : 'Condición a evaluar para permitir el ingreso de datos al control. Ej.: Permitir el ingreso de datos si la variableX es true, de lo contrario se asignará N/A: ${variableX} == true'
 _origen_fila_: Origen de la fila
 _origen_fila_help_: "Aplica para los campos 'Seleccionar uno' o 'Seleccionar varios'. Aquí debe ingresar los valores a mostrar en la lista de opciones, debe ser formato JSON (los valores van entre comillas simples) debe utilizar obligatoriamente los nombres 'value' y  'label': [{'value': 'valor_asociado', 'label': 'Etiqueta a mostrar'}, {'value': 'valor_asociado 2', 'label': 'Etiqueta a mostrar 2'}]"
 _origen_numeros_expedientes_: Origen de números de expedientes
