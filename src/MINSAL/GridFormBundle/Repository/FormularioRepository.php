@@ -67,18 +67,27 @@ class FormularioRepository extends EntityRepository {
             
             $this->cargarNumerosExpedientes($Frm, $params_string, $periodoIngreso->getPeriodo(), $esta);
         }
+        $join = '';
+        $whereVersion = '';
         if (in_array($this->area, array('ga_variables', 'ga_compromisosFinancieros', 'ga_distribucion'))){
             $tabla =  'costos.fila_origen_dato_ga';
             $origen = " area_costeo = '$this->area'  "; 
         } else {
             $tabla =  ($this->area == 'almacen_datos' or $this->area == 'calidad') ? 'almacen_datos.repositorio' : 'costos.fila_origen_dato_'.strtolower($this->area);
             $origen = " $this->campo IN (" . implode(',', $this->origenes) . ") ";
+            //Si el formulario tiene versión calcular solo los datos correspondientes
+            if ($Frm->getVersion() != ''){
+                $join = " INNER JOIN variable_captura B ON (datos->'codigo_variable' = B.codigo ) ";
+                $whereVersion = " AND B.version_formulario = '".$Frm->getVersion()."' ";
+            }
         }
         
         $sql = "
             SELECT datos
             FROM  $tabla
+                $join
             WHERE $origen
+                $whereVersion
                 $params_string
                 $this->orden
             ;";
