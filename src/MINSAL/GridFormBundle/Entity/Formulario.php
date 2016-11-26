@@ -44,6 +44,13 @@ class Formulario
      * @ORM\Column(name="descripcion", type="text", nullable=true)
      */
     private $descripcion;
+    
+    /**
+     * @var string $version
+     *
+     * @ORM\Column(name="version", type="integer", nullable=true)
+     */
+    private $version;
 
     /**
      * @var string $areaCosteo
@@ -898,5 +905,29 @@ class Formulario
     public function getConexionOrigenExpedientes()
     {
         return $this->conexionOrigenExpedientes;
+    }
+
+    /**
+     * Set version
+     *
+     * @param integer $version
+     *
+     * @return Formulario
+     */
+    public function setVersion($version)
+    {
+        $this->version = $version;
+
+        return $this;
+    }
+
+    /**
+     * Get version
+     *
+     * @return integer
+     */
+    public function getVersion()
+    {
+        return $this->version;
     }
 }

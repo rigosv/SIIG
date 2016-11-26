@@ -85,6 +85,13 @@ class VariableCaptura
     private $formulario;
     
     /**
+     * @var string $version_formulario
+     *
+     * @ORM\Column(name="version_formulario", type="float", nullable=true)
+     */
+    private $versionFormulario;
+    
+    /**
      * @var \Doctrine\Common\Collections\ArrayCollection
      * 
      * @ORM\ManyToMany(targetEntity="Indicador", mappedBy="criterios")
@@ -580,5 +587,29 @@ class VariableCaptura
     public function getLogicaSalto()
     {
         return $this->logicaSalto;
+    }
+
+    /**
+     * Set versionFormulario
+     *
+     * @param float $versionFormulario
+     *
+     * @return VariableCaptura
+     */
+    public function setVersionFormulario($versionFormulario)
+    {
+        $this->versionFormulario = $versionFormulario;
+
+        return $this;
+    }
+
+    /**
+     * Get versionFormulario
+     *
+     * @return float
+     */
+    public function getVersionFormulario()
+    {
+        return $this->versionFormulario;
     }
 }

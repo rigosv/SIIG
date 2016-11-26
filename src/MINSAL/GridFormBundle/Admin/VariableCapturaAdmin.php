@@ -24,6 +24,7 @@ class VariableCapturaAdmin extends Admin
                 ->add('area', null, array('label' => $this->getTranslator()->trans('_area_')))
                 ->add('descripcion', null, array('label' => $this->getTranslator()->trans('_descripcion_')))
                 ->add('formulario', null, array('label' => $this->getTranslator()->trans('_formulario_'),'required' => true))
+                ->add('versionFormulario', null, array('label' => $this->getTranslator()->trans('_version_formulario_')))
                 ->add('textoAyuda', null, array('label' => $this->getTranslator()->trans('_ayuda_')))
                 ->add('esPoblacion', null, array('label' => $this->getTranslator()->trans('_es_poblacion_')))
                 ->add('reglaValidacion', null, array('label' => $this->getTranslator()->trans('_regla_validacion_')))
@@ -60,7 +61,8 @@ class VariableCapturaAdmin extends Admin
                     'reglaValidacion' => $this->getTranslator()->trans('_operadores_permitidos_'),
                     'formulaCalculo' => $this->getTranslator()->trans('_formula_calculo_help_'),
                     'logicaSalto' => $this->getTranslator()->trans('_logica_salto_help_'),
-                    'origenFila' => $this->getTranslator()->trans('_origen_fila_help_')
+                    'origenFila' => $this->getTranslator()->trans('_origen_fila_help_'),
+                    'versionFormulario' => $this->getTranslator()->trans('_version_formulario_')
                 ))
                 ;
     }

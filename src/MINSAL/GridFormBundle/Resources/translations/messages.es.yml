@@ -235,3 +235,6 @@ _pondera_estandar_: Pondera estándar
 _pondera_estandar_help_: Si marca esta opción la calificación del indicador afecta a la calificación del estandar, en caso contrario no se toma en cuenta para calcular la calificación del estándar al que pertenece
 _acumulable_: Acumulable
 _acumulable_help_: Indica que el campo se debe acumular cuando se utilice en un indicador acumulable
+_version_: Versión
+_version_formulario_: Versión de formulario
+_acumulable_help_: Si el formulario al que pertenece la variable, tiene versión, ingresar en este campo a qué versión de formulario corresponde la variable

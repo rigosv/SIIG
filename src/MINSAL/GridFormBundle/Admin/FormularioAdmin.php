@@ -22,6 +22,7 @@ class FormularioAdmin extends Admin
             ->add('codigo', null, array('label'=> $this->getTranslator()->trans('_codigo_')))
             ->add('nombre', null, array('label'=> $this->getTranslator()->trans('_nombre_')))
             ->add('descripcion', null, array('label'=> $this->getTranslator()->trans('_descripcion_')))
+            ->add('version', null, array('label'=> $this->getTranslator()->trans('_version_')))
             ->add('columnasFijas', null, array('label'=> $this->getTranslator()->trans('_columnas_fijas_')))
             ->add('posicion', null, array('label'=> $this->getTranslator()->trans('_posicion_listados_')))
             ->add('origenDatos', null, array('label'=> $this->getTranslator()->trans('_origen_formulario_')))
