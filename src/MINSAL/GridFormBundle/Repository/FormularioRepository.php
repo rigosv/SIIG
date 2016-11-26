@@ -5,6 +5,7 @@ namespace MINSAL\GridFormBundle\Repository;
 use Doctrine\ORM\EntityRepository;
 use MINSAL\GridFormBundle\Entity\Formulario;
 use Symfony\Component\HttpFoundation\Request;
+use MINSAL\GridFormBundle\Entity\PeriodoIngreso;
 
 use MINSAL\GridFormBundle\Entity\PeriodoIngresoDatosFormulario;
 /**
