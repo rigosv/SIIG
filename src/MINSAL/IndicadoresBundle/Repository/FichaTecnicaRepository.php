@@ -355,28 +355,21 @@ class FichaTecnicaRepository extends EntityRepository {
             }
         }
 
-        if ($acumulado and in_array($significado->getCodigo(), array('anio', 'mes', 'trimestre'))){
-            //echo $significado->getCodigo();
-            //var_dump($significado->getAcumulable());
-            $em = $this->getEntityManager();
+        if ($acumulado and $significado->getAcumulable() === true){
             $var_n = array_pop(str_replace(array('{','}'), array('',''), $variables[0]));
             $var_d = array_pop(str_replace(array('{','}'), array('',''), $variables[1]));
             $filtros_ = str_replace('A.', 'AA.', $filtros);
-            
-            //leer la primera fila para determinar el tipo de dato de la dimensión actual
-            $sql2 = "SELECT $dimension FROM $tabla_indicador LIMIT 1";
-            $operador = '<=';
-            
+                        
             $formula = str_replace(
                     array('SUM('.$var_n.')', 'SUM('.$var_d.')'), 
-                    array("(SELECT SUM(AA.$var_n) FROM $tabla_indicador AA WHERE AA.$dimension $operador A.$dimension $filtros_)",
-                            "(SELECT SUM(DISTINCT AA.$var_d) FROM $tabla_indicador AA WHERE AA.$dimension $operador A.$dimension $filtros_)"), 
+                    array("(SELECT SUM(AA.$var_n) FROM $tabla_indicador AA WHERE AA.$dimension <= A.$dimension $filtros_)",
+                            "(SELECT SUM(DISTINCT AA.$var_d) FROM $tabla_indicador AA WHERE AA.$dimension <= A.$dimension $filtros_)"), 
                     $formula
                     );
             $variables_query = str_replace(
                     array('SUM('.$var_n.')', 'SUM('.$var_d.')'), 
-                    array("(SELECT SUM(AA.$var_n) FROM $tabla_indicador AA WHERE AA.$dimension $operador A.$dimension $filtros_)",
-                            "(SELECT SUM(DISTINCT AA.$var_d) FROM $tabla_indicador AA WHERE AA.$dimension $operador A.$dimension $filtros_)"), 
+                    array("(SELECT SUM(AA.$var_n) FROM $tabla_indicador AA WHERE AA.$dimension <= A.$dimension $filtros_)",
+                            "(SELECT SUM(DISTINCT AA.$var_d) FROM $tabla_indicador AA WHERE AA.$dimension <= A.$dimension $filtros_)"), 
                     $variables_query
                     );
         }

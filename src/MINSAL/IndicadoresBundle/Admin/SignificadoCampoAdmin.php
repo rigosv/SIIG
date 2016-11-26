@@ -25,6 +25,7 @@ class SignificadoCampoAdmin extends Admin
                         ->add('codigo', null, array('label' => $this->getTranslator()->trans('codigo')))
                         ->add('descripcion', null, array('label' => $this->getTranslator()->trans('descripcion')))
                         ->add('usoCosteo', null, array('label' => $this->getTranslator()->trans('_uso_costeo_')))
+                        ->add('acumulable', null, array('label' => $this->getTranslator()->trans('_acumulable_')))
                         ->add('usoEnCatalogo', null, array('label' => $this->getTranslator()->trans('uso_catalogo')))
                         ->add('catalogo', 'choice', array('label' => $this->getTranslator()->trans('catalogo'),
                             'required' => false,
@@ -44,6 +45,12 @@ class SignificadoCampoAdmin extends Admin
                         ->add('origenY', null, array('label' => $this->getTranslator()->trans('_origen_y_')))
                     ->end()
                 ->end()
+                ;
+        
+        $formMapper
+            ->setHelps(array(
+                    'acumulable' => $this->getTranslator()->trans('_acumulable_help_')
+                ))
                 ;
     }
 

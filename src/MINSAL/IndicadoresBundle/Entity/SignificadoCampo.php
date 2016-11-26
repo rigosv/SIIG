@@ -48,6 +48,13 @@ class SignificadoCampo
      * @ORM\Column(name="uso_costeo", type="boolean", nullable=true)
      */
     private $usoCosteo;
+    
+    /**
+     * @var string $acumulable
+     *
+     * @ORM\Column(name="acumulable", type="boolean", nullable=true)
+     */
+    private $acumulable;
 
     /**
      * @var string $catalogo
@@ -372,5 +379,29 @@ class SignificadoCampo
     public function getUsoCosteo()
     {
         return $this->usoCosteo;
+    }
+
+    /**
+     * Set acumulable
+     *
+     * @param boolean $acumulable
+     *
+     * @return SignificadoCampo
+     */
+    public function setAcumulable($acumulable)
+    {
+        $this->acumulable = $acumulable;
+
+        return $this;
+    }
+
+    /**
+     * Get acumulable
+     *
+     * @return boolean
+     */
+    public function getAcumulable()
+    {
+        return $this->acumulable;
     }
 }

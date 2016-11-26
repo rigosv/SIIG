@@ -233,3 +233,5 @@ _dimension_calidad_: Dimensión de calidad
 _cargar_from_kobo_: Cargar datos desde KoboToolbox
 _pondera_estandar_: Pondera estándar
 _pondera_estandar_help_: Si marca esta opción la calificación del indicador afecta a la calificación del estandar, en caso contrario no se toma en cuenta para calcular la calificación del estándar al que pertenece
+_acumulable_: Acumulable
+_acumulable_help_: Indica que el campo se debe acumular cuando se utilice en un indicador acumulable
