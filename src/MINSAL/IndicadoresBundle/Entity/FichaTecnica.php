@@ -9,7 +9,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * MINSAL\IndicadoresBundle\Entity\FichaTecnica
  *
  * @ORM\Table(name="ficha_tecnica")
- * @ORM\Entity(repositoryClass="MINSAL\IndicadoresBundle\Entity\FichaTecnicaRepository")
+ * @ORM\Entity(repositoryClass="MINSAL\IndicadoresBundle\Repository\FichaTecnicaRepository")
  */
 class FichaTecnica
 {

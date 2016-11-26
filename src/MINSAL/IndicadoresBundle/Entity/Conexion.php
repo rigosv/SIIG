@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * MINSAL\IndicadoresBundle\Entity\Conexion
  *
  * @ORM\Table(name="conexion")
- * @ORM\Entity(repositoryClass="MINSAL\IndicadoresBundle\Entity\ConexionRepository")
+ * @ORM\Entity(repositoryClass="MINSAL\IndicadoresBundle\Repository\ConexionRepository")
  */
 class Conexion
 {

@@ -2,7 +2,7 @@
 
 namespace MINSAL\CostosBundle\Repository;
 
-use MINSAL\GridFormBundle\Entity\FormularioRepository AS FormularioRepositoryBase;
+use MINSAL\GridFormBundle\Repository\FormularioRepository AS FormularioRepositoryBase;
 use MINSAL\GridFormBundle\Entity\Formulario;
 use Symfony\Component\HttpFoundation\Request;
 

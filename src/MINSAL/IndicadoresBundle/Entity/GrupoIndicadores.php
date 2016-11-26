@@ -10,7 +10,7 @@ use Vlabs\MediaBundle\Annotation\Vlabs;
  * MINSAL\IndicadoresBundle\Entity\GrupoIndicadores
  *
  * @ORM\Table(name="grupo_indicadores")
- * @ORM\Entity(repositoryClass="MINSAL\IndicadoresBundle\Entity\GrupoIndicadoresRepository")
+ * @ORM\Entity(repositoryClass="MINSAL\IndicadoresBundle\Repository\GrupoIndicadoresRepository")
  */
 class GrupoIndicadores
 {

@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * MINSAL\GridFormBundle\Entity\Campo
  *
  * @ORM\Table(name="costos.campo")
- * @ORM\Entity(repositoryClass="MINSAL\GridFormBundle\Entity\CampoRepository")
+ * @ORM\Entity(repositoryClass="MINSAL\GridFormBundle\Repository\CampoRepository")
  */
 class Campo
 {   

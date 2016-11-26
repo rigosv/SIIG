@@ -1,6 +1,6 @@
 <?php
 
-namespace MINSAL\GridFormBundle\Entity;
+namespace MINSAL\GridFormBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\HttpFoundation\Request;

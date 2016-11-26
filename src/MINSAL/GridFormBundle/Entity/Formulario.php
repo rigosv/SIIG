@@ -10,7 +10,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *
  * @ORM\Table(name="costos.formulario")
  * @UniqueEntity(fields="codigo", message="Código ya existe")
- * @ORM\Entity(repositoryClass="MINSAL\GridFormBundle\Entity\FormularioRepository")
+ * @ORM\Entity(repositoryClass="MINSAL\GridFormBundle\Repository\FormularioRepository")
  */
 class Formulario
 {

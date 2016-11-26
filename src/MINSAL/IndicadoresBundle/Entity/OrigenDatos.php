@@ -9,7 +9,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * MINSAL\IndicadoresBundle\Entity\OrigenDatos
  *
  * @ORM\Table(name="origen_datos")
- * @ORM\Entity(repositoryClass="MINSAL\IndicadoresBundle\Entity\OrigenDatosRepository")
+ * @ORM\Entity(repositoryClass="MINSAL\IndicadoresBundle\Repository\OrigenDatosRepository")
  */
 class OrigenDatos
 {

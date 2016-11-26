@@ -10,7 +10,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *
  * @ORM\Table(name="indicador")
  * @UniqueEntity(fields="codigo", message="Código ya existe")
- * @ORM\Entity(repositoryClass="MINSAL\GridFormBundle\Entity\IndicadorRepository")
+ * @ORM\Entity(repositoryClass="MINSAL\GridFormBundle\Repository\IndicadorRepository")
  */
 class Indicador
 {

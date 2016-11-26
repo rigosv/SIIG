@@ -1,6 +1,6 @@
 <?php
 
-namespace MINSAL\IndicadoresBundle\Entity;
+namespace MINSAL\IndicadoresBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use MINSAL\IndicadoresBundle\Entity\FichaTecnica;
