@@ -51,7 +51,7 @@ class GridController extends Controller
                     $data_ .= '{'.  str_replace('=>', ':', $f['datos']). '},';
                 }
                 $data_ .= '{'.  str_replace('=>', ':', $ultimo['datos']). '}';
-
+                $data_ = preg_replace("/[\n|\r|\n\r]/i",'', $data_);
                 $response->setContent('{"estado" : "ok", "data": ['. $data_. ']}');
             }
         }
