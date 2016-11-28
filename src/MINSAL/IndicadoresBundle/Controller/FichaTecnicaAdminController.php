@@ -304,7 +304,7 @@ class FichaTecnicaAdminController extends Controller {
         $salida = str_ireplace('<TABLE', "<TABLE width=95% ", $salida);
 
         return new Response('<HTML>' . $salida . '</HTML>', 200, array(
-                'Content-Type' => 'application/msword',
+                'Content-Type' => 'application/msword; charset=utf-8',
                 'Content-Disposition' => 'attachment; filename="fichas_tecnicas.doc"',
                 'Pragma' => 'no-cache',
                 'Expires' => '0'
