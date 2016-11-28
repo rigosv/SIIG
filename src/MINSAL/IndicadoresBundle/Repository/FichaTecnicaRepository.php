@@ -379,9 +379,9 @@ class FichaTecnicaRepository extends EntityRepository {
         $sql .= ' WHERE 1=1 ' . $evitar_div_0 . ' ' . $filtros;
         
         $sql .= "
-            GROUP BY $dimension $grupo_extra";
+            GROUP BY $dimension_ $grupo_extra";
         $sql .= ($acumulado)?'':"HAVING (($formula)::numeric) > 0";
-        $sql .= "ORDER BY $dimension";
+        $sql .= "ORDER BY $dimension_";
         
         try {
             if ($ver_sql == true)

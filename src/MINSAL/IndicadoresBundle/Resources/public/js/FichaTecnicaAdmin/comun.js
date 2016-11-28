@@ -214,7 +214,7 @@ function procesarDibujarGrafico(resp, zona, desde_sala) {
             && $('#' + zona).attr('orden') !== null
             && $('#' + zona).attr('orden') !== '')
     {
-        if ($('#' + zona).attr('orden-aplicado') !== 'true') {
+        if ($('#' + zona).attr('orden-aplicado') !== 'true' && $('#opciones_' + zona + ' .tipo_grafico_principal').val() != 'pastel') {
             var ordenobj = JSON.parse($('#' + zona).attr('orden'));
             datos = JSON.stringify(ordenarArreglo(resp.datos, ordenobj[0].tipo, ordenobj[0].modo));
             $('DIV.zona_actual').attr('orden-aplicado', 'true');
@@ -241,7 +241,9 @@ function ordenarDatos(zona, ordenar_por, modo_orden) {
     cerrarMenus();
     $('#' + zona).attr('orden', '[{"tipo":"' + ordenar_por + '", "modo": "' + modo_orden + '"}]');
     var grafico = crearGraficoObj(zona, $('#opciones_' + zona + ' .tipo_grafico_principal').val());
-    grafico.ordenar(modo_orden, ordenar_por);
+    if ($('#opciones_' + zona + ' .tipo_grafico_principal').val() != 'pastel'){
+        grafico.ordenar(modo_orden, ordenar_por);
+    }
     var datasetPrincipal = JSON.parse($('#' + zona).attr('datasetPrincipal'));
     construir_tabla_datos(zona, datasetPrincipal);
     aplicarFormato();
@@ -894,9 +896,10 @@ function ordenarArreglo(datos, ordenar_por, modo_orden) {
         );
     else
         var datos_ordenados = datos.sort(
-                (modo_orden === 'asc') ? function(a, b) {
-            return d3.ascending(parseFloat(a.measure), parseFloat(b.measure));
-        } :
+                (modo_orden === 'asc') ? 
+                function(a, b) {
+                    return d3.ascending(parseFloat(a.measure), parseFloat(b.measure));
+                } :
                 function(a, b) {
                     return d3.descending(parseFloat(a.measure), parseFloat(b.measure));
                 }
