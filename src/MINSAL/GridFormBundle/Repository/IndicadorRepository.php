@@ -4,7 +4,7 @@ namespace MINSAL\GridFormBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\HttpFoundation\Request;
-use MINSAL\GridFormBundle\Entity\FormularioRepository;
+use MINSAL\GridFormBundle\Repository\FormularioRepository;
 use MINSAL\GridFormBundle\Entity\Formulario;
 use MINSAL\GridFormBundle\Entity\Indicador;
 
