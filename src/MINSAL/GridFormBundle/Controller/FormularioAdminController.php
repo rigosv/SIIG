@@ -157,7 +157,10 @@ class FormularioAdminController extends Controller {
         $em = $this->getDoctrine()->getManager();
         $frm_ajustados = array();
         foreach ($formularios as $f) {
-            $var_ = $em->getRepository("GridFormBundle:VariableCaptura")->findBy(array('formulario' => $f), array('posicion' => 'ASC'));
+            
+            $buscarPor = ($f->getVersion() != null) ? array('formulario' => $f, 'versionFormulario'=>$f->getVersion()) : array('formulario' => $f);
+            $var_ = $em->getRepository("GridFormBundle:VariableCaptura")->findBy($buscarPor, array('posicion' => 'ASC'));
+            
             $i = 0;
             $formula = $f->getCalculoFilas();
             $busqueda = array();
@@ -184,7 +187,7 @@ class FormularioAdminController extends Controller {
             }
             $formula = trim($formula, '::');
             $f->setCalculoFilas($formula);
-
+            
             $frm_ajustados[] = $f;
         }
 
