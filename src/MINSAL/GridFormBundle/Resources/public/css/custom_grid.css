@@ -134,3 +134,8 @@ div.na{
     background-color: transparent !important;
     border: none;
 }
+
+.no_aplica{
+    background: transparent url("/bundles/gridform/images/check_na.png") no-repeat scroll center center;
+    background-color: #F7B138 !important;
+}

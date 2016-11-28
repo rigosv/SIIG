@@ -103,7 +103,7 @@
                 var rowbeginedit =  function (row, datafield, columntype, value) {
                     var datarow = $("#jqxgrid{{Frm.id}}").jqxGrid('getrowdata', row);
                     if (datarow.es_poblacion == 'true'){                        
-                        var celdas = $(".jqx-grid-cell:not('.oculto'):not('.celda_no_editable') .sw_etiqueta");
+                        var celdas = $(".jqx-grid-cell:not('.oculto'):not('.celda_no_editable'):not('.no_aplica') .sw_etiqueta");
                         var no_completado;
                         celdas.each(function(index, item){
                             if ($(item).html().trim() == ''){                                
@@ -122,15 +122,9 @@
                     if (patt.test(clase))
                         return false;
                     
-                    //Verificar si es lógica de salto
-                    var posicion = filasFormulas.indexOf(row+'_LS');
-                    if (posicion != -1){
-                        //evaluar el lado derecho de la formula correspondiente
-                        // se activa el control si el resultado es true
-                        var datarow = $("#jqxgrid{{Frm.id}}").jqxGrid('getrowdata', row);
-                        var result = evalLadoDerecho(row, datafield, value, datarow, operacionesFormulas[posicion]);
-                        return result;
-                    }
+                    var patt = new RegExp("no_aplica");
+                    if (patt.test(clase))
+                        return false;
                     
                     //Verificar si es campo calculado
                     {% if Frm.calculoFilas != '' %}
@@ -143,7 +137,8 @@
                 var cellclass = function (row, columnfield, value) {
                     var editable = $("#jqxgrid{{Frm.id}}").jqxGrid('getcolumnproperty', columnfield, 'editable');
                     var no_edit_class = (editable == false) ? 'celda_no_editable' : '';
-                    var oculto_class = ''
+                    var oculto_class = '';
+                    var noAplica_class = '';
                     {% if Frm.areaCosteo() == 'calidad' %}
                         var datarowExp = $("#jqxgrid{{Frm.id}}").jqxGrid('getrowdata', 0);
                         var datarowAct = $("#jqxgrid{{Frm.id}}").jqxGrid('getrowdata', row);
@@ -152,8 +147,13 @@
                             oculto_class = (num_exp == '') ? 'oculto': ''
                             
                         }
+                        //Verificar si es lógica de salto
+                        var posicion = filasFormulas.indexOf(row+'_LS');
+                        if (posicion != -1 && columnfield != 'descripcion_variable'){
+                            noAplica_class = ( evalLadoDerecho(row, columnfield, value, datarowAct, operacionesFormulas[posicion]) ) ? '' : 'no_aplica';
+                        }
                     {% endif %}
-                    return no_edit_class + ' ' + oculto_class;
+                    return no_edit_class + ' ' + oculto_class + ' ' + noAplica_class;
                 }
 
                 var error = false;
@@ -752,7 +752,7 @@
                                     
                                     var valor;
                                     if ( lados_formula[0].replace(/\$\{F|\}/g,'').trim() == fila_destino+'_LS'){
-                                        valor = (result) ? null : 'N/A'; 
+                                        valor = (result) ? null : ''; 
                                     }else if ( lados_formula[0].replace(/\$\{F|\}/g,'').trim() == fila_destino+'_LSX'){
                                         valor = result; 
                                     }
