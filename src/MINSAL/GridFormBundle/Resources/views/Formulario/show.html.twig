@@ -66,6 +66,8 @@
             $("#FiltroListadoFormularios").searchFilter({targetSelector: ".formulario", charCount: 2});
             $.jqx.theme = 'ui-redmond';
             listSource = [];
+            var columnaSeleccionada = '';
+            var ultimaFilaFormula = '';
             {% for Frm in Formularios %}
             var initGrid{{Frm.id}} = function () {
                 var url = Routing.generate('{{url}}', {id: {{Frm.id}}, periodo_ingreso: '{{parametros.periodo_estructura}}',titulo_frm : '{{titulo}}', datos_frm: $('#frm_').serialize() });
@@ -101,6 +103,8 @@
                     return false;
                 }
                 var rowbeginedit =  function (row, datafield, columntype, value) {
+                    columnaSeleccionada = datafield;
+                    ultimaFilaFormula = null;
                     var datarow = $("#jqxgrid{{Frm.id}}").jqxGrid('getrowdata', row);
                     if (datarow.es_poblacion == 'true'){                        
                         var celdas = $(".jqx-grid-cell:not('.oculto'):not('.celda_no_editable'):not('.no_aplica') .sw_etiqueta");
@@ -375,7 +379,6 @@
                                                 else{
                                                     var element = $('<div tabIndex=0 class="switch_cont" ></div>');
                                                     
-                                                    //element.jqxCheckBox({animationShowDelay: 0, animationHideDelay: 0});
                                                     element.jqxSwitchButton({onLabel:'{{'_si_'|trans}}', offLabel:'{{'_no_'|trans}}', width:60, height:25});
                                                     element_aux.append(element);
                                                     editor.append(element);
@@ -447,14 +450,12 @@
                                                     }
                                                 } else {
                                                     n_ = (cellValue == undefined) ? true : (cellValue.toString() == "true" || cellValue.toString() == "1") ? false: true;
-                                                    //checkBoxHTMLElement.jqxCheckBox({checked: n_});
                                                     checkBoxHTMLElement.jqxSwitchButton({checked: n_});
                                                 }
-                                                //checkBoxHTMLElement.jqxCheckBox('toggle');
-                                                
-                                                //checkBoxHTMLElement.jqxCheckBox('toggle');
                                                 var val = checkBoxHTMLElement.val();
                                                 editor.val(val);
+                                                $("#jqxgrid{{Frm.id}}").jqxGrid('endcelledit', row, columnaSeleccionada, false);
+                                                
                                             }
                                             else if (tipo_control == 'text'){
                                                 var inputField = editor.find('input');
@@ -473,9 +474,6 @@
                                                 dateElement.jqxDateTimeInput('val', fecha.format("DD/MM/YYYY"));
                                             } else if (tipo_control == 'datetimeinput'){
                                                 var dateElement = editor.find('div:first');
-                                                //var fecha = (moment(cellValue).isValid()) ? moment(cellValue, "DD/MM/YYYY HH:mm") : moment();
-                                                //alert(fecha);
-                                                //dateElement.jqxDateTimeInput('setDate', fecha);
                                             } else if (tipo_control == 'time') {
                                                 var dateElement = editor.find('div:first');                                                
                                                 var hora =  cellValue.split(':');
@@ -702,13 +700,17 @@
                             return;
                         }
                     }
+
                     $("#jqxgrid{{Frm.id}}").bind('cellendedit', function (event) {
                         var fila = event.args.rowindex;
                         var columna = event.args.datafield;
+                        if (ultimaFilaFormula == fila) return;
                         var valor_celda_actual = event.args.value;
                         var operaciones = '';
                         var datarow = $("#jqxgrid{{Frm.id}}").jqxGrid('getrowdata', fila);
                         
+                        var tipo_control = datarow.codigo_tipo_control;
+                        if (tipo_control != 'descripcion_variable'){
                             var campos = '{{Frm.calculoFilas}}'.split('::');
                             var formula = [];
                             //se espera el formato codigoColumna: {F2} := {F0}/{F1} * 100
@@ -722,6 +724,7 @@
                                 //Procesar solamente las fórmulas donde la celda actual aparece
                                 if (formula.toString().indexOf('{F'+fila+'}') != -1){
                                     filasp = /\$\{F[0-9]{1,2}\}/g;
+                                                                
                                     lados_formula = formula.split(':=');
                                     fila_destino = filasp.exec(lados_formula[0]).toString().replace(/\$\{F|\}/gi,'');
                                     operaciones = lados_formula[1];
@@ -759,9 +762,12 @@
                                     else{
                                         valor = result;
                                     }
+                                    
+                                    ultimaFilaFormula = fila;
                                     $("#jqxgrid{{Frm.id}}").jqxGrid('setcellvalue', fila_destino, columna, valor);
                                 }
                             });
+                        }
                     });
 
                     {% endif %}
