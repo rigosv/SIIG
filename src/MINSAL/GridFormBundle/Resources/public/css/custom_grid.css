@@ -139,3 +139,7 @@ div.na{
     background: transparent url("/bundles/gridform/images/check_na.png") no-repeat scroll center center;
     background-color: #F7B138 !important;
 }
+
+.notifyjs-bootstrap-error{
+    font-size: 18pt;
+}

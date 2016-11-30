@@ -180,10 +180,18 @@ class FormularioAdminController extends Controller {
                 $l_ = ( ( $l_aux !=  '' and strpos($l_aux, ':=') === false  ) ? '${'.$v->getCodigo().'}_LS := ' : '' ) . $l_aux;
                 $logicaSalto = ( $l_ != '') ? '::' . $l_ : '';
                 
+                //Validaciones
+                //Si hay varios espacios en blanco sustituirlo por uno solo
+                $chk_aux = str_replace (array('if(', 'if ('), 'ifX(' , preg_replace ('/[ ]+/', ' ', $v->getReglaValidacion()) );                 
+                //Verificar si se ingresó la fórmula completa (cuando existe la combinación := )
+                $chk_ = ( ( $chk_aux !=  '' and strpos($chk_aux, ':=') === false  ) ? '${'.$v->getCodigo().'}_CHECK := ' : '' ) . $chk_aux;
+                $reglaValidacion = ( $chk_ != '') ? '::' . $chk_ : '';
+                
                 $busqueda[] = '{' . $v->getCodigo() . '}';
                 $reemplazo[] = '{F' . $i++ . '}';
                 $formula = str_replace($busqueda, $reemplazo, $formula . $formulaVariable);
                 $formula = str_replace($busqueda, $reemplazo, $formula . $logicaSalto);
+                $formula = str_replace($busqueda, $reemplazo, $formula . $reglaValidacion);
             }
             $formula = trim($formula, '::');
             $f->setCalculoFilas($formula);

@@ -90,42 +90,6 @@ class VariableCapturaAdmin extends Admin
                 ->add('posicion', null, array('label'=> $this->getTranslator()->trans('_posicion_')))
                 ->add('alertas', null, array('label'=> $this->getTranslator()->trans('_alertas_')))
         ;
-    }    
-
-    public function validate(ErrorElement $errorElement, $object)
-    {
-        
-            // ******** Verificar si matematicamente la regla de validacion es correcta
-            // 1) Sustituir value por un valor fijo
-            // Quitar las palabras permitidas
-            $regla_check = str_replace(array('value',' and ', ' or '), array(20, ' && ', ' || '), 
-                    $object->getReglaValidacion());
-
-            $regla_valida = true;
-            $result = true;
-            
-            //Verificar que no tenga letras, para evitar un ataque de inyección
-            if (preg_match('/[A-Z]+/i', $regla_check) != 0) {
-                $regla_valida = false;
-                $mensaje = 'sintaxis_invalida';
-            } else {
-                //evaluar la formula, evitar que se muestren los errores por si los lleva
-                ob_start();
-                $test = eval('$result=' . $regla_check . ';');
-                ob_end_clean();
-
-                if (!$result){                
-                    $regla_valida = false;
-                    $mensaje = 'sintaxis_invalida';
-                }
-            }
-
-            if ($regla_valida == false) {
-                $errorElement
-                        ->with('reglaValidacion')
-                        ->addViolation($this->getTranslator()->trans($mensaje))
-                        ->end();
-            }
     }
     
     public function getBatchActions()
