@@ -546,10 +546,13 @@
                                             var error = false;
                                             reglasValidacion.forEach(function(nodo, index){
                                                 lados_formula = nodo.split(':=');
-                                                if (lados_formula[0].trim() == '${F'+row+'}_CHECK'
-                                                        && !evalLadoDerecho(row, columnaSeleccionada, valorNew, datarow, lados_formula[1]) ){
-                                                    $.notify("Error", {  autoHide: false});
-                                                    error = true;
+                                                if (lados_formula[0].trim() == '${F'+row+'}_CHECK'){
+                                                    var datos_formula = lados_formula[1].split('//');
+                                                    var mensaje = (datos_formula.length == 2) ? datos_formula[1] : 'Error en el dato ingresado';
+                                                    if (!evalLadoDerecho(row, columnaSeleccionada, valorNew, datarow, datos_formula[0]) ){
+                                                        editor.find('div').parent().notify(mensaje, { position:"right", autoHide: false});
+                                                        error = true;
+                                                    }
                                                 }
                                             });
                                             return (error) ? cellValue : valorNew;

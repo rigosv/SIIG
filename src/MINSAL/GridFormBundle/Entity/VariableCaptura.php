@@ -106,6 +106,15 @@ class VariableCaptura
     private $reglaValidacion;
     
     /**
+     * @var string $regla_validacion
+     *
+     * @ORM\Column(name="mensaje_validacion", type="string", length=200, nullable=true)
+     */
+    private $mensajeValidacion;
+    
+    
+    
+    /**
      * @var string $esSeparador
      *
      * @ORM\Column(name="es_separador", type="boolean", nullable=true, options={"default" = false})
@@ -611,5 +620,29 @@ class VariableCaptura
     public function getVersionFormulario()
     {
         return $this->versionFormulario;
+    }
+
+    /**
+     * Set mensajeValidacion
+     *
+     * @param string $mensajeValidacion
+     *
+     * @return VariableCaptura
+     */
+    public function setMensajeValidacion($mensajeValidacion)
+    {
+        $this->mensajeValidacion = $mensajeValidacion;
+
+        return $this;
+    }
+
+    /**
+     * Get mensajeValidacion
+     *
+     * @return string
+     */
+    public function getMensajeValidacion()
+    {
+        return $this->mensajeValidacion;
     }
 }

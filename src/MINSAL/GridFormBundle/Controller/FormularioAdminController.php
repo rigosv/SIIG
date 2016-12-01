@@ -185,7 +185,7 @@ class FormularioAdminController extends Controller {
                 $chk_aux = str_replace (array('if(', 'if ('), 'ifX(' , preg_replace ('/[ ]+/', ' ', $v->getReglaValidacion()) );                 
                 //Verificar si se ingresó la fórmula completa (cuando existe la combinación := )
                 $chk_ = ( ( $chk_aux !=  '' and strpos($chk_aux, ':=') === false  ) ? '${'.$v->getCodigo().'}_CHECK := ' : '' ) . $chk_aux;
-                $reglaValidacion = ( $chk_ != '') ? '::' . $chk_ : '';
+                $reglaValidacion = ( $chk_ != '') ? '::' . $chk_ . '//' . $v->getMensajeValidacion() : '';
                 
                 $busqueda[] = '{' . $v->getCodigo() . '}';
                 $reemplazo[] = '{F' . $i++ . '}';

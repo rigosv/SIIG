@@ -28,6 +28,7 @@ class VariableCapturaAdmin extends Admin
                 ->add('textoAyuda', null, array('label' => $this->getTranslator()->trans('_ayuda_')))
                 ->add('esPoblacion', null, array('label' => $this->getTranslator()->trans('_es_poblacion_')))
                 ->add('reglaValidacion', null, array('label' => $this->getTranslator()->trans('_regla_validacion_')))
+                ->add('mensajeValidacion', null, array('label' => $this->getTranslator()->trans('_mensaje_validacion_')))
                 ->add('formulaCalculo', null, array('label'=> $this->getTranslator()->trans('_formula_campo_calculado_')))
                 ->add('logicaSalto', null, array('label'=> $this->getTranslator()->trans('_logica_salto_')))                
                 ->add('tipoControl', null, array('label'=> $this->getTranslator()->trans('_tipo_control_'), 'required' => true))

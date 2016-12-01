@@ -140,6 +140,6 @@ div.na{
     background-color: #F7B138 !important;
 }
 
-.notifyjs-bootstrap-error{
-    font-size: 18pt;
+.notifyjs-wrapper{
+    z-index: 700 !important; 
 }
