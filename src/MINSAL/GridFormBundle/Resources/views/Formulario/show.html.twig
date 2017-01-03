@@ -697,24 +697,26 @@
                     
                     evalLadoDerecho = function (fila, columna, valor_celda_actual, datarow, operaciones){
                         operadores = operaciones.toString().match(/\$\{F[0-9]{1,2}\}/g);
-                        operadores.forEach(function(nodo2, index){
-                            fil = nodo2.toString().replace(/\$\{F|\}/gi,'');
-                            valor_oper = (fil == fila) ? valor_celda_actual :  $('#jqxgrid{{Frm.id}}').jqxGrid('getcellvalue', fil, columna);
-                            var datarow_celda = $("#jqxgrid{{Frm.id}}").jqxGrid('getrowdata', fil);
-                            if (datarow_celda.codigo_tipo_control == 'time'){
-                                hora =  valor_oper.split(':');
-                                valor_oper =  parseInt(hora[0]) * 60 + parseInt(hora[1]);
-                            } else if (datarow_celda.codigo_tipo_control == 'datetimeinput'){
-                                fecha = moment(valor_oper, "DD/MM/YYYY HH:mm")
-                                //valor de la fecha en milisegundos
-                                valor_oper =  fecha.valueOf();
-                            } else if (datarow_celda.codigo_tipo_control == 'date'){
-                                fecha = moment(valor_oper, "DD/MM/YYYY")
-                                //valor de la fecha en milisegundos
-                                valor_oper =  fecha.valueOf();
-                            }
-                            operaciones = operaciones.replace(nodo2.toString(), valor_oper);
-                        });
+                        if (operadores != null && operadores.length > 0){
+                            operadores.forEach(function(nodo2, index){
+                                fil = nodo2.toString().replace(/\$\{F|\}/gi,'');
+                                valor_oper = (fil == fila) ? valor_celda_actual :  $('#jqxgrid{{Frm.id}}').jqxGrid('getcellvalue', fil, columna);
+                                var datarow_celda = $("#jqxgrid{{Frm.id}}").jqxGrid('getrowdata', fil);
+                                if (datarow_celda.codigo_tipo_control == 'time'){
+                                    hora =  valor_oper.split(':');
+                                    valor_oper =  parseInt(hora[0]) * 60 + parseInt(hora[1]);
+                                } else if (datarow_celda.codigo_tipo_control == 'datetimeinput'){
+                                    fecha = moment(valor_oper, "DD/MM/YYYY HH:mm")
+                                    //valor de la fecha en milisegundos
+                                    valor_oper =  fecha.valueOf();
+                                } else if (datarow_celda.codigo_tipo_control == 'date'){
+                                    fecha = moment(valor_oper, "DD/MM/YYYY")
+                                    //valor de la fecha en milisegundos
+                                    valor_oper =  fecha.valueOf();
+                                }
+                                operaciones = operaciones.replace(nodo2.toString(), valor_oper);
+                            });
+                        }
                         try {
                             operaciones = operaciones.replace(/amp;/g, '')
                                     .replace(/&#039;/g, "'")
