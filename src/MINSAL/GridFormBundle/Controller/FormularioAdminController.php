@@ -182,7 +182,8 @@ class FormularioAdminController extends Controller {
                 
                 //Validaciones
                 //Si hay varios espacios en blanco sustituirlo por uno solo
-                $chk_aux = str_replace (array('if(', 'if ('), 'ifX(' , preg_replace ('/[ ]+/', ' ', $v->getReglaValidacion()) );                 
+                $regla = str_replace('value', '${'.$v->getCodigo().'}', $v->getReglaValidacion());
+                $chk_aux = str_replace (array('if(', 'if ('), 'ifX(' , preg_replace ('/[ ]+/', ' ', $regla) );                 
                 //Verificar si se ingresó la fórmula completa (cuando existe la combinación := )
                 $chk_ = ( ( $chk_aux !=  '' and strpos($chk_aux, ':=') === false  ) ? '${'.$v->getCodigo().'}_CHECK := ' : '' ) . $chk_aux;
                 $reglaValidacion = ( $chk_ != '') ? '::' . $chk_ . '//' . $v->getMensajeValidacion() : '';
