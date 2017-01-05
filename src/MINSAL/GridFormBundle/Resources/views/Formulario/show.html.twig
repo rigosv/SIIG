@@ -4,6 +4,7 @@
     <link rel="stylesheet" href="{{ asset('bundles/gridform/js/jqwidgets/styles/jqx.base.css') }}" type="text/css" media="all" />
     <link rel="stylesheet" href="{{ asset('bundles/gridform/js/jqwidgets/styles/jqx.ui-redmond.css') }}" type="text/css" media="all" />
     <link rel="stylesheet" href="{{ asset('bundles/gridform/css/custom_grid.css') }}" type="text/css" media="all" />
+    <link rel="stylesheet" href="{{ asset('bundles/gridform/vendor/animate.min.css') }}" type="text/css" media="all" />
 
 {% endblock stylesheets %}
 {% block javascripts %}
@@ -49,7 +50,7 @@
     <script src="{{ asset('bundles/gridform/js/moment/es.js') }}" type="text/javascript"></script>
     <script src="{{ asset('bundles/gridform/js/moment/moment.js') }}" type="text/javascript"></script>
     <script src="{{ asset('bundles/indicadores/js/jquery.searchFilter.js') }}" type="text/javascript"></script>
-    <script src="{{ asset('bundles/indicadores/js/notify.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('bundles/gridform/vendor/bootstrap-notify.min.js') }}" type="text/javascript"></script>
     
     {% block frm %}
     {% if periodoSeleccionado != null and parametros.periodo_estructura != '-1' %}
@@ -553,9 +554,16 @@
                                                 lados_formula = nodo.split(':=');
                                                 if (lados_formula[0].trim() == '${F'+row+'}_CHECK'){
                                                     var datos_formula = lados_formula[1].split('//');
-                                                    var mensaje = (datos_formula.length == 2) ? datos_formula[1] : 'Error en el dato ingresado';
+                                                    var mensaje = (datos_formula.length == 2 && datos_formula[1].length > 0 ) ? datos_formula[1] : 'Error en el dato ingresado';
                                                     if (!evalLadoDerecho(row, columnaSeleccionada, valorNew, datarow, datos_formula[0]) ){
-                                                        editor.find('div').parent().notify(mensaje, { position:"right", autoHide: false});
+                                                        $.notify({
+                                                            message: mensaje 
+                                                        },{
+                                                            animate: {
+                                                                enter: 'animated jello'
+                                                            },
+                                                            type: 'danger'
+                                                        });
                                                         error = true;
                                                     }
                                                 }
@@ -795,36 +803,18 @@
                                         result = result.toFixed(2);
                                     }
                                     
-                                    //Verificar si es una regla de validación
-                                    // la reglas de validación solo se ejecuta cuando se está editando 
-                                    // la celda que contiene la regla, esto porque dentro de la formula
-                                    // podría tener referencia a otras celdas
-                                    /*if ( lados_formula[0].replace(/\$\{F|\}/g,'').trim() == fila_destino+'_CHECK' && fila == fila_destino){
-                                        if (valor_celda_actual == null) return;
-                                        if (!result){
-                                            ultimaFilaFormula = fila;
-                                            
-                                            //Restablecer el valor de la celda
-                                            $("#jqxgrid{{Frm.id}}").jqxGrid('setcellvalue', fila_destino, columna, null);
-                                            // Desplegar mensaje de error, no utilizar alert
-                                            $.notify("Error");
-                                        }
-                                        return false;
-                                    } else {*/
-                                    
-                                        var valor;
-                                        if ( lados_formula[0].replace(/\$\{F|\}/g,'').trim() == fila_destino+'_LS'){
-                                            valor = (result) ? null : ''; 
-                                        }else if ( lados_formula[0].replace(/\$\{F|\}/g,'').trim() == fila_destino+'_LSX'){
-                                            valor = result; 
-                                        }
-                                        else{
-                                            valor = result;
-                                        }
+                                    var valor;
+                                    if ( lados_formula[0].replace(/\$\{F|\}/g,'').trim() == fila_destino+'_LS'){
+                                        valor = (result) ? null : ''; 
+                                    }else if ( lados_formula[0].replace(/\$\{F|\}/g,'').trim() == fila_destino+'_LSX'){
+                                        valor = result; 
+                                    }
+                                    else{
+                                        valor = result;
+                                    }
 
-                                        ultimaFilaFormula = fila;
-                                        $("#jqxgrid{{Frm.id}}").jqxGrid('setcellvalue', fila_destino, columna, valor);
-                                    //}
+                                    ultimaFilaFormula = fila;
+                                    $("#jqxgrid{{Frm.id}}").jqxGrid('setcellvalue', fila_destino, columna, valor);
                                 }
                             });
                         }
