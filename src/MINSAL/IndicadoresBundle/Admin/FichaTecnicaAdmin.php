@@ -36,6 +36,7 @@ class FichaTecnicaAdmin extends Admin
         $formMapper
                 ->tab($this->getTranslator()->trans('ficha_tecnica'))
                     ->with($this->getTranslator()->trans('_datos_generales_'))
+                        ->add('codigo', null, array('label' => $this->getTranslator()->trans('codigo'), 'required' => false))
                         ->add('nombre', null, array('label' => $this->getTranslator()->trans('nombre_indicador')))
                         ->add('tema', null, array('label' => $this->getTranslator()->trans('_interpretacion_')))
                         ->add('concepto', null, array('label' => $this->getTranslator()->trans('concepto')))
@@ -96,6 +97,7 @@ class FichaTecnicaAdmin extends Admin
     protected function configureShowFields(ShowMapper $showMapper)
     {
         $showMapper
+                ->add('codigo', null, array('label' => $this->getTranslator()->trans('codigo')))
                 ->add('tema', null, array('label' => $this->getTranslator()->trans('_interpretacion_')))
                 ->add('concepto', null, array('label' => $this->getTranslator()->trans('concepto')))
                 ->add('unidadMedida', null, array('label' => $this->getTranslator()->trans('unidad_medida')))
@@ -128,6 +130,7 @@ class FichaTecnicaAdmin extends Admin
     protected function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
         $datagridMapper
+                ->add('codigo', null, array('label' => $this->getTranslator()->trans('codigo')))
                 ->add('nombre', null, array('label' => $this->getTranslator()->trans('nombre')))
                 ->add('clasificacionTecnica', null, array('label' => $this->getTranslator()->trans('clasificacion_tecnica')))
                 ->add('clasificacionPrivacidad', null, array('label' => $this->getTranslator()->trans('_nivel_de_usuario_')))
@@ -137,6 +140,7 @@ class FichaTecnicaAdmin extends Admin
     protected function configureListFields(ListMapper $listMapper)
     {
         $listMapper
+                ->addIdentifier('codigo', null, array('label' => $this->getTranslator()->trans('codigo')))
                 ->addIdentifier('nombre', null, array('label' => $this->getTranslator()->trans('nombre_indicador')))
                 ->add('tema', null, array('label' => $this->getTranslator()->trans('_interpretacion_')))
                 ->add('concepto', null, array('label' => $this->getTranslator()->trans('concepto')))

@@ -4,11 +4,13 @@ namespace MINSAL\IndicadoresBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * MINSAL\IndicadoresBundle\Entity\FichaTecnica
  *
  * @ORM\Table(name="ficha_tecnica")
+ * @UniqueEntity(fields="codigo", message="Código ya existe")
  * @ORM\Entity(repositoryClass="MINSAL\IndicadoresBundle\Repository\FichaTecnicaRepository")
  */
 class FichaTecnica
@@ -21,6 +23,13 @@ class FichaTecnica
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
+    
+    /**
+     * @var string $codigo
+     *
+     * @ORM\Column(name="codigo", type="string", length=100, nullable=true)
+     */
+    private $codigo;
 
     /**
      * @var string $nombre
@@ -909,5 +918,29 @@ class FichaTecnica
     public function getMeta()
     {
         return $this->meta;
+    }
+
+    /**
+     * Set codigo
+     *
+     * @param string $codigo
+     *
+     * @return FichaTecnica
+     */
+    public function setCodigo($codigo)
+    {
+        $this->codigo = $codigo;
+
+        return $this;
+    }
+
+    /**
+     * Get codigo
+     *
+     * @return string
+     */
+    public function getCodigo()
+    {
+        return $this->codigo;
     }
 }
