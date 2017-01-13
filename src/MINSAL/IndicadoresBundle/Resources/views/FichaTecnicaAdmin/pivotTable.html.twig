@@ -39,6 +39,9 @@
         {% if is_granted('ROLE_SUPER_ADMIN') or is_granted('ROLE_USER_TABLERO_CALIDAD') %}
             <li ><a href="#calidad_datos">{{"_evaluacion_calidad_"|trans}}</a></li>
         {% endif %}
+        {% if is_granted('ROLE_SUPER_ADMIN') or is_granted('ROLE_USER_LOG_ACTIVIDAD') %}
+            <li ><a href="#log_actividad">{{"_bitacora_actividad_"|trans}}</a></li>
+        {% endif %}
     </ul>
 
     <div id='nombre_sala2' ></div>
@@ -60,6 +63,9 @@
         {% endif %}
         {% if is_granted('ROLE_SUPER_ADMIN') or is_granted('ROLE_USER_TABLERO_CALIDAD') %}
             {% include 'IndicadoresBundle:FichaTecnicaAdmin:calidad_datos.html.twig'%}
+        {% endif %}
+        {% if is_granted('ROLE_SUPER_ADMIN') or is_granted('ROLE_USER_LOG_ACTIVIDAD') %}
+            {% include 'IndicadoresBundle:FichaTecnicaAdmin:log_actividad.html.twig'%}
         {% endif %}
     </div>
 </div>

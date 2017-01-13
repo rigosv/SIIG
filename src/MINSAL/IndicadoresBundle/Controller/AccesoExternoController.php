@@ -64,5 +64,13 @@ class AccesoExternoController extends Controller {
         
         return $this->redirectToRoute('_inicio');
     }
+    
+    /**
+     * @Route("/admin/loginn", name="login_normal")
+     */
+    public function loginNormal() {
+        
+        return $this->redirectToRoute('_inicio');
+    }
 
 }

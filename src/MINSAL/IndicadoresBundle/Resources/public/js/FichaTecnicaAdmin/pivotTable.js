@@ -167,6 +167,19 @@ $(document).ready(function() {
         });
     });
     
+    $('A.log_actividad_item').click(function() {        
+        esCalidad = false;
+        $.getJSON(Routing.generate('get_log_actividad'), function(mps) {
+                datos_ = mps;
+                tipoElemento = 'log_actividad';
+                identificadorElemento = 'log_actividad';
+                cargarTablaDinamica(mps);
+            
+            $('#marco-sala').attr('data-content', 'Bitácora de actividad');   
+            $('#myTab a:first').tab('show');
+        });
+    });
+    
     function cargarTablaDinamica(datos){
         var renderers = $.extend($.pivotUtilities.renderers,
             $.pivotUtilities.c3_renderers);

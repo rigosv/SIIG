@@ -50,11 +50,24 @@ class PivotTableController extends Controller {
     /**
      * @Route("/pivotable/datos/{id}", name="get_datos_evaluacion_calidad", options={"expose"=true})
      */
-    public function getDatosEvaluacionCalidadAction($id, Request $request) {
+    public function getDatosEvaluacionCalidadAction($id) {
         $em = $this->getDoctrine()->getManager();
         $response = new Response();
         
         $datos = $em->getRepository("GridFormBundle:Indicador")->getDatosCalidad($id);
+        
+        $response->setContent(json_encode($datos));
+        return $response;
+    }
+    
+    /**
+     * @Route("/logactividad/", name="get_log_actividad", options={"expose"=true})
+     */
+    public function getLogActividadAction() {
+        $em = $this->getDoctrine()->getManager();
+        $response = new Response();
+        
+        $datos = $em->getRepository("IndicadoresBundle:Bitacora")->getLog();
         
         $response->setContent(json_encode($datos));
         return $response;

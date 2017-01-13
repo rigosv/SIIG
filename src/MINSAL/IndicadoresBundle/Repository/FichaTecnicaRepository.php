@@ -187,7 +187,7 @@ class FichaTecnicaRepository extends EntityRepository {
 
         try {
             $sql .= $this->crearTablaIndicador($fichaTecnica, $tablas_variables);
-            $em->getConnection()->exec($sql);            
+            $em->getConnection()->exec($sql);
             $fichaTecnica->setUpdatedAt($ahora);
             $em->persist($fichaTecnica);
             $em->flush();

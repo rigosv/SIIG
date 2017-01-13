@@ -34,5 +34,11 @@
             <argument type="service" id="security.token_storage" />
             <call method="setRequest"><argument type="service" id="request" on-invalid="null" strict="false" /></call>
         </service>
+        
+        <service id="indicadores.request_listener" class="MINSAL\IndicadoresBundle\Listener\RequestListener">
+            <tag name="kernel.event_listener" event="kernel.request" method="onKernelRequest" />
+            <argument type="service" id="service_container" />
+        </service>
+        
     </services>
 </container>
