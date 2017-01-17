@@ -17,7 +17,14 @@ class RequestListener
             'admin_minsal_gridform_indicador_tableroCalidad' => 'ESTANDARES_CALIDAD',
             'admin_minsal_gridform_indicador_tableroGeneralCalidad' => 'CALIDAD_TABLERO_MANDO',
             'login_normal' => 'INGRESO_SISTEMA',
-            'fos_user_security_logout' => 'SALIDA_SISTEMA'
+            'fos_user_security_logout' => 'SALIDA_SISTEMA',
+            'admin_minsal_indicadores_salaacciones_create' => 'CREAR_PLAN_ACCION_SALA',
+            'sala_set_usuario' => 'COMPARTIR_SALA',
+            'fichas_sala' => 'SALA_EXPORTAR_FICHAS_TECNICAS',
+            'tablero_sala' => 'SALA_EXPORTAR_GRAFICOS',
+            'tablas_datos_sala' => 'SALA_EXPORTAR_TABLA_DE_DATOS',
+            'get_grid_data' => 'FORMULARIO_CAPTURA_DATOS_(WEBFORM)',
+            'sala_guardar' => 'GUARDAR_SALA_SITUACIONAL'
         );
     
     
