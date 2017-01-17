@@ -148,15 +148,11 @@ fos_user:
 
     group:
         group_class:  Application\Sonata\UserBundle\Entity\Group
-    
-    from_email:
-        address:        noreply@minsal.gob.sv
-        sender_name:    'SIIG - Etab'
-    
+        
     resetting:
         email:
             from_email:
-                address:        noreply@minsal.gob.sv
+                address:        etab@minsal.gob.sv
                 sender_name:    'SIIG - eTab :: Reseteo de clave'
 
     profile:  # Authentication Form
