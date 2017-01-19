@@ -226,7 +226,10 @@ class MatrizSeguimientoController extends Controller {
         $ninios_12_23_meses = array();
         $ninos_6_23_meses_programados_entrega_mnp = array();
         foreach ($datos_anuales as $k=> $da){
-            $ninos_6_23_meses_programados_entrega_mnp[$k] = round(((($da['ninios_0_11_meses'] /2 ) + $da['ninios_12_23_meses'] ) * 2 ) / 12,0);
+            $div = ($k == 2016) ? 2:1;
+            $ninios_0_5_meses = (array_key_exists('ninios_0_5_meses', $da)) ? $da['ninios_0_5_meses'] : 0;
+            $ninio_6m_1anio = (array_key_exists('ninio_6m_1anio', $da)) ? $da['ninio_6m_1anio'] : 0;
+            $ninos_6_23_meses_programados_entrega_mnp[$k] = round(((( ($ninios_0_5_meses + $ninio_6m_1anio)/$div ) + $da['ninios_12_23_meses'] ) * 2 ) / 12,0);
             $ninios_12_23_meses[$k] = $da['ninios_12_23_meses'];
         }
         
