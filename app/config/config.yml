@@ -152,7 +152,7 @@ fos_user:
     resetting:
         email:
             from_email:
-                address:        etab@minsal.gob.sv
+                address:        etab@salud.gob.sv
                 sender_name:    'SIIG - eTab :: Reseteo de clave'
 
     profile:  # Authentication Form

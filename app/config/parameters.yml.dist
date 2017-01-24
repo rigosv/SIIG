@@ -7,6 +7,9 @@ parameters:
     database_password: rodriguez
     mailer_transport: smtp
     mailer_host: localhost
+    mailer_encryption: ssl
+    mailer_auth_mode:  login
+    mailer_port: 465
     mailer_user: null
     mailer_password: null
     locale: es_SV
