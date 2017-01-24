@@ -28,6 +28,14 @@ class CargarOrigenDatoConsumer implements ConsumerInterface
         $fecha = new \DateTime("now");
         $ahora = $fecha->format('Y-m-d H:i:s');
 
+        //Iniciar borrando los datos de la tabla auxiliar
+        $msg_init = array('id_origen_dato' => $idOrigen,
+            'method' => 'BEGIN',
+            'r' => microtime(true)
+        );
+        $this->container->get('old_sound_rabbit_mq.guardar_registro_producer')
+                ->publish(serialize($msg_init));
+        
         //Leeré los datos en grupos de 10,000
         $tamanio = 10000;
         
@@ -119,7 +127,7 @@ class CargarOrigenDatoConsumer implements ConsumerInterface
                 }
                 $datos_a_enviar[] = $nueva_fila;
                 //Enviaré en grupos de 200
-                if ($i == 200) {
+                if ($i ==1000) {
                     $msg_guardar = array('id_origen_dato' => $idOrigen,
                         'method' => 'PUT',
                         'datos' => $datos_a_enviar,

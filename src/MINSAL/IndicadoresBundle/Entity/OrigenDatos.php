@@ -87,6 +87,13 @@ class OrigenDatos
      * @ORM\Column(name="nombre_catalogo", type="string", length=100, nullable=true)
      */
     protected $nombreCatalogo;
+    
+    /**
+     * @var integer $minutosUltimaCarga
+     *
+     * @ORM\Column(name="tiempo_segundos_ultima_carga", type="integer", nullable=true)
+     */
+    protected $tiempoSegundosUltimaCarga;
 
     /**
      * @var string $camposFusionados
@@ -731,5 +738,53 @@ class OrigenDatos
     public function getVentanaLimiteSuperior()
     {
         return $this->ventanaLimiteSuperior;
+    }
+
+    /**
+     * Set totalRegUltimaLect
+     *
+     * @param integer $totalRegUltimaLect
+     *
+     * @return OrigenDatos
+     */
+    public function setTotalRegUltimaLect($totalRegUltimaLect)
+    {
+        $this->totalRegUltimaLect = $totalRegUltimaLect;
+
+        return $this;
+    }
+
+    /**
+     * Get totalRegUltimaLect
+     *
+     * @return integer
+     */
+    public function getTotalRegUltimaLect()
+    {
+        return $this->totalRegUltimaLect;
+    }
+
+    /**
+     * Set tiempoSegundosUltimaCarga
+     *
+     * @param integer $tiempoSegundosUltimaCarga
+     *
+     * @return OrigenDatos
+     */
+    public function setTiempoSegundosUltimaCarga($tiempoSegundosUltimaCarga)
+    {
+        $this->tiempoSegundosUltimaCarga = $tiempoSegundosUltimaCarga;
+
+        return $this;
+    }
+
+    /**
+     * Get tiempoSegundosUltimaCarga
+     *
+     * @return integer
+     */
+    public function getTiempoSegundosUltimaCarga()
+    {
+        return $this->tiempoSegundosUltimaCarga;
     }
 }
