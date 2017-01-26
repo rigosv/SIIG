@@ -96,7 +96,7 @@ $(document).ready(function() {
                 var tit_dimension = $(this).find('.dimension').html();
                 
                 titulos.push(tit + ' (por ' + tit_dimension + ')');
-                tablas.push($(this).find('table').parent().html());
+                tablas.push($(this).find('table.tabla-datos').parent().html());
             });
             $('#titulos').html(JSON.stringify(titulos));
             $('#tablas').html(JSON.stringify(tablas));

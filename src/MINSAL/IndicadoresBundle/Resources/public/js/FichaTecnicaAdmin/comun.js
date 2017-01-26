@@ -334,7 +334,7 @@ function cerrarMenus() {
 }
 
 function construir_tabla_datos(zona, datos) {
-    var tabla_datos = '<TABLE class="table table-striped table-condensed" >';
+    var tabla_datos = '<TABLE class="table table-striped table-condensed tabla-datos" >';
     $.each(datos, function(i, fila) {
         if (i === 0) {
             // Los nombres de los campos
