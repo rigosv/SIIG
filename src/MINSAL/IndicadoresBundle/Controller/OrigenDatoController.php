@@ -38,7 +38,7 @@ class OrigenDatoController extends Controller
     {
         $resultado = array('estado' => 'error', 'mensaje' => '', 'datos' => array());
         $sql = $this->getRequest()->get('sql');
-        $conexiones = explode('-', trim($this->getRequest()->get('conexiones_todas'), '-'));
+        $conexiones = explode(',', trim($this->getRequest()->get('conexiones_todas'), '-'));
 
         // Verificar que no tenga UPDATE o DELETE
         $patron = '/\bUPDATE\b|\bDELETE\b|\bINSERT\b|\bCREATE\b|\bDROP\b/i';
