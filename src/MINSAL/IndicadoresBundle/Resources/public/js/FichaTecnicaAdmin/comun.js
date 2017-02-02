@@ -772,6 +772,7 @@ function setTiposGraficos(zona) {
         tipos_graficos += "<OPTION VALUE='" + grafico.codigo + "'>" + grafico.descripcion + "</OPTION>";
     });
     $('#opciones_' + zona + ' .tipo_grafico_principal').html(tipos_graficos);
+    $('#' + zona + ' .tipo_grafico_principal').trigger("chosen:updated");
 }
 
 function alternar_favorito(zona, id_indicador) {
@@ -872,6 +873,7 @@ function procesarDimensiones(resp, datos, zona_g, desde_sala) {
                 $('#opciones_dimension_' + zona_g + ' .filtro_hasta').val(datos.filtroPosicionHasta);
                 $('#' + zona_g + ' .titulo_indicador').attr('filtro-elementos', datos.filtroElementos);
                 $('#' + zona_g + ' .tipo_grafico_principal').val(datos.tipoGrafico);
+                $('#' + zona_g + ' .tipo_grafico_principal').trigger("chosen:updated");
 
             }
             dibujarGrafico(zona_g, $('#opciones_dimension_' + zona_g + ' .dimensiones').val(), desde_sala);            
