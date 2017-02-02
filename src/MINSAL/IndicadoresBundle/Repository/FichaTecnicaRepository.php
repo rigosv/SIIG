@@ -243,7 +243,7 @@ class FichaTecnicaRepository extends EntityRepository {
             $catalogo = $significado->getCatalogo();
             if ($catalogo != '') {
                 $letra_catalogo = chr($catalogo_x++);
-                $rel_catalogos .= " INNER JOIN  $catalogo $letra_catalogo  ON (A.$c::integer = $letra_catalogo.id::integer) ";
+                $rel_catalogos .= " INNER JOIN  $catalogo $letra_catalogo  ON (A.$c::text = $letra_catalogo.id::text) ";
                 $campos[] = $letra_catalogo . '.descripcion AS ' . str_replace('id_', '', $c);
                 $campos_grp[] = $letra_catalogo . '.descripcion';
             } else {
@@ -332,7 +332,7 @@ class FichaTecnicaRepository extends EntityRepository {
                 ->findOneBy(array('codigo' => $dimension));
         $catalogo = $significado->getCatalogo();
         if ($catalogo != '') {
-            $rel_catalogo = " INNER JOIN  $catalogo  B ON (A.$dimension::integer = B.id::integer) ";
+            $rel_catalogo = " INNER JOIN  $catalogo  B ON (A.$dimension::text = B.id::text) ";
             $dimension_ = 'B.descripcion';
             $otros_campos = ' B.id AS id_category, ';
             $grupo_extra = ', B.id ';
