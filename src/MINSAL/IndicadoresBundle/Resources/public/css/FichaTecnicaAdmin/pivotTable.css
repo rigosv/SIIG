@@ -125,4 +125,5 @@ div.popover-content, div.popover-title{
 .content {
     overflow: auto;
     padding: 0 10px;
+    min-height: 450px;
 }
