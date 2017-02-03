@@ -9,12 +9,13 @@ TR{
     cursor: pointer;
 }
 .main-header{
-    position: fixed;
     width: 100%;
     background-color: #5D5D5D !important;
+    max-height: none;
 }
 .content-wrapper{
-    padding-top: 30px;
+    padding-top: 0px;
+    margin-top: 0px;
 }
 .titulo_{
     color: white;
@@ -126,10 +127,6 @@ DIV.row_tablero {
 #radar{
     height: 110% !important;
     width: 110% !important;
-}
-
-.content-wrapper{
-    margin-top: 15px;
 }
 
 label.active{
