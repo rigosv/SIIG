@@ -81,31 +81,41 @@ class OrigenDatosRepository extends EntityRepository
         $nombre_campos = array();
         if ($ruta_archivo == null) {
             //$conexion = $origenDato->getConexion();
-            $conn = $this->getEntityManager()
+            
+            try {
+                $conn = $this->getEntityManager()
                     ->getRepository('IndicadoresBundle:Conexion')
                     ->getConexionGenerica($conexion);
-
-            try {
+            
+                if ($conn== false ) return false;
+                
                 if ($conexion->getIdMotor()->getCodigo() == 'pdo_dblib') {
                     $query = mssql_query($sql, $conn);
                     if (mssql_num_rows($query) > 0) {
                         while ($row = mssql_fetch_assoc($query))
                             $datos[] = $row;
-                        $nombre_campos = array_keys($datos[0]);
+                        //$nombre_campos = array_keys($datos[0]);
                     }
                 } else {
-                    $query = $conn->query($sql);
-		    while ($row = $query->fetch() ) {
+                    //$query = $conn->query($sql);
+                    $datos = $conn->executeQuery($sql)->fetchAll();
+		    /*while ($row = $query->fetc ) {
                         $datos[] = $row;
-                    }
-                    $nombre_campos = array_keys($datos[0]);
+                    }*/
+                    //$nombre_campos = array_keys($datos[0]);
 		    
                 }
             } catch (\PDOException $e) {
+                echo $e->getMessage();
                 return false;
             } catch (\Exception $e) {
+                echo $e->getMessage();
                 return false;
-            } catch (DBAL\DBALException $e) {
+            } catch (\ErrorException $e) {
+                echo $e->getMessage();
+                return false;
+            }catch (DBAL\DBALException $e) {
+                echo $e->getMessage();
                 return false;
             }
         } else {

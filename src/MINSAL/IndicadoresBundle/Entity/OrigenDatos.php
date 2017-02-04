@@ -94,6 +94,13 @@ class OrigenDatos
      * @ORM\Column(name="tiempo_segundos_ultima_carga", type="integer", nullable=true)
      */
     protected $tiempoSegundosUltimaCarga;
+    
+    /**
+     * @var string $cargaFinalizada
+     *
+     * @ORM\Column(name="carga_finalizada", type="boolean", nullable=true)
+     */
+    private $cargaFinalizada;
 
     /**
      * @var string $camposFusionados
@@ -786,5 +793,29 @@ class OrigenDatos
     public function getTiempoSegundosUltimaCarga()
     {
         return $this->tiempoSegundosUltimaCarga;
+    }
+
+    /**
+     * Set cargaFinalizada
+     *
+     * @param boolean $cargaFinalizada
+     *
+     * @return OrigenDatos
+     */
+    public function setCargaFinalizada($cargaFinalizada)
+    {
+        $this->cargaFinalizada = $cargaFinalizada;
+
+        return $this;
+    }
+
+    /**
+     * Get cargaFinalizada
+     *
+     * @return boolean
+     */
+    public function getCargaFinalizada()
+    {
+        return $this->cargaFinalizada;
     }
 }

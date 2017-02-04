@@ -15,7 +15,8 @@ class GuardarRegistroOrigenDatoConsumer implements ConsumerInterface {
     }
 
     public function execute(AMQPMessage $mensaje) {
-        $msg = unserialize($mensaje->body);
+        $msg = unserialize(base64_decode($mensaje->body));
+        echo '  Msj: '. $msg['id_origen_dato']. '/'. $msg['numMsj'] . '  ';
 
         //Verificar si tiene código de costeo
         $sql = "SELECT area_costeo FROM origen_datos WHERE id = $msg[id_origen_dato]";
@@ -29,7 +30,9 @@ class GuardarRegistroOrigenDatoConsumer implements ConsumerInterface {
             // Iniciar borrando los datos que pudieran existir en la tabla auxiliar
             //$sql = " DELETE FROM fila_origen_dato_aux WHERE id_origen_dato='$msg[id_origen_dato]' ;";
             $sql = ' DROP TABLE IF EXISTS '.$tabla.'_tmp ;
-                SELECT * INTO '.$tabla.'_tmp FROM fila_origen_dato LIMIT 0';
+                SELECT * INTO '.$tabla."_tmp FROM fila_origen_dato LIMIT 0;
+                UPDATE origen_datos SET carga_finalizada = false WHERE id = '$msg[id_origen_dato]'
+               ";
             $this->em->getConnection()->exec($sql);
             return true;
             
@@ -122,7 +125,8 @@ class GuardarRegistroOrigenDatoConsumer implements ConsumerInterface {
                     $this->em->getConnection()->exec($sql);
 
                     $sql = "INSERT INTO $tabla SELECT * FROM $tabla"."_tmp WHERE id_origen_dato='$msg[id_origen_dato]' ";
-                            
+                    $this->em->getConnection()->exec($sql);
+                    /*        
                     $tamanio = 100000;
                     $totalReg = 0;
                     $leidos = 1;
@@ -131,7 +135,7 @@ class GuardarRegistroOrigenDatoConsumer implements ConsumerInterface {
                         $sql_aux = $sql . ' LIMIT ' . $tamanio . ' OFFSET ' . $i * $tamanio;
                         $leidos = $this->em->getConnection()->exec($sql_aux);
                         $i++;
-                    }
+                    }*/
                     $sql = ' DROP TABLE IF EXISTS '.$tabla.'_tmp ';
                     //$sql = "
                       //  DELETE FROM fila_origen_dato_aux WHERE id_origen_dato='$msg[id_origen_dato]' ;
@@ -143,7 +147,8 @@ class GuardarRegistroOrigenDatoConsumer implements ConsumerInterface {
             $inicio = new \DateTime($msg['ultima_lectura']);
             $fin = new \DateTime("now");
             $diffInSeconds = $fin->getTimestamp() - $inicio->getTimestamp();
-            $sql = "UPDATE origen_datos SET tiempo_segundos_ultima_carga = $diffInSeconds WHERE id = '$msg[id_origen_dato]' ";
+            $sql = "UPDATE origen_datos SET tiempo_segundos_ultima_carga = $diffInSeconds WHERE id = '$msg[id_origen_dato]';
+                    UPDATE origen_datos SET carga_finalizada = true WHERE id = '$msg[id_origen_dato]'";
             $this->em->getConnection()->exec($sql);
             
             //$this->em->getConnection()->commit();
