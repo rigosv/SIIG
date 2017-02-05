@@ -195,25 +195,27 @@ $ app/console fos:user:create --super-admin
 [Charla sobre RabbitMQ](http://www.symfony.es/noticias/2011/07/06/desymfony-2011-reduciendo-el-acoplamiento-entre-aplicaciones-con-rabbitmq/).
 En este proyecto será utilizado para la carga masiva de datos y así evitar cuelgues o saturación del servidor.
 
-- Agregar el repositorio
+- Instalar dependencias de RabbitMQ
 ~~~
- # sh -c 'echo "deb http://www.rabbitmq.com/debian/ testing main" >> /etc/apt/sources.list'
-~~~
+ # gpg --keyserver pgpkeys.mit.edu --recv-key 7638D0442B90D010
+ # gpg -a --export 7638D0442B90D010 | apt-key add -
+ # echo 'deb http://ftp.debian.org/debian wheezy-backports main' | tee /etc/apt/sources.list.d/wheezy_backports.list
 
-- Agregar la clave pública
-~~~
- # wget http://www.rabbitmq.com/rabbitmq-signing-key-public.asc
- # apt-key add rabbitmq-signing-key-public.asc
-~~~
+ # wget -O- https://packages.erlang-solutions.com/debian/erlang_solutions.asc | apt-key add -
+ # echo 'deb https://packages.erlang-solutions.com/debian wheezy contrib' | tee /etc/apt/sources.list.d/esl.list
 
-- Ejecutar 
-~~~
  # apt-get update
+ # apt-get install init-system-helpers socat esl-erlang
 ~~~
 
-- Instalar el paquete
+
+- Instalar RabbitMQ
 ~~~
- # apt-get install rabbitmq-server
+ # wget -O- https://www.rabbitmq.com/rabbitmq-release-signing-key.asc | apt-key add -
+ # echo 'deb http://www.rabbitmq.com/debian/ testing main' | tee /etc/apt/sources.list.d/rabbitmq.list
+
+ # sudo apt-get update
+ # sudo apt-get install rabbitmq-server
 ~~~
 
 - Verificar que el servicio de rabbitmq esté corriendo
@@ -234,8 +236,8 @@ Pueden aparecer mensajes de aviso como "/usr/bin/nohup: redirecting stderr to st
  # /etc/init.d/rabbitmq-server restart
 ~~~
 
-- Cargar la interfaz web: entrar a la dirección http://server_name:15672
-El usuario por defecto es **guest** y la clave **guest**
+- Cargar la interfaz web: entrar a la dirección http://localhost:15672
+El usuario por defecto es **guest** y la clave **guest**. Tomar en cuenta que este usuario solo está disponible para realizar una conexión local.
 
 - Además es necesario configurar el CRON para que ejecute periodicamente la carga de datos, con esto se llamará al proceso origen-dato:cargar que verificará para cada indicador si le corresponde realizar la carga de datos según se haya configurado: diario, mensual, bimensual, trimestral o anual. Un ejemplo podría ser crear el archivo: /etc/cron.d/carga-php-siig
 
