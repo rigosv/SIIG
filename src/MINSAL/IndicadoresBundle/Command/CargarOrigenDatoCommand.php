@@ -69,7 +69,7 @@ class CargarOrigenDatoCommand extends ContainerAwareCommand
                             $campos_sig[$campo->getNombre()] = $campo->getSignificado()->getCodigo();
                         }
 
-                        //Verificar si elorigen de datos tiene un campo para lectura incremental
+                        //Verificar si el origen de datos tiene un campo para lectura incremental
                         $campoLecturaIncremental = $origenDato->getCampoLecturaIncremental();
                         $condicion_carga_incremental = "";
                         $ultimaLecturaIncremental = null;
@@ -80,28 +80,26 @@ class CargarOrigenDatoCommand extends ContainerAwareCommand
                         if ($esLecturaIncremental){
                             //tomar la fecha de la última actualización del origen
                             $campoLecturaIncremental = $campoLecturaIncremental->getSignificado()->getCodigo();
-                            $ultimaLecturaIncremental = $origenDato->getUltimaActualizacion();
-                            if ($ultimaLecturaIncremental != null ){
-                               //Ya se realizó al menos una carga, a partir de la segunda leer solo el incremento
-                                $ventana_inf = ($origenDato->getVentanaLimiteInferior() == null) ? 0 : $origenDato->getVentanaLimiteInferior();
-                                $ventana_sup = ($origenDato->getVentanaLimiteSuperior() == null) ? 0 : $origenDato->getVentanaLimiteSuperior();
+                            
+                            //Calcular los límites
+                            $ventana_inf = ($origenDato->getVentanaLimiteInferior() == null) ? 0 : $origenDato->getVentanaLimiteInferior();
+                            $ventana_sup = ($origenDato->getVentanaLimiteSuperior() == null) ? 0 : $origenDato->getVentanaLimiteSuperior();
 
-                                if ($campoLecturaIncremental == 'fecha'){                
-                                    $ultimaLecturaIncremental->sub(new \DateInterval('P'.$ventana_inf.'D'));
-                                    $fecha->sub(new \DateInterval('P'.$ventana_sup.'D'));
-                                    $lim_inf= $ultimaLecturaIncremental->format('Y-m-d H:i:s');
-                                    $lim_sup = $fecha->format('Y-m-d H:i:s');
+                            if ($campoLecturaIncremental == 'fecha'){                
+                                $fechaIni = $fecha;
+                                $fechaFin = $fecha;
 
-                                } else {
-                                    // Se está utilizando el campo año para la carga incremental
-                                    $lim_inf = $ultimaLecturaIncremental->format('Y') - $ventana_inf ;
-                                    $lim_sup = $fecha->format('Y') - $ventana_sup;
-                                }
-                                $condicion_carga_incremental = " AND $campoLecturaIncremental >= '$lim_inf'
-                                                                     AND $campoLecturaIncremental <= '$lim_sup' ";
+                                $lim_inf = $fechaIni->sub(new \DateInterval('P'.$ventana_inf.'D'))->format('Y-m-d H:i:s');
+                                $lim_sup = $fechaFin->sub(new \DateInterval('P'.$ventana_sup.'D'))->format('Y-m-d H:i:s');
+                            } else {
+                                // Se está utilizando el campo año para la carga incremental
+                                $lim_inf = $fecha->format('Y') - $ventana_inf ;
+                                $lim_sup = $fecha->format('Y') - $ventana_sup;
                             }
+                            $condicion_carga_incremental = " AND $campoLecturaIncremental >= '$lim_inf'
+                                                                 AND $campoLecturaIncremental <= '$lim_sup' ";
+                            
                             $orden = " ORDER BY $campoLecturaIncremental ";
-                            $ultimaLecturaIncremental = $ultimaLecturaIncremental->format('Y-m-d H:i:s');
                         }
                         $msg = array('id_origen_dato' => $origenDato->getId(), 
                                     'sql' => $origenDato->getSentenciaSql(),
@@ -112,11 +110,16 @@ class CargarOrigenDatoCommand extends ContainerAwareCommand
                                     'orden' => $orden,
                                     'esLecturaIncremental' => $esLecturaIncremental,
                                     'campoLecturaIncremental' => $campoLecturaIncremental,
-                                    'ultimaLecturaIncremental' => $ultimaLecturaIncremental,
                                     'r' => microtime(true) 
 
                             );                                        
-
+                        
+                        foreach ($origenDato->getVariables() as $var) {
+                            foreach ($var->getIndicadores() as $ind) {
+                                $ind->setUltimaLectura($ahora);
+                            }
+                        }
+                        $em->flush();
                         $carga_directa = $origenDato->getEsCatalogo();
                         // No mandar a la cola de carga los que son catálogos, Se cargarán directamente
                         if ($carga_directa)

@@ -88,6 +88,7 @@ Conexion '.$cnx.' '.microtime(true).' Origen: '.$idOrigen.'
                                 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
                                 ---> Lectura de datos '. $lect . ' iniciada en '. microtime(true) . ' Origen: '.$idOrigen.' 
                         ';
+                    var_dump($msg['esLecturaIncremental']);
                     $datos = $em->getRepository('IndicadoresBundle:OrigenDatos')->getDatos($sql_aux, $cnx);
                     
                     echo '     
@@ -127,7 +128,6 @@ Conexion '.$cnx.' '.microtime(true).' Origen: '.$idOrigen.'
             'es_lectura_incremental' => $msg['esLecturaIncremental'],
             'lim_inf' => $msg['lim_inf'],
             'lim_sup' => $msg['lim_sup'],
-            'ultima_lectura_incremental' => $msg['ultimaLecturaIncremental'],
             'campo_lectura_incremental' => $msg['campoLecturaIncremental'],
             'r' => microtime(true),
             'numMsj' => $this->numMsj++

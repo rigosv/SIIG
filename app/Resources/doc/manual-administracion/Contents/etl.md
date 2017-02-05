@@ -42,8 +42,8 @@ Por defecto cada vez que se lee un origen de datos se hace una lectura completa,
 
 Para configurar la carga incremental tiene que especificar tres opciones:
 - El campo que se usará como punto de control de la carga incremental, debe ser un campo de tipo fecha o año. Especificando este campo, al realizar una segunda lectura, se determinará el último valor leido y se recuperarán los valores mayores a éste. Si quiere modificar este comportamiento debe utilizar las siguientes dos opciones: **Ventana límite inferior** y **Ventana límite superior**
-- Ventana límite inferior, representa el número de unidades (días si el campo de control es fecha o años para campo de control años) que se volverán a leer. Por ejemplo: si la última lectura fue el *13/02/2014* y el límite inferior es *3* se leerá a partir de *10/02/2014*
-- Ventana límite superior, este controla el número de unidades que se descontarán de la fecha actual, para realizar la lectura. Por ejemplo: si la fecha actual es *15/09/2015* y el límite superior es *5*, no se leerán los datos hasta la fecha actual sino 5 días antes, es decir hasta *10/09/2015*
+- Ventana límite inferior, representa el número de unidades (días si el campo de control es fecha o años para campo de control años) que se volverán a leer a partir de la fecha actual. Por ejemplo: si la fecha actual es *13/02/2016* y el límite inferior es *3* se leerá a partir de *10/02/2016*
+- Ventana límite superior, este controla el número de unidades que se descontarán de la fecha actual, para realizar la lectura. Por ejemplo: si la fecha actual es *15/09/2016* y el límite superior es *5*, no se leerán los datos hasta la fecha actual sino 5 días antes, es decir hasta *10/09/2016*
 
 
 ### Carga de tablas catálogos
