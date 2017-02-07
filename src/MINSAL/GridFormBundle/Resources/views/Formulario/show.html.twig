@@ -408,7 +408,7 @@
                                                 inputElement.jqxInput({  width: width, height: height});
                                             } else if (tipo_control == 'date') {
                                                 var element = $('<input type="date"></input>');
-                                                editor.append(element);                                                
+                                                editor.append(element);
                                                 var fecha = (moment(cellValue, "DD/MM/YYYY").isValid()) ? moment(cellValue, "DD/MM/YYYY") : moment();
                                                 var control = element.jqxDateTimeInput({value:fecha.toDate(), width: width, height: height, 
                                                     template: "info",
@@ -488,11 +488,13 @@
                                                     inputField.jqxInput('selectAll');
                                                 }
                                             } else if (tipo_control == 'date'){
-                                                var dateElement = editor.find('div:first');    
-                                                
+                                                var dateElement = editor.find('div:first');
                                                 var fecha = (moment(cellValue, "DD/MM/YYYY").isValid()) ? moment(cellValue, "DD/MM/YYYY") : moment();
                                                 dateElement.jqxDateTimeInput('val', fecha.format("DD/MM/YYYY"));
                                                 dateElement.jqxDateTimeInput('open');
+                                                dateElement.on('close', function (event) {
+                                                    $("#jqxgrid{{Frm.id}}").jqxGrid('endcelledit', row, columnaSeleccionada, false);
+                                                });
                                             } else if (tipo_control == 'datetimeinput'){
                                                 var dateElement = editor.find('div:first');
                                             } else if (tipo_control == 'time') {
