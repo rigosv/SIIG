@@ -503,6 +503,9 @@
                                                 var fecha =  moment({hour: hora[0], minute: hora[1]});
                                                 dateElement.jqxDateTimeInput('val', fecha);
                                                 dateElement.jqxDateTimeInput('open');
+                                                dateElement.on('close', function (event) {
+                                                    $("#jqxgrid{{Frm.id}}").jqxGrid('endcelledit', row, columnaSeleccionada, false);
+                                                });
                                             } else if (tipo_control == 'Number' || tipo_control == 'float') {
                                                 var inputField = editor.find('input');
                                                 if (pressedkey) {
@@ -516,6 +519,9 @@
                                             } else if (tipo_control == 'dropdownlist'){
                                                 editor.jqxDropDownList('selectItem', cellValue);
                                                 editor.jqxDropDownList('open');
+                                                editor.on('close', function (event) {
+                                                    $("#jqxgrid{{Frm.id}}").jqxGrid('endcelledit', row, columnaSeleccionada, false);
+                                                });
                                             }
                                         }
                                     },
