@@ -106,13 +106,7 @@ class Indicador
      * 
      * */
     private $dimension;
-    
-    /**
-     * @ORM\ManyToOne(targetEntity="DimensionCalidad", inversedBy="indicadores")
-     * 
-     * */
-    private $formulario;    
-    
+        
 
     public function __toString()
     {
@@ -436,5 +430,29 @@ class Indicador
     public function getPonderaEstandar()
     {
         return $this->ponderaEstandar;
+    }
+
+    /**
+     * Set formulario
+     *
+     * @param \MINSAL\GridFormBundle\Entity\DimensionCalidad $formulario
+     *
+     * @return Indicador
+     */
+    public function setFormulario(\MINSAL\GridFormBundle\Entity\DimensionCalidad $formulario = null)
+    {
+        $this->formulario = $formulario;
+
+        return $this;
+    }
+
+    /**
+     * Get formulario
+     *
+     * @return \MINSAL\GridFormBundle\Entity\DimensionCalidad
+     */
+    public function getFormulario()
+    {
+        return $this->formulario;
     }
 }

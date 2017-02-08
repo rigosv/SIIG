@@ -201,7 +201,7 @@ class Formulario
     
     /**
     * @var \Doctrine\Common\Collections\ArrayCollection
-    * @ORM\OneToMany(targetEntity="Indicador", mappedBy="formulario", cascade={"all"}, orphanRemoval=true)
+    * @ORM\OneToMany(targetEntity="Indicador", mappedBy="estandar", cascade={"all"}, orphanRemoval=true)
     * @ORM\OrderBy({"descripcion" = "ASC"})
     */
     private $indicadores;
