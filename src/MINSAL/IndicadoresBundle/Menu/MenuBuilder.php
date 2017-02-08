@@ -87,7 +87,8 @@ class MenuBuilder
 
                     if ($usuario != 'anon.') {
                         foreach ($admin->getRoutes()->getElements() as $r) {
-                            $ruta = array_pop(explode('/', $r->getPath()));
+                            $path = explode('/', $r->getPath());
+                            $ruta = array_pop($path);
                             if (in_array($ruta, array('almacenDatos'))) {
                                 if ($admin->hasRoute('almacenDatos') and ( $usuario->hasRole('ROLE_SUPER_ADMIN') or $usuario->hasRole('ROLE_USER_CAPTURA_DATOS'))) {
                                     $menu['origen_datos']
