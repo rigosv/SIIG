@@ -31,117 +31,124 @@ class CargarOrigenDatoConsumer implements ConsumerInterface {
         echo '
             ========== INICIO CARGA=========== '. $origenDato .' TIEMPO: '. microtime(true).' 
             ';
-        //Iniciar borrando los datos de la tabla auxiliar
-        $msg_init = array('id_origen_dato' => $idOrigen,
-            'method' => 'BEGIN',
-            'r' => microtime(true),
-            'numMsj' => $this->numMsj++
-        );
-        $this->container->get('old_sound_rabbit_mq.guardar_registro_producer')
-                ->publish(base64_encode(serialize($msg_init)));
+        
+        try {
+            //Iniciar borrando los datos de la tabla auxiliar
+            $msg_init = array('id_origen_dato' => $idOrigen,
+                'method' => 'BEGIN',
+                'r' => microtime(true),
+                'numMsj' => $this->numMsj++
+            );
+            $this->container->get('old_sound_rabbit_mq.guardar_registro_producer')
+                    ->publish(base64_encode(serialize($msg_init)));
 
-        //Leeré los datos en grupos de 10,000
-        $tamanio = 10000;
+            //Leeré los datos en grupos de 10,000
+            $tamanio = 10000;
 
-        if ($origenDato->getSentenciaSql() != '') {
-            //$sql = $origenDato->getSentenciaSql();
-            $sql = $msg['sql'];
-            
-            foreach ($origenDato->getConexiones() as $cnx) {
-                $leidos = 10001;
-                $i = 0;
-                echo '
+            if ($origenDato->getSentenciaSql() != '') {
+                //$sql = $origenDato->getSentenciaSql();
+                $sql = $msg['sql'];
 
-*********************************************************************************************
-*********************************************************************************************
-Conexion '.$cnx.' '.microtime(true).' Origen: '.$idOrigen.' 
-                    ';
-                $lect = 1;
-                while ($leidos >= $tamanio) {
-                    if ($cnx->getIdMotor()->getCodigo() == 'oci8') {
-                        $sql_aux = ($msg['esLecturaIncremental']) ?
-                                "SELECT * FROM ( $sql )  sqlOriginal 
-                                    WHERE  1 = 1
-                                        $msg[condicion_carga_incremental]
-                                        AND ROWNUM >= " . $i * $tamanio . ' AND ROWNUM < ' . ($tamanio * ($i + 1)) .
-                                $msg[orden] :
-                                'SELECT * FROM (' . $sql . ')  sqlOriginal ' .
-                                'WHERE ROWNUM >= ' . $i * $tamanio . ' AND ROWNUM < ' . ($tamanio * ($i + 1));
-                    } elseif ($cnx->getIdMotor()->getCodigo() == 'pdo_dblib') {
-                        $sql_aux = ($msg['esLecturaIncremental']) ?
-                                "SELECT * FROM ( $sql )  sqlOriginal 
-                                    WHERE 1 = 1
-                                    $msg[condicion_carga_incremental]
-                                    $msg[orden] " : $sql;
-                    } else {
-                        $sql_aux = ($msg['esLecturaIncremental']) ?
-                                "SELECT * FROM ( $sql) sqlOriginal 
+                foreach ($origenDato->getConexiones() as $cnx) {
+                    $leidos = 10001;
+                    $i = 0;
+                    echo '
+
+    *********************************************************************************************
+    *********************************************************************************************
+    Conexion '.$cnx.' '.microtime(true).' Origen: '.$idOrigen.' 
+                        ';
+                    $lect = 1;
+                    while ($leidos >= $tamanio) {
+                        if ($cnx->getIdMotor()->getCodigo() == 'oci8') {
+                            $sql_aux = ($msg['esLecturaIncremental']) ?
+                                    "SELECT * FROM ( $sql )  sqlOriginal 
+                                        WHERE  1 = 1
+                                            $msg[condicion_carga_incremental]
+                                            AND ROWNUM >= " . $i * $tamanio . ' AND ROWNUM < ' . ($tamanio * ($i + 1)) .
+                                    $msg[orden] :
+                                    'SELECT * FROM (' . $sql . ')  sqlOriginal ' .
+                                    'WHERE ROWNUM >= ' . $i * $tamanio . ' AND ROWNUM < ' . ($tamanio * ($i + 1));
+                        } elseif ($cnx->getIdMotor()->getCodigo() == 'pdo_dblib') {
+                            $sql_aux = ($msg['esLecturaIncremental']) ?
+                                    "SELECT * FROM ( $sql )  sqlOriginal 
                                         WHERE 1 = 1
                                         $msg[condicion_carga_incremental]
-                                        $msg[orden]
-                                        LIMIT " . $tamanio . ' OFFSET ' . $i * $tamanio :
-                                $sql . ' LIMIT ' . $tamanio . ' OFFSET ' . $i * $tamanio;
-                        ;
-                    }
-                    echo '   
-                        
-                                +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-                                ---> Lectura de datos '. $lect . ' iniciada en '. microtime(true) . ' Origen: '.$idOrigen.' 
-                        ';
-                    var_dump($msg['esLecturaIncremental']);
-                    $datos = $em->getRepository('IndicadoresBundle:OrigenDatos')->getDatos($sql_aux, $cnx);
-                    
-                    echo '     
-                                ---> Lectura de datos '. $lect . ' FINALIZADA EN '. microtime(true) . ' Origen: '.$idOrigen.' 
-                        ';
-                    
-                    if ($datos === false){
-                        $leidos = 1;
-                        echo '
-                                SIN REGISTROS  ---> Origen: '.$idOrigen.' 
-                         
-                        ' ;
-                    } else {
-                        $this->enviarDatos($idOrigen, $datos, $campos_sig, $ahora);
-                        if ($cnx->getIdMotor()->getCodigo() == 'pdo_dblib')
-                            $leidos = 1;
-                        else
-                            $leidos = count($datos);
-                        $i++;
-                        echo '
-                                 Envio '. $lect. ' Cantidad de registros :' . $leidos.' Origen: '.$idOrigen.' 
-                         
-                        ' ;
-                    }
-                    $lect++;
-                    
-                }
-            }
-        } else {
-            $datos = $em->getRepository('IndicadoresBundle:OrigenDatos')->getDatos(null, null, $origenDato->getAbsolutePath());
-            $this->enviarDatos($idOrigen, $datos, $campos_sig, $ahora);
-        }
-        //Después de enviados todos los registros para guardar, mandar mensaje para borrar los antiguos
-        $msg_guardar = array('id_origen_dato' => $idOrigen,
-            'method' => 'DELETE',
-            'ultima_lectura' => $ahora,
-            'es_lectura_incremental' => $msg['esLecturaIncremental'],
-            'lim_inf' => $msg['lim_inf'],
-            'lim_sup' => $msg['lim_sup'],
-            'campo_lectura_incremental' => $msg['campoLecturaIncremental'],
-            'r' => microtime(true),
-            'numMsj' => $this->numMsj++
-        );
-        
-        echo '
-            ==========FIN DE CARGA=========== '. $origenDato .' TIEMPO: '. microtime(true).' Origen: '.$idOrigen.' 
-                ULTIMO MENSAJE # '. $this->numMsj.' 
-            ';
-        $this->container->get('old_sound_rabbit_mq.guardar_registro_producer')
-                ->publish(base64_encode(serialize($msg_guardar)));
+                                        $msg[orden] " : $sql;
+                        } else {
+                            $sql_aux = ($msg['esLecturaIncremental']) ?
+                                    "SELECT * FROM ( $sql) sqlOriginal 
+                                            WHERE 1 = 1
+                                            $msg[condicion_carga_incremental]
+                                            $msg[orden]
+                                            LIMIT " . $tamanio . ' OFFSET ' . $i * $tamanio :
+                                    $sql . ' LIMIT ' . $tamanio . ' OFFSET ' . $i * $tamanio;
+                            ;
+                        }
+                        echo '   
 
-        $origenDato->setUltimaActualizacion($fecha);
-        $em->flush();
+                                    +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+                                    ---> Lectura de datos '. $lect . ' iniciada en '. microtime(true) . ' Origen: '.$idOrigen.' 
+                            ';
+                        
+                        $datos = $em->getRepository('IndicadoresBundle:OrigenDatos')->getDatos($sql_aux, $cnx);
+
+                        echo '     
+                                    ---> Lectura de datos '. $lect . ' FINALIZADA EN '. microtime(true) . ' Origen: '.$idOrigen.' 
+                            ';
+
+                        if ($datos === false){
+                            $leidos = 1;
+                            echo '
+                                    SIN REGISTROS  ---> Origen: '.$idOrigen.' 
+
+                            ' ;
+                        } else {
+                            $this->enviarDatos($idOrigen, $datos, $campos_sig, $ahora);
+                            if ($cnx->getIdMotor()->getCodigo() == 'pdo_dblib')
+                                $leidos = 1;
+                            else
+                                $leidos = count($datos);
+                            $i++;
+                            echo '
+                                     Envio '. $lect. ' Cantidad de registros :' . $leidos.' Origen: '.$idOrigen.' 
+
+                            ' ;
+                        }
+                        $lect++;
+
+                    }
+                }
+            } else {
+                $datos = $em->getRepository('IndicadoresBundle:OrigenDatos')->getDatos(null, null, $origenDato->getAbsolutePath());
+                $this->enviarDatos($idOrigen, $datos, $campos_sig, $ahora);
+            }
+            //Después de enviados todos los registros para guardar, mandar mensaje para borrar los antiguos
+            $msg_guardar = array('id_origen_dato' => $idOrigen,
+                'method' => 'DELETE',
+                'ultima_lectura' => $ahora,
+                'es_lectura_incremental' => $msg['esLecturaIncremental'],
+                'lim_inf' => $msg['lim_inf'],
+                'lim_sup' => $msg['lim_sup'],
+                'campo_lectura_incremental' => $msg['campoLecturaIncremental'],
+                'r' => microtime(true),
+                'numMsj' => $this->numMsj++
+            );
+
+            echo '
+                ==========FIN DE CARGA=========== '. $origenDato .' TIEMPO: '. microtime(true).' Origen: '.$idOrigen.' 
+                    ULTIMO MENSAJE # '. $this->numMsj.' 
+                ';
+            $this->container->get('old_sound_rabbit_mq.guardar_registro_producer')
+                    ->publish(base64_encode(serialize($msg_guardar)));
+
+            $origenDato->setUltimaActualizacion($fecha);
+            $em->flush();
+        } catch (\Exception $e) {
+            echo $e->getMessage();
+        } catch (\ErrorException $e) {
+            echo $e->getMessage();
+        }
         return true;
     }
 
