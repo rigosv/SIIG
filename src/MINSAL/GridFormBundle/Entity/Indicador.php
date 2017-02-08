@@ -107,6 +107,11 @@ class Indicador
      * */
     private $dimension;
     
+    /**
+     * @ORM\ManyToOne(targetEntity="DimensionCalidad", inversedBy="indicadores")
+     * 
+     * */
+    private $formulario;    
     
 
     public function __toString()
