@@ -26,12 +26,12 @@
         "twig/extensions": "v1.3.0",
         "symfony/assetic-bundle": "v2.8.0",
         "kriswallsmith/assetic": "v1.3.2",
-        "symfony/swiftmailer-bundle": "^2.3",
+        "symfony/swiftmailer-bundle": "^2.3.10",
         "symfony/monolog-bundle": "^2.8",
-        "sensio/distribution-bundle": "~5.0",
-        "sensio/framework-extra-bundle": "v3.0.16",
+        "sensio/distribution-bundle": "^5.0",
+        "sensio/framework-extra-bundle": "^3.0.2",
         "sensio/generator-bundle": "v3.0.7",
-        "incenteev/composer-parameter-handler": "v2.1.2",
+        "incenteev/composer-parameter-handler": "^2.0",
         
         "knplabs/knp-menu-bundle":"dev-master",
         
@@ -60,7 +60,8 @@
         "jms/serializer-bundle": "v1.1.0",
         "friendsofsymfony/rest-bundle": "^1.1",
         "snc/redis-bundle": "v2.0.0",
-        "predis/predis": "v1.1.1"
+        "predis/predis": "v1.1.1",
+        "h4cc/wkhtmlpdf-amd64": "0.12.3"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",

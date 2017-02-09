@@ -570,7 +570,8 @@
                                                             animate: {
                                                                 enter: 'animated jello'
                                                             },
-                                                            type: 'danger'
+                                                            type: 'danger',
+                                                            z_index: 5031
                                                         });
                                                         error = true;
                                                     }
@@ -712,7 +713,7 @@
                     {% if Frm.calculoFilas != '' %}
                     
                     evalLadoDerecho = function (fila, columna, valor_celda_actual, datarow, operaciones){
-                        operadores = operaciones.toString().match(/\$\{F[0-9]{1,2}\}/g);
+                        operadores = operaciones.toString().match(/\$\{F[0-9]{1,4}\}/g);
                         if (operadores != null && operadores.length > 0){
                             operadores.forEach(function(nodo2, index){
                                 fil = nodo2.toString().replace(/\$\{F|\}/gi,'');

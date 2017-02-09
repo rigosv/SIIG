@@ -83,7 +83,7 @@ class GridController extends Controller
         
         $datos = json_decode($request->get('fila'), true);
         
-        if (array_key_exists('regla_validacion', $datos) and $datos['regla_validacion'] != ''){
+        /*if (array_key_exists('regla_validacion', $datos) and $datos['regla_validacion'] != ''){
             $regla = $datos['regla_validacion'];
             
             foreach ($datos as $n=>$d){
@@ -92,6 +92,7 @@ class GridController extends Controller
                     $r_ = true;
                     //aplicar la regla de validación
                     $regla_ = str_replace('value', $d, $regla);
+                    echo $regla_;
                     $regla_msj = str_replace('value', 'valor_celda', $regla);
                     
                     eval('$r_ = ('.$regla_.');');
@@ -101,7 +102,7 @@ class GridController extends Controller
                     }
                 }
             }
-        }
+        }*/
         
         //$periodoEstructura =  $em->getRepository('CostosBundle:PeriodoIngresoDatosFormulario')->find($periodo_ingreso);
         if (!$periodoEstructura) {
