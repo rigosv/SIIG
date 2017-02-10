@@ -141,7 +141,7 @@
                         };
                         
                     }
-                    var clase = cellclass(row, datafield, value);                    
+                    var clase = cellclass(row, datafield, value);
                     var patt = new RegExp("oculto");
                     if (patt.test(clase))
                         return false;
@@ -718,6 +718,8 @@
                             operadores.forEach(function(nodo2, index){
                                 fil = nodo2.toString().replace(/\$\{F|\}/gi,'');
                                 valor_oper = (fil == fila) ? valor_celda_actual :  $('#jqxgrid{{Frm.id}}').jqxGrid('getcellvalue', fil, columna);
+                                valor_oper  = (valor_oper == '') ? false : valor_oper;
+                                
                                 var datarow_celda = $("#jqxgrid{{Frm.id}}").jqxGrid('getrowdata', fil);
                                 if (datarow_celda.codigo_tipo_control == 'time'){
                                     hora =  valor_oper.split(':');
@@ -748,11 +750,11 @@
                                     .replace(/:==/g, ':=')
                                     .replace(/>==/g, '>=')
                                     .replace(/<==/g, '<=')
-                                    ;
-                            
+                                    ; 
+
                             var result =  eval(operaciones);
                             return result;
-                        }
+                        }                        
                         catch(err) {
                             return;
                         }
@@ -782,13 +784,13 @@
                                 formula = nodo;
                                 //Procesar solamente las fórmulas donde la celda actual aparece
                                 if (formula.toString().indexOf('{F'+fila+'}') != -1){
-                                    filasp = /\$\{F[0-9]{1,2}\}/g;
+                                    filasp = /\$\{F[0-9]{1,4}\}/g;
                                                                 
                                     lados_formula = formula.split(':=');
                                     fila_destino = filasp.exec(lados_formula[0]).toString().replace(/\$\{F|\}/gi,'');
                                     operaciones = lados_formula[1];
                                     result = evalLadoDerecho(fila, columna, valor_celda_actual, datarow, operaciones);
-                                    
+
                                     //Convertir el valor de acuerdo al tipo de dato de la celda destino
                                     var datarow_dest = $("#jqxgrid{{Frm.id}}").jqxGrid('getrowdata', fila_destino);
                                     if (datarow_dest.codigo_tipo_control == 'time'){
@@ -814,7 +816,7 @@
                                     
                                     var valor;
                                     if ( lados_formula[0].replace(/\$\{F|\}/g,'').trim() == fila_destino+'_LS'){
-                                        valor = (result) ? null : ''; 
+                                        valor = (result) ? (datarow_dest.codigo_tipo_control == 'checkbox' || datarow_dest.codigo_tipo_control == 'checkbox_3_states') ? false : null : ''; 
                                     }else if ( lados_formula[0].replace(/\$\{F|\}/g,'').trim() == fila_destino+'_LSX'){
                                         valor = result; 
                                     }
