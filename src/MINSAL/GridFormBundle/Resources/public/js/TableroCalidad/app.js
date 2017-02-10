@@ -255,6 +255,7 @@
                             $scope.criterios = data;
                             $scope.resumenIndicadores = data[0].resumen_indicadores;
                             $scope.labels_rec = [];
+                            $scope.datosCriteriosOrd = [];
                             $scope.data_rec = [];
                             $scope.colors_rec = [];
                             $scope.series_rec = ['Series A'];
@@ -293,6 +294,7 @@
                                     $scope.labels_rec.push(des);
                                     $scope.data_rec.push(res_criterios.porc_cumplimiento);
                                     $scope.colors_rec.push(res_criterios.color);
+                                    $scope.datosCriteriosOrd.push(res_criterios);
                                 }
 
                             }                            
@@ -301,5 +303,11 @@
                             alert(error);
                         }
                     );
+            };
+            
+            $scope.getNumber100 = function(num) {
+                var num_ = Math.floor(num/10);
+                var repeticiones = (num % 10 >= 0) ? ++num_ : num_;
+                return new Array(repeticiones);
             };
         });

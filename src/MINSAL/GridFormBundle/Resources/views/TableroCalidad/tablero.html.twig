@@ -308,15 +308,31 @@
             </div>
         </div>
         <div class="row" ng-if="data_rec.length > 0 " ng-show="criterios.length">
-            <div class="col-md-8" style="max-height: 800px">
+            <div class="col-md-8">
                 <div class="page-header">
                     <h1><small>{{'_porc_cumplimiento_criterio_'|trans}}</small></h1>
                 </div>
-                <canvas id="resumen-eval-criterios" class="chart-horizontal-bar"
+                <!-- <canvas id="resumen-eval-criterios" class="chart-horizontal-bar"
                   chart-data="data_rec" chart-labels="labels_rec" chart-options="options_rec" 
                   chart-dataset-override="datasetOverride_rec" chart-colors="colors_rec"
                   chart-series="series_rec">
-                </canvas>
+                </canvas> -->
+                <TABLE class="table table-responsive table-condensed">
+                    <THEAD>
+                        <TR>
+                            <TH>Criterio</TH>
+                            <TH ng-repeat="i in getNumber100(100) track by $index"></TH>
+                            <TH></TH>
+                        </TR>
+                    </THEAD>
+                    <TBODY>
+                        <TR ng-repeat="f in datosCriteriosOrd">
+                            <TD>[[f.descripcion_variable]]</TD>
+                            <TD style="background-color: [[f.color]]" ng-repeat="i in getNumber100(f.porc_cumplimiento) track by $index"></TD>
+                            <TD>[[f.porc_cumplimiento]]%</TD>
+                        </TR>
+                    </TBODY>
+                </TABLE>
             </div>
             <div class="col-md-4" >
                 <div class="page-header">
