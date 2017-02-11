@@ -394,3 +394,6 @@ DIV.pie_grafico{
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
 }
+#myModal2 .modal-dialog{
+    width: auto !important;
+}
