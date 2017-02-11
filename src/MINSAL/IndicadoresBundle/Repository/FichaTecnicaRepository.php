@@ -19,7 +19,7 @@ class FichaTecnicaRepository extends EntityRepository {
         $existe = true;
         $acumulado = $fichaTecnica->getEsAcumulado();
         try {
-            $em->getConnection()->query("select * from tmp_ind_$nombre_indicador LIMIT 1");
+            $em->getConnection()->query("select * from temporales.tmp_ind_$nombre_indicador LIMIT 1");
         } catch (\Doctrine\DBAL\DBALException $e) {
             $existe = false;
         }
@@ -31,7 +31,7 @@ class FichaTecnicaRepository extends EntityRepository {
         $campos = str_replace("'", '', $fichaTecnica->getCamposIndicador());
 
         $tablas_variables = array();
-        $sql = 'DROP TABLE IF EXISTS tmp_ind_' . $nombre_indicador . '; ';
+        $sql = 'DROP TABLE IF EXISTS temporales.tmp_ind_' . $nombre_indicador . '; ';
         // Crear las tablas para cada variable
         foreach ($fichaTecnica->getVariables() as $variable) {
             //Recuperar la información de los campos para crear la tabla
@@ -214,7 +214,7 @@ class FichaTecnicaRepository extends EntityRepository {
 
         $sufijoTablas = 'var';
         $sql .= 'SELECT  ' . $campos . ',' . implode(',', $tablas_variables) .
-                " INTO tmp_ind_" . $nombre_indicador . " FROM  " . array_shift($tablas_variables) . '_' . $sufijoTablas . ' ';
+                " INTO temporales.tmp_ind_" . $nombre_indicador . " FROM  " . array_shift($tablas_variables) . '_' . $sufijoTablas . ' ';
         foreach ($tablas_variables as $tabla) {
             $sql .= " FULL OUTER JOIN " . $tabla . "_" . $sufijoTablas . " USING ($campos) " . $evitar_div_0;
         }
@@ -230,7 +230,7 @@ class FichaTecnicaRepository extends EntityRepository {
         //$util = new \MINSAL\IndicadoresBundle\Util\Util();
 
         $nombre_indicador = $fichaTecnica->getId();
-        $tabla_indicador = 'tmp_ind_' . $nombre_indicador;
+        $tabla_indicador = 'temporales.tmp_ind_' . $nombre_indicador;
 
         $campos = array();
         $campos_grp = array();
@@ -321,7 +321,7 @@ class FichaTecnicaRepository extends EntityRepository {
         $variables_query = trim($variables_query, ', ');
 
         $nombre_indicador = $fichaTecnica->getId();
-        $tabla_indicador = 'tmp_ind_' . $nombre_indicador;
+        $tabla_indicador = 'temporales.tmp_ind_' . $nombre_indicador;
 
         //Verificar si es un catálogo
         $rel_catalogo = '';
@@ -333,7 +333,7 @@ class FichaTecnicaRepository extends EntityRepository {
         $catalogo = $significado->getCatalogo();
         if ($catalogo != '') {
             $rel_catalogo = " INNER JOIN  $catalogo  B ON (A.$dimension::text = B.id::text) ";
-            $dimension_ = 'B.descripcion';
+            $dimension_ = 'A.'.$dimension.', B.descripcion';
             $otros_campos = ' B.id AS id_category, ';
             $grupo_extra = ', B.id ';
         }
