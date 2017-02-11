@@ -380,7 +380,7 @@ class FichaTecnicaRepository extends EntityRepository {
         
         $sql .= "
             GROUP BY $dimension_ $grupo_extra";
-        $sql .= ($acumulado)?'':"HAVING (($formula)::numeric) > 0";
+        $sql .=  "HAVING (($formula)::numeric) > 0 ";
         $sql .= "ORDER BY $dimension_";
         
         try {
