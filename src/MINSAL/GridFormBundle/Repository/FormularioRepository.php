@@ -248,6 +248,8 @@ class FormularioRepository extends EntityRepository {
         
         $datosIni = $this->getCamposInicializar($Frm);
         
+        $whereVersion = ($Frm->getVersion() != '') ? " AND A.version_formulario = '".$Frm->getVersion()."' " : '';
+        
         //Cargar las variables que no están en el año elegido
         $sql = "INSERT INTO almacen_datos.repositorio (id_formulario, datos)
                 (SELECT ".$Frm->getId()." AS id_formulario, 
@@ -269,6 +271,7 @@ class FormularioRepository extends EntityRepository {
                             )
                         AND A.formulario_id =  ".$Frm->getId()."
                         AND A.codigo !~* 'kobo'
+                        $whereVersion
                 )";
         $this->orden = "ORDER BY datos->'es_poblacion' DESC, COALESCE(NULLIF(datos->'posicion', ''), '100000000')::numeric, datos->'descripcion_categoria_variable', datos->'descripcion_variable'";
         $em->getConnection()->executeQuery($sql);                
