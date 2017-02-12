@@ -254,46 +254,11 @@
                         function (data) {
                             $scope.criterios = data;
                             $scope.resumenIndicadores = data[0].resumen_indicadores;
-                            $scope.labels_rec = [];
-                            $scope.datosCriteriosOrd = [];
-                            $scope.data_rec = [];
-                            $scope.colors_rec = [];
-                            $scope.series_rec = ['Series A'];
-                            $scope.datasetOverride_rec = [{ xAxisID: 'x-axis-1' }, { xAxisID: 'x-axis-2' }];
-                            $scope.options_rec = {                                
-                                scales: {
-                                    xAxes: [
-                                        {
-                                          id: 'x-axis-1',
-                                          type: 'linear',
-                                          display: true,
-                                          position: 'top',
-                                          ticks: {
-                                                    min: 0,
-                                                    max: 100
-                                                }
-                                        },
-                                        {
-                                          id: 'x-axis-2',
-                                          type: 'linear',
-                                          display: true,
-                                          position: 'bottom',
-                                          ticks: {
-                                                    min: 0,
-                                                    max: 100
-                                                }
-                                        }
-                                    ]
-                                }
-                            };                            
+                            $scope.datosCriteriosOrd = [];                        
                             for (var i in data){
                                 var datos = data[i];
                                 for(var r in datos.resumen_criterios){
                                     var res_criterios = datos.resumen_criterios[r];
-                                    var des = (res_criterios.descripcion_variable.length > 70) ? res_criterios.descripcion_variable.substring(0,70) + '...' : res_criterios.descripcion_variable;
-                                    $scope.labels_rec.push(des);
-                                    $scope.data_rec.push(res_criterios.porc_cumplimiento);
-                                    $scope.colors_rec.push(res_criterios.color);
                                     $scope.datosCriteriosOrd.push(res_criterios);
                                 }
 
