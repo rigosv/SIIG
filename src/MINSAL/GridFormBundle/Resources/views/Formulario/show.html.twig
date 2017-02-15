@@ -497,6 +497,9 @@
                                                 });
                                             } else if (tipo_control == 'datetimeinput'){
                                                 var dateElement = editor.find('div:first');
+                                                var fecha = (moment(cellValue, "DD/MM/YYYY HH:mm").isValid()) ? moment(cellValue, "DD/MM/YYYY HH:mm") : moment();
+                                                dateElement.jqxDateTimeInput('val', fecha.format("DD/MM/YYYY HH:mm"));
+                                                dateElement.jqxDateTimeInput('open');
                                             } else if (tipo_control == 'time') {
                                                 var dateElement = editor.find('div:first');                                                
                                                 var hora =  cellValue.split(':');
@@ -793,16 +796,9 @@
 
                                     //Convertir el valor de acuerdo al tipo de dato de la celda destino
                                     var datarow_dest = $("#jqxgrid{{Frm.id}}").jqxGrid('getrowdata', fila_destino);
-                                    if (datarow_dest.codigo_tipo_control == 'time'){
-                                        horas = ~~(parseInt(result) / 60);
-                                        horas = ( horas >=0 && horas < 10 ) ? '0'+horas : horas;
-
-                                        minutos = (parseInt(result) % 60)
-                                        minutos = ( minutos >= 0 && minutos < 10 ) ? '0'+Math.abs(minutos) : Math.abs(minutos);
-
-                                        result =  horas+ ':' + minutos;
-                                    } else if (datarow_dest.codigo_tipo_control == 'datetimeinput'){
-                                        //El resultado está en milisegundos, pasarlo a formato hora:minutos                                        
+                                    if (datarow_dest.codigo_tipo_control == 'datetimeinput' || 
+                                                datarow_dest.codigo_tipo_control == 'time'){
+                                        //El resultado está en milisegundos, pasarlo a formato hora:minutos
                                         horas_ = result / 1000 / 60 / 60 ;
                                         horas = ~~(horas_);
                                         horas = ( horas >=0 && horas < 10 ) ? '0'+horas : horas;
