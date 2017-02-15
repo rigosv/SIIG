@@ -77,54 +77,55 @@
             $("#FiltroListadoFormularios").searchFilter({targetSelector: ".formulario", charCount: 2});
             $.jqx.theme = 'ui-redmond';
             listSource = [];
-            var columnaSeleccionada = '';
-            var ultimaFilaFormula = '';
-            var valorCeldaPreEdicion = '';
-            var camposFormulas = [];
-            var reglasValidacion = [];
+            
             {% for Frm in Formularios %}
+            var columnaSeleccionada_{{Frm.id}} = '';
+            var ultimaFilaFormula_{{Frm.id}} = '';
+            var valorCeldaPreEdicion_{{Frm.id}} = '';
+            var camposFormulas_{{Frm.id}} = [];
+            var reglasValidacion_{{Frm.id}} = [];
             var initGrid{{Frm.id}} = function () {
                 var url = Routing.generate('{{url}}', {id: {{Frm.id}}, periodo_ingreso: '{{parametros.periodo_estructura}}',titulo_frm : '{{titulo}}', datos_frm: $('#frm_').serialize() });
                 var fila = 0;
                 var pk = '{{llave_primaria | default ('codigo_variable')}}'
                 
                 
-                var filasFormulas = [];
-                var operacionesFormulas = [];
+                var filasFormulas_{{Frm.id}} = [];
+                var operacionesFormulas_{{Frm.id}} = [];
                 {% if Frm.calculoFilas != ''%}
-                    var camposFormulas_aux = '{{Frm.calculoFilas}}'.split('::');
-                    camposFormulas_aux.forEach(function(nodo, index){
+                    var camposFormulas_aux_{{Frm.id}} = '{{Frm.calculoFilas}}'.split('::');
+                    camposFormulas_aux_{{Frm.id}}.forEach(function(nodo, index){
                             formula = nodo;
                             
                             lados_formula = formula.split(':=');
                             var posicion = lados_formula[0].indexOf('_CHECK');
                             if (posicion != -1){
-                                reglasValidacion.push(nodo);
+                                reglasValidacion_{{Frm.id}}.push(nodo);
                             } else {
                                 //Separar dos arreglos, con los lados izquierdo y derecho de cada fórmula
                                 var LadoIzq = lados_formula[0].toString().replace(/\$\{F|\}/g,'');
                                 var LadoDer = lados_formula[1];
-                                filasFormulas.push(LadoIzq.trim());                            
-                                operacionesFormulas.push(LadoDer.trim());
-                                camposFormulas.push(nodo);
+                                filasFormulas_{{Frm.id}}.push(LadoIzq.trim());                            
+                                operacionesFormulas_{{Frm.id}}.push(LadoDer.trim());
+                                camposFormulas_{{Frm.id}}.push(nodo);
                             }
                         });
                 {% endif %}
 
                 //Verifica si una fila tiene fórmula de cálculo
-                filaFormula = function(fila, columna){
+                filaFormula_{{Frm.id}} = function(fila, columna){
                     {% if Frm.calculoFilas != ''%}
-                        for(i = 0; i < filasFormulas.length; i++){
-                            if (filasFormulas[i] == fila)
+                        for(i = 0; i < filasFormulas_{{Frm.id}}.length; i++){
+                            if (filasFormulas_{{Frm.id}}[i] == fila)
                                 return true;
                         }
                     {% endif %}
                     return false;
                 }
                 var rowbeginedit =  function (row, datafield, columntype, value) {
-                    columnaSeleccionada = datafield;
-                    valorCeldaPreEdicion = value;
-                    ultimaFilaFormula = null;
+                    columnaSeleccionada_{{Frm.id}} = datafield;
+                    valorCeldaPreEdicion_{{Frm.id}} = value;
+                    ultimaFilaFormula_{{Frm.id}} = null;
                     var datarow = $("#jqxgrid{{Frm.id}}").jqxGrid('getrowdata', row);
                     if (datarow.es_poblacion == 'true'){                        
                         var celdas = $(".jqx-grid-cell:not('.oculto'):not('.celda_no_editable'):not('.no_aplica') .sw_etiqueta");
@@ -152,7 +153,7 @@
                     
                     //Verificar si es campo calculado
                     {% if Frm.calculoFilas != '' %}
-                        return  !(filaFormula(row, datafield));
+                        return  !(filaFormula_{{Frm.id}}(row, datafield));
                     {% endif %}
                     
                     
@@ -172,9 +173,9 @@
                             
                         }
                         //Verificar si es lógica de salto
-                        var posicion = filasFormulas.indexOf(row+'_LS');
+                        var posicion = filasFormulas_{{Frm.id}}.indexOf(row+'_LS');
                         if (posicion != -1 && columnfield != 'descripcion_variable'){
-                            noAplica_class = ( evalLadoDerecho(row, columnfield, value, datarowAct, operacionesFormulas[posicion]) ) ? '' : 'no_aplica';
+                            noAplica_class = ( evalLadoDerecho(row, columnfield, value, datarowAct, operacionesFormulas_{{Frm.id}}[posicion], {{Frm.id}}) ) ? '' : 'no_aplica';
                         }
                     {% endif %}
                     return no_edit_class + ' ' + oculto_class + ' ' + noAplica_class;
@@ -474,7 +475,7 @@
                                                 }
                                                 var val = checkBoxHTMLElement.val();
                                                 editor.val(val);
-                                                $("#jqxgrid{{Frm.id}}").jqxGrid('endcelledit', row, columnaSeleccionada, false);
+                                                $("#jqxgrid{{Frm.id}}").jqxGrid('endcelledit', row, columnaSeleccionada_{{Frm.id}}, false);
                                                 
                                             }
                                             else if (tipo_control == 'text'){
@@ -493,7 +494,7 @@
                                                 dateElement.jqxDateTimeInput('val', fecha.format("DD/MM/YYYY"));
                                                 dateElement.jqxDateTimeInput('open');
                                                 dateElement.on('close', function (event) {
-                                                    $("#jqxgrid{{Frm.id}}").jqxGrid('endcelledit', row, columnaSeleccionada, false);
+                                                    $("#jqxgrid{{Frm.id}}").jqxGrid('endcelledit', row, columnaSeleccionada_{{Frm.id}}, false);
                                                 });
                                             } else if (tipo_control == 'datetimeinput'){
                                                 var dateElement = editor.find('div:first');
@@ -507,7 +508,7 @@
                                                 dateElement.jqxDateTimeInput('val', fecha);
                                                 dateElement.jqxDateTimeInput('open');
                                                 dateElement.on('close', function (event) {
-                                                    $("#jqxgrid{{Frm.id}}").jqxGrid('endcelledit', row, columnaSeleccionada, false);
+                                                    $("#jqxgrid{{Frm.id}}").jqxGrid('endcelledit', row, columnaSeleccionada_{{Frm.id}}, false);
                                                 });
                                             } else if (tipo_control == 'Number' || tipo_control == 'float') {
                                                 var inputField = editor.find('input');
@@ -523,7 +524,7 @@
                                                 editor.jqxDropDownList('selectItem', cellValue);
                                                 editor.jqxDropDownList('open');
                                                 editor.on('close', function (event) {
-                                                    $("#jqxgrid{{Frm.id}}").jqxGrid('endcelledit', row, columnaSeleccionada, false);
+                                                    $("#jqxgrid{{Frm.id}}").jqxGrid('endcelledit', row, columnaSeleccionada_{{Frm.id}}, false);
                                                 });
                                             }
                                         }
@@ -561,12 +562,12 @@
                                             }
                                             
                                             var error = false;
-                                            reglasValidacion.forEach(function(nodo, index){
+                                            reglasValidacion_{{Frm.id}}.forEach(function(nodo, index){
                                                 lados_formula = nodo.split(':=');
                                                 if (lados_formula[0].trim() == '${F'+row+'}_CHECK'){
                                                     var datos_formula = lados_formula[1].split('//');
                                                     var mensaje = (datos_formula.length == 2 && datos_formula[1].length > 0 ) ? datos_formula[1] : 'Error en el dato ingresado';
-                                                    if (!evalLadoDerecho(row, columnaSeleccionada, valorNew, datarow, datos_formula[0]) ){
+                                                    if (!evalLadoDerecho(row, columnaSeleccionada_{{Frm.id}}, valorNew, datarow, datos_formula[0], {{Frm.id}}) ){
                                                         $.notify({
                                                             message: mensaje 
                                                         },{
@@ -589,7 +590,7 @@
                                     nivel = (datafield == 'descripcion_variable') ? datarow.nivel_indentacion : 0.3;
                                     estilo = (datarow.es_poblacion == 'true') ? "style='color: blue; margin-left:"+(parseFloat(nivel) * 20)+"px '" :  "style = 'margin-left:"+(parseFloat(nivel) * 20)+"px' ";
                                     clase_poblacion = (datarow.es_poblacion == 'true') ? "poblacion" : "";
-                                    var esFormula = filaFormula(index, datafield);
+                                    var esFormula = filaFormula_{{Frm.id}}(index, datafield);
                                     estilo = (esFormula) ? "style='color: black; font-weight: bold; margin-left:"+(parseFloat(nivel) * 20)+"px '" : estilo;
                                     var tipo_control = (datarow.codigo_tipo_control == undefined) ?  '{{campo.tipoControl.codigo}}' : datarow.codigo_tipo_control;
                                     var valor = cellValue;
@@ -715,15 +716,15 @@
 
                     {% if Frm.calculoFilas != '' %}
                     
-                    evalLadoDerecho = function (fila, columna, valor_celda_actual, datarow, operaciones){
+                    evalLadoDerecho = function (fila, columna, valor_celda_actual, datarow, operaciones, idFrm){
                         operadores = operaciones.toString().match(/\$\{F[0-9]{1,4}\}/g);
                         if (operadores != null && operadores.length > 0){
                             operadores.forEach(function(nodo2, index){
                                 fil = nodo2.toString().replace(/\$\{F|\}/gi,'');
-                                valor_oper = (fil == fila) ? valor_celda_actual :  $('#jqxgrid{{Frm.id}}').jqxGrid('getcellvalue', fil, columna);
+                                valor_oper = (fil == fila) ? valor_celda_actual :  $('#jqxgrid'+idFrm).jqxGrid('getcellvalue', fil, columna);
                                 valor_oper  = (valor_oper == '') ? false : valor_oper;
                                 
-                                var datarow_celda = $("#jqxgrid{{Frm.id}}").jqxGrid('getrowdata', fil);
+                                var datarow_celda = $("#jqxgrid"+idFrm).jqxGrid('getrowdata', fil);
                                 if (datarow_celda.codigo_tipo_control == 'time'){
                                     hora =  valor_oper.split(':');
                                     valor_oper =  parseInt(hora[0]) * 60 + parseInt(hora[1]);
@@ -767,7 +768,7 @@
                         var fila = event.args.rowindex;
                         var columna = event.args.datafield;
                         //Evitar que entre en bucle infinito
-                        if (ultimaFilaFormula == fila) return;
+                        if (ultimaFilaFormula_{{Frm.id}} == fila) return;
                         
                         var valor_celda_actual = event.args.value;
                         var operaciones = '';
@@ -775,7 +776,7 @@
                         
                         var tipo_control = datarow.codigo_tipo_control;
                         if (tipo_control != 'descripcion_variable'){
-                            var campos = camposFormulas;
+                            var campos = camposFormulas_{{Frm.id}};
                             var formula = [];
                             //se espera el formato codigoColumna: {F2} := {F0}/{F1} * 100
                             // Primero se separa por : para obtener el nombre de la columna y la formula
@@ -792,7 +793,7 @@
                                     lados_formula = formula.split(':=');
                                     fila_destino = filasp.exec(lados_formula[0]).toString().replace(/\$\{F|\}/gi,'');
                                     operaciones = lados_formula[1];
-                                    result = evalLadoDerecho(fila, columna, valor_celda_actual, datarow, operaciones);
+                                    result = evalLadoDerecho(fila, columna, valor_celda_actual, datarow, operaciones, {{Frm.id}});
 
                                     //Convertir el valor de acuerdo al tipo de dato de la celda destino
                                     var datarow_dest = $("#jqxgrid{{Frm.id}}").jqxGrid('getrowdata', fila_destino);
@@ -806,8 +807,10 @@
                                         minutos = parseInt((horas_ - horas) * 60);
                                         minutos = ( minutos >= 0 && minutos < 10 ) ? '0'+Math.abs(minutos) : Math.abs(minutos);
                                         result =  horas+ ':' + minutos;
-                                    } else if (datarow_dest.codigo_tipo_control == 'Number'){ 
+                                    } else if (datarow_dest.codigo_tipo_control == 'float'){ 
                                         result = result.toFixed(2);
+                                    } else if (datarow_dest.codigo_tipo_control == 'Number'){ 
+                                        result = result.toFixed(0);
                                     }
                                     
                                     var valor;
@@ -820,7 +823,7 @@
                                         valor = result;
                                     }
 
-                                    ultimaFilaFormula = fila;
+                                    ultimaFilaFormula_{{Frm.id}} = fila;
                                     $("#jqxgrid{{Frm.id}}").jqxGrid('setcellvalue', fila_destino, columna, valor);
                                 }
                             });
