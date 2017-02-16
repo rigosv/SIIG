@@ -500,7 +500,6 @@
                                                 var dateElement = editor.find('div:first');
                                                 var fecha = (moment(cellValue, "DD/MM/YYYY HH:mm").isValid()) ? moment(cellValue, "DD/MM/YYYY HH:mm") : moment();
                                                 dateElement.jqxDateTimeInput('val', fecha.format("DD/MM/YYYY HH:mm"));
-                                                dateElement.jqxDateTimeInput('open');
                                             } else if (tipo_control == 'time') {
                                                 var dateElement = editor.find('div:first');                                                
                                                 var hora =  cellValue.split(':');
