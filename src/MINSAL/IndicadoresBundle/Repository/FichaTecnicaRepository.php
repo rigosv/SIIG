@@ -362,16 +362,18 @@ class FichaTecnicaRepository extends EntityRepository {
                         
             $formula = str_replace(
                     array('SUM('.$var_n.')', 'SUM('.$var_d.')'), 
-                    array("(SELECT SUM(AA.$var_n) FROM $tabla_indicador AA WHERE AA.$dimension <= A.$dimension $filtros_)",
-                            "(SELECT SUM(DISTINCT AA.$var_d) FROM $tabla_indicador AA WHERE AA.$dimension <= A.$dimension $filtros_)"), 
+                    array("(SELECT SUM(AA.$var_n) FROM $tabla_indicador AA WHERE AA.$dimension::numeric <= A.$dimension::numeric $filtros_)",
+                            "(SELECT SUM(DISTINCT AA.$var_d) FROM $tabla_indicador AA WHERE AA.$dimension::numeric <= A.$dimension::numeric $filtros_)"), 
                     $formula
                     );
             $variables_query = str_replace(
                     array('SUM('.$var_n.')', 'SUM('.$var_d.')'), 
-                    array("(SELECT SUM(AA.$var_n) FROM $tabla_indicador AA WHERE AA.$dimension <= A.$dimension $filtros_)",
-                            "(SELECT SUM(DISTINCT AA.$var_d) FROM $tabla_indicador AA WHERE AA.$dimension <= A.$dimension $filtros_)"), 
+                    array("(SELECT SUM(AA.$var_n) FROM $tabla_indicador AA WHERE AA.$dimension::numeric <= A.$dimension::numeric $filtros_)",
+                            "(SELECT SUM(DISTINCT AA.$var_d) FROM $tabla_indicador AA WHERE AA.$dimension::numeric <= A.$dimension::numeric $filtros_)"), 
                     $variables_query
                     );
+            
+            $dimension_ = ($catalogo != '') ? $dimension_ = 'A.'.$dimension.'::numeric, B.descripcion' : $dimension.'::numeric';
         }
         
         $sql = "SELECT $dimension_ AS category, $otros_campos $variables_query, round(($formula)::numeric,2) AS measure
@@ -379,7 +381,7 @@ class FichaTecnicaRepository extends EntityRepository {
         $sql .= ' WHERE 1=1 ' . $evitar_div_0 . ' ' . $filtros;
         
         $sql .= "
-            GROUP BY $dimension_ $grupo_extra";
+            GROUP BY ".str_replace('::numeric', '', $dimension_)." $grupo_extra";
         $sql .=  "HAVING (($formula)::numeric) > 0 ";
         $sql .= "ORDER BY $dimension_";
         
