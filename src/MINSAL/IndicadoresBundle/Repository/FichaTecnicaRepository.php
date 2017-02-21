@@ -363,13 +363,13 @@ class FichaTecnicaRepository extends EntityRepository {
             $formula = str_replace(
                     array('SUM('.$var_n.')', 'SUM('.$var_d.')'), 
                     array("(SELECT SUM(AA.$var_n) FROM $tabla_indicador AA WHERE AA.$dimension::numeric <= A.$dimension::numeric $filtros_)",
-                            "(SELECT SUM(DISTINCT AA.$var_d) FROM $tabla_indicador AA WHERE AA.$dimension::numeric <= A.$dimension::numeric $filtros_)"), 
+                            "(SELECT SUM(AA.$var_d) FROM $tabla_indicador AA WHERE AA.$dimension::numeric <= A.$dimension::numeric $filtros_)"), 
                     $formula
                     );
             $variables_query = str_replace(
                     array('SUM('.$var_n.')', 'SUM('.$var_d.')'), 
                     array("(SELECT SUM(AA.$var_n) FROM $tabla_indicador AA WHERE AA.$dimension::numeric <= A.$dimension::numeric $filtros_)",
-                            "(SELECT SUM(DISTINCT AA.$var_d) FROM $tabla_indicador AA WHERE AA.$dimension::numeric <= A.$dimension::numeric $filtros_)"), 
+                            "(SELECT SUM(AA.$var_d) FROM $tabla_indicador AA WHERE AA.$dimension::numeric <= A.$dimension::numeric $filtros_)"), 
                     $variables_query
                     );
             
