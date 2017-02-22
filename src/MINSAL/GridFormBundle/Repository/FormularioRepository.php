@@ -559,8 +559,6 @@ class FormularioRepository extends EntityRepository {
         $mes_ = '';
         if ($Frm->getPeriodoLecturaDatos() == 'mensual' ){
             $mes_ = " A.datos->'mes' AS mes, ";
-        }
-        if ($mes != null){
             $periodo_lectura = " AND (A.datos->'mes')::integer = '$mes' ";
         }
         $whereAnio = '';
@@ -639,13 +637,13 @@ class FormularioRepository extends EntityRepository {
         $sql_forms = '';
         foreach ($datos_frm as $ff){
             $datos = 'datos';
-            $periodo_mensual = $ff->getPeriodoLecturaDatos() == 'mensual';
+            $periodo_mensual = ($ff->getPeriodoLecturaDatos() == 'mensual');
             $this->getDatosEvaluacion($ff, $establecimiento, $anio, $mes, true, true, true, false);
             //$campos = $em->getRepository('GridFormBundle:Indicador')->getListaCampos($ff, false, $mes);
             
-            //Verificar si tiene la variable de poblacion para obtener solo las columnas válidas        
+            //Verificar si tiene la variable de poblacion para obtener solo las
             $sql = "SELECT codigo_variable FROM datos_tmp WHERE es_poblacion = 'true'";
-            $cons = $em->getConnection()->executeQuery($sql);        
+            $cons = $em->getConnection()->executeQuery($sql);
             if ($cons->rowCount() > 0){
                 //Quitar las columnas para las que no se ingresó número de expediente
                 $sql = "SELECT nombre_pivote FROM datos_tmp WHERE es_poblacion = 'true' AND (dato is null OR dato = '') ";
@@ -695,6 +693,9 @@ class FormularioRepository extends EntityRepository {
         if (($key = array_search('cant_mensual_'.str_pad($mes, 2, "0", STR_PAD_LEFT), $mes_borrar)) !== false) {
             unset($mes_borrar[$key]);
         }
+        if (($key = array_search('mes_check_'.str_pad($mes, 2, "0", STR_PAD_LEFT), $mes_borrar)) !== false) {
+            unset($mes_borrar[$key]);
+        }
         
         $pivotes_borrar = "'".implode("','", $mes_borrar)."'";
         
@@ -704,7 +705,7 @@ class FormularioRepository extends EntityRepository {
                 ) AS AA
                 ORDER BY COALESCE(NULLIF(datos->'posicion', ''), '100000000')::numeric, codigo, datos->'es_poblacion' DESC,  datos->'descripcion_categoria_variable', datos->'descripcion_variable'
                 ";        
-        try {            
+        try {
             $datos_ =  $em->getConnection()->executeQuery($sql)->fetchAll();
             $datos = array();
             foreach ($datos_ as $d) {
