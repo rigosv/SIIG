@@ -51,7 +51,8 @@ class AppKernel extends Kernel
             
             new JMS\SerializerBundle\JMSSerializerBundle(),
             
-            new Snc\RedisBundle\SncRedisBundle()            
+            new Snc\RedisBundle\SncRedisBundle(),
+            new MINSAL\CalidadBundle\CalidadBundle(),
         );
 
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {
