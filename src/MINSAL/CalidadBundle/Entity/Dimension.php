@@ -6,13 +6,13 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
- * MINSAL\CalidadBundle\Entity\TipoIntervencion
+ * MINSAL\GridFormBundle\Entity\Dimension
  *
- * @ORM\Table(name="calidad.tipo_intervencion")
+ * @ORM\Table(name="calidad.dimension")
  * @UniqueEntity(fields="codigo", message="Código ya existe")
  * @ORM\Entity
  */
-class TipoIntervencion
+class Dimension
 {
     /**
      * @var integer $id
@@ -20,7 +20,7 @@ class TipoIntervencion
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="SEQUENCE")
-     * @ORM\SequenceGenerator(sequenceName="calidad.tipo_intervencion_id_seq")
+     * @ORM\SequenceGenerator(sequenceName="calidad.prioridad_id_seq")
      */
     private $id;
 
@@ -38,6 +38,13 @@ class TipoIntervencion
      * @ORM\Column(name="descripcion", type="text", nullable=true)
      */
     private $descripcion;
+    
+    /**
+    * @var \Doctrine\Common\Collections\ArrayCollection
+    * @ORM\OneToMany(targetEntity="Proceso", mappedBy="dimension", cascade={"all"}, orphanRemoval=true)
+    * @ORM\OrderBy({"descripcion" = "ASC"})
+    */
+    private $procesos;
     
 
     public function __toString()
@@ -102,5 +109,46 @@ class TipoIntervencion
     public function getDescripcion()
     {
         return $this->descripcion;
+    }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->procesos = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add proceso
+     *
+     * @param \MINSAL\CalidadBundle\Entity\Proceso $proceso
+     *
+     * @return Dimension
+     */
+    public function addProceso(\MINSAL\CalidadBundle\Entity\Proceso $proceso)
+    {
+        $this->procesos[] = $proceso;
+
+        return $this;
+    }
+
+    /**
+     * Remove proceso
+     *
+     * @param \MINSAL\CalidadBundle\Entity\Proceso $proceso
+     */
+    public function removeProceso(\MINSAL\CalidadBundle\Entity\Proceso $proceso)
+    {
+        $this->procesos->removeElement($proceso);
+    }
+
+    /**
+     * Get procesos
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getProcesos()
+    {
+        return $this->procesos;
     }
 }

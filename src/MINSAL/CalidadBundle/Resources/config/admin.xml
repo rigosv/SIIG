@@ -1,0 +1,30 @@
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>        
+        <service id="calidad.admin.tipo_intervencion" class="MINSAL\CalidadBundle\Admin\TipoIntervencionAdmin">
+            <tag name="sonata.admin" manager_type="orm" group="_calidad_" label="_tipo_intervencion_"/>
+            <argument />
+            <argument>MINSAL\CalidadBundle\Entity\TipoIntervencion</argument>
+            <argument />            
+        </service>
+        <service id="calidad.admin.prioridad" class="MINSAL\CalidadBundle\Admin\PrioridadAdmin">
+            <tag name="sonata.admin" manager_type="orm" group="_calidad_" label="_prioridad_"/>
+            <argument />
+            <argument>MINSAL\CalidadBundle\Entity\Prioridad</argument>
+            <argument />            
+        </service>
+        <service id="calidad.admin.dimension" class="MINSAL\CalidadBundle\Admin\DimensionAdmin">
+            <tag name="sonata.admin" manager_type="orm" group="_calidad_" label="_dimensiones_"/>
+            <argument />
+            <argument>MINSAL\CalidadBundle\Entity\Dimension</argument>
+            <argument />            
+        </service>
+        <service id="calidad.admin.proceso" class="MINSAL\CalidadBundle\Admin\ProcesoAdmin">
+            <tag name="sonata.admin" manager_type="orm" group="_calidad_" label="_procesos_"/>
+            <argument />
+            <argument>MINSAL\CalidadBundle\Entity\Proceso</argument>
+            <argument />            
+        </service>
+    </services>
+</container>

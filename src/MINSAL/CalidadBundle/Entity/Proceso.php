@@ -6,13 +6,13 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
- * MINSAL\CalidadBundle\Entity\TipoIntervencion
+ * MINSAL\GridFormBundle\Entity\Proceso
  *
- * @ORM\Table(name="calidad.tipo_intervencion")
+ * @ORM\Table(name="calidad.proceso")
  * @UniqueEntity(fields="codigo", message="Código ya existe")
  * @ORM\Entity
  */
-class TipoIntervencion
+class Proceso
 {
     /**
      * @var integer $id
@@ -20,7 +20,7 @@ class TipoIntervencion
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="SEQUENCE")
-     * @ORM\SequenceGenerator(sequenceName="calidad.tipo_intervencion_id_seq")
+     * @ORM\SequenceGenerator(sequenceName="calidad.prioridad_id_seq")
      */
     private $id;
 
@@ -38,6 +38,11 @@ class TipoIntervencion
      * @ORM\Column(name="descripcion", type="text", nullable=true)
      */
     private $descripcion;
+    
+    /**
+     * @ORM\ManyToOne(targetEntity="Proceso", inversedBy="procesos")
+     * */
+    private $dimension;
     
 
     public function __toString()
@@ -102,5 +107,29 @@ class TipoIntervencion
     public function getDescripcion()
     {
         return $this->descripcion;
+    }
+
+    /**
+     * Set dimension
+     *
+     * @param \MINSAL\GridFormBundle\Entity\Formulario $dimension
+     *
+     * @return Proceso
+     */
+    public function setDimension(\MINSAL\GridFormBundle\Entity\Formulario $dimension = null)
+    {
+        $this->dimension = $dimension;
+
+        return $this;
+    }
+
+    /**
+     * Get dimension
+     *
+     * @return \MINSAL\GridFormBundle\Entity\Formulario
+     */
+    public function getDimension()
+    {
+        return $this->dimension;
     }
 }
