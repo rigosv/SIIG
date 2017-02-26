@@ -29,7 +29,15 @@ class PlanMejoraController extends Controller
     {
         $admin_pool = $this->get('sonata.admin.pool');
         
-        return $this->render('CalidadBundle:PlanMejora:detalle.html.twig', array ('admin_pool' => $admin_pool));
+        $prioridades = array (1=> 'Baja', 2=>'Alta');
+        $tiposIntervencion = array (1=>'Inmediata', 2=>'Medio plazo');
+        
+        return $this->render('CalidadBundle:PlanMejora:detalle.html.twig', 
+                array ('admin_pool' => $admin_pool, 
+                    'prioridades'=>  json_encode($prioridades),
+                    'tiposIntervencion'=>  json_encode($tiposIntervencion),
+                    )
+                );
     }
     
     /**
@@ -38,16 +46,16 @@ class PlanMejoraController extends Controller
     public function criteriosAction()
     {
         $criterios = '{"rows":[
-		{"CustomerID":"ALFKI","CompanyName":"Alfreds Futterkiste","ContactName":"Maria Anders","Phone":"030-0074321","City":"Berlin"},
-		{"CustomerID":"ANATR","CompanyName":"Ana Trujillo Emparedados y helados","ContactName":"Ana Trujillo","Phone":"(5) 555-4729","City":"M\u00e9xico D.F."},
-		{"CustomerID":"ANTON","CompanyName":"Antonio Moreno Taquer\u00eda","ContactName":"Antonio Moreno","Phone":"(5) 555-3932","City":"M\u00e9xico D.F."},
-		{"CustomerID":"BLAUS","CompanyName":"Blauer See Delikatessen","ContactName":"Hanna Moos","Phone":"0621-08460","City":"Mannheim"},
-		{"CustomerID":"BLONP","CompanyName":"Blondel p\u00e8re et fils","ContactName":"Fr\u00e9d\u00e9rique Citeaux","Phone":"88.60.15.31","City":"Strasbourg"},
-		{"CustomerID":"BONAP","CompanyName":"Bon app","ContactName":"Laurence Lebihan","Phone":"91.24.45.40","City":"Marseille"},
-		{"CustomerID":"BOTTM","CompanyName":"Bottom-Dollar Markets","ContactName":"Elizabeth Lincoln","Phone":"(604) 555-4729","City":"Tsawassen"},
-		{"CustomerID":"BSBEV","CompanyName":"Bs Beverages","ContactName":"Victoria Ashworth","Phone":"(171) 555-1212","City":"London"},
-		{"CustomerID":"CACTU","CompanyName":"Cactus Comidas para llevar","ContactName":"Patricio Simpson","Phone":"(1) 135-5555","City":"Buenos Aires"},
-		{"CustomerID":"CHOPS","CompanyName":"Chop-suey Chinese","ContactName":"Yang Wang","Phone":"(5) 555-3392","City":"Bern"}
+		{"id":"ALFKI","descripcion":"Alfreds Futterkiste", "brecha": 10},
+		{"id":"ANATR","descripcion":"Ana Trujillo Emparedados y helados", "brecha": 5},
+		{"id":"ANTON","descripcion":"Antonio Moreno Taquer\u00eda","brecha": 6},
+		{"id":"BLAUS","descripcion":"Blauer See Delikatessen","brecha": 20},
+		{"id":"BLONP","descripcion":"Blondel p\u00e8re et fils","brecha": 1},
+		{"id":"BONAP","descripcion":"Bon app","brecha": 15},
+		{"id":"BOTTM","descripcion":"Bottom-Dollar Markets","brecha": 23},
+		{"id":"BSBEV","descripcion":"Bs Beverages","brecha": 30},
+		{"id":"CACTU","descripcion":"Cactus Comidas para llevar", "brecha": 50},
+		{"id":"CHOPS","descripcion":"Chop-suey Chinese","brecha": 60}
 		
                 ]}';
         return new Response(

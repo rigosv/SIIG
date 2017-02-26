@@ -1,15 +1,24 @@
 $(document).ready(function () {
     var rowid;
     // Grid de criterios
-    $("#jqGrid").jqGrid({
+    $("#gridCriterios").jqGrid({
         url: Routing.generate('calidad_planmejora_get_criterios'),
         datatype: "json",
         colModel: [
-            {label: 'ID', name: 'CustomerID', key: true, width: 75},
-            {label: 'Company Name', name: 'CompanyName', width: 150},
-            {label: 'Contact Name', name: 'ContactName', width: 150},
-            {label: 'Phone', name: 'Phone', width: 150},
-            {label: 'City', name: 'City', width: 150}
+            {label: 'ID', name: 'id', key: true, width: 50, hidden: true},
+            {label: 'Descripción', name: 'descripcion', width: 100, editable: true, editoptions: { readonly: "readonly" }},
+            {label: 'Brecha', name: 'brecha', width: 30, editable:true, editoptions: { readonly: "readonly" }},
+            {label: 'Causa brecha', name: 'causaBrecha', width: 150, editable: true, edittype: 'textarea', editrules: {required: true}},
+            {label: 'Oportunidad mejora', name: 'oportunidadMejora', width: 150, editable: true, edittype: 'textarea', editrules: {required: true}},
+            {label: 'Factores de mejoramiento', name: 'factoresMejoramiento', width: 150, editable: true, edittype: 'textarea', editrules: {required: true}},
+            {label: 'Tipo intervención', name: 'tipoIntervencion', width: 60, editable: true, edittype: 'select', 
+                editoptions:{value:tiposIntervencion},
+                editrules: {required: true}
+            },
+            {label: 'Prioridad', name: 'prioridad', width: 50, editable: true, edittype: 'select', 
+                editoptions:{value: prioridades},
+                editrules: {required: true}
+            }
         ],
         autowidth: true,
         height: 150,
@@ -19,18 +28,19 @@ $(document).ready(function () {
         caption: 'Criterios',
         onSelectRow: function (rowid, selected) {
             if (rowid != null) {
-                jQuery("#jqGridDetails").jqGrid('setGridParam', {url: Routing.generate('calidad_planmejora_get_actividades', {criterio: rowid}), datatype: 'json'}); // the last setting is for demo only
-                jQuery("#jqGridDetails").jqGrid('setCaption', 'Actividades de criterio::' + rowid);
-                jQuery("#jqGridDetails").trigger("reloadGrid");
+                var descripcionCriterio = jQuery("#gridCriterios").jqGrid ('getCell', rowid, 'descripcion');
+                jQuery("#gridActividades").jqGrid('setGridParam', {url: Routing.generate('calidad_planmejora_get_actividades', {criterio: rowid}), datatype: 'json'}); // the last setting is for demo only
+                jQuery("#gridActividades").jqGrid('setCaption', 'Actividades de criterio :: ' + descripcionCriterio);
+                jQuery("#gridActividades").trigger("reloadGrid");
             }
         }, // use the onSelectRow that is triggered on row click to show a details grid
         onSortCol: clearSelection,
         onPaging: clearSelection,
-        pager: "#jqGridPager"
+        pager: "#pagerGridCriterios"
     });
 
     // grid de actividades
-    $("#jqGridDetails").jqGrid({
+    $("#gridActividades").jqGrid({
         url: Routing.generate('calidad_planmejora_get_actividades', {criterio: 0}),
         datatype: "json",
         editurl: Routing.generate('calidad_planmejora_set_actividades', {criterio: rowid}),
@@ -68,13 +78,13 @@ $(document).ready(function () {
         loadonce: true,
         height: '100',
         viewrecords: true,
-        caption: 'Actividades::',
-        pager: "#jqGridDetailsPager"
+        caption: 'Actividades :: ',
+        pager: "#pagerGridActividades"
     });
 
-    $('#jqGridDetails').navGrid('#jqGridDetailsPager',
+    $('#gridActividades').navGrid('#pagerGridActividades',
         // the buttons to appear on the toolbar of the grid
-        {edit: true, add: true, del: true, search: true, refresh: false, view: false, position: "left", cloneToTop: false},
+        {edit: true, add: true, del: true, search: false, refresh: false, view: false, position: "left", cloneToTop: false},
         
         // options for the Edit Dialog
         {
@@ -102,12 +112,29 @@ $(document).ready(function () {
         }
     });
     
+    $('#gridCriterios').navGrid('#pagerGridCriterios',
+        // the buttons to appear on the toolbar of the grid
+        {edit: true, add: false, del: false, search: false, refresh: false, view: false, position: "left", cloneToTop: false},
+        
+        // options for the Edit Dialog
+        {
+            editCaption: "Editar actividad",
+            recreateForm: true,
+            checkOnUpdate: true,
+            checkOnSubmit: true,
+            closeAfterEdit: true,
+            errorTextFormat: function (data) {
+                return 'Error: ' + data.responseText
+            }
+        }
+    );
+    
     
 });
 
 function clearSelection() {
-    jQuery("#jqGridDetails").jqGrid('setGridParam', {url: Routing.generate('calidad_planmejora_get_actividades', {criterio: 0}), datatype: 'json'}); // the last setting is for demo purpose only
-    jQuery("#jqGridDetails").jqGrid('setCaption', 'Actividades:: ');
-    jQuery("#jqGridDetails").trigger("reloadGrid");
+    jQuery("#gridActividades").jqGrid('setGridParam', {url: Routing.generate('calidad_planmejora_get_actividades', {criterio: 0}), datatype: 'json'}); // the last setting is for demo purpose only
+    jQuery("#gridActividades").jqGrid('setCaption', 'Actividades :: ');
+    jQuery("#gridActividades").trigger("reloadGrid");
 
 }
