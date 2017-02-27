@@ -4,6 +4,7 @@ $(document).ready(function () {
     $("#gridCriterios").jqGrid({
         url: Routing.generate('calidad_planmejora_get_criterios'),
         datatype: "json",
+        editurl: Routing.generate('calidad_planmejora_set_criterio'),
         colModel: [
             {label: 'ID', name: 'id', key: true, width: 50, hidden: true},
             {label: 'Descripción', name: 'descripcion', width: 100, editable: true, editoptions: { readonly: "readonly" }},
@@ -22,7 +23,7 @@ $(document).ready(function () {
         ],
         autowidth: true,
         height: 150,
-        rowNum: 7,
+        rowNum: 100,
         viewrecords: true,
         loadonce: true,
         caption: 'Criterios',
@@ -43,7 +44,7 @@ $(document).ready(function () {
     $("#gridActividades").jqGrid({
         url: Routing.generate('calidad_planmejora_get_actividades', {criterio: 0}),
         datatype: "json",
-        editurl: Routing.generate('calidad_planmejora_set_actividades', {criterio: rowid}),
+        editurl: Routing.generate('calidad_planmejora_set_actividad', {criterio: rowid}),
         colModel: [
             {label: 'Nombre de actividad', name: 'nombre', key: true, width: 100, editable: true, edittype: 'textarea', editrules: {required: true}},
             {label: 'Fecha inicio', name: 'fechaInicio', width: 30, editable: true, editrules: {required: true},
@@ -90,8 +91,8 @@ $(document).ready(function () {
         {
             editCaption: "Editar actividad",
             recreateForm: true,
-            checkOnUpdate: true,
-            checkOnSubmit: true,
+            checkOnUpdate: false,
+            checkOnSubmit: false,
             closeAfterEdit: true,
             errorTextFormat: function (data) {
                 return 'Error: ' + data.responseText
@@ -120,9 +121,18 @@ $(document).ready(function () {
         {
             editCaption: "Editar actividad",
             recreateForm: true,
-            checkOnUpdate: true,
-            checkOnSubmit: true,
+            checkOnUpdate: false,
+            checkOnSubmit: false,
             closeAfterEdit: true,
+            afterSubmit : function( data, postdata, oper) {
+                var response = $.parseJSON(data.responseText);
+                if (response.hasOwnProperty("error")) {
+                    if(response.error.length) {
+                        return [false,response.error ];
+                    }
+                }
+                return [true,"",""];
+            },
             errorTextFormat: function (data) {
                 return 'Error: ' + data.responseText
             }

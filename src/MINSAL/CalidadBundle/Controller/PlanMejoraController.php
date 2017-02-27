@@ -76,7 +76,7 @@ class PlanMejoraController extends Controller
     }
     
     /**
-     * @Route("/detalle/{criterio}/actividad/guardar" , name="calidad_planmejora_set_actividades", options={"expose"=true})
+     * @Route("/detalle/{criterio}/actividad/guardar" , name="calidad_planmejora_set_actividad", options={"expose"=true})
      */
     public function setActividadAction($criterio, Request $req)
     {
@@ -84,6 +84,18 @@ class PlanMejoraController extends Controller
         $criterios = ($criterio == '0') ? '{}' : '{"rows":[{"OrderID":"11058","RequiredDate":"1998-05-27 00:00:00","ShipName":"Blauer See Delikatessen","ShipCity":"Mannheim","Freight":"31.1400"},{"OrderID":"10956","RequiredDate":"1998-04-28 00:00:00","ShipName":"Blauer See Delikatessen","ShipCity":"Mannheim","Freight":"44.6500"},{"OrderID":"10853","RequiredDate":"1998-02-24 00:00:00","ShipName":"Blauer See Delikatessen","ShipCity":"Mannheim","Freight":"53.8300"},{"OrderID":"10614","RequiredDate":"1997-08-26 00:00:00","ShipName":"Blauer See Delikatessen","ShipCity":"Mannheim","Freight":"1.9300"},{"OrderID":"10582","RequiredDate":"1997-07-25 00:00:00","ShipName":"Blauer See Delikatessen","ShipCity":"Mannheim","Freight":"27.7100"},{"OrderID":"10509","RequiredDate":"1997-05-15 00:00:00","ShipName":"Blauer See Delikatessen","ShipCity":"Mannheim","Freight":"0.1500"},{"OrderID":"10501","RequiredDate":"1997-05-07 00:00:00","ShipName":"Blauer See Delikatessen","ShipCity":"Mannheim","Freight":"8.8500"}]}';
         return new Response(
                 $criterios
+        );
+    }
+    
+    /**
+     * @Route("/detalle/criterio/guardar" , name="calidad_planmejora_set_criterio", options={"expose"=true})
+     */
+    public function setCriterioAction(Request $req)
+    {
+        
+        $resp = array("ok"=> "ok");
+        return new Response(
+                json_encode($resp)
         );
     }
 }
