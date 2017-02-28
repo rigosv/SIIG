@@ -12,11 +12,11 @@ $(document).ready(function () {
             {label: 'Causa brecha', name: 'causaBrecha', width: 150, editable: true, edittype: 'textarea', editrules: {required: true}},
             {label: 'Oportunidad mejora', name: 'oportunidadMejora', width: 150, editable: true, edittype: 'textarea', editrules: {required: true}},
             {label: 'Factores de mejoramiento', name: 'factoresMejoramiento', width: 150, editable: true, edittype: 'textarea', editrules: {required: true}},
-            {label: 'Tipo intervención', name: 'tipoIntervencion', width: 60, editable: true, edittype: 'select', 
-                editoptions:{value:tiposIntervencion},
+            {label: 'Tipo intervención', name: 'tipoIntervencion', width: 60, editable: true, edittype: 'select', formatter:'select',
+                editoptions:{value:tiposIntervencion}, 
                 editrules: {required: true}
             },
-            {label: 'Prioridad', name: 'prioridad', width: 50, editable: true, edittype: 'select', 
+            {label: 'Prioridad', name: 'prioridad', width: 50, editable: true, edittype: 'select', formatter:'select',
                 editoptions:{value: prioridades},
                 editrules: {required: true}
             }
@@ -27,7 +27,8 @@ $(document).ready(function () {
         viewrecords: true,
         loadonce: true,
         caption: 'Criterios',
-        onSelectRow: function (rowid, selected) {
+        onSelectRow: function (row, selected) {
+            rowid = row;
             if (rowid != null) {
                 var descripcionCriterio = jQuery("#gridCriterios").jqGrid ('getCell', rowid, 'descripcion');
                 jQuery("#gridActividades").jqGrid('setGridParam', {url: Routing.generate('calidad_planmejora_get_actividades', {criterio: rowid}), datatype: 'json'}); // the last setting is for demo only
@@ -46,7 +47,8 @@ $(document).ready(function () {
         datatype: "json",
         editurl: Routing.generate('calidad_planmejora_set_actividad', {criterio: rowid}),
         colModel: [
-            {label: 'Nombre de actividad', name: 'nombre', key: true, width: 100, editable: true, edittype: 'textarea', editrules: {required: true}},
+            {label: 'ID', name: 'id', key: true, width: 50, hidden: true},
+            {label: 'Nombre de actividad', name: 'nombre', width: 100, editable: true, edittype: 'textarea', editrules: {required: true}},
             {label: 'Fecha inicio', name: 'fechaInicio', width: 30, editable: true, editrules: {required: true},
                 edittype:"text",
                 editoptions: {
@@ -96,14 +98,38 @@ $(document).ready(function () {
             closeAfterEdit: true,
             errorTextFormat: function (data) {
                 return 'Error: ' + data.responseText
+            },
+            afterSubmit : function( data, postdata) {
+                return actualizar(data, postdata, 'edit', 'gridActividades');
             }
         },
         // options for the Add Dialog
         {
             closeAfterAdd: true,
             recreateForm: true,
+            afterSubmit : function( data, postdata) {
+                return actualizar(data, postdata, 'add', 'gridActividades');
+            },
+            afterShowForm: function () {
+                var idSelector = $.jgrid.jqID(this.p.id);
+                if(rowid != 'undefined') {
+                    $.jgrid.hideModal("#editmod" + idSelector, {gbox: "#gbox_" + idSelector});
+                    $.notify({
+                        message: 'Seleccione un criterio' 
+                    },{
+                        animate: {
+                            enter: 'animated jello'
+                        },
+                        placement: {
+                                from: "bottom",
+                                align: "center"
+                        },
+                        type: 'warning'
+                    });
+                }
+            },
             errorTextFormat: function (data) {
-                return 'Error: ' + data.responseText
+                return 'Error: ' + data.responseText;
             }
         },
         // options for the Delete Dailog
@@ -124,14 +150,8 @@ $(document).ready(function () {
             checkOnUpdate: false,
             checkOnSubmit: false,
             closeAfterEdit: true,
-            afterSubmit : function( data, postdata, oper) {
-                var response = $.parseJSON(data.responseText);
-                if (response.hasOwnProperty("error")) {
-                    if(response.error.length) {
-                        return [false,response.error ];
-                    }
-                }
-                return [true,"",""];
+            afterSubmit : function( data, postdata) {
+                return actualizar(data, postdata, 'edit', 'gridCriterios');
             },
             errorTextFormat: function (data) {
                 return 'Error: ' + data.responseText
@@ -142,6 +162,22 @@ $(document).ready(function () {
     
 });
 
+
+function actualizar(data, postdata, oper, gridID){
+        var response = $.parseJSON(data.responseText);
+        if (response.hasOwnProperty("error")) {
+            if(response.error.length) {
+                return [false,response.error ];
+            }
+        }
+        if (oper === 'edit'){
+            $('#'+gridID).jqGrid("setRowData", postdata.id, postdata);
+        } else if (oper === 'add'){
+            var idNewRow = data.id; 
+            $('#'+gridID).jqGrid("addRowData",idNewRow , postdata, "first");
+        } 
+        return [true,"",""];
+}
 function clearSelection() {
     jQuery("#gridActividades").jqGrid('setGridParam', {url: Routing.generate('calidad_planmejora_get_actividades', {criterio: 0}), datatype: 'json'}); // the last setting is for demo purpose only
     jQuery("#gridActividades").jqGrid('setCaption', 'Actividades :: ');
