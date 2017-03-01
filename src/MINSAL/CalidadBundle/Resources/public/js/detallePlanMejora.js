@@ -101,6 +101,10 @@ $(document).ready(function () {
             },
             afterSubmit : function( data, postdata) {
                 return actualizar(data, postdata, 'edit', 'gridActividades');
+            },
+            beforeShowForm: function(form) {
+                var idSelector = $.jgrid.jqID(this.p.id); 
+                centrarfrm(idSelector);
             }
         },
         // options for the Add Dialog
@@ -112,7 +116,7 @@ $(document).ready(function () {
             },
             afterShowForm: function () {
                 var idSelector = $.jgrid.jqID(this.p.id);
-                if(rowid != 'undefined') {
+                if(rowid == undefined) {
                     $.jgrid.hideModal("#editmod" + idSelector, {gbox: "#gbox_" + idSelector});
                     $.notify({
                         message: 'Seleccione un criterio' 
@@ -127,6 +131,9 @@ $(document).ready(function () {
                         type: 'warning'
                     });
                 }
+            },
+            beforeShowForm: function(form) {
+                centrarfrm($.jgrid.jqID(this.p.id));
             },
             errorTextFormat: function (data) {
                 return 'Error: ' + data.responseText;
@@ -160,6 +167,8 @@ $(document).ready(function () {
     );
     
     
+    
+    
 });
 
 
@@ -177,6 +186,18 @@ function actualizar(data, postdata, oper, gridID){
             $('#'+gridID).jqGrid("addRowData",idNewRow , postdata, "first");
         } 
         return [true,"",""];
+}
+
+function centrarfrm(idSelector){
+    // "editmodlist"
+    var dlgDiv = $("#editmod"+idSelector);
+    var parentDiv = dlgDiv.parent();
+    var dlgWidth = dlgDiv.width();
+    var parentWidth = parentDiv.width();
+    var dlgHeight = dlgDiv.height();
+    var parentHeight = parentDiv.height();
+    dlgDiv[0].style.top = Math.round((parentHeight+dlgHeight)/2) + "px";
+    dlgDiv[0].style.left = Math.round((parentWidth-dlgWidth)/2) + "px";
 }
 function clearSelection() {
     jQuery("#gridActividades").jqGrid('setGridParam', {url: Routing.generate('calidad_planmejora_get_actividades', {criterio: 0}), datatype: 'json'}); // the last setting is for demo purpose only
