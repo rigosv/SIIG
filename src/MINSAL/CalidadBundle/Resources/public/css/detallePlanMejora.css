@@ -1,3 +1,10 @@
 .ui-jqgrid-view{
     font-size: 13px !important;
 }
+.fm-button{
+    height:auto !important;
+}
+
+.ui-jqdialog-titlebar-close{
+    padding: 0px !important;
+}
