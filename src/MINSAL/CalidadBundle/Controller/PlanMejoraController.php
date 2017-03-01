@@ -28,9 +28,17 @@ class PlanMejoraController extends Controller
     public function crearDetalleAction()
     {
         $admin_pool = $this->get('sonata.admin.pool');
+        $em = $this->getDoctrine()->getManager();
         
-        $prioridades = array (1=> 'Baja', 2=>'Alta');
-        $tiposIntervencion = array (1=>'Inmediata', 2=>'Medio plazo');
+        $prioridades = array();
+        foreach ($em->getRepository('CalidadBundle:Prioridad')->findBy(array(), array('codigo'=>'ASC')) as $p ){
+            $prioridades[$p->getCodigo()] = $p->getDescripcion(); 
+        }
+        
+        $tiposIntervencion = array();
+        foreach ($em->getRepository('CalidadBundle:TipoIntervencion')->findBy(array(), array('codigo'=>'ASC')) as $p ){
+            $tiposIntervencion[$p->getCodigo()] = $p->getDescripcion(); 
+        }
         
         return $this->render('CalidadBundle:PlanMejora:detalle.html.twig', 
                 array ('admin_pool' => $admin_pool, 
