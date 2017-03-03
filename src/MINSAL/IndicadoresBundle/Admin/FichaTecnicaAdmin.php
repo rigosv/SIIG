@@ -42,6 +42,7 @@ class FichaTecnicaAdmin extends Admin
                         ->add('concepto', null, array('label' => $this->getTranslator()->trans('concepto')))
                         ->add('unidadMedida', null, array('label' => $this->getTranslator()->trans('unidad_medida')))
                         ->add('esAcumulado', null, array('label' => $this->getTranslator()->trans('es_acumulado')))
+                        ->add('ruta', null, array('label' => $this->getTranslator()->trans('_ruta_')))
                         ->add('variables', null, array('label' => $this->getTranslator()->trans('variables'), 'expanded' => false,
                             'class' => 'IndicadoresBundle:VariableDato',
                             'query_builder' => function ($repository) {

@@ -72,6 +72,13 @@ class FichaTecnica
      * @ORM\Column(name="observacion", type="text", nullable=true)
      */
     private $observacion;
+    
+    /**
+     * @var string $ruta
+     *
+     * @ORM\Column(name="ruta", type="text", nullable=true)
+     */
+    private $ruta;
 
     /**
      * @var string $camposIndicador
@@ -942,5 +949,29 @@ class FichaTecnica
     public function getCodigo()
     {
         return $this->codigo;
+    }
+
+    /**
+     * Set ruta
+     *
+     * @param string $ruta
+     *
+     * @return FichaTecnica
+     */
+    public function setRuta($ruta)
+    {
+        $this->ruta = $ruta;
+
+        return $this;
+    }
+
+    /**
+     * Get ruta
+     *
+     * @return string
+     */
+    public function getRuta()
+    {
+        return $this->ruta;
     }
 }
