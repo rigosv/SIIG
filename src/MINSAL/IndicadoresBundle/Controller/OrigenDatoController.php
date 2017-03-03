@@ -34,11 +34,11 @@ class OrigenDatoController extends Controller
     /**
      * @Route("/sentencia/probar", name="origen_dato_conexion_probar_sentencia", options={"expose"=true})
      */
-    public function probarSentenciaAction()
+    public function probarSentenciaAction(Request $request)
     {
         $resultado = array('estado' => 'error', 'mensaje' => '', 'datos' => array());
-        $sql = $this->getRequest()->get('sql');
-        $conexiones = explode(',', trim($this->getRequest()->get('conexiones_todas'), '-'));
+        $sql = $this->request->get('sql');
+        $conexiones = explode(',', trim($request->get('conexiones_todas'), '-'));
 
         // Verificar que no tenga UPDATE o DELETE
         $patron = '/\bUPDATE\b|\bDELETE\b|\bINSERT\b|\bCREATE\b|\bDROP\b/i';
@@ -98,9 +98,9 @@ class OrigenDatoController extends Controller
      * Crear una conexión para realizar pruebas
      * @param type $objeto_prueba, puede ser 'base_datos' o 'consulta_sql'
      */
-    public function getConexionGenerica($objeto_prueba, $conexion = null)
+    public function getConexionGenerica($objeto_prueba, $conexion = null, Request $request)
     {
-        $req = $this->getRequest();
+        $req = $request;
         $em = $this->getDoctrine()->getManager();
 
         try {
@@ -160,7 +160,7 @@ class OrigenDatoController extends Controller
     /**
      * @Route("/origen_dato/{id}/leer", name="origen_dato_leer", options={"expose"=true})
      */
-    public function leerOrigenAction(OrigenDatos $origenDato)
+    public function leerOrigenAction(OrigenDatos $origenDato, Request $request)
     {
         $resultado = array('estado' => 'ok',
             'mensaje' => '',
@@ -168,7 +168,7 @@ class OrigenDatoController extends Controller
             'es_catalogo' => '',
             'nombre_campos' => array(),
             'datos' => array());
-        $recargar = ($this->getRequest()->get('recargar')=='false') ? false : true;
+        $recargar = ($request->get('recargar')=='false') ? false : true;
 
         $em = $this->getDoctrine()->getManager();
 
@@ -338,12 +338,12 @@ class OrigenDatoController extends Controller
     /**
      * @Route("/configurar/campo", name="configurar_campo", options={"expose"=true})
      */
-    public function configurarCampoAction()
+    public function configurarCampoAction(Request $request)
     {
         $resultado = array('estado' => 'success', 'mensaje' => '');
 
         $em = $this->getDoctrine()->getManager();
-        $req = $this->getRequest();
+        $req = $request;
         list($tipo_cambio, $id) = explode('__', $req->get('control'));
         $valor = $req->get('valor');
         $campo = $em->find("IndicadoresBundle:Campo", $id);

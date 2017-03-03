@@ -8,6 +8,7 @@ use MINSAL\IndicadoresBundle\Entity\FichaTecnica;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\Annotations\Get;
 use Predis;
+use Symfony\Component\HttpFoundation\Request;
 
 class IndicadorRESTController extends Controller {
 
@@ -17,12 +18,12 @@ class IndicadorRESTController extends Controller {
      * @Get("/rest-service/data/{id}/{dimension}", options={"expose"=true})
      * @Rest\View
      */
-    public function getIndicadorAction(FichaTecnica $fichaTec, $dimension) {
+    public function getIndicadorAction(FichaTecnica $fichaTec, $dimension, Request $request) {
         $response = new Response();
         $redis = new Predis\Client();
         
-        $filtro = $this->getRequest()->get('filtro');
-        $verSql = ($this->getRequest()->get('ver_sql') == 'true') ? true : false;
+        $filtro = $request->get('filtro');
+        $verSql = ($request->get('ver_sql') == 'true') ? true : false;
         $hash = md5($filtro.$verSql);
         
         // verifica que la respuesta no se ha modificado para la petición dada

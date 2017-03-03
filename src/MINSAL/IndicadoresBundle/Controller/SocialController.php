@@ -5,7 +5,7 @@ namespace MINSAL\IndicadoresBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use MINSAL\IndicadoresBundle\Entity\ComentariosSala;
 use MINSAL\IndicadoresBundle\Entity\GrupoIndicadores;
@@ -18,10 +18,10 @@ class SocialController extends Controller {
     /**
      * @Route("/sala/get_comentarios/{idSala}/", name="sala_get_comentarios", options={"expose"=true})
      */
-    public function getComentariosSala($idSala) {
+    public function getComentariosSala($idSala, Request $request) {
         $session = new Session();
         $em = $this->getDoctrine()->getManager();
-        $req = $this->getRequest();
+        $req = $request;
 
         
         if ($req->get('vez') == 1 or $session->get('ultima_lectura_comentarios_sala') == ''){
@@ -55,10 +55,10 @@ class SocialController extends Controller {
     /**
      * @Route("/sala/{id}/set_comentario", name="sala_set_comentario", options={"expose"=true})
      */
-    public function setComentarioSala(GrupoIndicadores $sala) {
+    public function setComentarioSala(GrupoIndicadores $sala, Request $request) {
         $session = new Session();
         $em = $this->getDoctrine()->getManager();
-        $req = $this->getRequest();
+        $req = $request;
         $comentario = new ComentariosSala();
         $ahora = new \DateTime("now");
         
