@@ -8,7 +8,7 @@ $(document).ready(function () {
         colModel: [
             {label: 'ID', name: 'id', key: true, width: 50, hidden: true},
             {label: 'Descripción', name: 'descripcion', width: 100, editable: true, editoptions: { readonly: "readonly" }},
-            {label: 'Brecha', name: 'brecha', width: 30, editable:true, editoptions: { readonly: "readonly" }},
+            {label: 'Brecha', name: 'brecha', align: "right", sorttype: "number", width: 30, editable:true, editoptions: { readonly: "readonly" }},
             {label: 'Causa brecha', name: 'causaBrecha', width: 150, editable: true, edittype: 'textarea', editrules: {required: true}},
             {label: 'Oportunidad mejora', name: 'oportunidadMejora', width: 150, editable: true, edittype: 'textarea', editrules: {required: true}},
             {label: 'Factores de mejoramiento', name: 'factoresMejoramiento', width: 150, editable: true, edittype: 'textarea', editrules: {required: true}},
