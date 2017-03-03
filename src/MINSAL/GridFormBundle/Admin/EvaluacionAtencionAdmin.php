@@ -18,28 +18,28 @@ class EvaluacionAtencionAdmin extends Admin
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
-            ->add('formulario', null, array('label'=> $this->getTranslator()->trans('_formulario_')))
-            ->add('establecimiento', null, array('label'=> $this->getTranslator()->trans('_establecimiento_')))
-            ->add('areasAtencion', null, array('label'=> $this->getTranslator()->trans('_areas_atencion_')))
+            ->add('formulario', null, array('label'=> ('_formulario_')))
+            ->add('establecimiento', null, array('label'=> ('_establecimiento_')))
+            ->add('areasAtencion', null, array('label'=> ('_areas_atencion_')))
         ;
     }
 
     protected function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
         $datagridMapper
-            ->add('formulario', null, array('label'=> $this->getTranslator()->trans('_formulario_')))
-            ->add('establecimiento', null, array('label'=> $this->getTranslator()->trans('_establecimiento_')))
-            ->add('areasAtencion', null, array('label'=> $this->getTranslator()->trans('_areas_atencion_')))
+            ->add('formulario', null, array('label'=> ('_formulario_')))
+            ->add('establecimiento', null, array('label'=> ('_establecimiento_')))
+            ->add('areasAtencion', null, array('label'=> ('_areas_atencion_')))
         ;
     }
 
     protected function configureListFields(ListMapper $listMapper)
     {
         $listMapper
-            ->addIdentifier('id', null, array('label'=> $this->getTranslator()->trans('_id_')))
-            ->add('formulario', null, array('label'=> $this->getTranslator()->trans('_formulario_')))
-            ->add('establecimiento', null, array('label'=> $this->getTranslator()->trans('_establecimiento_')))
-            ->add('areasAtencion', null, array('label'=> $this->getTranslator()->trans('_areas_atencion_')))
+            ->addIdentifier('id', null, array('label'=> ('_id_')))
+            ->add('formulario', null, array('label'=> ('_formulario_')))
+            ->add('establecimiento', null, array('label'=> ('_establecimiento_')))
+            ->add('areasAtencion', null, array('label'=> ('_areas_atencion_')))
         ;
     }
 

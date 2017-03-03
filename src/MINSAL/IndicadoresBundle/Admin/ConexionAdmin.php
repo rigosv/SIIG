@@ -17,40 +17,40 @@ class ConexionAdmin extends Admin {
 
     protected function configureFormFields(FormMapper $formMapper) {
         $formMapper
-                ->add('nombreConexion', null, array('label' => $this->getTranslator()->trans('nombre_conexion')))
-                ->add('idMotor', null, array('label' => $this->getTranslator()->trans('motor'),
+                ->add('nombreConexion', null, array('label' => ('nombre_conexion')))
+                ->add('idMotor', null, array('label' => ('motor'),
                     'required' => true))
-                ->add('puerto', null, array('label' => $this->getTranslator()->trans('puerto'), 'required' => false))
-                ->add('instancia', null, array('label' => $this->getTranslator()->trans('instancia'), 'required' => false))
-                ->add('ip', null, array('label' => $this->getTranslator()->trans('ip')))
-                ->add('usuario', null, array('label' => $this->getTranslator()->trans('usuario')))
+                ->add('puerto', null, array('label' => ('puerto'), 'required' => false))
+                ->add('instancia', null, array('label' => ('instancia'), 'required' => false))
+                ->add('ip', null, array('label' => ('ip')))
+                ->add('usuario', null, array('label' => ('usuario')))
                 ->add('clave', 'repeated', array(
                     'type' => 'password',
-                    'invalid_message' => $this->getTranslator()->trans('claves_no_coinciden'),
+                    'invalid_message' => ('claves_no_coinciden'),
                     'options' => array('attr' => array('class' => 'span5')),
                     'required' => true,
-                    'first_options' => array('label' => $this->getTranslator()->trans('Clave')),
+                    'first_options' => array('label' => ('Clave')),
                     'second_options' => array('label' => 'Repetir clave'),
                 ))
-                ->add('nombreBaseDatos', null, array('label' => $this->getTranslator()->trans('nombre_base_datos')))
-                ->add('comentario', 'textarea', array('label' => $this->getTranslator()->trans('comentario'), 'required' => false))                
+                ->add('nombreBaseDatos', null, array('label' => ('nombre_base_datos')))
+                ->add('comentario', 'textarea', array('label' => ('comentario'), 'required' => false))                
         ;
     }
 
     protected function configureDatagridFilters(DatagridMapper $datagridMapper) {
         $datagridMapper
-                ->add('nombreConexion', null, array('label' => $this->getTranslator()->trans('nombre_conexion')))
-                ->add('idMotor', null, array('label' => $this->getTranslator()->trans('motor')))
+                ->add('nombreConexion', null, array('label' => ('nombre_conexion')))
+                ->add('idMotor', null, array('label' => ('motor')))
         ;
     }
 
     protected function configureListFields(ListMapper $listMapper) {
         $listMapper
-                ->addIdentifier('nombreConexion', null, array('label' => $this->getTranslator()->trans('nombre_conexion')))
-                ->add('idMotor', null, array('label' => $this->getTranslator()->trans('motor')))
-                ->add('ip', null, array('label' => $this->getTranslator()->trans('ip')))
-                ->add('nombreBaseDatos', null, array('label' => $this->getTranslator()->trans('nombre_base_datos')))
-                ->add('comentario', null, array('label' => $this->getTranslator()->trans('comentario')))
+                ->addIdentifier('nombreConexion', null, array('label' => ('nombre_conexion')))
+                ->add('idMotor', null, array('label' => ('motor')))
+                ->add('ip', null, array('label' => ('ip')))
+                ->add('nombreBaseDatos', null, array('label' => ('nombre_base_datos')))
+                ->add('comentario', null, array('label' => ('comentario')))
 
         ;
     }

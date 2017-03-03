@@ -13,31 +13,31 @@ class PeriodoIngresoDatosFormularioAdmin extends Admin
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
-            ->add('usuario', null, array('label'=> $this->getTranslator()->trans('_usuario_')))
-            ->add('formulario', null, array('label'=> $this->getTranslator()->trans('_formulario_')))
-            ->add('periodo', null, array('label'=> $this->getTranslator()->trans('_periodo_ingreso_')))
-            ->add('unidad', null, array('label'=> $this->getTranslator()->trans('_unidad_')))            
+            ->add('usuario', null, array('label'=> ('_usuario_')))
+            ->add('formulario', null, array('label'=> ('_formulario_')))
+            ->add('periodo', null, array('label'=> ('_periodo_ingreso_')))
+            ->add('unidad', null, array('label'=> ('_unidad_')))            
         ;
     }
 
     protected function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
         $datagridMapper
-            ->add('usuario', null, array('label'=> $this->getTranslator()->trans('_usuario_')))
-            ->add('formulario', null, array('label'=> $this->getTranslator()->trans('_formulario_')))
-            ->add('unidad', null, array('label'=> $this->getTranslator()->trans('_unidad_')))
-            ->add('periodo', null, array('label'=> $this->getTranslator()->trans('_periodo_ingreso_')))
+            ->add('usuario', null, array('label'=> ('_usuario_')))
+            ->add('formulario', null, array('label'=> ('_formulario_')))
+            ->add('unidad', null, array('label'=> ('_unidad_')))
+            ->add('periodo', null, array('label'=> ('_periodo_ingreso_')))
         ;
     }
 
     protected function configureListFields(ListMapper $listMapper)
     {
         $listMapper            
-            ->addIdentifier('id', null, array('label'=> $this->getTranslator()->trans('_id_')))
-            ->add('usuario', null, array('label'=> $this->getTranslator()->trans('_usuario_')))
-            ->add('formulario', null, array('label'=> $this->getTranslator()->trans('_formulario_')))
-            ->add('unidad', null, array('label'=> $this->getTranslator()->trans('_unidad_')))
-            ->add('periodo', null, array('label'=> $this->getTranslator()->trans('_periodo_ingreso_')))
+            ->addIdentifier('id', null, array('label'=> ('_id_')))
+            ->add('usuario', null, array('label'=> ('_usuario_')))
+            ->add('formulario', null, array('label'=> ('_formulario_')))
+            ->add('unidad', null, array('label'=> ('_unidad_')))
+            ->add('periodo', null, array('label'=> ('_periodo_ingreso_')))
         ;
     }
 

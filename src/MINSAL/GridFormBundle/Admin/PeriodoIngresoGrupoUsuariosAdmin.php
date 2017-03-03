@@ -13,28 +13,28 @@ class PeriodoIngresoGrupoUsuariosAdmin extends Admin
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
-            ->add('grupoUsuario', null, array('label'=> $this->getTranslator()->trans('_grupo_usuarios_')))
-            ->add('formulario', null, array('label'=> $this->getTranslator()->trans('_formulario_')))
-            ->add('periodo', null, array('label'=> $this->getTranslator()->trans('_periodo_ingreso_')))
+            ->add('grupoUsuario', null, array('label'=> ('_grupo_usuarios_')))
+            ->add('formulario', null, array('label'=> ('_formulario_')))
+            ->add('periodo', null, array('label'=> ('_periodo_ingreso_')))
         ;
     }
 
     protected function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
         $datagridMapper
-            ->add('grupoUsuario', null, array('label'=> $this->getTranslator()->trans('_grupo_usuario_')))
-            ->add('formulario', null, array('label'=> $this->getTranslator()->trans('_formulario_')))
-            ->add('periodo', null, array('label'=> $this->getTranslator()->trans('_periodo_ingreso_')))
+            ->add('grupoUsuario', null, array('label'=> ('_grupo_usuario_')))
+            ->add('formulario', null, array('label'=> ('_formulario_')))
+            ->add('periodo', null, array('label'=> ('_periodo_ingreso_')))
         ;
     }
 
     protected function configureListFields(ListMapper $listMapper)
     {
         $listMapper            
-            ->addIdentifier('id', null, array('label'=> $this->getTranslator()->trans('_id_')))
-            ->add('grupoUsuario', null, array('label'=> $this->getTranslator()->trans('_grupo_usuarios_')))
-            ->add('formulario', null, array('label'=> $this->getTranslator()->trans('_formulario_')))
-            ->add('periodo', null, array('label'=> $this->getTranslator()->trans('_periodo_ingreso_')))
+            ->addIdentifier('id', null, array('label'=> ('_id_')))
+            ->add('grupoUsuario', null, array('label'=> ('_grupo_usuarios_')))
+            ->add('formulario', null, array('label'=> ('_formulario_')))
+            ->add('periodo', null, array('label'=> ('_periodo_ingreso_')))
         ;
     }
 

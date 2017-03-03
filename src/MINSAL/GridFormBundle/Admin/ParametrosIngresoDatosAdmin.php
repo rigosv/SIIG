@@ -17,37 +17,37 @@ class ParametrosIngresoDatosAdmin extends Admin
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
-            ->add('establecimiento', null, array('label'=> $this->getTranslator()->trans('_establecimiento_')))
-            ->add('formulario', null, array('label'=> $this->getTranslator()->trans('_estandar_')))
-            ->add('fechaEvaluacion', null, array('label'=> $this->getTranslator()->trans('_fecha_evaluacion_')))
-            ->add('anio', null, array('label'=> $this->getTranslator()->trans('_anio_')))
-            ->add('mes', null, array('label'=> $this->getTranslator()->trans('_mes_')))
-            ->add('nombreResponsable', null, array('label'=> $this->getTranslator()->trans('_nombre_responsable_evaluacion_')))
-            ->add('cantidadExpedienteReportar', null, array('label'=> $this->getTranslator()->trans('_cantidad_expedientes_reportar_')))
-            ->add('observaciones', null, array('label'=> $this->getTranslator()->trans('_observaciones_')))
+            ->add('establecimiento', null, array('label'=> ('_establecimiento_')))
+            ->add('formulario', null, array('label'=> ('_estandar_')))
+            ->add('fechaEvaluacion', null, array('label'=> ('_fecha_evaluacion_')))
+            ->add('anio', null, array('label'=> ('_anio_')))
+            ->add('mes', null, array('label'=> ('_mes_')))
+            ->add('nombreResponsable', null, array('label'=> ('_nombre_responsable_evaluacion_')))
+            ->add('cantidadExpedienteReportar', null, array('label'=> ('_cantidad_expedientes_reportar_')))
+            ->add('observaciones', null, array('label'=> ('_observaciones_')))
         ;
     }
 
     protected function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
         $datagridMapper
-            ->add('establecimiento', null, array('label'=> $this->getTranslator()->trans('_establecimiento_')))
-            ->add('formulario', null, array('label'=> $this->getTranslator()->trans('_estandar_')))            
-            ->add('anio', null, array('label'=> $this->getTranslator()->trans('_anio_')))
-            ->add('mes', null, array('label'=> $this->getTranslator()->trans('_mes_')))
+            ->add('establecimiento', null, array('label'=> ('_establecimiento_')))
+            ->add('formulario', null, array('label'=> ('_estandar_')))            
+            ->add('anio', null, array('label'=> ('_anio_')))
+            ->add('mes', null, array('label'=> ('_mes_')))
         ;
     }
 
     protected function configureListFields(ListMapper $listMapper)
     {
         $listMapper
-            ->addIdentifier('id', null, array('label'=> $this->getTranslator()->trans('_codigo_')))
-            ->add('establecimiento', null, array('label'=> $this->getTranslator()->trans('_establecimiento_')))
-            ->add('formulario', null, array('label'=> $this->getTranslator()->trans('_estandar_')))
-            ->add('fechaEvaluacion', null, array('label'=> $this->getTranslator()->trans('_fecha_evaluacion_')))
-            ->add('anio', null, array('label'=> $this->getTranslator()->trans('_anio_')))
-            ->add('mes', null, array('label'=> $this->getTranslator()->trans('_mes_')))
-            ->add('nombreResponsable', null, array('label'=> $this->getTranslator()->trans('_nombre_responsable_evaluacion_'))) 
+            ->addIdentifier('id', null, array('label'=> ('_codigo_')))
+            ->add('establecimiento', null, array('label'=> ('_establecimiento_')))
+            ->add('formulario', null, array('label'=> ('_estandar_')))
+            ->add('fechaEvaluacion', null, array('label'=> ('_fecha_evaluacion_')))
+            ->add('anio', null, array('label'=> ('_anio_')))
+            ->add('mes', null, array('label'=> ('_mes_')))
+            ->add('nombreResponsable', null, array('label'=> ('_nombre_responsable_evaluacion_'))) 
         ;
     }
 

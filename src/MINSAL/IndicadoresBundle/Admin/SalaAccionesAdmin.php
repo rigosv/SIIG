@@ -13,10 +13,10 @@ class SalaAccionesAdmin extends Admin
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
-            ->add('sala', null, array('label'=> $this->getTranslator()->trans('_sala_')))
-            ->add('acciones', null, array('label'=> $this->getTranslator()->trans('_acciones_')))
-            ->add('observaciones', null, array('label'=> $this->getTranslator()->trans('_observaciones_')))
-            ->add('responsables', null, array('label'=> $this->getTranslator()->trans('_responsables_')))
+            ->add('sala', null, array('label'=> ('_sala_')))
+            ->add('acciones', null, array('label'=> ('_acciones_')))
+            ->add('observaciones', null, array('label'=> ('_observaciones_')))
+            ->add('responsables', null, array('label'=> ('_responsables_')))
         ;
     }
 
@@ -24,7 +24,7 @@ class SalaAccionesAdmin extends Admin
     {
         if (!$this->getRequest()->isXmlHttpRequest()) {
             $datagridMapper
-                ->add('sala', null, array('label'=> $this->getTranslator()->trans('_sala_')))
+                ->add('sala', null, array('label'=> ('_sala_')))
             ;
         }
     }
@@ -32,12 +32,12 @@ class SalaAccionesAdmin extends Admin
     protected function configureListFields(ListMapper $listMapper)
     {
         $listMapper
-            ->add('sala', null, array('label'=> $this->getTranslator()->trans('_sala_')))
-            ->addIdentifier('fecha',null, array('label'=> $this->getTranslator()->trans('_fecha_')))
-            ->add('usuario',null, array('label'=> $this->getTranslator()->trans('_usuario_')))
-            ->add('acciones', null, array('label'=> $this->getTranslator()->trans('_acciones_')))
-            ->add('observaciones', null, array('label'=> $this->getTranslator()->trans('_observaciones_')))
-            ->add('responsables', null, array('label'=> $this->getTranslator()->trans('_responsables_')))
+            ->add('sala', null, array('label'=> ('_sala_')))
+            ->addIdentifier('fecha',null, array('label'=> ('_fecha_')))
+            ->add('usuario',null, array('label'=> ('_usuario_')))
+            ->add('acciones', null, array('label'=> ('_acciones_')))
+            ->add('observaciones', null, array('label'=> ('_observaciones_')))
+            ->add('responsables', null, array('label'=> ('_responsables_')))
             
         ;
     }

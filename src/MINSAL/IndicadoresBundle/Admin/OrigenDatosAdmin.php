@@ -23,46 +23,46 @@ class OrigenDatosAdmin extends Admin
         $origenActual = $this->getSubject();
 
         $formMapper
-                ->tab($this->getTranslator()->trans('datos_generales'))
+                ->tab(('datos_generales'))
                     ->with('', array('class' => 'col-md-12'))->end()
                 ->end()
-                ->tab($this->getTranslator()->trans('_origen_datos_'))
-                    ->with($this->getTranslator()->trans('origen_datos_sql'), array('class' => 'col-md-8'))->end()
-                    ->with($this->getTranslator()->trans('origen_datos_archivo'), array('class' => 'col-md-4'))->end()
+                ->tab(('_origen_datos_'))
+                    ->with(('origen_datos_sql'), array('class' => 'col-md-8'))->end()
+                    ->with(('origen_datos_archivo'), array('class' => 'col-md-4'))->end()
                 ->end()
         ;
         
         $formMapper            
-                ->tab($this->getTranslator()->trans('datos_generales'), array('collapsed' => false))
+                ->tab(('datos_generales'), array('collapsed' => false))
                     ->with('', array('class' => 'col-md-12'))
-                        ->add('nombre', null, array('label' => $this->getTranslator()->trans('nombre')))
-                        ->add('descripcion', null, array('label' => $this->getTranslator()->trans('descripcion'), 'required' => false))                        
+                        ->add('nombre', null, array('label' => ('nombre')))
+                        ->add('descripcion', null, array('label' => ('descripcion'), 'required' => false))                        
                     ->end()
                 ->end()
         ;
         if ($esFusionado == false)
             $formMapper
-                    ->tab($this->getTranslator()->trans('datos_generales'), array('collapsed' => false))
+                    ->tab(('datos_generales'), array('collapsed' => false))
                         ->with('', array('class' => 'col-md-12'))
-                            ->add('esCatalogo', null, array('label' => $this->getTranslator()->trans('es_catalogo')))
-                            ->add('areaCosteo', 'choice', array('label' => $this->getTranslator()->trans('_area_costeo_'),
-                                'choices' => array('rrhh'=>$this->getTranslator()->trans('_rrhh_'),
-                                    'ga_af'=>$this->getTranslator()->trans('_ga_af_')),
+                            ->add('esCatalogo', null, array('label' => ('es_catalogo')))
+                            ->add('areaCosteo', 'choice', array('label' => ('_area_costeo_'),
+                                'choices' => array('rrhh'=>('_rrhh_'),
+                                    'ga_af'=>('_ga_af_')),
                                 'required' => false
                                 ))
                         ->end()
                     ->end()
-                    ->tab($this->getTranslator()->trans('_origen_datos_'), array('collapsed' => true))
-                        ->with($this->getTranslator()->trans('origen_datos_sql'))
-                            ->add('conexiones', null, array('label' => $this->getTranslator()->trans('nombre_conexion'), 'required' => false, 'expanded' => false))
-                            ->add('sentenciaSql', null, array('label' => $this->getTranslator()->trans('sentencia_sql'),
+                    ->tab(('_origen_datos_'), array('collapsed' => true))
+                        ->with(('origen_datos_sql'))
+                            ->add('conexiones', null, array('label' => ('nombre_conexion'), 'required' => false, 'expanded' => false))
+                            ->add('sentenciaSql', null, array('label' => ('sentencia_sql'),
                                 'required' => false,
                                 'attr' => array('rows' => 7, 'cols' => 50)
                             ))
                         ->end()
-                        ->with($this->getTranslator()->trans('origen_datos_archivo'))
-                            ->add('archivoNombre', null, array('label' => $this->getTranslator()->trans('archivo_asociado'), 'required' => false, 'read_only' => true))
-                            ->add('file', 'file', array('label' => $this->getTranslator()->trans('subir_nuevo_archivo'), 'required' => false))
+                        ->with(('origen_datos_archivo'))
+                            ->add('archivoNombre', null, array('label' => ('archivo_asociado'), 'required' => false, 'read_only' => true))
+                            ->add('file', 'file', array('label' => ('subir_nuevo_archivo'), 'required' => false))
                         ->end()
                     ->end()                    
             ;
@@ -72,14 +72,14 @@ class OrigenDatosAdmin extends Admin
         if ($accion == 'create') {
             $formMapper
                     ->setHelps(array(
-                        'campoLecturaIncremental' => $this->getTranslator()->trans('_debe_guardar_para_ver_campos_')
+                        'campoLecturaIncremental' => ('_debe_guardar_para_ver_campos_')
                     ))
             ;
         }else {
             $formMapper
-                    ->tab($this->getTranslator()->trans('_carga_incremental_'), array('collapsed' => true))
+                    ->tab(('_carga_incremental_'), array('collapsed' => true))
                         ->with('', array('class' => 'col-md-12'))
-                            ->add('campoLecturaIncremental', null, array('label' => $this->getTranslator()->trans('_campo_lectura_incremental_'), 'expanded' => false,
+                            ->add('campoLecturaIncremental', null, array('label' => ('_campo_lectura_incremental_'), 'expanded' => false,
                                 'class' => 'IndicadoresBundle:Campo',
                                 'query_builder' => function ($repository) use($origenActual) {
                                     if($origenActual->getId() == null){
@@ -99,20 +99,20 @@ class OrigenDatosAdmin extends Admin
                                     }
                                 }                                
                                 ))
-                            ->add('ventanaLimiteInferior', null, array('label' => $this->getTranslator()->trans('_ventana_limite_inferior_'), 'required' => false))
-                            ->add('ventanaLimiteSuperior', null, array('label' => $this->getTranslator()->trans('_ventana_limite_superior_'), 'required' => false))
+                            ->add('ventanaLimiteInferior', null, array('label' => ('_ventana_limite_inferior_'), 'required' => false))
+                            ->add('ventanaLimiteSuperior', null, array('label' => ('_ventana_limite_superior_'), 'required' => false))
                         ->end()
                     ->end()
                     ->setHelps(array(
-                        'campoLecturaIncremental' => $this->getTranslator()->trans('_debe_ser_tipo_fecha_'). '<BR/><IMG src="/bundles/indicadores/images/carga_incremental.png" />'
+                        'campoLecturaIncremental' => ('_debe_ser_tipo_fecha_'). '<BR/><IMG src="/bundles/indicadores/images/carga_incremental.png" />'
                     ))
             ;
         }
         
         $formMapper
             ->setHelps(array(
-                'ventanaLimiteInferior' => $this->getTranslator()->trans('_ayuda_ventana_limite_inferior_'),
-                'ventanaLimiteSuperior' => $this->getTranslator()->trans('_ayuda_ventana_limite_superior_')
+                'ventanaLimiteInferior' => ('_ayuda_ventana_limite_inferior_'),
+                'ventanaLimiteSuperior' => ('_ayuda_ventana_limite_superior_')
             ));
         
     }
@@ -120,22 +120,22 @@ class OrigenDatosAdmin extends Admin
     protected function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
         $datagridMapper
-                ->add('nombre', null, array('label' => $this->getTranslator()->trans('nombre')))
-                ->add('sentenciaSql', null, array('label' => $this->getTranslator()->trans('sentencia_sql')))
+                ->add('nombre', null, array('label' => ('nombre')))
+                ->add('sentenciaSql', null, array('label' => ('sentencia_sql')))
         ;
     }
 
     protected function configureListFields(ListMapper $listMapper)
     {
         $listMapper
-                ->addIdentifier('nombre', null, array('label' => $this->getTranslator()->trans('nombre')))
-                ->add('descripcion', null, array('label' => $this->getTranslator()->trans('descripcion')))
-                ->add('esFusionado', null, array('label' => $this->getTranslator()->trans('fusion.es_fusionado')))
-                ->add('esCatalogo', null, array('label' => $this->getTranslator()->trans('es_catalogo')))                
-                ->add('sentenciaSql', null, array('label' => $this->getTranslator()->trans('sentencia_sql'),
+                ->addIdentifier('nombre', null, array('label' => ('nombre')))
+                ->add('descripcion', null, array('label' => ('descripcion')))
+                ->add('esFusionado', null, array('label' => ('fusion.es_fusionado')))
+                ->add('esCatalogo', null, array('label' => ('es_catalogo')))                
+                ->add('sentenciaSql', null, array('label' => ('sentencia_sql'),
                     'template'=>'IndicadoresBundle:CRUD:list_sentencia_sql.html.twig'))
-                ->add('archivoNombre', null, array('label' => $this->getTranslator()->trans('archivo_asociado')))
-                ->add('ultimaActualizacion', null, array('label' => $this->getTranslator()->trans('_ultima_actualizacion_')))
+                ->add('archivoNombre', null, array('label' => ('archivo_asociado')))
+                ->add('ultimaActualizacion', null, array('label' => ('_ultima_actualizacion_')))
                 ->add('_action', 'actions', array(
                     'actions' => array(
                         'load_data' => array('template' => 'IndicadoresBundle:OrigenDatosAdmin:list__action_load_data.html.twig')
@@ -149,18 +149,18 @@ class OrigenDatosAdmin extends Admin
         if ($object->getEsFusionado() == false) {
             if ($object->file == '' and $object->getArchivoNombre() == '' and $object->getSentenciaSql() == '') {
                 $errorElement->with('sentenciaSql')
-                        ->addViolation($this->getTranslator()->trans('validacion.sentencia_o_archivo'))
+                        ->addViolation(('validacion.sentencia_o_archivo'))
                         ->end();
             }
             if ($object->file != '' and $object->getSentenciaSql() != '') {
                 $errorElement->with('sentenciaSql')
-                        ->addViolation($this->getTranslator()->trans('validacion.sentencia_o_archivo_no_ambas'))
+                        ->addViolation(('validacion.sentencia_o_archivo_no_ambas'))
                         ->end();
             }
             echo count($object->getConexiones());
             if ($object->getSentenciaSql() != '' and count($object->getConexiones()) == 0) {
                 $errorElement->with('conexiones')
-                        ->addViolation($this->getTranslator()->trans('validacion.requerido'))
+                        ->addViolation(('validacion.requerido'))
                         ->end();
             }
         }
@@ -253,7 +253,7 @@ class OrigenDatosAdmin extends Admin
             }
             $origenes_fusionados = trim($origenes_fusionados, ', ');
 
-            $nueva_descripcion = $this->getTranslator()->trans('fusion.fusiona_siguientes_origenes') .
+            $nueva_descripcion = ('fusion.fusiona_siguientes_origenes') .
                     $origenes_fusionados;
             if (strpos($origenDato->getDescripcion(), $nueva_descripcion) === false)
                 $origenDato->setDescripcion(trim($origenDato->getDescripcion() . '. ' . $nueva_descripcion, '. '));

@@ -20,12 +20,12 @@ class CampoAdmin extends Admin
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
-                ->add('nombre', null, array('label' => $this->getTranslator()->trans('nombre')))
-                ->add('descripcion', null, array('label' => $this->getTranslator()->trans('descripcion'), 'required' => true))
-                ->add('origenDato', null, array('label' => $this->getTranslator()->trans('origen_datos'), 'required' => true))
-                ->add('tipoCampo', null, array('label' => $this->getTranslator()->trans('javascript.tipo'), 'required' => true))
-                ->add('significado', null, array('label' => $this->getTranslator()->trans('significado'), 'required' => true))
-                ->add('formula', null, array('label' => $this->getTranslator()->trans('formula'), 'required' => true))
+                ->add('nombre', null, array('label' => ('nombre')))
+                ->add('descripcion', null, array('label' => ('descripcion'), 'required' => true))
+                ->add('origenDato', null, array('label' => ('origen_datos'), 'required' => true))
+                ->add('tipoCampo', null, array('label' => ('javascript.tipo'), 'required' => true))
+                ->add('significado', null, array('label' => ('significado'), 'required' => true))
+                ->add('formula', null, array('label' => ('formula'), 'required' => true))
                 ->end()
         ;
     }
@@ -33,19 +33,19 @@ class CampoAdmin extends Admin
     protected function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
         $datagridMapper
-                ->add('nombre', null, array('label' => $this->getTranslator()->trans('nombre')))
-                ->add('origenDato', null, array('label' => $this->getTranslator()->trans('origen_datos')))
+                ->add('nombre', null, array('label' => ('nombre')))
+                ->add('origenDato', null, array('label' => ('origen_datos')))
         ;
     }
 
     protected function configureListFields(ListMapper $listMapper)
     {
         $listMapper
-                ->add('nombre', null, array('label' => $this->getTranslator()->trans('nombre')))
-                ->add('descripcion', null, array('label' => $this->getTranslator()->trans('descripcion')))
-                ->add('origenDato.nombre', null, array('label' => $this->getTranslator()->trans('origen_datos')))
-                ->add('tipoCampo.descripcion', null, array('label' => $this->getTranslator()->trans('tipo')))
-                ->add('significado.descripcion', null, array('label' => $this->getTranslator()->trans('significado')))
+                ->add('nombre', null, array('label' => ('nombre')))
+                ->add('descripcion', null, array('label' => ('descripcion')))
+                ->add('origenDato.nombre', null, array('label' => ('origen_datos')))
+                ->add('tipoCampo.descripcion', null, array('label' => ('tipo')))
+                ->add('significado.descripcion', null, array('label' => ('significado')))
                 ->add('_action', 'actions', array(
                     'actions' => array(
                         'edit' => array()
@@ -97,7 +97,7 @@ class CampoAdmin extends Admin
             if (!array_key_exists(str_replace(array('{', '}'), '', $var), $campos)) {
                 $errorElement
                         ->with('formula')
-                        ->addViolation('<span style="color:red">' . $var . '</span> ' . $this->getTranslator()->trans('_variable_no_campo_'))
+                        ->addViolation('<span style="color:red">' . $var . '</span> ' . ('_variable_no_campo_'))
                         ->end();
 
                 return;
@@ -130,7 +130,7 @@ class CampoAdmin extends Admin
         } catch (\Doctrine\DBAL\DBALException $exc) {
             $errorElement
                     ->with('formula')
-                    ->addViolation($this->getTranslator()->trans('sintaxis_invalida') . $exc->getMessage())
+                    ->addViolation(('sintaxis_invalida') . $exc->getMessage())
                     ->end();
         }
     }

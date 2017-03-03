@@ -19,11 +19,11 @@ class ContratosFijosGAAdmin extends Admin
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
-            ->add('codigo', null, array('label'=> $this->getTranslator()->trans('_codigo_')))
-            ->add('descripcion', null, array('label'=> $this->getTranslator()->trans('_descripcion_')))
-            ->add('categoria', null, array('label'=> $this->getTranslator()->trans('_categoria_')))
-            ->add('criterioDistribucion', null, array('label'=> $this->getTranslator()->trans('_criterio_distribucion_')))
-            ->add('establecimientos', null, array('label' => $this->getTranslator()->trans('_establecimiento_'),
+            ->add('codigo', null, array('label'=> ('_codigo_')))
+            ->add('descripcion', null, array('label'=> ('_descripcion_')))
+            ->add('categoria', null, array('label'=> ('_categoria_')))
+            ->add('criterioDistribucion', null, array('label'=> ('_criterio_distribucion_')))
+            ->add('establecimientos', null, array('label' => ('_establecimiento_'),
                     'required' => true, 'expanded' => true,
                     'class' => 'CostosBundle:Estructura',
                     'by_reference' => false,
@@ -33,7 +33,7 @@ class ContratosFijosGAAdmin extends Admin
                                 ->where('e.nivel = 1 ')
                                 ->add('orderBy','e.nombre');
                     }))
-            ->add('ubicacion', null, array('label' => $this->getTranslator()->trans('_ubicacion_'),
+            ->add('ubicacion', null, array('label' => ('_ubicacion_'),
                     'required' => false, 'expanded' => false,
                     'class' => 'CostosBundle:Ubicacion',
                     'property' => 'codigoEstablecimientoNombreUbicacion',
@@ -42,7 +42,7 @@ class ContratosFijosGAAdmin extends Admin
                                 ->join('u.establecimiento', 'e')
                                 ->add('orderBy','e.nombre');
                     }))
-            ->add('variableCalculoConsumo', null, array('label' => $this->getTranslator()->trans('_variable_calculo_consumo_'),
+            ->add('variableCalculoConsumo', null, array('label' => ('_variable_calculo_consumo_'),
                     'required' => false, 'expanded' => false,
                     'class' => 'GridFormBundle:Campo',
                     'query_builder' => function ($repository) {                        
@@ -53,7 +53,7 @@ class ContratosFijosGAAdmin extends Admin
                                 ->add('orderBy','s.descripcion');
                     }))
             ->setHelps(array(
-                'variableCalculoConsumo' => $this->getTranslator()->trans('_ayuda_variable_calculo_consumo_')                
+                'variableCalculoConsumo' => ('_ayuda_variable_calculo_consumo_')                
             ))
         ;
     }
@@ -61,21 +61,21 @@ class ContratosFijosGAAdmin extends Admin
     protected function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
         $datagridMapper
-            ->add('descripcion', null, array('label'=> $this->getTranslator()->trans('_descripcion_')))
-            ->add('categoria', null, array('label'=> $this->getTranslator()->trans('_categoria_')))
-            ->add('criterioDistribucion', null, array('label'=> $this->getTranslator()->trans('_criterio_distribucion_')))
-            ->add('establecimientos', null, array('label'=> $this->getTranslator()->trans('_establecimiento_')))
+            ->add('descripcion', null, array('label'=> ('_descripcion_')))
+            ->add('categoria', null, array('label'=> ('_categoria_')))
+            ->add('criterioDistribucion', null, array('label'=> ('_criterio_distribucion_')))
+            ->add('establecimientos', null, array('label'=> ('_establecimiento_')))
         ;
     }
 
     protected function configureListFields(ListMapper $listMapper)
     {
         $listMapper
-            ->addIdentifier('codigo', null, array('label'=> $this->getTranslator()->trans('_codigo_')))
-            ->add('descripcion', null, array('label'=> $this->getTranslator()->trans('_descripcion_'))) 
-            ->add('categoria', null, array('label'=> $this->getTranslator()->trans('_categoria_')))
-            ->add('criterioDistribucion', null, array('label'=> $this->getTranslator()->trans('_criterio_distribucion_')))
-            ->add('establecimientos', null, array('label' => $this->getTranslator()->trans('_establecimiento_')))
+            ->addIdentifier('codigo', null, array('label'=> ('_codigo_')))
+            ->add('descripcion', null, array('label'=> ('_descripcion_'))) 
+            ->add('categoria', null, array('label'=> ('_categoria_')))
+            ->add('criterioDistribucion', null, array('label'=> ('_criterio_distribucion_')))
+            ->add('establecimientos', null, array('label' => ('_establecimiento_')))
         ;
     }
 
@@ -95,10 +95,10 @@ class ContratosFijosGAAdmin extends Admin
                 if ($e->getCodigo() != $object->getUbicacion()->getEstablecimiento()->getCodigo()){
                     $errorElement
                         ->with('ubicacion')
-                            ->addViolation($this->getTranslator()->trans('_solo_establecimiento_de_ubicacion_'))
+                            ->addViolation(('_solo_establecimiento_de_ubicacion_'))
                         ->end()
                         ->with('establecimientos')
-                            ->addViolation($this->getTranslator()->trans('_solo_establecimiento_de_ubicacion_'))
+                            ->addViolation(('_solo_establecimiento_de_ubicacion_'))
                         ->end();
                     break;
                 }

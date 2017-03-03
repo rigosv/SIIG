@@ -18,27 +18,27 @@ class ProcesoAdmin extends Admin
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
-            ->add('codigo', null, array('label'=> $this->getTranslator()->trans('_codigo_')))
-            ->add('descripcion', null, array('label'=> $this->getTranslator()->trans('_descripcion_')))
-            ->add('dimension', null, array('label'=> $this->getTranslator()->trans('_dimension_')))
+            ->add('codigo', null, array('label'=> ('_codigo_')))
+            ->add('descripcion', null, array('label'=> ('_descripcion_')))
+            ->add('dimension', null, array('label'=> ('_dimension_')))
         ;
     }
 
     protected function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
         $datagridMapper
-            ->add('codigo', null, array('label'=> $this->getTranslator()->trans('_codigo_')))
-            ->add('descripcion', null, array('label'=> $this->getTranslator()->trans('_descripcion_')))
-            ->add('dimension', null, array('label'=> $this->getTranslator()->trans('_dimension_')))
+            ->add('codigo', null, array('label'=> ('_codigo_')))
+            ->add('descripcion', null, array('label'=> ('_descripcion_')))
+            ->add('dimension', null, array('label'=> ('_dimension_')))
         ;
     }
 
     protected function configureListFields(ListMapper $listMapper)
     {
         $listMapper
-            ->addIdentifier('codigo', null, array('label'=> $this->getTranslator()->trans('_codigo_')))
-            ->add('descripcion', null, array('label'=> $this->getTranslator()->trans('_descripcion_')))
-            ->add('dimension', null, array('label'=> $this->getTranslator()->trans('_dimension_')))
+            ->addIdentifier('codigo', null, array('label'=> ('_codigo_')))
+            ->add('descripcion', null, array('label'=> ('_descripcion_')))
+            ->add('dimension', null, array('label'=> ('_dimension_')))
         ;
     }
 

@@ -18,9 +18,9 @@ class EspecialidadAdmin extends Admin
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
-            ->add('codigo', null, array('label'=> $this->getTranslator()->trans('_codigo_')))
-            ->add('descripcion', null, array('label'=> $this->getTranslator()->trans('_descripcion_')))
-            ->add('establecimiento', null, array('label' => $this->getTranslator()->trans('_establecimiento_'),
+            ->add('codigo', null, array('label'=> ('_codigo_')))
+            ->add('descripcion', null, array('label'=> ('_descripcion_')))
+            ->add('establecimiento', null, array('label' => ('_establecimiento_'),
                     'required' => true, 'expanded' => false,
                     'class' => 'CostosBundle:Estructura',
                     'query_builder' => function ($repository) {                        
@@ -34,9 +34,9 @@ class EspecialidadAdmin extends Admin
     protected function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
         $datagridMapper
-            ->add('codigo', null, array('label'=> $this->getTranslator()->trans('_codigo_')))
-            ->add('descripcion', null, array('label'=> $this->getTranslator()->trans('_descripcion_')))
-            ->add('establecimiento', null, array('label' => $this->getTranslator()->trans('_establecimiento_'),
+            ->add('codigo', null, array('label'=> ('_codigo_')))
+            ->add('descripcion', null, array('label'=> ('_descripcion_')))
+            ->add('establecimiento', null, array('label' => ('_establecimiento_'),
                     'required' => true, 'expanded' => false,
                     'class' => 'CostosBundle:Estructura',
                     'query_builder' => function ($repository) {                        
@@ -50,9 +50,9 @@ class EspecialidadAdmin extends Admin
     protected function configureListFields(ListMapper $listMapper)
     {
         $listMapper
-            ->addIdentifier('codigo', null, array('label'=> $this->getTranslator()->trans('_codigo_')))
-            ->add('descripcion', null, array('label'=> $this->getTranslator()->trans('_descripcion_')))
-            ->add('establecimiento', null, array('label'=> $this->getTranslator()->trans('_establecimiento_')))
+            ->addIdentifier('codigo', null, array('label'=> ('_codigo_')))
+            ->add('descripcion', null, array('label'=> ('_descripcion_')))
+            ->add('establecimiento', null, array('label'=> ('_establecimiento_')))
         ;
     }
 

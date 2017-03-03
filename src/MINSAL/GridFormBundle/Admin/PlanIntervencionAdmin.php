@@ -21,8 +21,8 @@ class PlanIntervencionAdmin extends Admin
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
-            ->add('codigo', null, array('label'=> $this->getTranslator()->trans('_codigo_plan_')))
-            ->add('estandar', null, array('label' => $this->getTranslator()->trans('_estandar_'),
+            ->add('codigo', null, array('label'=> ('_codigo_plan_')))
+            ->add('estandar', null, array('label' => ('_estandar_'),
                 'required' => true, 'expanded' => false,
                 'class' => 'GridFormBundle:Formulario',
                 'query_builder' => function ($repository) {                        
@@ -34,8 +34,8 @@ class PlanIntervencionAdmin extends Admin
                         ;
                     
                 }))
-            ->add('fechaEvaluacion', 'sonata_type_date_picker', array('label'=> $this->getTranslator()->trans('_fecha_evaluacion_')))
-            ->add('establecimiento', null, array('label' => $this->getTranslator()->trans('_establecimiento_'),
+            ->add('fechaEvaluacion', 'sonata_type_date_picker', array('label'=> ('_fecha_evaluacion_')))
+            ->add('establecimiento', null, array('label' => ('_establecimiento_'),
                     'required' => true, 'expanded' => false,
                     'class' => 'CostosBundle:Estructura',
                     'query_builder' => function ($repository) {                        
@@ -43,27 +43,27 @@ class PlanIntervencionAdmin extends Admin
                                 ->where('e.nivel = 1 ')
                                 ->add('orderBy','e.nombre');
                     }))
-            ->add('situacionEncontrada', null, array('label'=> $this->getTranslator()->trans('_situacion_encontrada_')))            
+            ->add('situacionEncontrada', null, array('label'=> ('_situacion_encontrada_')))            
         ;
     }
 
     protected function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
         $datagridMapper
-            ->add('estandar', null, array('label'=> $this->getTranslator()->trans('_estandar_')))            
-            ->add('fechaEvaluacion', null, array('label'=> $this->getTranslator()->trans('_fecha_evaluacion_')))
-            ->add('establecimiento', null, array('label'=> $this->getTranslator()->trans('_establecimiento_')))
+            ->add('estandar', null, array('label'=> ('_estandar_')))            
+            ->add('fechaEvaluacion', null, array('label'=> ('_fecha_evaluacion_')))
+            ->add('establecimiento', null, array('label'=> ('_establecimiento_')))
         ;
     }
 
     protected function configureListFields(ListMapper $listMapper)
     {
         $listMapper
-            ->addIdentifier('codigo', null, array('label'=> $this->getTranslator()->trans('_codigo_')))
-            ->add('estandar', null, array('label'=> $this->getTranslator()->trans('_estandar_')))
-            ->add('fechaEvaluacion', null, array('label'=> $this->getTranslator()->trans('_fecha_evaluacion_')))
-            ->add('establecimiento', null, array('label'=> $this->getTranslator()->trans('_establecimiento_')))
-            ->add('situacionEncontrada', null, array('label'=> $this->getTranslator()->trans('_situacion_encontrada_')))
+            ->addIdentifier('codigo', null, array('label'=> ('_codigo_')))
+            ->add('estandar', null, array('label'=> ('_estandar_')))
+            ->add('fechaEvaluacion', null, array('label'=> ('_fecha_evaluacion_')))
+            ->add('establecimiento', null, array('label'=> ('_establecimiento_')))
+            ->add('situacionEncontrada', null, array('label'=> ('_situacion_encontrada_')))
         ;
     }
 

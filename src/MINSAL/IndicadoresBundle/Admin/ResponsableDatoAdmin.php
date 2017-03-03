@@ -18,13 +18,13 @@ class ResponsableDatoAdmin extends Admin
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
-            ->add('contacto', null, array('label'=> $this->getTranslator()->trans('contacto')))
-            ->add('establecimiento', null, array('label'=> $this->getTranslator()->trans('establecimiento')))
-            ->add('correo', 'email', array('label'=> $this->getTranslator()->trans('correo_electronico')))
-            ->add('telefono', null, array('label'=> $this->getTranslator()->trans('telefono')))
-            ->add('cargo', null, array('label'=> $this->getTranslator()->trans('cargo')))
+            ->add('contacto', null, array('label'=> ('contacto')))
+            ->add('establecimiento', null, array('label'=> ('establecimiento')))
+            ->add('correo', 'email', array('label'=> ('correo_electronico')))
+            ->add('telefono', null, array('label'=> ('telefono')))
+            ->add('cargo', null, array('label'=> ('cargo')))
             ->setHelps(array(
-                'telefono' => $this->getTranslator()->trans('formato_xxxx-xxxx')
+                'telefono' => ('formato_xxxx-xxxx')
             ))
         ;
     }
@@ -32,19 +32,19 @@ class ResponsableDatoAdmin extends Admin
     protected function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
         $datagridMapper
-            ->add('contacto', null, array('label'=> $this->getTranslator()->trans('contacto')))
-            ->add('establecimiento',null, array('label'=> $this->getTranslator()->trans('establecimiento')))
+            ->add('contacto', null, array('label'=> ('contacto')))
+            ->add('establecimiento',null, array('label'=> ('establecimiento')))
         ;
     }
 
     protected function configureListFields(ListMapper $listMapper)
     {
         $listMapper
-            ->addIdentifier('contacto', null, array('label'=> $this->getTranslator()->trans('contacto')))
-            ->add('establecimiento', null, array('label'=> $this->getTranslator()->trans('nombre_establecimiento')))
-            ->add('correo', null, array('label'=> $this->getTranslator()->trans('correo_electronico')))
-            ->add('telefono', null, array('label'=> $this->getTranslator()->trans('telefono')))
-            ->add('cargo', null, array('label'=> $this->getTranslator()->trans('cargo')))
+            ->addIdentifier('contacto', null, array('label'=> ('contacto')))
+            ->add('establecimiento', null, array('label'=> ('nombre_establecimiento')))
+            ->add('correo', null, array('label'=> ('correo_electronico')))
+            ->add('telefono', null, array('label'=> ('telefono')))
+            ->add('cargo', null, array('label'=> ('cargo')))
 
         ;
     }

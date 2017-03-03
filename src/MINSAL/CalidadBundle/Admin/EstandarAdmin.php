@@ -18,29 +18,29 @@ class EstandarAdmin extends Admin
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
-            ->add('codigo', null, array('label'=> $this->getTranslator()->trans('_codigo_')))
-            ->add('nombre', null, array('label'=> $this->getTranslator()->trans('_nombre_')))
-            ->add('descripcion', null, array('label'=> $this->getTranslator()->trans('_descripcion_')))
-            ->add('formularioCaptura', null, array('label'=> $this->getTranslator()->trans('_formulario_captura_datos_')))
+            ->add('codigo', null, array('label'=> ('_codigo_')))
+            ->add('nombre', null, array('label'=> ('_nombre_')))
+            ->add('descripcion', null, array('label'=> ('_descripcion_')))
+            ->add('formularioCaptura', null, array('label'=> ('_formulario_captura_datos_')))
         ;
     }
 
     protected function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
         $datagridMapper
-            ->add('codigo', null, array('label'=> $this->getTranslator()->trans('_codigo_')))
-            ->add('nombre', null, array('label'=> $this->getTranslator()->trans('_nombre_')))
-            ->add('formularioCaptura', null, array('label'=> $this->getTranslator()->trans('_formulario_captura_datos_')))
+            ->add('codigo', null, array('label'=> ('_codigo_')))
+            ->add('nombre', null, array('label'=> ('_nombre_')))
+            ->add('formularioCaptura', null, array('label'=> ('_formulario_captura_datos_')))
         ;
     }
 
     protected function configureListFields(ListMapper $listMapper)
     {
         $listMapper
-            ->addIdentifier('codigo', null, array('label'=> $this->getTranslator()->trans('_codigo_')))
-            ->add('nombre', null, array('label'=> $this->getTranslator()->trans('_nombre_')))
-            ->add('descripcion', null, array('label'=> $this->getTranslator()->trans('_descripcion_')))
-            ->add('formularioCaptura', null, array('label'=> $this->getTranslator()->trans('_formulario_captura_datos_')))
+            ->addIdentifier('codigo', null, array('label'=> ('_codigo_')))
+            ->add('nombre', null, array('label'=> ('_nombre_')))
+            ->add('descripcion', null, array('label'=> ('_descripcion_')))
+            ->add('formularioCaptura', null, array('label'=> ('_formulario_captura_datos_')))
         ;
     }
 

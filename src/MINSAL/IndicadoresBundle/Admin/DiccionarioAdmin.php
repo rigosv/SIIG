@@ -18,23 +18,23 @@ class DiccionarioAdmin extends Admin
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
-            ->add('codigo', null, array('label'=> $this->getTranslator()->trans('codigo')))
-            ->add('descripcion', null, array('label'=> $this->getTranslator()->trans('descripcion')))
+            ->add('codigo', null, array('label'=> ('codigo')))
+            ->add('descripcion', null, array('label'=> ('descripcion')))
         ;
     }
 
     protected function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
         $datagridMapper
-            ->add('descripcion', null, array('label'=> $this->getTranslator()->trans('descripcion')))
+            ->add('descripcion', null, array('label'=> ('descripcion')))
         ;
     }
 
     protected function configureListFields(ListMapper $listMapper)
     {
         $listMapper
-            ->addIdentifier('codigo', null, array('label'=> $this->getTranslator()->trans('codigo')))
-            ->add('descripcion', null, array('required'=>false, 'label'=> $this->getTranslator()->trans('descripcion')))
+            ->addIdentifier('codigo', null, array('label'=> ('codigo')))
+            ->add('descripcion', null, array('required'=>false, 'label'=> ('descripcion')))
         ;
     }
 
