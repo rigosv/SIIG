@@ -12,6 +12,7 @@ use MINSAL\IndicadoresBundle\Entity\User;
 use MINSAL\IndicadoresBundle\Entity\GrupoIndicadores;
 use MINSAL\IndicadoresBundle\Entity\UsuarioGrupoIndicadores;
 use MINSAL\IndicadoresBundle\Entity\AccesoExterno;
+use Symfony\Component\HttpFoundation\Request;
 
 class IndicadorController extends Controller {
 
@@ -104,10 +105,10 @@ class IndicadorController extends Controller {
     /**
      * @Route("/indicador/datos/mapa", name="indicador_datos_mapa", options={"expose"=true})
      */
-    public function getMapaAction() {
+    public function getMapaAction(Request $request) {
         $em = $this->getDoctrine()->getManager();
-        $dimension = $this->getRequest()->get('dimension');
-        $tipo_peticion = $this->getRequest()->get('tipo_peticion');
+        $dimension = $request->get('dimension');
+        $tipo_peticion = $request->get('tipo_peticion');
 
         if ($tipo_peticion == 'mapa')
             $tipo = '';
@@ -138,8 +139,8 @@ class IndicadorController extends Controller {
     /**
      * @Route("/indicador/{_locale}/change", name="change_locale")
      */
-    public function changeLocaleAction($_locale) {
-        $request = $this->getRequest();
+    public function changeLocaleAction($_locale, Request $request) {
+        $request = $request;
         //$this->get('session')->set('_locale', $_locale);
         return $this->redirect($request->headers->get('referer'));
     }
@@ -148,8 +149,8 @@ class IndicadorController extends Controller {
      * @Route("/tablero/usuario/change/{codigo_clasificacion}", name="change_clasificacion_uso", options={"expose"=true})
      * @ParamConverter("clasificacion", options={"mapping": {"codigo_clasificacion": "codigo"}})
      */
-    public function changeClasificacionUsoAction(ClasificacionUso $clasificacion) {
-        $request = $this->getRequest();
+    public function changeClasificacionUsoAction(ClasificacionUso $clasificacion, Request $request) {
+        $request = $request;
         $em = $this->getDoctrine()->getManager();
         $usuario = $this->getUser();
         $usuario->setClasificacionUso($clasificacion);
@@ -162,9 +163,9 @@ class IndicadorController extends Controller {
     /**
      * @Route("/indicador/favorito", name="indicador_favorito", options={"expose"=true})
      */
-    public function indicadorFavorito() {
+    public function indicadorFavorito(Request $request) {
         $em = $this->getDoctrine()->getManager();
-        $req = $this->getRequest();
+        $req = $request;
 
         $indicador = $em->find('IndicadoresBundle:FichaTecnica', $req->get('id'));
         $usuario = $this->getUser();
@@ -202,9 +203,9 @@ class IndicadorController extends Controller {
     /**
      * @Route("/sala/guardar", name="sala_guardar", options={"expose"=true})
      */
-    public function guardarSala() {
+    public function guardarSala(Request $request) {
         $em = $this->getDoctrine()->getManager();
-        $req = $this->getRequest();
+        $req = $request;
         $resp = array();
 
         $sala = json_decode($req->get('datos'));

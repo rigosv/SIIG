@@ -18,10 +18,10 @@ class ClasificacionTecnicaAdmin extends Admin
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
-            ->add('codigo', null, array('label'=> $this->getTranslator()->trans('codigo')))
-            ->add('descripcion', null, array('label'=> $this->getTranslator()->trans('descripcion')))
-            ->add('comentario', 'textarea', array('required'=>false, 'label'=> $this->getTranslator()->trans('comentario')))
-            ->add('clasificacionUso', null, array('required'=>true, 'label'=> $this->getTranslator()->trans('clasificacion_uso')))
+            ->add('codigo', null, array('label'=> ('codigo')))
+            ->add('descripcion', null, array('label'=> ('descripcion')))
+            ->add('comentario', 'textarea', array('required'=>false, 'label'=> ('comentario')))
+            ->add('clasificacionUso', null, array('required'=>true, 'label'=> ('clasificacion_uso')))
 
         ;
     }
@@ -29,15 +29,15 @@ class ClasificacionTecnicaAdmin extends Admin
     protected function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
         $datagridMapper
-            ->add('descripcion', null, array('label'=> $this->getTranslator()->trans('descripcion')))
+            ->add('descripcion', null, array('label'=> ('descripcion')))
         ;
     }
 
     protected function configureListFields(ListMapper $listMapper)
     {
         $listMapper
-            ->addIdentifier('descripcion', null, array('label'=> $this->getTranslator()->trans('descripcion')))
-            ->add('comentario', null, array('required'=>false, 'label'=> $this->getTranslator()->trans('comentario')))
+            ->addIdentifier('descripcion', null, array('label'=> ('descripcion')))
+            ->add('comentario', null, array('required'=>false, 'label'=> ('comentario')))
         ;
     }
 

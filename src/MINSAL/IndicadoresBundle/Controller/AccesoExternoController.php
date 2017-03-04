@@ -8,7 +8,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
-    
+use Symfony\Component\HttpFoundation\Request;
 
 class AccesoExternoController extends Controller {
 
@@ -34,7 +34,7 @@ class AccesoExternoController extends Controller {
     /**
      * @Route("/externo/autenticar/{user}/{pw}", name="autenticar")
      */
-    public function accesoExterno($user, $pw) {
+    public function accesoExterno($user, $pw, Request $request) {
         $em = $this->getDoctrine()->getManager();
         $usuarioBD = $em->getRepository("IndicadoresBundle:User")->findOneBy(array('username' => $user));
 
@@ -48,7 +48,7 @@ class AccesoExternoController extends Controller {
 
             $this->get('security.token_storage')->setToken($token);
 
-            $event = new InteractiveLoginEvent($this->getRequest(), $token);
+            $event = new InteractiveLoginEvent($request, $token);
             $this->get('event_dispatcher')->dispatch('security.interactive_login', $event);
 
         } else {

@@ -20,7 +20,7 @@ class VariableDatoAdmin extends Admin
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
-                ->add('origenDatos', 'entity', array('label' => $this->getTranslator()->trans('origen_dato'),
+                ->add('origenDatos', 'entity', array('label' => 'origen_dato',
                     'class' => 'IndicadoresBundle:OrigenDatos',
                     'property' => 'nombre',
                     'query_builder' => function(EntityRepository $er) {
@@ -30,30 +30,30 @@ class VariableDatoAdmin extends Admin
                                 ->setParameter('es_catalogo', 'false');
                     }
                 ))
-                ->add('nombre', null, array('label' => $this->getTranslator()->trans('nombre_variable')))
-                ->add('iniciales', null, array('label' => $this->getTranslator()->trans('iniciales')))
-                ->add('idFuenteDato', null, array('label' => $this->getTranslator()->trans('fuente_datos')))
-                ->add('idResponsableDato', null, array('label' => $this->getTranslator()->trans('responsable_datos')))
-                ->add('confiabilidad', null, array('label' => $this->getTranslator()->trans('confiabilidad'), 'required'=>false))
-                ->add('comentario', null, array('label' => $this->getTranslator()->trans('comentario'), 'required'=>false))
+                ->add('nombre', null, array('label' => ('nombre_variable')))
+                ->add('iniciales', null, array('label' => ('iniciales')))
+                ->add('idFuenteDato', null, array('label' => ('fuente_datos')))
+                ->add('idResponsableDato', null, array('label' => ('responsable_datos')))
+                ->add('confiabilidad', null, array('label' => ('confiabilidad'), 'required'=>false))
+                ->add('comentario', null, array('label' => ('comentario'), 'required'=>false))
         ;
     }
 
     protected function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
         $datagridMapper
-                ->add('nombre', null, array('label' => $this->getTranslator()->trans('nombre')))
-                ->add('iniciales', null, array('label' => $this->getTranslator()->trans('iniciales')))
-                ->add('idResponsableDato', null, array('label' => $this->getTranslator()->trans('responsable_datos')))
+                ->add('nombre', null, array('label' => ('nombre')))
+                ->add('iniciales', null, array('label' => ('iniciales')))
+                ->add('idResponsableDato', null, array('label' => ('responsable_datos')))
         ;
     }
 
     protected function configureListFields(ListMapper $listMapper)
     {
         $listMapper
-                ->addIdentifier('nombre', null, array('label' => $this->getTranslator()->trans('nombre_variable')))
-                ->add('iniciales', null, array('label' => $this->getTranslator()->trans('iniciales')))
-                ->add('origenDatos', null, array('label' => $this->getTranslator()->trans('origen_dato')))
+                ->addIdentifier('nombre', null, array('label' => 'nombre_variable'))
+                ->add('iniciales', null, array('label' => ('iniciales')))
+                ->add('origenDatos', null, array('label' => ('origen_dato')))
 
         ;
     }
@@ -67,7 +67,7 @@ class VariableDatoAdmin extends Admin
         if (count($campos_no_configurados) > 0) {
             $errorElement
                 ->with('origenDatos')
-                    ->addViolation($this->getTranslator()->trans('origen_no_configurado'))
+                    ->addViolation(('origen_no_configurado'))
                 ->end();
         }
 

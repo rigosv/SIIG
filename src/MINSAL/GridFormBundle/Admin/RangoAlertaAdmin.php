@@ -18,13 +18,13 @@ class RangoAlertaAdmin extends Admin {
 
     protected function configureFormFields(FormMapper $formMapper) {       
         $formMapper
-                ->add('limiteInferior', null, array('label' => $this->getTranslator()->trans('_alerta_limite_inferior_')))
-                ->add('limiteSuperior', null, array('label' => $this->getTranslator()->trans('limite_superior')))
-                ->add('color', 'choice', array('label' => $this->getTranslator()->trans('color'),
+                ->add('limiteInferior', null, array('label' => ('_alerta_limite_inferior_')))
+                ->add('limiteSuperior', null, array('label' => ('limite_superior')))
+                ->add('color', 'choice', array('label' => ('color'),
                         'choices' => array(
-                            'green'=>$this->getTranslator()->trans('_green_'),
-                            'orange' => $this->getTranslator()->trans('_orange_'),
-                            'red' => $this->getTranslator()->trans('_red_')
+                            'green'=>('_green_'),
+                            'orange' => ('_orange_'),
+                            'red' => ('_red_')
                             ),
                          'required' => true   
                         ))
@@ -33,20 +33,20 @@ class RangoAlertaAdmin extends Admin {
 
     protected function configureDatagridFilters(DatagridMapper $datagridMapper) {
         $datagridMapper
-                ->add('limiteInferior', null, array('label' => $this->getTranslator()->trans('_alerta_limite_inferior_'),
+                ->add('limiteInferior', null, array('label' => ('_alerta_limite_inferior_'),
                     'required' => true))
-                ->add('limiteSuperior', null, array('label' => $this->getTranslator()->trans('limite_superior'),
+                ->add('limiteSuperior', null, array('label' => ('limite_superior'),
                     'required' => true))
-                ->add('color', null, array('label' => $this->getTranslator()->trans('color')))
+                ->add('color', null, array('label' => ('color')))
         ;
     }
 
     protected function configureListFields(ListMapper $listMapper) {
         $listMapper
-                ->addIdentifier('id', null, array('label' => $this->getTranslator()->trans('Id')))
-                ->add('limiteInferior', null, array('label' => $this->getTranslator()->trans('_limite_inferior_')))
-                ->add('limiteSuperior', null, array('label' => $this->getTranslator()->trans('limite_superior')))
-                ->add('color', null, array('label' => $this->getTranslator()->trans('color')))
+                ->addIdentifier('id', null, array('label' => ('Id')))
+                ->add('limiteInferior', null, array('label' => ('_limite_inferior_')))
+                ->add('limiteSuperior', null, array('label' => ('limite_superior')))
+                ->add('color', null, array('label' => ('color')))
 
         ;
     }
@@ -61,7 +61,7 @@ class RangoAlertaAdmin extends Admin {
         if ($object->getLimiteInferior() == "" and $object->getLimiteSuperior() == ""){
             $errorElement
                     ->with('limiteInferior')
-                    ->addViolation($this->getTranslator()->trans('_ambos_limites_vacios_'))
+                    ->addViolation(('_ambos_limites_vacios_'))
                     ->end();
                 return;
         }

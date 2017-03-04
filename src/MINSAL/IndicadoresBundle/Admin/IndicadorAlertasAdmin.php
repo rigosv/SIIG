@@ -19,35 +19,35 @@ class IndicadorAlertasAdmin extends Admin {
         
         if($this->getRequest()->get('_sonata_admin') == 'sonata.admin.indicador_alertas') {
             $formMapper
-                ->add('indicador', null, array('label' => $this->getTranslator()->trans('indicador')));
+                ->add('indicador', null, array('label' => ('indicador')));
         }
         $formMapper
-                ->add('limiteInferior', null, array('label' => $this->getTranslator()->trans('_alerta_limite_inferior_'),
+                ->add('limiteInferior', null, array('label' => ('_alerta_limite_inferior_'),
                     'required' => true))
-                ->add('limiteSuperior', null, array('label' => $this->getTranslator()->trans('limite_superior'),
+                ->add('limiteSuperior', null, array('label' => ('limite_superior'),
                     'required' => true))
-                ->add('color', null, array('label' => $this->getTranslator()->trans('color'),
+                ->add('color', null, array('label' => ('color'),
                     'required' => true))
-                ->add('comentario', null, array('label' => $this->getTranslator()->trans('comentario')))
+                ->add('comentario', null, array('label' => ('comentario')))
 
         ;
     }
 
     protected function configureDatagridFilters(DatagridMapper $datagridMapper) {
         $datagridMapper
-                ->add('indicador', null, array('label' => $this->getTranslator()->trans('indicador')))
-                ->add('color', null, array('label' => $this->getTranslator()->trans('color')))
+                ->add('indicador', null, array('label' => ('indicador')))
+                ->add('color', null, array('label' => ('color')))
         ;
     }
 
     protected function configureListFields(ListMapper $listMapper) {
         $listMapper
-                ->addIdentifier('id', null, array('label' => $this->getTranslator()->trans('Id')))
-                ->add('indicador', null, array('label' => $this->getTranslator()->trans('indicador')))
-                ->add('limiteInferior', null, array('label' => $this->getTranslator()->trans('limite_inferior')))
-                ->add('limiteSuperior', null, array('label' => $this->getTranslator()->trans('limite_superior')))
-                ->add('color', null, array('label' => $this->getTranslator()->trans('color')))
-                ->add('comentario', null, array('label' => $this->getTranslator()->trans('comentario')))
+                ->addIdentifier('id', null, array('label' => ('Id')))
+                ->add('indicador', null, array('label' => ('indicador')))
+                ->add('limiteInferior', null, array('label' => ('limite_inferior')))
+                ->add('limiteSuperior', null, array('label' => ('limite_superior')))
+                ->add('color', null, array('label' => ('color')))
+                ->add('comentario', null, array('label' => ('comentario')))
 
         ;
     }

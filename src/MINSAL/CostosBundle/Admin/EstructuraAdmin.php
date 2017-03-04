@@ -18,12 +18,12 @@ class EstructuraAdmin extends Admin
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
-            ->add('codigo', null, array('label'=> $this->getTranslator()->trans('_codigo_')))
-            ->add('nombre', null, array('label'=> $this->getTranslator()->trans('_nombre_')))
-            ->add('nombreCorto', null, array('label'=> $this->getTranslator()->trans('_nombre_corto_')))
-            ->add('nivelCategoria', null, array('label'=> $this->getTranslator()->trans('_nivel_categoria_')))
-            ->add('tipoEstablecimiento', null, array('label'=> $this->getTranslator()->trans('_tipo_establecimiento_')))
-            ->add('parent', null, array('label' => $this->getTranslator()->trans('_unidad_superior_'),
+            ->add('codigo', null, array('label'=> ('_codigo_')))
+            ->add('nombre', null, array('label'=> ('_nombre_')))
+            ->add('nombreCorto', null, array('label'=> ('_nombre_corto_')))
+            ->add('nivelCategoria', null, array('label'=> ('_nivel_categoria_')))
+            ->add('tipoEstablecimiento', null, array('label'=> ('_tipo_establecimiento_')))
+            ->add('parent', null, array('label' => ('_unidad_superior_'),
                     'required' => false, 'expanded' => false,
                     'class' => 'CostosBundle:Estructura',
                     'property' => 'nombre',
@@ -33,11 +33,11 @@ class EstructuraAdmin extends Admin
                     }));
         ;
         if ($this->subject->getNivel() == 1){
-            $formMapper->add('contratosFijos', null, array('label'=> $this->getTranslator()->trans('_contratos_fijos_'),
+            $formMapper->add('contratosFijos', null, array('label'=> ('_contratos_fijos_'),
                 'required' => true, 'expanded' => true));
         }
         if ($this->subject->getNivel() == 3 and $this->subject->getParent()->getParent()){
-            $formMapper->add('ubicacionDependencia', null, array('label' => $this->getTranslator()->trans('_ubicacion_'),
+            $formMapper->add('ubicacionDependencia', null, array('label' => ('_ubicacion_'),
                     'required' => false, 'expanded' => false,
                     'class' => 'CostosBundle:Ubicacion',
                     'query_builder' => function ($repository) {                        
@@ -51,19 +51,19 @@ class EstructuraAdmin extends Admin
     protected function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
         $datagridMapper
-            ->add('codigo', null, array('label'=> $this->getTranslator()->trans('_codigo_')))
-            ->add('nombre', null, array('label'=> $this->getTranslator()->trans('_nombre_')))
-            ->add('parent', null, array('label'=> $this->getTranslator()->trans('_unidad_superior_')))
+            ->add('codigo', null, array('label'=> ('_codigo_')))
+            ->add('nombre', null, array('label'=> ('_nombre_')))
+            ->add('parent', null, array('label'=> ('_unidad_superior_')))
         ;
     }
 
     protected function configureListFields(ListMapper $listMapper)
     {
         $listMapper
-            ->addIdentifier('codigo', null, array('label'=> $this->getTranslator()->trans('_codigo_')))
-            ->add('nombre', null, array('label'=> $this->getTranslator()->trans('_nombre_')))
-            ->add('nivel', null, array('label'=> $this->getTranslator()->trans('_nivel_')))
-            ->add('parent', null, array('label'=> $this->getTranslator()->trans('_unidad_superior_')))
+            ->addIdentifier('codigo', null, array('label'=> ('_codigo_')))
+            ->add('nombre', null, array('label'=> ('_nombre_')))
+            ->add('nivel', null, array('label'=> ('_nivel_')))
+            ->add('parent', null, array('label'=> ('_unidad_superior_')))
         ;
     }
 

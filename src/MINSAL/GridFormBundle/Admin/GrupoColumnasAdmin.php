@@ -18,28 +18,28 @@ class GrupoColumnasAdmin extends Admin
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
-            ->add('codigo', null, array('label'=> $this->getTranslator()->trans('_codigo_')))
-            ->add('descripcion', null, array('label'=> $this->getTranslator()->trans('_descripcion_')))
-            ->add('grupoPadre', null, array('label'=> $this->getTranslator()->trans('_grupo_padre_')))
-            ->add('formulario', null, array('label'=> $this->getTranslator()->trans('_formulario_')))
+            ->add('codigo', null, array('label'=> ('_codigo_')))
+            ->add('descripcion', null, array('label'=> ('_descripcion_')))
+            ->add('grupoPadre', null, array('label'=> ('_grupo_padre_')))
+            ->add('formulario', null, array('label'=> ('_formulario_')))
         ;
     }
 
     protected function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
         $datagridMapper
-            ->add('descripcion', null, array('label'=> $this->getTranslator()->trans('_descripcion_')))
-            ->add('grupoPadre', null, array('label'=> $this->getTranslator()->trans('_grupo_padre_')))
-            ->add('formulario', null, array('label'=> $this->getTranslator()->trans('_formulario_')))
+            ->add('descripcion', null, array('label'=> ('_descripcion_')))
+            ->add('grupoPadre', null, array('label'=> ('_grupo_padre_')))
+            ->add('formulario', null, array('label'=> ('_formulario_')))
         ;
     }
 
     protected function configureListFields(ListMapper $listMapper)
     {
         $listMapper
-            ->addIdentifier('descripcion', null, array('label'=> $this->getTranslator()->trans('_descripcion_'))) 
-            ->add('grupoPadre', null, array('label'=> $this->getTranslator()->trans('_grupo_padre_')))
-            ->add('formulario', null, array('label'=> $this->getTranslator()->trans('_formulario_')))
+            ->addIdentifier('descripcion', null, array('label'=> ('_descripcion_'))) 
+            ->add('grupoPadre', null, array('label'=> ('_grupo_padre_')))
+            ->add('formulario', null, array('label'=> ('_formulario_')))
         ;
     }
 

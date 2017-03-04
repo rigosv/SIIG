@@ -18,24 +18,24 @@ class AlertaAdmin extends Admin
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
-                ->add('codigo', null, array('label' => $this->getTranslator()->trans('codigo'),
-                    'help' => $this->getTranslator()->trans('_ayuda_codigo_color_')))
-                ->add('color', null, array('label' => $this->getTranslator()->trans('color')))
+                ->add('codigo', null, array('label' => ('codigo'),
+                    'help' => ('_ayuda_codigo_color_')))
+                ->add('color', null, array('label' => ('color')))
         ;
     }
 
     protected function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
         $datagridMapper
-                ->add('color', null, array('label' => $this->getTranslator()->trans('color')))
+                ->add('color', null, array('label' => ('color')))
         ;
     }
 
     protected function configureListFields(ListMapper $listMapper)
     {
         $listMapper
-                ->addIdentifier('codigo', null, array('label' => $this->getTranslator()->trans('codigo')))
-                ->add('color', null, array('label' => $this->getTranslator()->trans('color')))
+                ->addIdentifier('codigo', null, array('label' => ('codigo')))
+                ->add('color', null, array('label' => ('color')))
 
         ;
     }

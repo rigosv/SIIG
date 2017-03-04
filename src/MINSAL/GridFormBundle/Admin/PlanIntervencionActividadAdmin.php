@@ -19,15 +19,15 @@ class PlanIntervencionActividadAdmin extends Admin
     {
         if (!$formMapper->getAdmin()->isChild()) {
             $formMapper            
-                ->add('planIntervencion', null, array('label'=> $this->getTranslator()->trans('_plan_intervencion_')));
+                ->add('planIntervencion', null, array('label'=> ('_plan_intervencion_')));
         }
         $formMapper
-            ->add('fechaCumplimiento', 'sonata_type_date_picker', array('label'=> $this->getTranslator()->trans('_fecha_cumplimiento_')))
-            ->add('descripcion', null, array('label'=> $this->getTranslator()->trans('_descripcion_')))
-            ->add('responsable', null, array('label'=> $this->getTranslator()->trans('_responsable_')))
-            ->add('fechaEvaluacion', 'sonata_type_date_picker', array('label'=> $this->getTranslator()->trans('_fecha_evaluacion_'), 'required' => false))
-            ->add('resultadoEvaluacion', null, array('label'=> $this->getTranslator()->trans('_resultado_evaluacion_')))
-            ->add('medidas', null, array('label'=> $this->getTranslator()->trans('_medidas_')))
+            ->add('fechaCumplimiento', 'sonata_type_date_picker', array('label'=> ('_fecha_cumplimiento_')))
+            ->add('descripcion', null, array('label'=> ('_descripcion_')))
+            ->add('responsable', null, array('label'=> ('_responsable_')))
+            ->add('fechaEvaluacion', 'sonata_type_date_picker', array('label'=> ('_fecha_evaluacion_'), 'required' => false))
+            ->add('resultadoEvaluacion', null, array('label'=> ('_resultado_evaluacion_')))
+            ->add('medidas', null, array('label'=> ('_medidas_')))
         ;
     }
 
@@ -35,7 +35,7 @@ class PlanIntervencionActividadAdmin extends Admin
     {
         if (!$datagridMapper->getAdmin()->isChild()) {
             $datagridMapper
-                ->add('planIntervencion', null, array('label'=> $this->getTranslator()->trans('_estandar_')))
+                ->add('planIntervencion', null, array('label'=> ('_estandar_')))
             ;
         }
     }
@@ -43,17 +43,17 @@ class PlanIntervencionActividadAdmin extends Admin
     protected function configureListFields(ListMapper $listMapper)
     {
         $listMapper
-            ->addIdentifier('id', null, array('label'=> $this->getTranslator()->trans('_codigo_')));
+            ->addIdentifier('id', null, array('label'=> ('_codigo_')));
         if (!$listMapper->getAdmin()->isChild()) {
             $listMapper->add('planIntervencion');
         }
         $listMapper
-            ->add('fechaCumplimiento', null, array('label'=> $this->getTranslator()->trans('_fecha_cumplimiento_')))
-            ->add('descripcion', null, array('label'=> $this->getTranslator()->trans('_descripcion_')))
-            ->add('responsable', null, array('label'=> $this->getTranslator()->trans('_responsable_')))
-            ->add('fechaEvaluacion', null, array('label'=> $this->getTranslator()->trans('_fecha_evaluacion_')))
-            ->add('resultadoEvaluacion', null, array('label'=> $this->getTranslator()->trans('_resultado_evaluacion_')))
-            ->add('medidas', null, array('label'=> $this->getTranslator()->trans('_medidas_')))
+            ->add('fechaCumplimiento', null, array('label'=> ('_fecha_cumplimiento_')))
+            ->add('descripcion', null, array('label'=> ('_descripcion_')))
+            ->add('responsable', null, array('label'=> ('_responsable_')))
+            ->add('fechaEvaluacion', null, array('label'=> ('_fecha_evaluacion_')))
+            ->add('resultadoEvaluacion', null, array('label'=> ('_resultado_evaluacion_')))
+            ->add('medidas', null, array('label'=> ('_medidas_')))
         ;
     }
     

@@ -18,24 +18,24 @@ class TipoIntervencionAdmin extends Admin
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
-            ->add('codigo', null, array('label'=> $this->getTranslator()->trans('_codigo_')))
-            ->add('descripcion', null, array('label'=> $this->getTranslator()->trans('_descripcion_')))
+            ->add('codigo', null, array('label'=> ('_codigo_')))
+            ->add('descripcion', null, array('label'=> ('_descripcion_')))
         ;
     }
 
     protected function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
         $datagridMapper
-            ->add('codigo', null, array('label'=> $this->getTranslator()->trans('_codigo_')))
-            ->add('descripcion', null, array('label'=> $this->getTranslator()->trans('_descripcion_')))            
+            ->add('codigo', null, array('label'=> ('_codigo_')))
+            ->add('descripcion', null, array('label'=> ('_descripcion_')))            
         ;
     }
 
     protected function configureListFields(ListMapper $listMapper)
     {
         $listMapper
-            ->addIdentifier('codigo', null, array('label'=> $this->getTranslator()->trans('_codigo_')))
-            ->add('descripcion', null, array('label'=> $this->getTranslator()->trans('_descripcion_'))) 
+            ->addIdentifier('codigo', null, array('label'=> ('_codigo_')))
+            ->add('descripcion', null, array('label'=> ('_descripcion_'))) 
         ;
     }
 

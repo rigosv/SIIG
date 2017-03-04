@@ -158,12 +158,12 @@ class FichaTecnicaAdminController extends Controller {
         );
     }
 
-    public function tableroAction($sala_default = null) {
+    public function tableroAction($sala_default = null, Request $request) {
         $em = $this->getDoctrine()->getManager();
         $usuario = $this->getUser();
         $usuarioSalas = array();
         
-        $req = $this->getRequest();
+        $req = $request;
         
         $sala_default = ($sala_default == null) ? 0 : $sala_default;
         
@@ -327,10 +327,10 @@ class FichaTecnicaAdminController extends Controller {
     /**
      * @Route("/sala/tablas-datos", name="tablas_datos_sala", options={"expose"=true})
      */
-    public function tablasDatosSalaAction() {
+    public function tablasDatosSalaAction(Request $request) {
         $em = $this->getDoctrine()->getManager();
 
-        $req = $this->getRequest();
+        $req = $request;
 
         $titulos = json_decode($req->get('titulos'), true);
         $tablas = json_decode($req->get('tablas'), true);

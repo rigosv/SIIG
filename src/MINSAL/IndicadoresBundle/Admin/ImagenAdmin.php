@@ -19,8 +19,8 @@ class ImagenAdmin extends Admin
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
-            ->add('titulo', null, array('label'=> $this->getTranslator()->trans('_titulo_')))
-            ->add('descripcion', null, array('label'=> $this->getTranslator()->trans('_descripcion_')))
+            ->add('titulo', null, array('label'=> ('_titulo_')))
+            ->add('descripcion', null, array('label'=> ('_descripcion_')))
             ->add('sala')
             ->add('archivo', 'file', array('required'=>false))
         ;
@@ -29,8 +29,8 @@ class ImagenAdmin extends Admin
     protected function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
         $datagridMapper
-            ->add('titulo', null, array('label'=> $this->getTranslator()->trans('_titulo_')))
-            ->add('descripcion',null, array('label'=> $this->getTranslator()->trans('_descripcion_')))
+            ->add('titulo', null, array('label'=> ('_titulo_')))
+            ->add('descripcion',null, array('label'=> ('_descripcion_')))
             ->add('sala')
         ;
     }
@@ -38,10 +38,10 @@ class ImagenAdmin extends Admin
     protected function configureListFields(ListMapper $listMapper)
     {
         $listMapper
-            ->addIdentifier('titulo', null, array('label'=> $this->getTranslator()->trans('_titulo_')))
-            ->add('descripcion', null, array('label'=> $this->getTranslator()->trans('_descripcion_')))
+            ->addIdentifier('titulo', null, array('label'=> ('_titulo_')))
+            ->add('descripcion', null, array('label'=> ('_descripcion_')))
             ->add('sala')
-            ->add('archivo', 'file', array('label'=> $this->getTranslator()->trans('_archivo_'),
+            ->add('archivo', 'file', array('label'=> ('_archivo_'),
                                             'template' => 'IndicadoresBundle:CRUD:list_image.html.twig'))                
         ;
     }

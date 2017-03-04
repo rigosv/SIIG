@@ -8,6 +8,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use MINSAL\IndicadoresBundle\Entity\GrupoIndicadores;
 use MINSAL\IndicadoresBundle\Entity\SalaAcciones;
+use Symfony\Component\HttpFoundation\Request;
 
 class SalaAccionesAdminController extends Controller
 {
@@ -58,9 +59,9 @@ class SalaAccionesAdminController extends Controller
     /**
      * @Route("/sala/{id}/accion/guardar", name="accion_guardar", options={"expose"=true})
      */
-    public function guardarAccion(GrupoIndicadores $sala) {
+    public function guardarAccion(GrupoIndicadores $sala, Request $request) {
         $em = $this->getDoctrine()->getManager();
-        $req = $this->getRequest();        
+        $req = $request;        
         $usuario = $this->getUser();
         $resp = array();
 

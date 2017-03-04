@@ -45,9 +45,9 @@ class OrigenDatosAdminController extends Controller
             return $this->get('translator')->trans('fusion.selecione_2_o_mas_elementos');
     }
 
-    public function batchActionMerge(ProxyQueryInterface $selectedModelQuery, $esPivote = false)
+    public function batchActionMerge(ProxyQueryInterface $selectedModelQuery, $esPivote = false, Request $request)
     {
-        $selecciones = $this->getRequest()->get('idx');
+        $selecciones = $request->get('idx');
         $em = $this->getDoctrine()->getManager();
 
         //Obtener la información de los campos de cada origen
@@ -225,9 +225,9 @@ class OrigenDatosAdminController extends Controller
         return new RedirectResponse($this->admin->generateUrl('list', $this->admin->getFilterParameters()));
     }
 
-    public function mergeSaveAction()
+    public function mergeSaveAction(Request $request)
     {
-        $req = $this->getRequest();
+        $req = $request;
         $opciones = $req->get('fusionar');
         $em = $this->getDoctrine()->getManager();
 
@@ -264,9 +264,9 @@ class OrigenDatosAdminController extends Controller
         return new RedirectResponse($this->admin->generateUrl('list', $this->admin->getFilterParameters()));
     }
 
-    public function loadDataAction()
+    public function loadDataAction(Request $request)
     {
-        $id = $this->getRequest()->get('id');
+        $id = $request->get('id');
         $origen = $this->getDoctrine()->getManager()->find('IndicadoresBundle:OrigenDatos', $id);
         $valid = $this->batchActionLoadDataIsRelevant(array($id));
         if($valid === true)

@@ -18,27 +18,27 @@ class CampoAdmin extends Admin
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
-            ->add('significadoCampo', null, array('label'=> $this->getTranslator()->trans('_significado_campo_')))
-            ->add('descripcion', null, array('label'=> $this->getTranslator()->trans('_descripcion_')))
-            ->add('formularios', null, array('label'=> $this->getTranslator()->trans('_formulario_'), 'by_reference' => false))
-            ->add('reglaValidacion', null, array('label'=> $this->getTranslator()->trans('_regla_validacion_')))
-            ->add('msjValidacion', null, array('label'=> $this->getTranslator()->trans('_msj_validacion_')))
-            ->add('posicion', null, array('label'=> $this->getTranslator()->trans('_posicion_')))
-            ->add('ancho', null, array('label'=> $this->getTranslator()->trans('_ancho_')))
-            ->add('esEditable', null, array('label'=> $this->getTranslator()->trans('_es_editable_')))
-            ->add('oculto', null, array('label'=> $this->getTranslator()->trans('_oculto_')))
-            ->add('tipoDato', null, array('label'=> $this->getTranslator()->trans('_tipo_dato_')))
-            ->add('tipoControl', null, array('label'=> $this->getTranslator()->trans('_tipo_control_')))
-            ->add('alineacion', null, array('label'=> $this->getTranslator()->trans('_alineacion_')))
-            ->add('formato', null, array('label'=> $this->getTranslator()->trans('_formato_')))
-            ->add('origen', null, array('label'=> $this->getTranslator()->trans('_origen_campo_')))
-            ->add('grupoColumnas', null, array('label'=> $this->getTranslator()->trans('_grupo_columnas_')))
-            ->add('origenPivote', null, array('label'=> $this->getTranslator()->trans('_origen_pivote_')))            
+            ->add('significadoCampo', null, array('label'=> ('_significado_campo_')))
+            ->add('descripcion', null, array('label'=> ('_descripcion_')))
+            ->add('formularios', null, array('label'=> ('_formulario_'), 'by_reference' => false))
+            ->add('reglaValidacion', null, array('label'=> ('_regla_validacion_')))
+            ->add('msjValidacion', null, array('label'=> ('_msj_validacion_')))
+            ->add('posicion', null, array('label'=> ('_posicion_')))
+            ->add('ancho', null, array('label'=> ('_ancho_')))
+            ->add('esEditable', null, array('label'=> ('_es_editable_')))
+            ->add('oculto', null, array('label'=> ('_oculto_')))
+            ->add('tipoDato', null, array('label'=> ('_tipo_dato_')))
+            ->add('tipoControl', null, array('label'=> ('_tipo_control_')))
+            ->add('alineacion', null, array('label'=> ('_alineacion_')))
+            ->add('formato', null, array('label'=> ('_formato_')))
+            ->add('origen', null, array('label'=> ('_origen_campo_')))
+            ->add('grupoColumnas', null, array('label'=> ('_grupo_columnas_')))
+            ->add('origenPivote', null, array('label'=> ('_origen_pivote_')))            
             ->setHelps(array(
-                'formula' => $this->getTranslator()->trans('_ayuda_formula_campo_'),
-                'reglaValidacion' => $this->getTranslator()->trans('_ayuda_validacion_campo_'),
-                'origen' => $this->getTranslator()->trans('_ayuda_origen_campo_'),
-                'origenPivote' => $this->getTranslator()->trans('_ayuda_origen_pivote_')
+                'formula' => ('_ayuda_formula_campo_'),
+                'reglaValidacion' => ('_ayuda_validacion_campo_'),
+                'origen' => ('_ayuda_origen_campo_'),
+                'origenPivote' => ('_ayuda_origen_pivote_')
             ))
             
         ;
@@ -47,18 +47,18 @@ class CampoAdmin extends Admin
     protected function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
         $datagridMapper
-            ->add('formularios', null, array('label'=> $this->getTranslator()->trans('_formulario_')))
-            ->add('significadoCampo', null, array('label'=> $this->getTranslator()->trans('_significado_campo_')))
+            ->add('formularios', null, array('label'=> ('_formulario_')))
+            ->add('significadoCampo', null, array('label'=> ('_significado_campo_')))
         ;
     }
 
     protected function configureListFields(ListMapper $listMapper)
     {
         $listMapper            
-            ->add('significadoCampo', null, array('label'=> $this->getTranslator()->trans('_significado_campo_')))
-            ->addIdentifier('descripcion', null, array('label'=> $this->getTranslator()->trans('_descripcion_'))) 
-            ->add('posicion', null, array('label'=> $this->getTranslator()->trans('_posicion_')))
-            ->add('formularios', null, array('label'=> $this->getTranslator()->trans('_formulario_')))
+            ->add('significadoCampo', null, array('label'=> ('_significado_campo_')))
+            ->addIdentifier('descripcion', null, array('label'=> ('_descripcion_'))) 
+            ->add('posicion', null, array('label'=> ('_posicion_')))
+            ->add('formularios', null, array('label'=> ('_formulario_')))
             ->add('_action', 'actions', array(
             'actions' => array(
                 'edit' => array(),

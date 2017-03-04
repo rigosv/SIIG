@@ -28,24 +28,24 @@ class IndicadorAdmin extends Admin
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
-            ->add('codigo', null, array('label'=> $this->getTranslator()->trans('_codigo_')))
-            ->add('descripcion', null, array('label'=> $this->getTranslator()->trans('_descripcion_')))
-            ->add('estandar', null, array('label'=> $this->getTranslator()->trans('_estandar_')))
-            ->add('dimension', null, array('label'=> $this->getTranslator()->trans('_dimension_calidad_')))
-            ->add('formaEvaluacion', 'choice', array('label' => $this->getTranslator()->trans('_forma_evaluacion_'),
+            ->add('codigo', null, array('label'=> ('_codigo_')))
+            ->add('descripcion', null, array('label'=> ('_descripcion_')))
+            ->add('estandar', null, array('label'=> ('_estandar_')))
+            ->add('dimension', null, array('label'=> ('_dimension_calidad_')))
+            ->add('formaEvaluacion', 'choice', array('label' => ('_forma_evaluacion_'),
                         'choices' => array(
-                            'cumplimiento_porcentaje_aceptacion'=>$this->getTranslator()->trans('_cumplimiento_porcentaje_aceptacion_'),
-                            'cumplimiento_criterios'=>$this->getTranslator()->trans('_cumplimiento_criterios_'),
-                            'promedio' => $this->getTranslator()->trans('_promedio_')
+                            'cumplimiento_porcentaje_aceptacion'=>('_cumplimiento_porcentaje_aceptacion_'),
+                            'cumplimiento_criterios'=>('_cumplimiento_criterios_'),
+                            'promedio' => ('_promedio_')
                             )
                         ))
-            ->add('porcentajeAceptacion', null, array('label'=> $this->getTranslator()->trans('_porcentaje_aceptacion_')))
-            ->add('unidadMedida', null, array('label'=> $this->getTranslator()->trans('_unidad_medida_')))
-            ->add('esTrazador', null, array('label'=> $this->getTranslator()->trans('_es_trazador_')))
-            ->add('ponderaEstandar', null, array('label'=> $this->getTranslator()->trans('_pondera_estandar_')))
-            ->add('posicion', null, array('label'=> $this->getTranslator()->trans('_posicion_')))            
+            ->add('porcentajeAceptacion', null, array('label'=> ('_porcentaje_aceptacion_')))
+            ->add('unidadMedida', null, array('label'=> ('_unidad_medida_')))
+            ->add('esTrazador', null, array('label'=> ('_es_trazador_')))
+            ->add('ponderaEstandar', null, array('label'=> ('_pondera_estandar_')))
+            ->add('posicion', null, array('label'=> ('_posicion_')))            
             ->add('criterios', null, 
-                    array('label'=> $this->getTranslator()->trans('_criterios_'), 
+                    array('label'=> ('_criterios_'), 
                         'expanded' => false,
                         'group_by'=> 'formulario',
                         'multiple' => true,
@@ -59,7 +59,7 @@ class IndicadorAdmin extends Admin
                                         ;
                             }))
             ->add('alertas', 'entity', 
-                    array('label'=> $this->getTranslator()->trans('_alertas_'), 
+                    array('label'=> ('_alertas_'), 
                     'expanded' => false, 
                     'multiple' => true,
                     'by_reference' => false,
@@ -73,29 +73,29 @@ class IndicadorAdmin extends Admin
         ;
         $formMapper
             ->setHelps(array(
-                'estandar' => $this->getTranslator()->trans('_indicador_estandar_help_'),
-                'esTrazador' => $this->getTranslator()->trans('_es_trazador_help_'),
-                'ponderaEstandar' => $this->getTranslator()->trans('_pondera_estandar_help_'),
-                'posicion' => $this->getTranslator()->trans('_posicion_help_')
+                'estandar' => ('_indicador_estandar_help_'),
+                'esTrazador' => ('_es_trazador_help_'),
+                'ponderaEstandar' => ('_pondera_estandar_help_'),
+                'posicion' => ('_posicion_help_')
             ));
     }
 
     protected function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
         $datagridMapper
-            ->add('codigo', null, array('label'=> $this->getTranslator()->trans('_codigo_')))
-            ->add('descripcion', null, array('label'=> $this->getTranslator()->trans('_descripcion_')))
-            ->add('estandar', null, array('label'=> $this->getTranslator()->trans('_estandar_')))
+            ->add('codigo', null, array('label'=> ('_codigo_')))
+            ->add('descripcion', null, array('label'=> ('_descripcion_')))
+            ->add('estandar', null, array('label'=> ('_estandar_')))
         ;
     }
 
     protected function configureListFields(ListMapper $listMapper)
     {
         $listMapper
-            ->addIdentifier('codigo', null, array('label'=> $this->getTranslator()->trans('_codigo_')))
-            ->add('descripcion', null, array('label'=> $this->getTranslator()->trans('_descripcion_'))) 
-            ->add('estandar', null, array('label'=> $this->getTranslator()->trans('_estandar_'))) 
-            ->add('criterios', null, array('label'=> $this->getTranslator()->trans('_criterios_'))) 
+            ->addIdentifier('codigo', null, array('label'=> ('_codigo_')))
+            ->add('descripcion', null, array('label'=> ('_descripcion_'))) 
+            ->add('estandar', null, array('label'=> ('_estandar_'))) 
+            ->add('criterios', null, array('label'=> ('_criterios_'))) 
         ;
     }
 

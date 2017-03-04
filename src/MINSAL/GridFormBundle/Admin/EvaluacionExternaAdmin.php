@@ -17,31 +17,31 @@ class EvaluacionExternaAdmin extends Admin
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
-            ->add('establecimiento', null, array('label'=> $this->getTranslator()->trans('_establecimiento_')))
-            ->add('tipoEvaluacion', null, array('label'=> $this->getTranslator()->trans('_tipo_evaluacion_')))
-            ->add('anio', null, array('label'=> $this->getTranslator()->trans('_anio_')))
-            ->add('valor', null, array('label'=> $this->getTranslator()->trans('_valor_')))
+            ->add('establecimiento', null, array('label'=> ('_establecimiento_')))
+            ->add('tipoEvaluacion', null, array('label'=> ('_tipo_evaluacion_')))
+            ->add('anio', null, array('label'=> ('_anio_')))
+            ->add('valor', null, array('label'=> ('_valor_')))
         ;
     }
 
     protected function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
         $datagridMapper
-            ->add('establecimiento', null, array('label'=> $this->getTranslator()->trans('_establecimiento_')))
-            ->add('tipoEvaluacion', null, array('label'=> $this->getTranslator()->trans('_tipo_evaluacion_')))
-            ->add('anio', null, array('label'=> $this->getTranslator()->trans('_anio_')))
-            ->add('valor', null, array('label'=> $this->getTranslator()->trans('_valor_')))
+            ->add('establecimiento', null, array('label'=> ('_establecimiento_')))
+            ->add('tipoEvaluacion', null, array('label'=> ('_tipo_evaluacion_')))
+            ->add('anio', null, array('label'=> ('_anio_')))
+            ->add('valor', null, array('label'=> ('_valor_')))
         ;
     }
 
     protected function configureListFields(ListMapper $listMapper)
     {
         $listMapper
-            ->addIdentifier('id', null, array('label'=> $this->getTranslator()->trans('_id_')))
-            ->add('establecimiento', null, array('label'=> $this->getTranslator()->trans('_establecimiento_')))
-            ->add('tipoEvaluacion', null, array('label'=> $this->getTranslator()->trans('_tipo_evaluacion_')))
-            ->add('anio', null, array('label'=> $this->getTranslator()->trans('_anio_')))
-            ->add('valor', null, array('label'=> $this->getTranslator()->trans('_valor_')))
+            ->addIdentifier('id', null, array('label'=> ('_id_')))
+            ->add('establecimiento', null, array('label'=> ('_establecimiento_')))
+            ->add('tipoEvaluacion', null, array('label'=> ('_tipo_evaluacion_')))
+            ->add('anio', null, array('label'=> ('_anio_')))
+            ->add('valor', null, array('label'=> ('_valor_')))
         ;
     }
 

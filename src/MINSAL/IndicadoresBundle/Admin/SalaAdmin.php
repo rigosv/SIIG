@@ -18,7 +18,7 @@ class SalaAdmin extends Admin
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
-            ->add('nombre', null, array('label'=> $this->getTranslator()->trans('nombre')))
+            ->add('nombre', null, array('label'=> ('nombre')))
             ->add('imagenes', 'vlabs_file', array(
                 'required' => false
             ))
@@ -28,14 +28,14 @@ class SalaAdmin extends Admin
     protected function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
         $datagridMapper
-            ->add('nombre',null, array('label'=> $this->getTranslator()->trans('nombre')))
+            ->add('nombre',null, array('label'=> ('nombre')))
         ;
     }
 
     protected function configureListFields(ListMapper $listMapper)
     {
         $listMapper
-            ->add('nombre', null, array('label'=> $this->getTranslator()->trans('nombre')))            
+            ->add('nombre', null, array('label'=> ('nombre')))            
         ;
     }
 

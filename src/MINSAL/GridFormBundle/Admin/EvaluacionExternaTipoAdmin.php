@@ -18,30 +18,30 @@ class EvaluacionExternaTipoAdmin extends Admin
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
-            ->add('codigo', null, array('label'=> $this->getTranslator()->trans('_codigo_')))
-            ->add('descripcion', null, array('label'=> $this->getTranslator()->trans('_descripcion_')))
-            ->add('unidadMedida', null, array('label'=> $this->getTranslator()->trans('_unidad_medida_')))
-            ->add('categoriaEvaluacion', null, array('label'=> $this->getTranslator()->trans('_categoria_evaluacion_')))
+            ->add('codigo', null, array('label'=> ('_codigo_')))
+            ->add('descripcion', null, array('label'=> ('_descripcion_')))
+            ->add('unidadMedida', null, array('label'=> ('_unidad_medida_')))
+            ->add('categoriaEvaluacion', null, array('label'=> ('_categoria_evaluacion_')))
         ;
     }
 
     protected function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
         $datagridMapper
-            ->add('codigo', null, array('label'=> $this->getTranslator()->trans('_codigo_')))
-            ->add('descripcion', null, array('label'=> $this->getTranslator()->trans('_descripcion_')))
-            ->add('unidadMedida', null, array('label'=> $this->getTranslator()->trans('_unidad_medida_')))
-            ->add('categoriaEvaluacion', null, array('label'=> $this->getTranslator()->trans('_categoria_evaluacion_')))
+            ->add('codigo', null, array('label'=> ('_codigo_')))
+            ->add('descripcion', null, array('label'=> ('_descripcion_')))
+            ->add('unidadMedida', null, array('label'=> ('_unidad_medida_')))
+            ->add('categoriaEvaluacion', null, array('label'=> ('_categoria_evaluacion_')))
         ;
     }
 
     protected function configureListFields(ListMapper $listMapper)
     {
         $listMapper
-            ->addIdentifier('codigo', null, array('label'=> $this->getTranslator()->trans('_codigo_')))
-            ->add('descripcion', null, array('label'=> $this->getTranslator()->trans('_descripcion_')))
-            ->add('unidadMedida', null, array('label'=> $this->getTranslator()->trans('_unidad_medida_')))
-            ->add('categoriaEvaluacion', null, array('label'=> $this->getTranslator()->trans('_categoria_evaluacion_')))
+            ->addIdentifier('codigo', null, array('label'=> ('_codigo_')))
+            ->add('descripcion', null, array('label'=> ('_descripcion_')))
+            ->add('unidadMedida', null, array('label'=> ('_unidad_medida_')))
+            ->add('categoriaEvaluacion', null, array('label'=> ('_categoria_evaluacion_')))
         ;
     }
 

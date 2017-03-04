@@ -19,17 +19,17 @@ class AgenciaAdmin extends Admin
     {
         
         $formMapper
-            ->tab($this->getTranslator()->trans('_general_'))
+            ->tab(('_general_'))
                 ->with('', array('class' => 'col-md-6'))
-                    ->add('codigo', null, array('label'=> $this->getTranslator()->trans('codigo')))
-                    ->add('nombre', null, array('label'=> $this->getTranslator()->trans('nombre')))
+                    ->add('codigo', null, array('label'=> ('codigo')))
+                    ->add('nombre', null, array('label'=> ('nombre')))
                 ->end()
             ->end()
-            ->tab($this->getTranslator()->trans('_accesos_'))
-                ->with($this->getTranslator()->trans(' '), array('class' => 'col-md-6'))
+            ->tab(('_accesos_'))
+                ->with((' '), array('class' => 'col-md-6'))
                     ->add('indicadores', null, 
                             array(
-                                'label' => $this->getTranslator()->trans('indicadores'), 
+                                'label' => ('indicadores'), 
                                 'expanded' => false,
                                 'class' => 'IndicadoresBundle:FichaTecnica',
                                 'query_builder' => function ($repository) {
@@ -39,10 +39,10 @@ class AgenciaAdmin extends Admin
                                 )
                         )                    
                 ->end()
-                ->with($this->getTranslator()->trans(''), array('class' => 'col-md-6'))
+                ->with((''), array('class' => 'col-md-6'))
                     ->add('formularios', null, 
                             array(
-                                'label' => $this->getTranslator()->trans('_formularios_'), 
+                                'label' => ('_formularios_'), 
                                 'expanded' => false,
                                 'class' => 'GridFormBundle:Formulario',
                                 'query_builder' => function ($repository) {
@@ -61,16 +61,16 @@ class AgenciaAdmin extends Admin
     protected function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
         $datagridMapper
-            ->add('codigo', null, array('label'=> $this->getTranslator()->trans('codigo')))
-            ->add('nombre',null, array('label'=> $this->getTranslator()->trans('nombre')))
+            ->add('codigo', null, array('label'=> ('codigo')))
+            ->add('nombre',null, array('label'=> ('nombre')))
         ;
     }
 
     protected function configureListFields(ListMapper $listMapper)
     {
         $listMapper
-            ->addIdentifier('codigo', null, array('label'=> $this->getTranslator()->trans('codigo')))
-            ->add('nombre', null, array('label'=> $this->getTranslator()->trans('nombre')))            
+            ->addIdentifier('codigo', null, array('label'=> ('codigo')))
+            ->add('nombre', null, array('label'=> ('nombre')))            
         ;
     }
 

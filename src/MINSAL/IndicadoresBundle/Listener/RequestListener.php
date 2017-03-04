@@ -66,9 +66,9 @@ class RequestListener
      */
     protected function _getCurrentUser()
     {
-        if ($this->_container->get('security.context')->getToken())
+        if ($this->_container->get('security.token_storage')->getToken())
         {
-            return $this->_container->get('security.context')->getToken()->getUser();
+            return $this->_container->get('security.token_storage')->getToken()->getUser();
         }
     }
     

@@ -18,13 +18,13 @@ class ReglaTransformacionAdmin extends Admin
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
-                ->add('diccionario', null, array('label' => $this->getTranslator()->trans('javascript.diccionario_transformacion')))
-                ->add('regla', 'choice', array('label' => $this->getTranslator()->trans('_regla_'),
+                ->add('diccionario', null, array('label' => ('javascript.diccionario_transformacion')))
+                ->add('regla', 'choice', array('label' => ('_regla_'),
                     'choices'   => array('=' => 'Igual'),
                     'required'=>true))
-                ->add('limiteInferior', null, array('label' => $this->getTranslator()->trans('limite_inferior'),
+                ->add('limiteInferior', null, array('label' => ('limite_inferior'),
                     'required'=>true))
-                ->add('transformacion', null, array('label' => $this->getTranslator()->trans('_transformacion_')))
+                ->add('transformacion', null, array('label' => ('_transformacion_')))
 
         ;
     }
@@ -32,19 +32,19 @@ class ReglaTransformacionAdmin extends Admin
     protected function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
         $datagridMapper
-                ->add('diccionario', null, array('label' => $this->getTranslator()->trans('indicador')))
+                ->add('diccionario', null, array('label' => ('indicador')))
         ;
     }
 
     protected function configureListFields(ListMapper $listMapper)
     {
         $listMapper
-                ->addIdentifier('id', null, array('label' => $this->getTranslator()->trans('Id')))
-                ->add('regla', null, array('label' => $this->getTranslator()->trans('_regla_')))
-                ->add('diccionario', null, array('label' => $this->getTranslator()->trans('indicador')))
-                ->add('limiteInferior', null, array('label' => $this->getTranslator()->trans('_valor_')))
-                ->add('limiteSuperior', null, array('label' => $this->getTranslator()->trans('limite_superior')))
-                ->add('transformacion', null, array('label' => $this->getTranslator()->trans('_transformacion_')))
+                ->addIdentifier('id', null, array('label' => ('Id')))
+                ->add('regla', null, array('label' => ('_regla_')))
+                ->add('diccionario', null, array('label' => ('indicador')))
+                ->add('limiteInferior', null, array('label' => ('_valor_')))
+                ->add('limiteSuperior', null, array('label' => ('limite_superior')))
+                ->add('transformacion', null, array('label' => ('_transformacion_')))
 
         ;
     }
