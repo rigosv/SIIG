@@ -149,38 +149,16 @@ class PlanMejora
         return $this->criterios;
     }
 
-    /**
-     * Set periodoIngreso
-     *
-     * @param \MINSAL\CostosBundle\Entity\PeriodoIngreso $periodoIngreso
-     *
-     * @return PlanMejora
-     */
-    public function setPeriodoIngreso(\MINSAL\CostosBundle\Entity\PeriodoIngreso $periodoIngreso = null)
-    {
-        $this->periodoIngreso = $periodoIngreso;
-
-        return $this;
-    }
-
-    /**
-     * Get periodoIngreso
-     *
-     * @return \MINSAL\CostosBundle\Entity\PeriodoIngreso
-     */
-    public function getPeriodoIngreso()
-    {
-        return $this->periodoIngreso;
-    }
+    
 
     /**
      * Set periodo
      *
-     * @param \MINSAL\CalidadBundle\Entity\PeriodoIngreso $periodo
+     * @param \MINSAL\GridFormBundle\Entity\PeriodoIngreso $periodo
      *
      * @return PlanMejora
      */
-    public function setPeriodo(\MINSAL\CalidadBundle\Entity\PeriodoIngreso $periodo = null)
+    public function setPeriodo(\MINSAL\GridFormBundle\Entity\PeriodoIngreso $periodo = null)
     {
         $this->periodo = $periodo;
 
@@ -190,7 +168,7 @@ class PlanMejora
     /**
      * Get periodo
      *
-     * @return \MINSAL\CalidadBundle\Entity\PeriodoIngreso
+     * @return \MINSAL\GridFormBundle\Entity\PeriodoIngreso
      */
     public function getPeriodo()
     {

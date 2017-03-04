@@ -233,4 +233,8 @@ class Estandar
     {
         return $this->proceso;
     }
+    
+    public function __toString() {
+        return $this->getNombre();
+    }
 }
