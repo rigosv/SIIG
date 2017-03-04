@@ -21,7 +21,8 @@ class EstandarAdmin extends Admin
             ->add('codigo', null, array('label'=> ('_codigo_')))
             ->add('nombre', null, array('label'=> ('_nombre_')))
             ->add('descripcion', null, array('label'=> ('_descripcion_')))
-            ->add('formularioCaptura', null, array('label'=> ('_formulario_captura_datos_')))
+            ->add('formularioCaptura', null, array('label'=> ('_formulario_captura_datos_'), 'required' => true))
+            ->add('proceso', null, array('label'=> ('_proceso_')))
         ;
     }
 
@@ -31,6 +32,7 @@ class EstandarAdmin extends Admin
             ->add('codigo', null, array('label'=> ('_codigo_')))
             ->add('nombre', null, array('label'=> ('_nombre_')))
             ->add('formularioCaptura', null, array('label'=> ('_formulario_captura_datos_')))
+            ->add('proceso', null, array('label'=> ('_proceso_')))
         ;
     }
 
@@ -41,6 +43,7 @@ class EstandarAdmin extends Admin
             ->add('nombre', null, array('label'=> ('_nombre_')))
             ->add('descripcion', null, array('label'=> ('_descripcion_')))
             ->add('formularioCaptura', null, array('label'=> ('_formulario_captura_datos_')))
+            ->add('proceso', null, array('label'=> ('_proceso_')))
         ;
     }
 

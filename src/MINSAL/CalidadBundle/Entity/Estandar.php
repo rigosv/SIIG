@@ -25,28 +25,33 @@ class Estandar
     /**
      * @var string $codigo
      *
-     * @ORM\Column(name="codigo", type="string", length=40, nullable=true)
+     * @ORM\Column(name="codigo", type="string", length=40, nullable=false)
      */
     private $codigo;
 
     /**
      * @var string $nombre
      *
-     * @ORM\Column(name="nombre", type="string", length=100, nullable=true)
+     * @ORM\Column(name="nombre", type="string", length=100, nullable=false)
      */
     private $nombre;
 
     /**
      * @var string $descripcion
      *
-     * @ORM\Column(name="descripcion", type="text", nullable=true)
+     * @ORM\Column(name="descripcion", type="text", nullable=false)
      */
     private $descripcion;
     
-     /**
+    /**
      * @ORM\ManyToOne(targetEntity="MINSAL\GridFormBundle\Entity\Formulario", inversedBy="estandares")
      * */
     private $formularioCaptura;
+    
+    /**
+     * @ORM\ManyToOne(targetEntity="Proceso")
+     * */
+    private $proceso;
     
     /**
      * @ORM\OneToMany(targetEntity="Criterio", mappedBy="estandar", cascade={"all"}, orphanRemoval=true)
@@ -203,5 +208,29 @@ class Estandar
     public function getDescripcion()
     {
         return $this->descripcion;
+    }
+
+    /**
+     * Set proceso
+     *
+     * @param \MINSAL\CalidadBundle\Entity\Proceso $proceso
+     *
+     * @return Estandar
+     */
+    public function setProceso(\MINSAL\CalidadBundle\Entity\Proceso $proceso = null)
+    {
+        $this->proceso = $proceso;
+
+        return $this;
+    }
+
+    /**
+     * Get proceso
+     *
+     * @return \MINSAL\CalidadBundle\Entity\Proceso
+     */
+    public function getProceso()
+    {
+        return $this->proceso;
     }
 }
