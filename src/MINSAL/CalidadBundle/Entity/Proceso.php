@@ -40,7 +40,7 @@ class Proceso
     private $descripcion;
     
     /**
-     * @ORM\ManyToOne(targetEntity="Proceso", inversedBy="procesos")
+     * @ORM\ManyToOne(targetEntity="Dimension", inversedBy="procesos")
      * */
     private $dimension;
     
@@ -112,11 +112,11 @@ class Proceso
     /**
      * Set dimension
      *
-     * @param \MINSAL\GridFormBundle\Entity\Formulario $dimension
+     * @param \MINSAL\CalidadBundle\Entity\Dimension $dimension
      *
      * @return Proceso
      */
-    public function setDimension(\MINSAL\GridFormBundle\Entity\Formulario $dimension = null)
+    public function setDimension(\MINSAL\CalidadBundle\Entity\Dimension $dimension = null)
     {
         $this->dimension = $dimension;
 
@@ -126,7 +126,7 @@ class Proceso
     /**
      * Get dimension
      *
-     * @return \MINSAL\GridFormBundle\Entity\Formulario
+     * @return \MINSAL\CalidadBundle\Entity\Dimension
      */
     public function getDimension()
     {
