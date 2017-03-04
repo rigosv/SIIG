@@ -35,6 +35,15 @@ class PlanMejora
     private $establecimiento;
     
     /**
+     * @ORM\ManyToOne(targetEntity="MINSAL\GridFormBundle\Entity\PeriodoIngreso")
+     * @ORM\JoinColumns({
+     *                   @ORM\JoinColumn(name="anio_periodo", referencedColumnName="anio"), 
+     *                   @ORM\JoinColumn(name="mes_periodo", referencedColumnName="mes")
+     *                  })     
+     **/
+    private $periodo;
+    
+    /**
     * @ORM\OneToMany(targetEntity="Criterio", mappedBy="planMejora", cascade={"all"}, orphanRemoval=true)
     */
     private $criterios;
@@ -138,5 +147,53 @@ class PlanMejora
     public function getCriterios()
     {
         return $this->criterios;
+    }
+
+    /**
+     * Set periodoIngreso
+     *
+     * @param \MINSAL\CostosBundle\Entity\PeriodoIngreso $periodoIngreso
+     *
+     * @return PlanMejora
+     */
+    public function setPeriodoIngreso(\MINSAL\CostosBundle\Entity\PeriodoIngreso $periodoIngreso = null)
+    {
+        $this->periodoIngreso = $periodoIngreso;
+
+        return $this;
+    }
+
+    /**
+     * Get periodoIngreso
+     *
+     * @return \MINSAL\CostosBundle\Entity\PeriodoIngreso
+     */
+    public function getPeriodoIngreso()
+    {
+        return $this->periodoIngreso;
+    }
+
+    /**
+     * Set periodo
+     *
+     * @param \MINSAL\CalidadBundle\Entity\PeriodoIngreso $periodo
+     *
+     * @return PlanMejora
+     */
+    public function setPeriodo(\MINSAL\CalidadBundle\Entity\PeriodoIngreso $periodo = null)
+    {
+        $this->periodo = $periodo;
+
+        return $this;
+    }
+
+    /**
+     * Get periodo
+     *
+     * @return \MINSAL\CalidadBundle\Entity\PeriodoIngreso
+     */
+    public function getPeriodo()
+    {
+        return $this->periodo;
     }
 }
