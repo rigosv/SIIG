@@ -2,9 +2,9 @@ $(document).ready(function () {
     var rowid;
     // Grid de criterios
     $("#gridCriterios").jqGrid({
-        url: Routing.generate('calidad_planmejora_get_criterios'),
+        url: Routing.generate('calidad_planmejora_get_criterios', {id: idPlan}),
         datatype: "json",
-        editurl: Routing.generate('calidad_planmejora_set_criterio'),
+        editurl: Routing.generate('calidad_planmejora_set_criterio', {id: idPlan}),
         colModel: [
             {label: 'ID', name: 'id', key: true, width: 50, hidden: true},
             {label: 'Descripción', name: 'descripcion', width: 100, editable: true, editoptions: { readonly: "readonly" }},

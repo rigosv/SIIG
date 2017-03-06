@@ -622,6 +622,13 @@ class FormularioRepository extends EntityRepository {
         
         
     }
+    /**
+     * 
+     * @param text $establecimiento, código de estructura
+     * @param text $periodo, anio_mes
+     * @param type $formulario, codigo del formulario
+     * @return type
+     */
     
     public function getCriterios($establecimiento, $periodo, $formulario) {
         $em = $this->getEntityManager();        
