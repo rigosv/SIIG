@@ -61,7 +61,12 @@ class Criterio
     private $prioridad;
     
     /**
-    * @ORM\OneToMany(targetEntity="actividad", mappedBy="criterio", cascade={"all"}, orphanRemoval=true)
+     * @ORM\ManyToOne(targetEntity="PlanMejora", inversedBy="criterios")
+     * */
+    private $planMejora;
+    
+    /**
+    * @ORM\OneToMany(targetEntity="Actividad", mappedBy="criterio", cascade={"all"}, orphanRemoval=true)
     */
     private $actividades;
   
@@ -73,6 +78,8 @@ class Criterio
     {
         $this->actividades = new \Doctrine\Common\Collections\ArrayCollection();
     }
+
+    
 
     /**
      * Get id
@@ -229,13 +236,37 @@ class Criterio
     }
 
     /**
-     * Add actividade
+     * Set planMejora
      *
-     * @param \MINSAL\CalidadBundle\Entity\actividad $actividade
+     * @param \MINSAL\CalidadBundle\Entity\PlanMejora $planMejora
      *
      * @return Criterio
      */
-    public function addActividade(\MINSAL\CalidadBundle\Entity\actividad $actividade)
+    public function setPlanMejora(\MINSAL\CalidadBundle\Entity\PlanMejora $planMejora = null)
+    {
+        $this->planMejora = $planMejora;
+
+        return $this;
+    }
+
+    /**
+     * Get planMejora
+     *
+     * @return \MINSAL\CalidadBundle\Entity\PlanMejora
+     */
+    public function getPlanMejora()
+    {
+        return $this->planMejora;
+    }
+
+    /**
+     * Add actividade
+     *
+     * @param \MINSAL\CalidadBundle\Entity\Actividad $actividade
+     *
+     * @return Criterio
+     */
+    public function addActividade(\MINSAL\CalidadBundle\Entity\Actividad $actividade)
     {
         $this->actividades[] = $actividade;
 
@@ -245,9 +276,9 @@ class Criterio
     /**
      * Remove actividade
      *
-     * @param \MINSAL\CalidadBundle\Entity\actividad $actividade
+     * @param \MINSAL\CalidadBundle\Entity\Actividad $actividade
      */
-    public function removeActividade(\MINSAL\CalidadBundle\Entity\actividad $actividade)
+    public function removeActividade(\MINSAL\CalidadBundle\Entity\Actividad $actividade)
     {
         $this->actividades->removeElement($actividade);
     }

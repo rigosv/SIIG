@@ -54,7 +54,7 @@ class Estandar
     private $proceso;
     
     /**
-     * @ORM\OneToMany(targetEntity="Criterio", mappedBy="estandar", cascade={"all"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="PlanMejora", mappedBy="estandar", cascade={"all"}, orphanRemoval=true)
      * 
      */
     private $planesMejora;
@@ -67,6 +67,10 @@ class Estandar
     {
         $this->planesMejora = new \Doctrine\Common\Collections\ArrayCollection();
     }
+    
+    public function __toString() {
+        return $this->getNombre();
+    }
 
     /**
      * Get id
@@ -77,66 +81,6 @@ class Estandar
     {
         return $this->id;
     }
-
-    /**
-     * Set formularioCaptura
-     *
-     * @param \MINSAL\GridFormBundle\Entity\Formulario $formularioCaptura
-     *
-     * @return Estandar
-     */
-    public function setFormularioCaptura(\MINSAL\GridFormBundle\Entity\Formulario $formularioCaptura = null)
-    {
-        $this->formularioCaptura = $formularioCaptura;
-
-        return $this;
-    }
-
-    /**
-     * Get formularioCaptura
-     *
-     * @return \MINSAL\GridFormBundle\Entity\Formulario
-     */
-    public function getFormularioCaptura()
-    {
-        return $this->formularioCaptura;
-    }
-
-    /**
-     * Add planesMejora
-     *
-     * @param \MINSAL\CalidadBundle\Entity\Criterio $planesMejora
-     *
-     * @return Estandar
-     */
-    public function addPlanesMejora(\MINSAL\CalidadBundle\Entity\Criterio $planesMejora)
-    {
-        $this->planesMejora[] = $planesMejora;
-
-        return $this;
-    }
-
-    /**
-     * Remove planesMejora
-     *
-     * @param \MINSAL\CalidadBundle\Entity\Criterio $planesMejora
-     */
-    public function removePlanesMejora(\MINSAL\CalidadBundle\Entity\Criterio $planesMejora)
-    {
-        $this->planesMejora->removeElement($planesMejora);
-    }
-
-    /**
-     * Get planesMejora
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getPlanesMejora()
-    {
-        return $this->planesMejora;
-    }
-    
-    
 
     /**
      * Set codigo
@@ -211,6 +155,30 @@ class Estandar
     }
 
     /**
+     * Set formularioCaptura
+     *
+     * @param \MINSAL\GridFormBundle\Entity\Formulario $formularioCaptura
+     *
+     * @return Estandar
+     */
+    public function setFormularioCaptura(\MINSAL\GridFormBundle\Entity\Formulario $formularioCaptura = null)
+    {
+        $this->formularioCaptura = $formularioCaptura;
+
+        return $this;
+    }
+
+    /**
+     * Get formularioCaptura
+     *
+     * @return \MINSAL\GridFormBundle\Entity\Formulario
+     */
+    public function getFormularioCaptura()
+    {
+        return $this->formularioCaptura;
+    }
+
+    /**
      * Set proceso
      *
      * @param \MINSAL\CalidadBundle\Entity\Proceso $proceso
@@ -233,8 +201,38 @@ class Estandar
     {
         return $this->proceso;
     }
-    
-    public function __toString() {
-        return $this->getNombre();
+
+    /**
+     * Add planesMejora
+     *
+     * @param \MINSAL\CalidadBundle\Entity\PlanMejora $planesMejora
+     *
+     * @return Estandar
+     */
+    public function addPlanesMejora(\MINSAL\CalidadBundle\Entity\PlanMejora $planesMejora)
+    {
+        $this->planesMejora[] = $planesMejora;
+
+        return $this;
+    }
+
+    /**
+     * Remove planesMejora
+     *
+     * @param \MINSAL\CalidadBundle\Entity\PlanMejora $planesMejora
+     */
+    public function removePlanesMejora(\MINSAL\CalidadBundle\Entity\PlanMejora $planesMejora)
+    {
+        $this->planesMejora->removeElement($planesMejora);
+    }
+
+    /**
+     * Get planesMejora
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getPlanesMejora()
+    {
+        return $this->planesMejora;
     }
 }

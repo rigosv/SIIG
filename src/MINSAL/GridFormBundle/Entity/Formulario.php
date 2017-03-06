@@ -179,6 +179,12 @@ class Formulario
     * @ORM\OrderBy({"descripcion" = "ASC"})
     */
     private $gruposColumnas;
+    
+    /**
+    * @ORM\OneToMany(targetEntity="MINSAL\CalidadBundle\Entity\Estandar", mappedBy="formularioCaptura", cascade={"all"}, orphanRemoval=true)
+    * @ORM\OrderBy({"nombre" = "ASC"})
+    */
+    private $estandares;
         
     /**
     * @var \Doctrine\Common\Collections\ArrayCollection
@@ -929,5 +935,39 @@ class Formulario
     public function getVersion()
     {
         return $this->version;
+    }
+
+    /**
+     * Add estandare
+     *
+     * @param \MINSAL\CalidadBundle\Entity\Estandar $estandare
+     *
+     * @return Formulario
+     */
+    public function addEstandare(\MINSAL\CalidadBundle\Entity\Estandar $estandare)
+    {
+        $this->estandares[] = $estandare;
+
+        return $this;
+    }
+
+    /**
+     * Remove estandare
+     *
+     * @param \MINSAL\CalidadBundle\Entity\Estandar $estandare
+     */
+    public function removeEstandare(\MINSAL\CalidadBundle\Entity\Estandar $estandare)
+    {
+        $this->estandares->removeElement($estandare);
+    }
+
+    /**
+     * Get estandares
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getEstandares()
+    {
+        return $this->estandares;
     }
 }
