@@ -114,10 +114,25 @@ class PlanMejoraController extends Controller {
     }
 
     /**
-     * @Route("/{id}/criterio/guardar" , name="calidad_planmejora_set_criterio", options={"expose"=true})
+     * @Route("/criterio/guardar" , name="calidad_planmejora_set_criterio", options={"expose"=true})
      */
-    public function setCriterioAction(PlanMejora $planMejora, Request $req) {
-
+    public function setCriterioAction(Request $req) {
+        
+        $em = $this->getDoctrine()->getManager();
+        
+        $criterio = $em->find('CalidadBundle:Criterio', $req->get('id'));
+        $prioridad = $em->find('CalidadBundle:Prioridad', $req->get('prioridad'));
+        $tipoIntervencion = $em->find('CalidadBundle:TipoIntervencion', $req->get('tipoIntervencion'));
+        
+        $criterio->setCausaBrecha($req->get('causaBrecha'));
+        $criterio->setOportunidadMejora($req->get('oportunidadMejora'));
+        $criterio->setFactoresMejoramiento($req->get('factoresMejoramiento'));
+        $criterio->setPrioridad($prioridad);
+        $criterio->setTipoIntervencion($tipoIntervencion);
+        
+        $em->persist($criterio);
+        $em->flush();
+        
         $resp = array("ok" => "ok");
         return new Response(
                 json_encode($resp)

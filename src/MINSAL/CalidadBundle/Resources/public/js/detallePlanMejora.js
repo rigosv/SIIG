@@ -4,7 +4,7 @@ $(document).ready(function () {
     $("#gridCriterios").jqGrid({
         url: Routing.generate('calidad_planmejora_get_criterios', {id: idPlan}),
         datatype: "json",
-        editurl: Routing.generate('calidad_planmejora_set_criterio', {id: idPlan}),
+        editurl: Routing.generate('calidad_planmejora_set_criterio'),
         colModel: [
             {label: 'ID', name: 'id', key: true, width: 50, hidden: true},
             {label: 'Descripción', name: 'descripcion', width: 100, editable: true, editoptions: { readonly: "readonly" }},
@@ -35,7 +35,16 @@ $(document).ready(function () {
                 jQuery("#gridActividades").jqGrid('setCaption', 'Actividades de criterio :: ' + descripcionCriterio);
                 jQuery("#gridActividades").trigger("reloadGrid");
             }
-        }, // use the onSelectRow that is triggered on row click to show a details grid
+        },
+        ondblClickRow: function(rowid) {
+            jQuery(this).jqGrid('editGridRow', rowid,
+                            {editCaption: "Editar actividad", recreateForm: true, 
+                                checkOnUpdate: false, checkOnSubmit: false, closeAfterEdit: true,
+                                afterSubmit : function( data, postdata) {
+                                    return actualizar(data, postdata, 'edit', 'gridCriterios');
+                                }
+                            });
+        },
         onSortCol: clearSelection,
         onPaging: clearSelection,
         pager: "#pagerGridCriterios"
@@ -165,10 +174,6 @@ $(document).ready(function () {
             }
         }
     );
-    
-    
-    
-    
 });
 
 
