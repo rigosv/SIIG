@@ -126,22 +126,27 @@ class PlanMejoraController extends Controller {
             $actividad->setCriterio($criterio);
         } else {
             $actividad = $em->find('CalidadBundle:Actividad', $req->get('id'));
-
-            if ($req->get('oper') === 'del') {
-                $em->remove($actividad);
-            } else {
-                $fi = new \DateTime();
-                $ff = new \DateTime();
-
-                $actividad->setNombre($req->get('nombre'));
-                $actividad->setFechaInicio($fi->createFromFormat('d/m/Y', $req->get('fechaInicio')));
-                $actividad->setFechaFinalizacion($ff->createFromFormat('d/m/Y', $req->get('fechaFinalizacion')));
-                $actividad->setMedioVerificacion($req->get('medioVerificacion'));
-                $actividad->setResponsable($req->get('responsable'));
-                $actividad->setPorcentajeAvance($req->get('porcentajeAvance'));
-                
-                $em->persist($actividad);
+        }
+        
+        if ($req->get('oper') === 'del') {
+            $em->remove($actividad);
+        } else {
+            $fecha = new \DateTime();
+            $fi = $fecha->createFromFormat('d/m/Y', $req->get('fechaInicio'));
+            $ff = $fecha->createFromFormat('d/m/Y', $req->get('fechaFinalizacion'));
+            
+            if ($fi > $ff){
+                return new Response(json_encode(array("error" => 'La fecha de inicio debe ser menor a la fecha de finalización')));
             }
+
+            $actividad->setNombre($req->get('nombre'));
+            $actividad->setFechaInicio($fi);
+            $actividad->setFechaFinalizacion($ff);
+            $actividad->setMedioVerificacion($req->get('medioVerificacion'));
+            $actividad->setResponsable($req->get('responsable'));
+            $actividad->setPorcentajeAvance($req->get('porcentajeAvance'));
+
+            $em->persist($actividad);
         }
         
 
