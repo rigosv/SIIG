@@ -66,7 +66,7 @@ class Actividad
     
         
     /**
-     * @ORM\ManyToOne(targetEntity="MINSAL\GridFormBundle\Entity\VariableCaptura", inversedBy="actividades")
+     * @ORM\ManyToOne(targetEntity="Criterio", inversedBy="actividades")
      * */
     private $criterio;
        
@@ -225,14 +225,16 @@ class Actividad
         return $this->porcentajeAvance;
     }
 
+    
+
     /**
      * Set criterio
      *
-     * @param \MINSAL\GridFormBundle\Entity\VariableCaptura $criterio
+     * @param \MINSAL\CalidadBundle\Entity\Criterio $criterio
      *
      * @return Actividad
      */
-    public function setCriterio(\MINSAL\GridFormBundle\Entity\VariableCaptura $criterio = null)
+    public function setCriterio(\MINSAL\CalidadBundle\Entity\Criterio $criterio = null)
     {
         $this->criterio = $criterio;
 
@@ -242,7 +244,7 @@ class Actividad
     /**
      * Get criterio
      *
-     * @return \MINSAL\GridFormBundle\Entity\VariableCaptura
+     * @return \MINSAL\CalidadBundle\Entity\Criterio
      */
     public function getCriterio()
     {

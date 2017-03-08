@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    var rowid;
+    var idCriterio;
     // Grid de criterios
     $("#gridCriterios").jqGrid({
         url: Routing.generate('calidad_planmejora_get_criterios', {id: idPlan}),
@@ -28,17 +28,18 @@ $(document).ready(function () {
         loadonce: true,
         caption: 'Criterios',
         onSelectRow: function (row, selected) {
-            rowid = row;
-            if (rowid != null) {
-                var descripcionCriterio = jQuery("#gridCriterios").jqGrid ('getCell', rowid, 'descripcion');
-                jQuery("#gridActividades").jqGrid('setGridParam', {url: Routing.generate('calidad_planmejora_get_actividades', {criterio: rowid}), datatype: 'json'}); // the last setting is for demo only
+            idCriterio = row;
+            if (idCriterio != null) {
+                var descripcionCriterio = jQuery("#gridCriterios").jqGrid ('getCell', idCriterio, 'descripcion');
+                jQuery("#gridActividades").jqGrid('setGridParam', {url: Routing.generate('calidad_planmejora_get_actividades', {criterio: idCriterio}), datatype: 'json'});
+                jQuery("#gridActividades").jqGrid('setGridParam', {editurl: Routing.generate('calidad_planmejora_set_actividad', {criterio: idCriterio}), datatype: 'json'});
                 jQuery("#gridActividades").jqGrid('setCaption', 'Actividades de criterio :: ' + descripcionCriterio);
                 jQuery("#gridActividades").trigger("reloadGrid");
             }
         },
         ondblClickRow: function(rowid) {
             jQuery(this).jqGrid('editGridRow', rowid,
-                            {editCaption: "Editar actividad", recreateForm: true, 
+                            {editCaption: "Editar criterio", recreateForm: true, 
                                 checkOnUpdate: false, checkOnSubmit: false, closeAfterEdit: true,
                                 afterSubmit : function( data, postdata) {
                                     return actualizar(data, postdata, 'edit', 'gridCriterios');
@@ -54,7 +55,7 @@ $(document).ready(function () {
     $("#gridActividades").jqGrid({
         url: Routing.generate('calidad_planmejora_get_actividades', {criterio: 0}),
         datatype: "json",
-        editurl: Routing.generate('calidad_planmejora_set_actividad', {criterio: rowid}),
+        editurl: Routing.generate('calidad_planmejora_set_actividad', {criterio: idCriterio}),
         colModel: [
             {label: 'ID', name: 'id', key: true, width: 50, hidden: true},
             {label: 'Nombre de actividad', name: 'nombre', width: 100, editable: true, edittype: 'textarea', editrules: {required: true}},
@@ -91,6 +92,15 @@ $(document).ready(function () {
         height: '100',
         viewrecords: true,
         caption: 'Actividades :: ',
+        ondblClickRow: function(rowid) {
+            jQuery(this).jqGrid('editGridRow', rowid,
+                            {editCaption: "Editar actividad", recreateForm: true, 
+                                checkOnUpdate: false, checkOnSubmit: false, closeAfterEdit: true,
+                                afterSubmit : function( data, postdata) {
+                                    return actualizar(data, postdata, 'edit', 'gridActividades');
+                                }
+                            });
+        },
         pager: "#pagerGridActividades"
     });
 
@@ -125,7 +135,7 @@ $(document).ready(function () {
             },
             afterShowForm: function () {
                 var idSelector = $.jgrid.jqID(this.p.id);
-                if(rowid == undefined) {
+                if(idCriterio === undefined) {
                     $.jgrid.hideModal("#editmod" + idSelector, {gbox: "#gbox_" + idSelector});
                     $.notify({
                         message: 'Seleccione un criterio' 
@@ -143,6 +153,7 @@ $(document).ready(function () {
             },
             beforeShowForm: function(form) {
                 centrarfrm($.jgrid.jqID(this.p.id));
+                $("#rowed3").jqGrid('setGridParam', {editurl:'whatever/url/you/need/with/the/id'});
             },
             errorTextFormat: function (data) {
                 return 'Error: ' + data.responseText;
@@ -161,7 +172,7 @@ $(document).ready(function () {
         
         // options for the Edit Dialog
         {
-            editCaption: "Editar actividad",
+            editCaption: "Editar criterio",
             recreateForm: true,
             checkOnUpdate: false,
             checkOnSubmit: false,
@@ -187,7 +198,7 @@ function actualizar(data, postdata, oper, gridID){
         if (oper === 'edit'){
             $('#'+gridID).jqGrid("setRowData", postdata.id, postdata);
         } else if (oper === 'add'){
-            var idNewRow = data.id; 
+            var idNewRow = response.id; 
             $('#'+gridID).jqGrid("addRowData",idNewRow , postdata, "first");
         } 
         return [true,"",""];

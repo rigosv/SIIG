@@ -7,6 +7,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use MINSAL\CalidadBundle\Entity\PlanMejora;
+use MINSAL\CalidadBundle\Entity\Criterio;
+use MINSAL\CalidadBundle\Entity\Actividad;
 
 /**
  * Institucion controller.
@@ -60,83 +62,116 @@ class PlanMejoraController extends Controller {
         $criteriosEstandar = $em->getRepository('CalidadBundle:Estandar')->getCriterios($codigoEstructura, $periodo, $codigoFormulario);
 
         $criteriosParaPlan = array();
-        
+
         $limiteAceptacion = 80;
-        
+
         foreach ($criteriosEstandar['datos'][$codigoFormulario]['resumen_criterios'] as $c) {
-            
-            if ($c['porc_cumplimiento'] < $limiteAceptacion){
+
+            if ($c['porc_cumplimiento'] < $limiteAceptacion) {
                 $c['brecha'] = $limiteAceptacion - $c['porc_cumplimiento'];
                 array_push($criteriosParaPlan, $c);
             }
         }
-        
+
         //Guardar los criterios, por si hay nuevos
         $em->getRepository('CalidadBundle:PlanMejora')->agregarCriterios($planMejora, $criteriosParaPlan);
 
         //Recuperar los criterios del plan
         $criterios = array();
-        foreach ($planMejora->getCriterios() as $c ){
-            $criterios['rows'][] = array('id'=> $c->getId(),
-                'descripcion'=> $c->getVariableCaptura()->getDescripcion(),
-                'brecha'=> $c->getBrecha(),
-                'causaBrecha'=> $c->getCausaBrecha(),
+        foreach ($planMejora->getCriterios() as $c) {
+            $criterios['rows'][] = array('id' => $c->getId(),
+                'descripcion' => $c->getVariableCaptura()->getDescripcion(),
+                'brecha' => $c->getBrecha(),
+                'causaBrecha' => $c->getCausaBrecha(),
                 'oportunidadMejora' => $c->getOportunidadMejora(),
-                'factoresMejoramiento'=> $c->getFactoresMejoramiento(),
-                'tipoIntervencion'=> ( $c->getTipoIntervencion() === null) ?  null : $c->getTipoIntervencion()->getId(),
-                'prioridad'=> ( $c->getPrioridad() === null ) ? null : $c->getPrioridad()->getId());
+                'factoresMejoramiento' => $c->getFactoresMejoramiento(),
+                'tipoIntervencion' => ( $c->getTipoIntervencion() === null) ? null : $c->getTipoIntervencion()->getId(),
+                'prioridad' => ( $c->getPrioridad() === null ) ? null : $c->getPrioridad()->getId()
+            );
         }
-        
-        
+
+
         return new Response(json_encode($criterios));
     }
 
     /**
-     * @Route("/detalle/{criterio}/actividades" , name="calidad_planmejora_get_actividades", options={"expose"=true})
+     * @Route("/{criterio}/actividades" , name="calidad_planmejora_get_actividades", options={"expose"=true})
      */
-    public function actividadesAction($criterio, Request $req) {
+    public function actividadesAction(Criterio $criterio) {
 
-        $criterios = ($criterio == '0') ? '{}' : '{"rows":[{"OrderID":"11058","RequiredDate":"1998-05-27 00:00:00","ShipName":"Blauer See Delikatessen","ShipCity":"Mannheim","Freight":"31.1400"},{"OrderID":"10956","RequiredDate":"1998-04-28 00:00:00","ShipName":"Blauer See Delikatessen","ShipCity":"Mannheim","Freight":"44.6500"},{"OrderID":"10853","RequiredDate":"1998-02-24 00:00:00","ShipName":"Blauer See Delikatessen","ShipCity":"Mannheim","Freight":"53.8300"},{"OrderID":"10614","RequiredDate":"1997-08-26 00:00:00","ShipName":"Blauer See Delikatessen","ShipCity":"Mannheim","Freight":"1.9300"},{"OrderID":"10582","RequiredDate":"1997-07-25 00:00:00","ShipName":"Blauer See Delikatessen","ShipCity":"Mannheim","Freight":"27.7100"},{"OrderID":"10509","RequiredDate":"1997-05-15 00:00:00","ShipName":"Blauer See Delikatessen","ShipCity":"Mannheim","Freight":"0.1500"},{"OrderID":"10501","RequiredDate":"1997-05-07 00:00:00","ShipName":"Blauer See Delikatessen","ShipCity":"Mannheim","Freight":"8.8500"}]}';
-        return new Response(
-                $criterios
-        );
+        //Recuperar los criterios del plan
+        $actividades = array();
+        foreach ($criterio->getActividades() as $a) {
+            $actividades['rows'][] = array('id' => $a->getId(),
+                'nombre' => $a->getNombre(),
+                'fechaInicio' => $a->getFechaInicio()->format('d/m/Y'),
+                'fechaFinalizacion' => $a->getFechaFinalizacion()->format('d/m/Y'),
+                'medioVerificacion' => $a->getMedioVerificacion(),
+                'responsable' => $a->getResponsable(),
+                'porcentajeAvance' => $a->getPorcentajeAvance()
+            );
+        }
+        return new Response(json_encode($actividades));
     }
 
     /**
      * @Route("/detalle/{criterio}/actividad/guardar" , name="calidad_planmejora_set_actividad", options={"expose"=true})
      */
-    public function setActividadAction($criterio, Request $req) {
+    public function setActividadAction(Criterio $criterio, Request $req) {
 
-        $criterios = ($criterio == '0') ? '{}' : '{"rows":[{"OrderID":"11058","RequiredDate":"1998-05-27 00:00:00","ShipName":"Blauer See Delikatessen","ShipCity":"Mannheim","Freight":"31.1400"},{"OrderID":"10956","RequiredDate":"1998-04-28 00:00:00","ShipName":"Blauer See Delikatessen","ShipCity":"Mannheim","Freight":"44.6500"},{"OrderID":"10853","RequiredDate":"1998-02-24 00:00:00","ShipName":"Blauer See Delikatessen","ShipCity":"Mannheim","Freight":"53.8300"},{"OrderID":"10614","RequiredDate":"1997-08-26 00:00:00","ShipName":"Blauer See Delikatessen","ShipCity":"Mannheim","Freight":"1.9300"},{"OrderID":"10582","RequiredDate":"1997-07-25 00:00:00","ShipName":"Blauer See Delikatessen","ShipCity":"Mannheim","Freight":"27.7100"},{"OrderID":"10509","RequiredDate":"1997-05-15 00:00:00","ShipName":"Blauer See Delikatessen","ShipCity":"Mannheim","Freight":"0.1500"},{"OrderID":"10501","RequiredDate":"1997-05-07 00:00:00","ShipName":"Blauer See Delikatessen","ShipCity":"Mannheim","Freight":"8.8500"}]}';
-        return new Response(
-                $criterios
-        );
+        $em = $this->getDoctrine()->getManager();
+
+        if ($req->get('oper') === 'add') {
+            $actividad = new Actividad();
+            $actividad->setCriterio($criterio);
+        } else {
+            $actividad = $em->find('CalidadBundle:Actividad', $req->get('id'));
+
+            if ($req->get('oper') === 'del') {
+                $em->remove($actividad);
+            } else {
+                $fi = new \DateTime();
+                $ff = new \DateTime();
+
+                $actividad->setNombre($req->get('nombre'));
+                $actividad->setFechaInicio($fi->createFromFormat('d/m/Y', $req->get('fechaInicio')));
+                $actividad->setFechaFinalizacion($ff->createFromFormat('d/m/Y', $req->get('fechaFinalizacion')));
+                $actividad->setMedioVerificacion($req->get('medioVerificacion'));
+                $actividad->setResponsable($req->get('responsable'));
+                $actividad->setPorcentajeAvance($req->get('porcentajeAvance'));
+                
+                $em->persist($actividad);
+            }
+        }
+        
+
+        $em->flush();
+
+        //Si todo sale bien devolver el id de la actividad (escencial para nuevas actividades)
+        return new Response(json_encode(array("id" => $actividad->getId())));
     }
 
     /**
      * @Route("/criterio/guardar" , name="calidad_planmejora_set_criterio", options={"expose"=true})
      */
     public function setCriterioAction(Request $req) {
-        
+
         $em = $this->getDoctrine()->getManager();
-        
+
         $criterio = $em->find('CalidadBundle:Criterio', $req->get('id'));
         $prioridad = $em->find('CalidadBundle:Prioridad', $req->get('prioridad'));
         $tipoIntervencion = $em->find('CalidadBundle:TipoIntervencion', $req->get('tipoIntervencion'));
-        
+
         $criterio->setCausaBrecha($req->get('causaBrecha'));
         $criterio->setOportunidadMejora($req->get('oportunidadMejora'));
         $criterio->setFactoresMejoramiento($req->get('factoresMejoramiento'));
         $criterio->setPrioridad($prioridad);
         $criterio->setTipoIntervencion($tipoIntervencion);
-        
+
         $em->persist($criterio);
         $em->flush();
-        
-        $resp = array("ok" => "ok");
-        return new Response(
-                json_encode($resp)
-        );
+
+        return new Response(json_encode(array("ok" => "ok")));
     }
 
 }
