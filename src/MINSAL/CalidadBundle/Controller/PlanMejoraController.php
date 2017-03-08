@@ -31,12 +31,12 @@ class PlanMejoraController extends Controller {
 
         $prioridades = array();
         foreach ($em->getRepository('CalidadBundle:Prioridad')->findBy(array(), array('codigo' => 'ASC')) as $p) {
-            $prioridades[$p->getCodigo()] = $p->getDescripcion();
+            $prioridades[$p->getId()] = $p->getDescripcion();
         }
 
         $tiposIntervencion = array();
         foreach ($em->getRepository('CalidadBundle:TipoIntervencion')->findBy(array(), array('codigo' => 'ASC')) as $p) {
-            $tiposIntervencion[$p->getCodigo()] = $p->getDescripcion();
+            $tiposIntervencion[$p->getId()] = $p->getDescripcion();
         }
 
         return $this->render('CalidadBundle:PlanMejora:detalle.html.twig', array('admin_pool' => $admin_pool,
@@ -57,36 +57,38 @@ class PlanMejoraController extends Controller {
         $periodo = $planMejora->getPeriodo()->getAnio() . '_' . $planMejora->getPeriodo()->getMes();
         $codigoFormulario = $planMejora->getEstandar()->getFormularioCaptura()->getCodigo();
 
-        $criterios = $em->getRepository('CalidadBundle:Estandar')->getCriterios($codigoEstructura, $periodo, $codigoFormulario);
+        $criteriosEstandar = $em->getRepository('CalidadBundle:Estandar')->getCriterios($codigoEstructura, $periodo, $codigoFormulario);
 
         $criteriosParaPlan = array();
-
-        foreach ($criterios['datos'][$codigoFormulario]['resumen_criterios'] as $c) {
-            if ($c['porc_cumplimiento'] < 80){
+        
+        $limiteAceptacion = 80;
+        
+        foreach ($criteriosEstandar['datos'][$codigoFormulario]['resumen_criterios'] as $c) {
+            
+            if ($c['porc_cumplimiento'] < $limiteAceptacion){
+                $c['brecha'] = $limiteAceptacion - $c['porc_cumplimiento'];
                 array_push($criteriosParaPlan, $c);
             }
         }
         
         //Guardar los criterios, por si hay nuevos
         $em->getRepository('CalidadBundle:PlanMejora')->agregarCriterios($planMejora, $criteriosParaPlan);
-        /* $criterios = '{"rows":[
-          {"id":"ALFKI","descripcion":"Alfreds Futterkiste", "brecha": 10},
-          {"id":"ANATR","descripcion":"Ana Trujillo Emparedados y helados", "brecha": 5},
-          {"id":"ANTON","descripcion":"Antonio Moreno Taquer\u00eda","brecha": 6},
-          {"id":"BLAUS","descripcion":"Blauer See Delikatessen","brecha": 20},
-          {"id":"BLONP","descripcion":"Blondel p\u00e8re et fils","brecha": 1},
-          {"id":"BONAP","descripcion":"Bon app","brecha": 15},
-          {"id":"BOTTM","descripcion":"Bottom-Dollar Markets","brecha": 23},
-          {"id":"BSBEV","descripcion":"Bs Beverages","brecha": 30},
-          {"id":"CACTU","descripcion":"Cactus Comidas para llevar", "brecha": 50},
-          {"id":"CHOPS","descripcion":"Chop-suey Chinese","brecha": 60}
 
-          ]}';
-         * 
-         */
-        return new Response(
-                $criterios
-        );
+        //Recuperar los criterios del plan
+        $criterios = array();
+        foreach ($planMejora->getCriterios() as $c ){
+            $criterios['rows'][] = array('id'=> $c->getId(),
+                'descripcion'=> $c->getVariableCaptura()->getDescripcion(),
+                'brecha'=> $c->getBrecha(),
+                'causaBrecha'=> $c->getCausaBrecha(),
+                'oportunidadMejora' => $c->getOportunidadMejora(),
+                'factoresMejoramiento'=> $c->getFactoresMejoramiento(),
+                'tipoIntervencion'=> ( $c->getTipoIntervencion() === null) ?  null : $c->getTipoIntervencion()->getId(),
+                'prioridad'=> ( $c->getPrioridad() === null ) ? null : $c->getPrioridad()->getId());
+        }
+        
+        
+        return new Response(json_encode($criterios));
     }
 
     /**

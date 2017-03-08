@@ -8,7 +8,6 @@ use Doctrine\ORM\Mapping as ORM;
  * MINSAL\GridFormBundle\Entity\PlanMejora
  *
  * @ORM\Table(name="calidad.plan_mejora")
- * @ORM\Entity
  * @ORM\Entity(repositoryClass="MINSAL\CalidadBundle\Repository\PlanMejoraRepository")
  */
 class PlanMejora

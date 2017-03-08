@@ -1,6 +1,6 @@
 <?php
 
-namespace MINSAL\IndicadoresBundle\Repository;
+namespace MINSAL\CalidadBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
 

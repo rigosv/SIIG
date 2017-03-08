@@ -24,6 +24,13 @@ class Criterio
     private $id;
     
     /**
+     * @var string $brecha
+     *
+     * @ORM\Column(name="brecha", type="float", nullable=false)
+     */
+    private $brecha;
+    
+    /**
      * @var string $causaBrecha
      *
      * @ORM\Column(name="causa_brecha", type="text", nullable=true)
@@ -291,5 +298,29 @@ class Criterio
     public function getActividades()
     {
         return $this->actividades;
+    }
+
+    /**
+     * Set brecha
+     *
+     * @param float $brecha
+     *
+     * @return Criterio
+     */
+    public function setBrecha($brecha)
+    {
+        $this->brecha = $brecha;
+
+        return $this;
+    }
+
+    /**
+     * Get brecha
+     *
+     * @return float
+     */
+    public function getBrecha()
+    {
+        return $this->brecha;
     }
 }
