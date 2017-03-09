@@ -3,6 +3,7 @@
 namespace MINSAL\CalidadBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use MINSAL\GridFormBundle\Entity\PeriodoIngreso;
 
 /**
  * EstandarRepository
@@ -20,5 +21,5 @@ class EstandarRepository extends EntityRepository {
         $em = $this->getEntityManager();        
         return $em->getRepository('GridFormBundle:Formulario')->getCriterios($establecimiento, $periodo, $formulario);
     }
-
+    
 }

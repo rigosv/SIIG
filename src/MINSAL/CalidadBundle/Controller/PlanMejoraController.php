@@ -9,6 +9,9 @@ use Symfony\Component\HttpFoundation\Request;
 use MINSAL\CalidadBundle\Entity\PlanMejora;
 use MINSAL\CalidadBundle\Entity\Criterio;
 use MINSAL\CalidadBundle\Entity\Actividad;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Doctrine\ORM\EntityRepository;
 
 /**
  * Institucion controller.
@@ -18,10 +21,83 @@ use MINSAL\CalidadBundle\Entity\Actividad;
 class PlanMejoraController extends Controller {
 
     /**
-     * @Route("/crear")
+     * @Route("/")
      */
-    public function indexAction() {
-        return $this->render('CalidadBundle:PlanMejora:index.html.twig');
+    public function indexAction(Request $request) {
+        $admin_pool = $this->get('sonata.admin.pool');
+        $establecimiento = null;
+        $em = $this->getDoctrine()->getManager();
+
+        $datos = array();
+        $formB = $this->createFormBuilder()
+                ->add('periodo', EntityType::class, array(
+                    'label' => '_periodo_evaluacion_',
+                    'class' => 'GridFormBundle:PeriodoIngreso',
+                    'query_builder' => function (EntityRepository $er) {
+                        return $er->getPeriodosEvaluadosCalidad();
+                    },
+                ))
+                ->add('continuar', SubmitType::class, array('label' => '_cargar_', 'attr' => array('class' => 'btn btn-success')))
+        ;
+
+        $form = $formB->getForm();
+        $form->handleRequest($request);
+
+
+        if ($form->isSubmitted()) {
+            $datos = $form->getData();
+            $periodo = $datos['periodo'];
+
+            if ($this->getUser()->getUsername() === 'admin') {
+                //Recuperar las unidades que tienen evaluaciones en el periodo seleccionado
+                $formB->add('establecimiento', EntityType::class, array(
+                    'class' => 'CostosBundle:Estructura',
+                    'query_builder' => function (EntityRepository $er) use ($periodo) {
+                        return $er->getEstablecimientosEvaluadosCalidad($periodo);
+                    }
+                ));
+            } else {
+                //El establecimiento será el asignado al usuario
+                $establecimiento = $this->getUser()->getEstablecimientoPrincipal();
+            }
+
+            //Actualizar el formulario con el campo agregado
+            $form = $formB->getForm();
+            $form->handleRequest($request);
+            $datos = $form->getData();
+
+            //Verificar si ya se eligió la unidad (sería el segundo envio)
+            if (array_key_exists('establecimiento', $datos)) {
+                // por el administrador
+                $establecimiento = $datos['establecimiento'];
+            }
+            
+            if ($establecimiento !== null) {
+                
+                $per = $periodo->getAnio().'_'. ltrim($periodo->getMes(), '0');
+                // Evaluaciones por lista de chequeo
+                $data = $em->getRepository('GridFormBundle:Indicador')->getEvaluaciones($establecimiento->getCodigo(), $per);
+                
+                //Obtener las otras evaluaciones que no son lista de chequeo
+                //$data2 = $em->getRepository('GridFormBundle:Indicador')->getEvaluacionesNOListaChequeo($establecimiento, $periodo);
+                
+                $evaluaciones = array();
+                foreach ($data as $f) {
+                    if ($f['calificacion'] < $f['meta']){
+                        array_push($evaluaciones, $f);
+                    }
+                }
+
+            }
+            $formB->setData($datos);
+        }
+
+        return $this->render('CalidadBundle:PlanMejora:index.html.twig', array(
+                    'admin_pool' => $admin_pool,
+                    'form' => $formB->getForm()->createView(),
+                    'establecimiento' => $establecimiento,
+                    'evaluaciones' => $evaluaciones
+        ));
     }
 
     /**
@@ -127,15 +203,15 @@ class PlanMejoraController extends Controller {
         } else {
             $actividad = $em->find('CalidadBundle:Actividad', $req->get('id'));
         }
-        
+
         if ($req->get('oper') === 'del') {
             $em->remove($actividad);
         } else {
             $fecha = new \DateTime();
             $fi = $fecha->createFromFormat('d/m/Y', $req->get('fechaInicio'));
             $ff = $fecha->createFromFormat('d/m/Y', $req->get('fechaFinalizacion'));
-            
-            if ($fi > $ff){
+
+            if ($fi > $ff) {
                 return new Response(json_encode(array("error" => 'La fecha de inicio debe ser menor a la fecha de finalización')));
             }
 
@@ -148,7 +224,7 @@ class PlanMejoraController extends Controller {
 
             $em->persist($actividad);
         }
-        
+
 
         $em->flush();
 

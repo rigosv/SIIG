@@ -1,1 +1,60 @@
-Hello World!
+{% extends 'IndicadoresBundle::standard_layout.html.twig' %}
+
+{% block javascripts %}
+    {{parent()}}
+    <script type="text/javascript" src="{{ app.request.schemeAndHttpHost ~ asset('bundles/indicadores/js/notify.min.js') }}"></script>
+    <script type="text/javascript" src="{{ app.request.schemeAndHttpHost ~ asset('bundles/calidad/js/planMejora.js') }}" ></script>
+    <script type="text/javascript">
+        var mostrarMsjEstablecimiento =  {% if form.establecimiento is defined and establecimiento == null %} true {% else %} false{% endif %};
+    </script>
+{% endblock %}
+{% block content %}
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand label-primary" href="#">
+                    {{'_plan_mejora_'|trans}}
+                </a>
+            </div>
+            <div class="navbar-form navbar-left">
+                {{ form_start(form) }}
+                {{'_periodo_evaluacion_'|trans}} 
+                <div class="form-group">
+                    {{ form_widget(form.periodo) }}
+                </div>
+                {% if form.establecimiento is defined %}
+                    <div class="form-group">
+                        {{ form_widget(form.establecimiento) }}
+                    </div>
+                {% endif %}
+                {{ form_widget(form.continuar) }}
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </nav>
+    {% if evaluaciones|length > 0 %}
+        <div class="panel panel-warning">
+            <div class="panel-heading">{{'_evaluaciones_realizadas_no_meta_alcanzada_'|trans}}</div>
+            <TABLE class="table table-bordered table-condensed">
+                <THEAD>
+                    <TR>
+                        <TH>{{'_estandar_'|trans}}</TH>
+                        <TH>{{'_calificacion_'|trans}}</TH>
+                        <TH>{{'_meta_'|trans}}</TH>                    
+                        <TH>{{'_brecha_'|trans}}</TH>
+                    </TR>
+                </THEAD>
+                <TBODY>
+                    {% for eval in evaluaciones %}
+                        <TR>
+                            <TD>{{eval.descripcion}}</TD>
+                            <TD>{{eval.calificacion}}</TD>
+                            <TD>{{eval.meta}}</TD>
+                            <TD>{{eval.meta - eval.calificacion}}</TD>
+                        </TR>
+                    {% endfor %}
+                </TBODY>
+            </TABLE>
+        </div>
+    {% endif %}
+{% endblock content%}

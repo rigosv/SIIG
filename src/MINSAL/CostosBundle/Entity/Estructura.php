@@ -10,7 +10,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *
  * @ORM\Table(name="costos.estructura")
  * @UniqueEntity(fields="codigo", message="Código ya existe")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="MINSAL\CostosBundle\Repository\EstructuraRepository")
  */
 class Estructura
 {
