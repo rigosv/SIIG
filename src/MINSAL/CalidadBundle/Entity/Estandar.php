@@ -3,11 +3,13 @@
 namespace MINSAL\CalidadBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * MINSAL\GridFormBundle\Entity\Estandar
  *
  * @ORM\Table(name="calidad.estandar")
+ * @UniqueEntity(fields="codigo", message="Código ya existe")
  * @ORM\Entity(repositoryClass="MINSAL\CalidadBundle\Repository\EstandarRepository")
  */
 class Estandar

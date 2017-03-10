@@ -68,7 +68,7 @@ class Criterio
     private $prioridad;
     
     /**
-     * @ORM\ManyToOne(targetEntity="PlanMejora", inversedBy="criterios")
+     * @ORM\ManyToOne(targetEntity="PlanMejora", inversedBy="criterios", cascade={"persist", "remove"})
      * */
     private $planMejora;
     

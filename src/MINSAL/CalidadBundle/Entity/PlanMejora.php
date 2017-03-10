@@ -35,7 +35,8 @@ class PlanMejora
     private $establecimiento;
     
     /**
-     * @ORM\ManyToOne(targetEntity="MINSAL\GridFormBundle\Entity\PeriodoIngreso")
+     * @ORM\ManyToOne(targetEntity="MINSAL\GridFormBundle\Entity\PeriodoIngreso", cascade={"persist", "remove"})
+     * 
      * @ORM\JoinColumns({
      *                   @ORM\JoinColumn(name="anio_periodo", referencedColumnName="anio"), 
      *                   @ORM\JoinColumn(name="mes_periodo", referencedColumnName="mes")

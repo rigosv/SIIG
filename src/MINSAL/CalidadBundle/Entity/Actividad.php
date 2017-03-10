@@ -66,7 +66,7 @@ class Actividad
     
         
     /**
-     * @ORM\ManyToOne(targetEntity="Criterio", inversedBy="actividades")
+     * @ORM\ManyToOne(targetEntity="Criterio", inversedBy="actividades", cascade={"persist", "remove"})
      * */
     private $criterio;
        
