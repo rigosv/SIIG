@@ -48,6 +48,27 @@ class Estandar
      * */
     private $formularioCaptura;
     
+     /**
+     * @var string $formaEvaluacion
+     *
+     * @ORM\Column(name="forma_evaluacion", type="string", length=50, nullable=true)
+     */
+    private $formaEvaluacion;
+    
+    /**
+     * @var string $evaluacionPorExpedientes
+     *
+     * @ORM\Column(name="evaluacion_por_expedientes", type="boolean", nullable=true)
+     */
+    private $evaluacionPorExpedientes;
+    
+    /**
+     * @var string $meta
+     *
+     * @ORM\Column(name="meta", type="float", nullable=true)
+     */
+    private $meta;
+    
     /**
      * @ORM\ManyToOne(targetEntity="Proceso")
      * */
@@ -234,5 +255,77 @@ class Estandar
     public function getPlanesMejora()
     {
         return $this->planesMejora;
+    }
+
+    /**
+     * Set formaEvaluacion
+     *
+     * @param string $formaEvaluacion
+     *
+     * @return Estandar
+     */
+    public function setFormaEvaluacion($formaEvaluacion)
+    {
+        $this->formaEvaluacion = $formaEvaluacion;
+
+        return $this;
+    }
+
+    /**
+     * Get formaEvaluacion
+     *
+     * @return string
+     */
+    public function getFormaEvaluacion()
+    {
+        return $this->formaEvaluacion;
+    }
+
+    /**
+     * Set evaluacionPorExpedientes
+     *
+     * @param boolean $evaluacionPorExpedientes
+     *
+     * @return Estandar
+     */
+    public function setEvaluacionPorExpedientes($evaluacionPorExpedientes)
+    {
+        $this->evaluacionPorExpedientes = $evaluacionPorExpedientes;
+
+        return $this;
+    }
+
+    /**
+     * Get evaluacionPorExpedientes
+     *
+     * @return boolean
+     */
+    public function getEvaluacionPorExpedientes()
+    {
+        return $this->evaluacionPorExpedientes;
+    }
+
+    /**
+     * Set meta
+     *
+     * @param float $meta
+     *
+     * @return Estandar
+     */
+    public function setMeta($meta)
+    {
+        $this->meta = $meta;
+
+        return $this;
+    }
+
+    /**
+     * Get meta
+     *
+     * @return float
+     */
+    public function getMeta()
+    {
+        return $this->meta;
     }
 }
