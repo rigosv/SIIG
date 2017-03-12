@@ -67,8 +67,11 @@ class MenuBuilder
         $usuario = $this->context->getToken()->getUser();
 
         foreach ($this->pool->getAdminGroups() as $name => $group) {            
+            
+            $nName = explode('.', $name);
+            
             $menu
-                    ->addChild($name, array('label' => $group['label']))
+                    ->addChild($nName[0], array('label' => $nName[0]))
                     ->setAttributes(
                             array(
                                 'icon' => $group['icon'],
@@ -77,10 +80,18 @@ class MenuBuilder
                     )
                     ->setExtra('roles', $group['roles'])
                     ->setExtra('translationdomain', 'messages')
-            ;            
+            ;
+            if (count($nName) > 1){
+                $menu[$nName[0]]
+                        ->addChild($nName[1], array('uri' => '#'))
+                        ->setExtra('translationdomain', 'messages');
+            }
         }
         $menu->addChild('_reportes_');
-        foreach ($this->pool->getAdminGroups() as $name => $group) {
+        foreach ($this->pool->getAdminGroups() as $nName => $group) {
+            $name_ = explode('.', $nName);            
+            $name = $name_[0];
+            
             foreach ($group['items'] as $item) {
                 if (array_key_exists('admin', $item) && $item['admin'] != null) {
                     $admin = $this->pool->getInstance($item['admin']);
@@ -173,11 +184,19 @@ class MenuBuilder
                     $admin = null;
                 }
 
-                $menu[$name]
-                        ->addChild($label, array('uri' => $route))
-                        ->setExtra('translationdomain', $translationDomain)
-                        ->setExtra('admin', $admin)
-                ;
+                if (count($name_) > 1){
+                    $menu[$name]->getChild($name_[1])
+                            ->addChild($label, array('uri' => $route))
+                            ->setExtra('translationdomain', $translationDomain)
+                            ->setExtra('admin', $admin)
+                    ;
+                } else {
+                    $menu[$name]
+                            ->addChild($label, array('uri' => $route))
+                            ->setExtra('translationdomain', $translationDomain)
+                            ->setExtra('admin', $admin)
+                    ;
+                }
             }
             if (0 === count($menu[$name]->getChildren())) {
                 $menu->removeChild($name);
@@ -188,7 +207,7 @@ class MenuBuilder
         }
         $event = new ConfigureMenuEvent($this->factory, $menu);
         $this->eventDispatcher->dispatch(ConfigureMenuEvent::SIDEBAR, $event);
-
+        //var_dump($event->getMenu()->getChild('_calidad2_')->getChild('_catalogos_'));
         return $event->getMenu();
     }
 

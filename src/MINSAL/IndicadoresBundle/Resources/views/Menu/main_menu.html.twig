@@ -17,7 +17,11 @@
 
     {%- if item.displayed and display|default %}
         {%- if item.level == 1%}
-            {%- do item.setAttribute('class', (item.attribute('class')~' dropdown')|trim) %}            
+            {%- do item.setAttribute('class', (item.attribute('class')~' dropdown')|trim) %}
+        {%- endif %}
+        
+        {%- if item.level == 2 and item.children|length > 0 %}
+            {%- do item.setAttribute('class', (' dropdown dropdown-submenu')|trim) %}
         {%- endif %}
 
         {%- do item.setChildrenAttribute('class', (item.childrenAttribute('class')~' dropdown-menu')|trim) %}
@@ -25,13 +29,6 @@
     {% endif %}
 {% endblock %}
 
-{% block linkElement %}
-    {% spaceless %}
-        {% set translation_domain = item.getExtra('translationdomain', 'messages') %}        
-        {% set is_link = true %}
-        {{ parent() }}
-    {% endspaceless %}
-{% endblock %}
 
 {% block spanElement %}
     {% spaceless %}

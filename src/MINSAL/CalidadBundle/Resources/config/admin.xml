@@ -2,34 +2,59 @@
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
-        <service id="calidad.admin.tipo_intervencion" class="MINSAL\CalidadBundle\Admin\TipoIntervencionAdmin">
-            <tag name="sonata.admin" manager_type="orm" group="_calidad_" label="_tipo_intervencion_"/>
+        <service id="sonata.gridform.admin.area_criterio" class="MINSAL\GridFormBundle\Admin\AreaVariableCapturaAdmin">
+            <tag name="sonata.admin" manager_type="orm" group="_calidad_._catalogos_" label="_area_criterios_"/>
             <argument />
-            <argument>MINSAL\CalidadBundle\Entity\TipoIntervencion</argument>
-            <argument />            
-        </service>
-        <service id="calidad.admin.prioridad" class="MINSAL\CalidadBundle\Admin\PrioridadAdmin">
-            <tag name="sonata.admin" manager_type="orm" group="_calidad_" label="_prioridad_"/>
-            <argument />
-            <argument>MINSAL\CalidadBundle\Entity\Prioridad</argument>
-            <argument />            
-        </service>
-        <service id="calidad.admin.estandar" class="MINSAL\CalidadBundle\Admin\EstandarAdmin">
-            <tag name="sonata.admin" manager_type="orm" group="_calidad_" label="_estandar_"/>
-            <argument />
-            <argument>MINSAL\CalidadBundle\Entity\Estandar</argument>
+            <argument>MINSAL\GridFormBundle\Entity\AreaVariableCaptura</argument>
             <argument />            
         </service>
         <service id="calidad.admin.dimension" class="MINSAL\CalidadBundle\Admin\DimensionAdmin">
-            <tag name="sonata.admin" manager_type="orm" group="_calidad_" label="_dimensiones_"/>
+            <tag name="sonata.admin" manager_type="orm" group="_calidad_._catalogos_" label="_dimensiones_"/>
             <argument />
             <argument>MINSAL\CalidadBundle\Entity\Dimension</argument>
             <argument />            
         </service>
+        <service id="sonata.gridform.admin.evaluacion_categoria" class="MINSAL\GridFormBundle\Admin\EvaluacionCategoriaAdmin">
+            <tag name="sonata.admin" manager_type="orm" group="_calidad_._catalogos_" label="_evaluacion_categoria_"/>
+            <argument />
+            <argument>MINSAL\GridFormBundle\Entity\EvaluacionCategoria</argument>
+            <argument />            
+        </service>
+        <service id="sonata.gridform.admin.evaluacion_externa_tipo" class="MINSAL\GridFormBundle\Admin\EvaluacionExternaTipoAdmin">
+            <tag name="sonata.admin" manager_type="orm" group="_calidad_._catalogos_" label="_evaluacion_externa_tipo_"/>
+            <argument />
+            <argument>MINSAL\GridFormBundle\Entity\EvaluacionExternaTipo</argument>
+            <argument />            
+        </service>
+        <service id="sonata.gridform.admin.limites_aceptacion" class="MINSAL\GridFormBundle\Admin\LimitesAceptacionCalidadAdmin">
+            <tag name="sonata.admin" manager_type="orm" group="_calidad_._catalogos_" label="_limites_aceptacion_"/>
+            <argument />
+            <argument>MINSAL\GridFormBundle\Entity\LimitesAceptacionCalidad</argument>
+            <argument />            
+        </service>
+        <service id="calidad.admin.prioridad" class="MINSAL\CalidadBundle\Admin\PrioridadAdmin">
+            <tag name="sonata.admin" manager_type="orm" group="_calidad_._catalogos_" label="_prioridad_"/>
+            <argument />
+            <argument>MINSAL\CalidadBundle\Entity\Prioridad</argument>
+            <argument />            
+        </service>
         <service id="calidad.admin.proceso" class="MINSAL\CalidadBundle\Admin\ProcesoAdmin">
-            <tag name="sonata.admin" manager_type="orm" group="_calidad_" label="_procesos_"/>
+            <tag name="sonata.admin" manager_type="orm" group="_calidad_._catalogos_" label="_procesos_"/>
             <argument />
             <argument>MINSAL\CalidadBundle\Entity\Proceso</argument>
+            <argument />            
+        </service>
+        <service id="calidad.admin.tipo_intervencion" class="MINSAL\CalidadBundle\Admin\TipoIntervencionAdmin">
+            <tag name="sonata.admin" manager_type="orm" group="_calidad_._catalogos_" label="_tipo_intervencion_"/>
+            <argument />
+            <argument>MINSAL\CalidadBundle\Entity\TipoIntervencion</argument>
+            <argument />            
+        </service>
+        
+        <service id="calidad.admin.estandar" class="MINSAL\CalidadBundle\Admin\EstandarAdmin">
+            <tag name="sonata.admin" manager_type="orm" group="_calidad_" label="_estandar_"/>
+            <argument />
+            <argument>MINSAL\CalidadBundle\Entity\Estandar</argument>
             <argument />            
         </service>
     </services>

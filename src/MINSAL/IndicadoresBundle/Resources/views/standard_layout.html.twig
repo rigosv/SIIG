@@ -11,6 +11,7 @@
     {{parent()}}
     <script type="text/javascript" src="{{ app.request.schemeAndHttpHost ~ asset('bundles/fosjsrouting/js/router.js') }}"></script>
     <script type="text/javascript" src="{{ app.request.schemeAndHttpHost ~ asset('bundles/indicadores/js/notify.min.js') }}"></script>
+    <script type="text/javascript" src="{{ app.request.schemeAndHttpHost ~ asset('bundles/indicadores/js/menu.js') }}"></script>
     <script type="text/javascript" src="{{ path('fos_js_routing_js', {"callback": "fos.Router.setData"}) }}"></script>
 
     {% include (['IndicadoresBundle::messages_js.html.twig']|join) %}

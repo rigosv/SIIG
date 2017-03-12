@@ -419,3 +419,4 @@ _cargar_reporte_: Load report
 _ruta_: Path
 Action: Action
 _proceso_: Process
+_catalogos_: Catalogs
