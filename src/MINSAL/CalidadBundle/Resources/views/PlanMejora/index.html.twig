@@ -32,7 +32,7 @@
             </div>
         </div>
     </nav>
-    {% if evaluaciones|length > 0 %}
+    {% if estandaresEval|length > 0 %}
         <div class="panel panel-warning">
             <div class="panel-heading">{{'_evaluaciones_realizadas_no_meta_alcanzada_'|trans}}</div>
             <TABLE class="table table-bordered table-condensed">
@@ -45,12 +45,12 @@
                     </TR>
                 </THEAD>
                 <TBODY>
-                    {% for eval in evaluaciones %}
+                    {% for estEval in estandaresEval %}
                         <TR>
-                            <TD>{{eval.descripcion}}</TD>
-                            <TD>{{eval.calificacion}}</TD>
-                            <TD>{{eval.meta}}</TD>
-                            <TD>{{eval.meta - eval.calificacion}}</TD>
+                            <TD>{{estEval.est.descripcion}}</TD>
+                            <TD>{{estEval.eval.calificacion}}</TD>
+                            <TD>{{estEval.est.meta}}</TD>
+                            <TD>{{estEval.est.meta - estEval.eval.calificacion}}</TD>
                         </TR>
                     {% endfor %}
                 </TBODY>

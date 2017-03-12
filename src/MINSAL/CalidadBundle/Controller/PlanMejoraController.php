@@ -79,16 +79,30 @@ class PlanMejoraController extends Controller {
                 // Evaluaciones por lista de chequeo
                 $data = $em->getRepository('GridFormBundle:Indicador')->getEvaluaciones($establecimiento->getCodigo(), $per);
                 
+                //Crear un arreglo donde la llave sea el código del formulario
+                // Para facilitar la búsqueda posterior
+                $evaluaciones = array();
+                foreach ($data as $d){
+                    $evaluaciones[$d['codigo']] = $d;
+                }
+                
                 //Obtener las otras evaluaciones que no son lista de chequeo
                 //$data2 = $em->getRepository('GridFormBundle:Indicador')->getEvaluacionesNOListaChequeo($establecimiento, $periodo);
                 
-                $evaluaciones = array();
-                foreach ($data as $f) {
-                    if ($f['calificacion'] < $f['meta']){
-                        array_push($evaluaciones, $f);
+                //Obtener los estándares
+                $estadares = $em->getRepository('CalidadBundle:Estandar')->findBy(array(), array('posicion'=> 'ASC'));
+                
+                //Obtener los estándares que fueron evaluados y que no cumplieron la meta
+                $estandaresEval = array();
+                foreach ($estadares as $est) {
+                    $frm = $est->getFormularioCaptura(); 
+                    if ($frm != null and array_key_exists($frm->getCodigo(), $evaluaciones) 
+                            and ($est->getMeta() > $evaluaciones[$frm->getCodigo()]['calificacion']) 
+                        ){
+                        $estandaresEval[$est->getCodigo()]['est'] = $est;
+                        $estandaresEval[$est->getCodigo()]['eval'] = $evaluaciones[$frm->getCodigo()];
                     }
                 }
-
             }
             $formB->setData($datos);
         }
@@ -97,7 +111,7 @@ class PlanMejoraController extends Controller {
                     'admin_pool' => $admin_pool,
                     'form' => $formB->getForm()->createView(),
                     'establecimiento' => $establecimiento,
-                    'evaluaciones' => $evaluaciones
+                    'estandaresEval' => $estandaresEval
         ));
     }
 
