@@ -72,6 +72,13 @@ class Estandar
     private $meta;
     
     /**
+     * @var string $posicion
+     *
+     * @ORM\Column(name="posicion", type="float", nullable=true)
+     */
+    private $posicion;
+    
+    /**
      * @ORM\ManyToOne(targetEntity="Proceso")
      * */
     private $proceso;
@@ -329,5 +336,29 @@ class Estandar
     public function getMeta()
     {
         return $this->meta;
+    }
+
+    /**
+     * Set posicion
+     *
+     * @param float $posicion
+     *
+     * @return Estandar
+     */
+    public function setPosicion($posicion)
+    {
+        $this->posicion = $posicion;
+
+        return $this;
+    }
+
+    /**
+     * Get posicion
+     *
+     * @return float
+     */
+    public function getPosicion()
+    {
+        return $this->posicion;
     }
 }

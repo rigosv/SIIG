@@ -22,6 +22,7 @@ class EstandarAdmin extends Admin
             ->add('nombre', null, array('label'=> ('_nombre_')))
             ->add('descripcion', null, array('label'=> ('_descripcion_')))
             ->add('formularioCaptura', null, array('label'=> ('_formulario_captura_datos_'), 'required' => true))
+            ->add('posicion', null, array('label'=> ('_posicion_listados_')))
             ->add('proceso', null, array('label'=> ('_proceso_')))
             ->add('meta', null, array('label'=> ('_umbral_estandar_')))
             ->add('formaEvaluacion', 'choice', array('label' => ('_forma_evaluacion_'),
