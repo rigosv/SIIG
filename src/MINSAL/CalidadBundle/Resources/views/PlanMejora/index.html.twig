@@ -42,6 +42,7 @@
                         <TH>{{'_calificacion_'|trans}}</TH>
                         <TH>{{'_meta_'|trans}}</TH>                    
                         <TH>{{'_brecha_'|trans}}</TH>
+                        <TH>{{'_plan_mejora_'|trans}}</TH>
                     </TR>
                 </THEAD>
                 <TBODY>
@@ -51,6 +52,24 @@
                             <TD>{{estEval.eval.calificacion}}</TD>
                             <TD>{{estEval.est.meta}}</TD>
                             <TD>{{estEval.est.meta - estEval.eval.calificacion}}</TD>
+                            {% if estEval.plan != null %}
+                                <TD>
+                                    <A 
+                                       href="{{path('calidad_planmejora_detalle', {'id': estEval.plan.id})}}" 
+                                       class="btn btn-info" role="button">
+                                        Editar
+                                    </A>
+                                       Ver</TD>
+                            {% else %}
+                                <TD>
+                                    <A 
+                                       href="{{path('calidad_planmejora_crear', 
+                                                {'id_establecimiento': establecimiento.id, 'anio': periodo.anio, 
+                                                'mes': periodo.mes, 'id_estandar': estEval.est.id})
+                                            }}" 
+                                       class="btn btn-success" role="button">Crear</a>
+                                </TD>
+                            {% endif %}
                         </TR>
                     {% endfor %}
                 </TBODY>

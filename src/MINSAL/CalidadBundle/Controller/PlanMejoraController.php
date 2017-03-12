@@ -26,7 +26,8 @@ class PlanMejoraController extends Controller {
     public function indexAction(Request $request) {
         $admin_pool = $this->get('sonata.admin.pool');
         $establecimiento = null;
-        $evaluaciones = null;
+        $estandaresEval = null;
+        $periodo = null;
         $em = $this->getDoctrine()->getManager();
 
         $datos = array();
@@ -72,35 +73,46 @@ class PlanMejoraController extends Controller {
                 // por el administrador
                 $establecimiento = $datos['establecimiento'];
             }
-            
+
             if ($establecimiento !== null) {
-                
-                $per = $periodo->getAnio().'_'. ltrim($periodo->getMes(), '0');
+
+                $per = $periodo->getAnio() . '_' . ltrim($periodo->getMes(), '0');
                 // Evaluaciones por lista de chequeo
                 $data = $em->getRepository('GridFormBundle:Indicador')->getEvaluaciones($establecimiento->getCodigo(), $per);
-                
+
                 //Crear un arreglo donde la llave sea el código del formulario
                 // Para facilitar la búsqueda posterior
                 $evaluaciones = array();
-                foreach ($data as $d){
+                foreach ($data as $d) {
                     $evaluaciones[$d['codigo']] = $d;
                 }
-                
+
                 //Obtener las otras evaluaciones que no son lista de chequeo
                 //$data2 = $em->getRepository('GridFormBundle:Indicador')->getEvaluacionesNOListaChequeo($establecimiento, $periodo);
-                
                 //Obtener los estándares
-                $estadares = $em->getRepository('CalidadBundle:Estandar')->findBy(array(), array('posicion'=> 'ASC'));
-                
+                $estadares = $em->getRepository('CalidadBundle:Estandar')->findBy(array(), array('posicion' => 'ASC'));
+
                 //Obtener los estándares que fueron evaluados y que no cumplieron la meta
                 $estandaresEval = array();
                 foreach ($estadares as $est) {
-                    $frm = $est->getFormularioCaptura(); 
-                    if ($frm != null and array_key_exists($frm->getCodigo(), $evaluaciones) 
-                            and ($est->getMeta() > $evaluaciones[$frm->getCodigo()]['calificacion']) 
-                        ){
+                    $frm = $est->getFormularioCaptura();
+                    if ($frm != null and array_key_exists($frm->getCodigo(), $evaluaciones)
+                            and ( $est->getMeta() > $evaluaciones[$frm->getCodigo()]['calificacion'])
+                    ) {
                         $estandaresEval[$est->getCodigo()]['est'] = $est;
                         $estandaresEval[$est->getCodigo()]['eval'] = $evaluaciones[$frm->getCodigo()];
+
+                        //Verificar si tiene plan de mejora creado
+                        $plan = $em->getRepository('CalidadBundle:PlanMejora')
+                                ->findOneBy(
+                                        array('establecimiento' => $establecimiento,    
+                                            'periodo' => $periodo,
+                                            'estandar' => $est
+                                        )
+                                    );
+                        
+                        $estandaresEval[$est->getCodigo()]['plan'] = $plan;
+                        
                     }
                 }
             }
@@ -111,12 +123,35 @@ class PlanMejoraController extends Controller {
                     'admin_pool' => $admin_pool,
                     'form' => $formB->getForm()->createView(),
                     'establecimiento' => $establecimiento,
+                    'periodo' => $periodo,
                     'estandaresEval' => $estandaresEval
         ));
     }
 
     /**
-     * @Route("/{id}/detalle/")
+     * @Route("/crear/{id_establecimiento}/{anio}/{mes}/{id_estandar}", name="calidad_planmejora_crear")
+     */
+    public function crearAction($id_establecimiento, $anio, $mes, $id_estandar) {
+        $em = $this->getDoctrine()->getManager();
+        
+        $establecimiento = $em->find('CostosBundle:Estructura', $id_establecimiento);
+        $periodo = $em->find('GridFormBundle:PeriodoIngreso', array('anio'=>$anio, 'mes'=>$mes));
+        $estandar = $em->find('CalidadBundle:Estandar', $id_estandar);
+        
+        $plan = new PlanMejora();
+        $plan->setEstablecimiento($establecimiento);
+        $plan->setEstandar($estandar);
+        $plan->setPeriodo($periodo);
+        
+        $em->persist($plan);
+        $em->flush();
+        
+        return $this->forward('CalidadBundle:PlanMejora:detalle', array(
+            'id'  => $plan->getId()
+        ));
+    }
+    /**
+     * @Route("/{id}/detalle/", name="calidad_planmejora_detalle")
      */
     public function detalleAction(PlanMejora $planMejora) {
         $admin_pool = $this->get('sonata.admin.pool');
