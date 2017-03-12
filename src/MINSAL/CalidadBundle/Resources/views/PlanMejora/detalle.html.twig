@@ -25,6 +25,21 @@
 {% endblock %}
 
 {% block content %}
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand label-primary" href="#">
+                    {{'_plan_mejora_'|trans}}
+                </a>
+            </div>
+            <div class="navbar-form navbar-left">
+                {{planMejora.establecimiento.nombreCorto}}  <kbd>{{planMejora.periodo.mes ~ ' / ' ~ planMejora.periodo.anio}}</kbd>
+            </div>
+            <div class="navbar-form navbar-right">
+                {{planMejora.estandar.descripcion}}
+            </div>
+        </div>
+    </nav>
     <table id="gridCriterios"></table>
     <div id="pagerGridCriterios"></div>
 
