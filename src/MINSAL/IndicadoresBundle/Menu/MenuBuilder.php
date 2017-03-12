@@ -88,6 +88,15 @@ class MenuBuilder
             }
         }
         $menu->addChild('_reportes_');
+        
+        
+        
+        $router = $this->pool->getContainer()->get('router');
+        if ($usuario != 'anon.') {
+            if ($usuario->hasRole('ROLE_SUPER_ADMIN') or $usuario->hasRole('ROLE_USER_TABLERO_CALIDAD')){
+                $menu['_calidad_']->addChild('_plan_mejora_', array('uri' => $router->generate('calidad_planmejora')));
+            }
+        }
         foreach ($this->pool->getAdminGroups() as $nName => $group) {
             $name_ = explode('.', $nName);            
             $name = $name_[0];

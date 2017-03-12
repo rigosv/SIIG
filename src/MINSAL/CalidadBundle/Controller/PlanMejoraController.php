@@ -21,11 +21,12 @@ use Doctrine\ORM\EntityRepository;
 class PlanMejoraController extends Controller {
 
     /**
-     * @Route("/")
+     * @Route("/", name="calidad_planmejora")
      */
     public function indexAction(Request $request) {
         $admin_pool = $this->get('sonata.admin.pool');
         $establecimiento = null;
+        $evaluaciones = null;
         $em = $this->getDoctrine()->getManager();
 
         $datos = array();
