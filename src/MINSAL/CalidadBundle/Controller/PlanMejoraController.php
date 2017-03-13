@@ -204,7 +204,7 @@ class PlanMejoraController extends Controller {
 
         //Recuperar los criterios del plan
         $criterios = array();
-        foreach ($planMejora->getCriterios() as $c) {
+        foreach ($em->getRepository('CalidadBundle:Criterio')->findBy(array('planMejora'=>$planMejora), array('variableCaptura'=>'ASC')) as $c) {
             $criterios['rows'][] = array('id' => $c->getId(),
                 'descripcion' => $c->getVariableCaptura()->getDescripcion(),
                 'brecha' => $c->getBrecha(),

@@ -86,7 +86,7 @@ class Criterio
         $this->actividades = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
-    
+
 
     /**
      * Get id
