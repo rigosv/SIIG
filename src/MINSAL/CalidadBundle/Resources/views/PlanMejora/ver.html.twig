@@ -94,15 +94,15 @@
                                             <TD align="right">{{a.fechaFinalizacion|date('d/m/Y')}}</TD>
                                             <TD>{{a.medioVerificacion}}</TD>
                                             <TD>{{a.Responsable}}</TD>
-                                            <TD align='right'>{{a.porcentajeDiasTranscurrido}}</TD>
+                                            <TD align='right'>{{a.porcentajeDiasTranscurrido|number_format(1)}}</TD>
                                             <TD align="right" 
-                                                {% if 'now' > a.fechaFinalizacion and a.porcentajeAvance < 100 %}
-                                                    style="background-color: #E74615; font-size: 12pt; font-weight: bold"
+                                                {% if a.actividadVencida %}
+                                                    style="background-color: #D9534F; font-size: 12pt; font-weight: bold"
                                                 {% elseif a.porcentajeDiasTranscurrido > a.porcentajeAvance %}
-                                                    style="background-color: #E48605; font-size: 10pt; font-weight: bold"
+                                                    style="background-color: #F0AD4E; font-size: 10pt; font-weight: bold"
                                                 {% endif %}
                                                     >
-                                                {{a.porcentajeAvance}}
+                                                {{a.porcentajeAvance|number_format(1)}}
                                             </TD>
                                         </TR>
                                     {% endfor %}

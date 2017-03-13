@@ -262,6 +262,11 @@ class Actividad
     
     public function getPorcentajeDiasTranscurrido() {
         $diasTranscurridos = number_format($this->getDiasTranscurridos() / $this->getDuracionDias() * 100, 1);
-        return ($diasTranscurridos > 100) ? 100 : $diasTranscurridos;
+        return ($diasTranscurridos > 100) ? 100.0 : $diasTranscurridos;
+    }
+    
+    public function isActividadVencida(){
+        $hoy = new \DateTime();
+        return $hoy > $this->fechaFinalizacion and $this->porcentajeAvance < 100;
     }
 }
