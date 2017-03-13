@@ -43,5 +43,23 @@ class PlanMejoraRepository extends EntityRepository {
         $em->flush();
         
     }
+    
+    public function getCriteriosOrden(PlanMejora $planMejora) {
+        
+        $criterios =  $this->getEntityManager()
+            ->createQuery(
+                "SELECT C
+                    FROM CalidadBundle:Criterio C
+                    INNER JOIN C.variableCaptura V
+                    WHERE C.planMejora = :plan
+                    ORDER BY V.posicion ASC
+                    "
+            )
+            ->setParameters(array('plan'=>$planMejora))
+            ->getResult();
+        
+        return $criterios;
+                
+    }
 
 }

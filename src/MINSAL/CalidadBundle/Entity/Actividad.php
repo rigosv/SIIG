@@ -250,4 +250,18 @@ class Actividad
     {
         return $this->criterio;
     }
+    
+    public function getDuracionDias() {
+        return $this->fechaFinalizacion->diff($this->fechaInicio)->format('%a');
+    }
+    
+    public function getDiasTranscurridos() {
+        $hoy = new \DateTime();
+        return $hoy->diff($this->fechaInicio)->format('%a');
+    }
+    
+    public function getPorcentajeDiasTranscurrido() {
+        $diasTranscurridos = number_format($this->getDiasTranscurridos() / $this->getDuracionDias() * 100, 1);
+        return ($diasTranscurridos > 100) ? 100 : $diasTranscurridos;
+    }
 }

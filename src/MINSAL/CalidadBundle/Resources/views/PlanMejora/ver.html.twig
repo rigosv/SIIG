@@ -1,0 +1,118 @@
+{% extends 'IndicadoresBundle::pdf_layout.html.twig' %}
+ {% block stylesheets %}
+    {{parent()}}
+    <style type="text/css">
+        .content{
+            font-size: 9pt;
+        }
+        table {
+            width: 100%
+        }
+        .sonata-bc .span12 {
+            width: 100%;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <CENTER>
+        <H2>{{'_titulo_1_plan_mejora_'|trans}}</H2>
+        <H2>{{'_titulo_2_plan_mejora_'|trans}}</H2>
+        <H3>{{'_titulo_3_plan_mejora_'|trans}}</H3>
+        <H4>{{'_periodo_'|trans}} {{plan.periodo.mesTexto}} / {{plan.periodo.anio}}</H4>
+        <H4>{{'_fecha_generacion_'|trans}} {{'now'|date('d/m/Y')}}</H4>
+    </CENTER>
+    
+    <TABLE >
+        <TBODY>        
+            <TR>
+                <TD style="width: 15%"><B>{{'_region_'|trans}}</B></TD>
+                <TD style="width: 35%"></TD>
+                <TD style="width: 15%"><B>{{'_estandar_'|trans}}</B></TD>
+                <TD style="width: 35%">{{plan.estandar.descripcion}}</TD>
+            </TR>
+            <TR>
+                <TD style="width: 15%"><B>{{'_nivel_'|trans}}</B></TD>
+                <TD style="width: 35%"></TD>
+                <TD style="width: 15%"><B>{{'_dimension_'|trans}}</B></TD>
+                <TD style="width: 35%"></TD>
+            </TR>
+            <TR>
+                <TD style="width: 15%"><B>{{'_establecimiento_'|trans}}</B></TD>
+                <TD style="width: 35%">{{plan.establecimiento.nombre}}</TD>
+                <TD style="width: 15%"><B>{{'_proceso_'|trans}}</B></TD>
+                <TD style="width: 35%"></TD>
+            </TR>
+        </TBODY>
+    </TABLE>
+                <BR/>
+    <TABLE >
+        <THEAD>
+            <TR>
+                <TH>{{'_criterio_'|trans}}</TH>
+                <TH>{{'_brecha_'|trans}}</TH>
+                <TH>{{'_causa_brecha_'|trans}}</TH>
+                <TH>{{'_oportunidad_mejora_'|trans}}</TH>
+                <TH>{{'_factores_mejoramiento_'|trans}}</TH>
+                <TH>{{'_tipo_intervencion_'|trans}}</TH>
+                <TH>{{'_prioridad_'|trans}}</TH>
+            </TR>
+            
+        </THEAD>
+        <TBODY>
+            {% for c in criterios %}
+                <TR>
+                    <TD>{{c.variableCaptura.descripcion}}</TD>
+                    <TD>{{c.brecha}}</TD>
+                    <TD>{{c.causaBrecha}}</TD>
+                    <TD><{{c.oportunidadMejora}}/TD>
+                    <TD>{{c.factoresMejoramiento}}</TD>
+                    <TD>{{c.tipoIntervencion}}</TD>
+                    <TD>{{c.prioridad}}</TD>
+                </TR>
+                {% if c.actividades | length > 0 %}
+                    <TR>
+                        <TD colspan="7">
+                            <Br/>
+                            Actividades
+                            <TABLE style="width: 90%" align="center">
+                                <THEAD>
+                                    <TR>
+                                        <TH>{{'_nombre_actividad_'|trans}}</TH>
+                                        <TH>{{'_inicio_'|trans}}</TH>
+                                        <TH>{{'_finalizacion_'|trans}}</TH>
+                                        <TH>{{'_medio_verificacion_'|trans}}</TH>
+                                        <TH>{{'_responsable_'|trans}}</TH>
+                                        <TH>{{'_dias_transcurridos_porcentaje_'|trans}}</TH>
+                                        <TH>{{'_porcentaje_avance_'|trans}}</TH>
+                                    </TR>
+                                </thead>
+                                <Tbody>
+                                    {% for a in c.actividades %}
+                                        <TR>
+                                            <TD>{{a.nombre}}</TD>
+                                            <TD align="right">{{a.fechaInicio|date('d/m/Y')}}</TD>
+                                            <TD align="right">{{a.fechaFinalizacion|date('d/m/Y')}}</TD>
+                                            <TD>{{a.medioVerificacion}}</TD>
+                                            <TD>{{a.Responsable}}</TD>
+                                            <TD align='right'>{{a.porcentajeDiasTranscurrido}}</TD>
+                                            <TD align="right" 
+                                                {% if 'now' > a.fechaFinalizacion and a.porcentajeAvance < 100 %}
+                                                    style="background-color: #E74615; font-size: 12pt; font-weight: bold"
+                                                {% elseif a.porcentajeDiasTranscurrido > a.porcentajeAvance %}
+                                                    style="background-color: #E48605; font-size: 10pt; font-weight: bold"
+                                                {% endif %}
+                                                    >
+                                                {{a.porcentajeAvance}}
+                                            </TD>
+                                        </TR>
+                                    {% endfor %}
+                                </tbody>
+                            </TABLE>
+                                <BR/>
+                        </TD>
+                    </TR>
+                {% endif %}
+            {% endfor %}
+        </TBODY>
+    </table>
+{% endblock content%}

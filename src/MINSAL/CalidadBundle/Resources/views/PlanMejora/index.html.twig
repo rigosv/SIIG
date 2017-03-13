@@ -59,7 +59,13 @@
                                        class="btn btn-info" role="button">
                                         Editar
                                     </A>
-                                       Ver</TD>
+                                    <A 
+                                       href="{{path('calidad_planmejora_ver', {'id': estEval.plan.id})}}" 
+                                       target="blank_"
+                                       class="btn btn-primary" role="button">
+                                        Ver
+                                    </A>
+                                </TD>
                             {% else %}
                                 <TD>
                                     <A 

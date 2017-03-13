@@ -304,5 +304,20 @@ class PlanMejoraController extends Controller {
 
         return new Response(json_encode(array("ok" => "ok")));
     }
+    
+    /**
+     * @Route("/{id}/ver/", name="calidad_planmejora_ver")
+     */
+    public function verAction(PlanMejora $planMejora) {
+        $admin_pool = $this->get('sonata.admin.pool');
+        $em = $this->getDoctrine()->getManager();
+        
+        $criterios = $em->getRepository('CalidadBundle:PlanMejora')->getCriteriosOrden($planMejora);
 
+        return $this->render('CalidadBundle:PlanMejora:ver.html.twig', array('admin_pool' => $admin_pool,
+                    'plan' => $planMejora,
+                    'criterios' => $criterios
+                        )
+        );
+    }
 }
