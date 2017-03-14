@@ -5,9 +5,7 @@
         .content{
             font-size: 9pt;
         }
-        table {
-            width: 100%
-        }
+        
         .sonata-bc .span12 {
             width: 100%;
         }
@@ -18,6 +16,13 @@
         .jqstooltip{
             width: 35px !important;
             height: 30px !important;
+        }
+        .tieneActividades{
+            background-color: #F5F5F5;
+        }
+        
+        .table { 
+            width: 98% !important;
         }
     </style>
     <link rel="stylesheet" href="{{ app.request.schemeAndHttpHost ~ asset('bundles/sonatacore/vendor/bootstrap/dist/css/bootstrap.min.css') }}" type="text/css" media="all" />
@@ -45,130 +50,131 @@
         <div class='col-md-4'><H4>{{'_periodo_'|trans}} {{plan.periodo.mesTexto}} / {{plan.periodo.anio}}</H4></div>
         <div class='col-md-4'><H4>{{'_porcentaje_ejecucion_'|trans}}:  {{plan.porcentajeAvance|number_format(1)}}%</H4></div>
     </div>
-    
-    <TABLE >
-        <TBODY>        
-            <TR>
-                <TD style="width: 15%"><B>{{'_region_'|trans}}</B></TD>
-                <TD style="width: 35%"></TD>
-                <TD style="width: 15%"><B>{{'_estandar_'|trans}}</B></TD>
-                <TD style="width: 35%">{{plan.estandar.descripcion}}</TD>
-            </TR>
-            <TR>
-                <TD style="width: 15%"><B>{{'_nivel_'|trans}}</B></TD>
-                <TD style="width: 35%"></TD>
-                <TD style="width: 15%"><B>{{'_dimension_'|trans}}</B></TD>
-                <TD style="width: 35%"></TD>
-            </TR>
-            <TR>
-                <TD style="width: 15%"><B>{{'_establecimiento_'|trans}}</B></TD>
-                <TD style="width: 35%">{{plan.establecimiento.nombre}}</TD>
-                <TD style="width: 15%"><B>{{'_proceso_'|trans}}</B></TD>
-                <TD style="width: 35%"></TD>
-            </TR>
-        </TBODY>
-    </TABLE>
-                <BR/>
-    <TABLE >
-        <THEAD>
-            <TR style='text-align: center'>
-                <TH>{{'_criterio_'|trans}}</TH>
-                <TH>{{'_brecha_'|trans}}</TH>
-                <TH>{{'_causa_brecha_'|trans}}</TH>
-                <TH>{{'_oportunidad_mejora_'|trans}}</TH>
-                <TH>{{'_factores_mejoramiento_'|trans}}</TH>
-                <TH>{{'_tipo_intervencion_'|trans}}</TH>
-                <TH>{{'_prioridad_'|trans}}</TH>
-                <TH>{{'_porcentaje_avance_'|trans}}</TH>
-            </TR>
-            
-        </THEAD>
-        <TBODY>
-            {% for c in criterios %}
+    <div class="table-responsive">
+        <TABLE align='center' class="table table-bordered table-condensed">
+            <TBODY>        
                 <TR>
-                    <TD>{{c.variableCaptura.descripcion}}</TD>
-                    <TD>{{c.brecha}}</TD>
-                    <TD>{{c.causaBrecha}}</TD>
-                    <TD>{{c.oportunidadMejora}}</TD>
-                    <TD>{{c.factoresMejoramiento}}</TD>
-                    <TD>{{c.tipoIntervencion}}</TD>
-                    <TD>{{c.prioridad}}</TD>
-                    <TD align='right'>{% if c.porcentajeAvance != null %} {{c.porcentajeAvance | number_format(1)}} {% endif %}</TD>
+                    <TD style="width: 15%" class="info"><B>{{'_region_'|trans}}</B></TD>
+                    <TD style="width: 35%"></TD>
+                    <TD style="width: 15%" class="info"><B>{{'_estandar_'|trans}}</B></TD>
+                    <TD style="width: 35%">{{plan.estandar.descripcion}}</TD>
                 </TR>
-                {% if c.actividades | length > 0 %}
-                    <TR>
-                        <TD colspan="8">
-                            {% if historialCriterios[c.variableCaptura.codigo] is defined %}
-                                <Br/>
-                                {{'_brecha_historica_'|trans}} 
-                                <TABLE style='width: 10%; margin-left:  5%'>
-                                    <TR>
-                                        {% for periodo,bh in historialCriterios[c.variableCaptura.codigo]|reverse %}<TH>{{periodo}}</TH>{% endfor %}
-                                        {% if historialCriterios[c.variableCaptura.codigo] | length > 2 %}
-                                            <TH></TH>
-                                        {% endif %}
-                                    </TR>
-                                    <TR>
-                                        {% for bh in historialCriterios[c.variableCaptura.codigo]|reverse %}<TD>{{bh}}</TD>{% endfor %}
-                                        {% if historialCriterios[c.variableCaptura.codigo] | length > 2 %}
-                                            <TD>
-                                                <span class="inlinesparkline">{{historialCriterios[c.variableCaptura.codigo]|reverse|join(',') }}</span>
-                                            </TD>
-                                        {% endif %}
-                                    </TR>
-                                </TABLE>
-                            {% endif %}
-                            <Br/>
-                            {{'_actividades_'|trans}}
-                            <TABLE style="width: 90%" align="center">
-                                <THEAD>
-                                    <TR >
-                                        <TH>{{'_nombre_actividad_'|trans}}</TH>
-                                        <TH>{{'_inicio_'|trans}}</TH>
-                                        <TH>{{'_finalizacion_'|trans}}</TH>
-                                        <TH>{{'_medio_verificacion_'|trans}}</TH>
-                                        <TH>{{'_responsable_'|trans}}</TH>
-                                        <TH>{{'_dias_transcurridos_porcentaje_'|trans}}</TH>
-                                        <TH>{{'_porcentaje_avance_'|trans}}</TH>
-                                        <TH>{{'_estado_'|trans}}</TH>
-                                    </TR>
-                                </thead>
-                                <Tbody>
-                                    {% for a in c.actividades %}
+                <TR>
+                    <TD style="width: 15%" class="info"><B>{{'_nivel_'|trans}}</B></TD>
+                    <TD style="width: 35%"></TD>
+                    <TD style="width: 15%" class="info"><B>{{'_dimension_'|trans}}</B></TD>
+                    <TD style="width: 35%"></TD>
+                </TR>
+                <TR>
+                    <TD style="width: 15%" class="info"><B>{{'_establecimiento_'|trans}}</B></TD>
+                    <TD style="width: 35%">{{plan.establecimiento.nombre}}</TD>
+                    <TD style="width: 15%" class="info"><B>{{'_proceso_'|trans}}</B></TD>
+                    <TD style="width: 35%"></TD>
+                </TR>
+            </TBODY>
+        </TABLE>
+                    <BR/>
+        <TABLE align="center" class="table table-bordered table-condensed">
+            <THEAD>
+                <TR style='text-align: center' class="info">
+                    <TH>{{'_criterio_'|trans}}</TH>
+                    <TH>{{'_brecha_'|trans}}</TH>
+                    <TH>{{'_causa_brecha_'|trans}}</TH>
+                    <TH>{{'_oportunidad_mejora_'|trans}}</TH>
+                    <TH>{{'_factores_mejoramiento_'|trans}}</TH>
+                    <TH>{{'_tipo_intervencion_'|trans}}</TH>
+                    <TH>{{'_prioridad_'|trans}}</TH>
+                    <TH>{{'_porcentaje_avance_'|trans}}</TH>
+                </TR>
+
+            </THEAD>
+            <TBODY>
+                {% for c in criterios %}
+                    <TR {% if c.actividades | length > 0 %} class="tieneActividades"{% endif %}>
+                        <TD>{{c.variableCaptura.descripcion}}</TD>
+                        <TD>{{c.brecha}}</TD>
+                        <TD>{{c.causaBrecha}}</TD>
+                        <TD>{{c.oportunidadMejora}}</TD>
+                        <TD>{{c.factoresMejoramiento}}</TD>
+                        <TD>{{c.tipoIntervencion}}</TD>
+                        <TD>{{c.prioridad}}</TD>
+                        <TD align='right'>{% if c.porcentajeAvance != null %} {{c.porcentajeAvance | number_format(1)}} {% endif %}</TD>
+                    </TR>
+                    {% if c.actividades | length > 0 %}
+                        <TR>
+                            <TD colspan="8">
+                                {% if historialCriterios[c.variableCaptura.codigo] is defined %}
+                                    <Br/>
+                                    {{'_brecha_historica_'|trans}} 
+                                    <TABLE style='width: 10%; margin-left:  5%'>
                                         <TR>
-                                            <TD>{{a.nombre}}</TD>
-                                            <TD align="center">{{a.fechaInicio|date('d/m/Y')}}</TD>
-                                            <TD align="center">{{a.fechaFinalizacion|date('d/m/Y')}}</TD>
-                                            <TD>{{a.medioVerificacion}}</TD>
-                                            <TD>{{a.Responsable}}</TD>
-                                            <TD align='right'>{{a.porcentajeDiasTranscurrido|number_format(1)}}</TD>
-                                            <TD align="right">
-                                                {{a.porcentajeAvance|number_format(1)}}
-                                            </TD>
-                                            {% if not a.iniciada %}
-                                                <TD>{{'_no_iniciada_'|trans}}</TD>
-                                            {% elseif a.porcentajeAvance == 100 %}
-                                                <TD style="font-size: 12pt;" >{{'_finalizada_'|trans}} <span class="glyphicon glyphicon-ok" style='color: #00e765' aria-hidden="true"></span></TD>
-                                            {% elseif a.actividadVencida %}
-                                                <TD style="background-color: #D9534F; font-size: 12pt; font-weight: bold">{{'_vencida_'|trans}}</TD>
-                                            {% elseif a.porcentajeDiasTranscurrido > a.porcentajeAvance %}
-                                                <TD style="background-color: #F0AD4E; font-size: 10pt; font-weight: bold">
-                                                    {{'_en_progreso_'|trans}} (<span class="glyphicon glyphicon-minus" aria-hidden="true">)
-                                                </TD>
-                                            {% elseif a.porcentajeDiasTranscurrido < a.porcentajeAvance %}
-                                                <TD style="background-color: #F0AD4E; font-size: 10pt; font-weight: bold">
-                                                    {{'_en_progreso_'|trans}} (<span class="glyphicon glyphicon-plus" aria-hidden="true">)
+                                            {% for periodo,bh in historialCriterios[c.variableCaptura.codigo]|reverse %}<TH>{{periodo}}</TH>{% endfor %}
+                                            {% if historialCriterios[c.variableCaptura.codigo] | length > 2 %}
+                                                <TH></TH>
+                                            {% endif %}
+                                        </TR>
+                                        <TR>
+                                            {% for bh in historialCriterios[c.variableCaptura.codigo]|reverse %}<TD>{{bh}}</TD>{% endfor %}
+                                            {% if historialCriterios[c.variableCaptura.codigo] | length > 2 %}
+                                                <TD>
+                                                    <span class="inlinesparkline">{{historialCriterios[c.variableCaptura.codigo]|reverse|join(',') }}</span>
                                                 </TD>
                                             {% endif %}
                                         </TR>
-                                    {% endfor %}
-                                </tbody>
-                            </TABLE>
-                                <BR/>
-                        </TD>
-                    </TR>
-                {% endif %}
-            {% endfor %}
-        </TBODY>
+                                    </TABLE>
+                                {% endif %}
+                                <Br/>
+                                {{'_actividades_'|trans}}
+                                <TABLE style="width: 90%" align="center" class="table">
+                                    <THEAD>
+                                        <TR class="warning">
+                                            <TH>{{'_nombre_actividad_'|trans}}</TH>
+                                            <TH>{{'_inicio_'|trans}}</TH>
+                                            <TH>{{'_finalizacion_'|trans}}</TH>
+                                            <TH>{{'_medio_verificacion_'|trans}}</TH>
+                                            <TH>{{'_responsable_'|trans}}</TH>
+                                            <TH>{{'_dias_transcurridos_porcentaje_'|trans}}</TH>
+                                            <TH>{{'_porcentaje_avance_'|trans}}</TH>
+                                            <TH>{{'_estado_'|trans}}</TH>
+                                        </TR>
+                                    </thead>
+                                    <Tbody>
+                                        {% for a in c.actividades %}
+                                            <TR>
+                                                <TD>{{a.nombre}}</TD>
+                                                <TD align="center">{{a.fechaInicio|date('d/m/Y')}}</TD>
+                                                <TD align="center">{{a.fechaFinalizacion|date('d/m/Y')}}</TD>
+                                                <TD>{{a.medioVerificacion}}</TD>
+                                                <TD>{{a.Responsable}}</TD>
+                                                <TD align='right'>{{a.porcentajeDiasTranscurrido|number_format(1)}}</TD>
+                                                <TD align="right">
+                                                    {{a.porcentajeAvance|number_format(1)}}
+                                                </TD>
+                                                {% if not a.iniciada %}
+                                                    <TD>{{'_no_iniciada_'|trans}}</TD>
+                                                {% elseif a.porcentajeAvance == 100 %}
+                                                    <TD style="font-size: 12pt;" >{{'_finalizada_'|trans}} <span class="glyphicon glyphicon-ok" style='color: #00e765' aria-hidden="true"></span></TD>
+                                                {% elseif a.actividadVencida %}
+                                                    <TD style="background-color: #D9534F; font-size: 12pt; font-weight: bold">{{'_vencida_'|trans}}</TD>
+                                                {% elseif a.porcentajeDiasTranscurrido > a.porcentajeAvance %}
+                                                    <TD style="background-color: #F0AD4E; font-size: 10pt; font-weight: bold">
+                                                        {{'_en_progreso_'|trans}} (<span class="glyphicon glyphicon-minus" aria-hidden="true">)
+                                                    </TD>
+                                                {% elseif a.porcentajeDiasTranscurrido < a.porcentajeAvance %}
+                                                    <TD style="background-color: #F0AD4E; font-size: 10pt; font-weight: bold">
+                                                        {{'_en_progreso_'|trans}} (<span class="glyphicon glyphicon-plus" aria-hidden="true">)
+                                                    </TD>
+                                                {% endif %}
+                                            </TR>
+                                        {% endfor %}
+                                    </tbody>
+                                </TABLE>
+                                    <BR/>
+                            </TD>
+                        </TR>
+                    {% endif %}
+                {% endfor %}
+            </TBODY>
+        </table>
     </table>
 {% endblock content%}
