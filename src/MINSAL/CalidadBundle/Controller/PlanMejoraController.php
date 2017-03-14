@@ -105,14 +105,13 @@ class PlanMejoraController extends Controller {
                         //Verificar si tiene plan de mejora creado
                         $plan = $em->getRepository('CalidadBundle:PlanMejora')
                                 ->findOneBy(
-                                        array('establecimiento' => $establecimiento,    
-                                            'periodo' => $periodo,
-                                            'estandar' => $est
-                                        )
-                                    );
-                        
+                                array('establecimiento' => $establecimiento,
+                                    'periodo' => $periodo,
+                                    'estandar' => $est
+                                )
+                        );
+
                         $estandaresEval[$est->getCodigo()]['plan'] = $plan;
-                        
                     }
                 }
             }
@@ -133,23 +132,24 @@ class PlanMejoraController extends Controller {
      */
     public function crearAction($id_establecimiento, $anio, $mes, $id_estandar) {
         $em = $this->getDoctrine()->getManager();
-        
+
         $establecimiento = $em->find('CostosBundle:Estructura', $id_establecimiento);
-        $periodo = $em->find('GridFormBundle:PeriodoIngreso', array('anio'=>$anio, 'mes'=>$mes));
+        $periodo = $em->find('GridFormBundle:PeriodoIngreso', array('anio' => $anio, 'mes' => $mes));
         $estandar = $em->find('CalidadBundle:Estandar', $id_estandar);
-        
+
         $plan = new PlanMejora();
         $plan->setEstablecimiento($establecimiento);
         $plan->setEstandar($estandar);
         $plan->setPeriodo($periodo);
-        
+
         $em->persist($plan);
         $em->flush();
-        
+
         return $this->forward('CalidadBundle:PlanMejora:detalle', array(
-            'id'  => $plan->getId()
+                    'id' => $plan->getId()
         ));
     }
+
     /**
      * @Route("/{id}/detalle/", name="calidad_planmejora_detalle")
      */
@@ -204,7 +204,7 @@ class PlanMejoraController extends Controller {
 
         //Recuperar los criterios del plan
         $criterios = array();
-        foreach ($em->getRepository('CalidadBundle:Criterio')->findBy(array('planMejora'=>$planMejora), array('variableCaptura'=>'ASC')) as $c) {
+        foreach ($em->getRepository('CalidadBundle:Criterio')->findBy(array('planMejora' => $planMejora), array('variableCaptura' => 'ASC')) as $c) {
             $criterios['rows'][] = array('id' => $c->getId(),
                 'descripcion' => $c->getVariableCaptura()->getDescripcion(),
                 'brecha' => $c->getBrecha(),
@@ -304,20 +304,64 @@ class PlanMejoraController extends Controller {
 
         return new Response(json_encode(array("ok" => "ok")));
     }
-    
+
     /**
      * @Route("/{id}/ver/", name="calidad_planmejora_ver")
      */
     public function verAction(PlanMejora $planMejora) {
         $admin_pool = $this->get('sonata.admin.pool');
         $em = $this->getDoctrine()->getManager();
-        
-        $criterios = $em->getRepository('CalidadBundle:PlanMejora')->getCriteriosOrden($planMejora);
 
+        $criterios = $em->getRepository('CalidadBundle:PlanMejora')->getCriteriosOrden($planMejora);
+        
+        $historialCriterios = $this->getHistorialCriterios($planMejora, $criterios);
+        
         return $this->render('CalidadBundle:PlanMejora:ver.html.twig', array('admin_pool' => $admin_pool,
                     'plan' => $planMejora,
-                    'criterios' => $criterios
+                    'criterios' => $criterios,
+                    'historialCriterios' => $historialCriterios
                         )
         );
     }
+    
+    public function getHistorialCriterios(PlanMejora $planMejora, $criterios) {
+       $em = $this->getDoctrine()->getManager();
+       
+        $arrCriterios = array();
+        foreach ($criterios as $c) {
+            $arrCriterios[] = $c->getVariableCaptura()->getCodigo();
+        }
+        
+        $historialCriterios = array();
+        $limiteAceptacion = 80;
+        //Historial de criterios
+        $codigoEstructura = $planMejora->getEstablecimiento()->getCodigo();
+        $periodoInicial = $planMejora->getPeriodo();
+        $codigoFormulario = $planMejora->getEstandar()->getFormularioCaptura()->getCodigo();
+        $anio = $periodoInicial->getAnio();
+        $mes = (int) $periodoInicial->getMes();
+        for ($i = 0; $i < 7; $i++) {
+            //Periodo anterior
+            $anio = ($mes == 1) ? $anio - 1 : $anio;
+            $mes = ($mes == 1) ? 12 : $mes - 1;
+            
+            
+            //Buscar la evaluacion de los criterios para ese periodo
+            $criteriosEstandar = $em->getRepository('CalidadBundle:Estandar')
+                    ->getCriterios($codigoEstructura, $anio . '_' . str_pad($mes, 2, "0", STR_PAD_LEFT), $codigoFormulario);
+            
+            //Recuperar los criterios que están en el plan actual
+            if (count($criteriosEstandar['datos']) > 0){
+                foreach ($criteriosEstandar['datos'][$codigoFormulario]['resumen_criterios'] as $c) {
+                    if (in_array($c['codigo_variable'], $arrCriterios)) {
+                        $brecha = ( $c['porc_cumplimiento'] > $limiteAceptacion ) ? 0 : $limiteAceptacion - $c['porc_cumplimiento'];
+                        $historialCriterios[$c['codigo_variable']][ str_pad($mes, 2, "0", STR_PAD_LEFT).'/'.$anio] = $brecha;
+                    }
+                }
+            }
+        }
+        
+        return $historialCriterios;
+    }
+
 }

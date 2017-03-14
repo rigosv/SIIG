@@ -269,4 +269,9 @@ class Actividad
         $hoy = new \DateTime();
         return $hoy > $this->fechaFinalizacion and $this->porcentajeAvance < 100;
     }
+    
+    public function isIniciada(){
+        $hoy = new \DateTime();
+        return $hoy > $this->fechaInicio;
+    }
 }

@@ -175,4 +175,19 @@ class PlanMejora
     {
         return $this->periodo;
     }
+    
+    public function getPorcentajeAvance() {
+        $avance = null;
+        $cantCriterios = 0;
+        
+        foreach($this->getCriterios() as $c){
+            if ($c->getPorcentajeAvance() != null){
+                $avance += $c->getPorcentajeAvance();
+                $cantCriterios++;
+            }
+            
+        }
+        
+        return ( $avance == null) ? null : ($avance / $cantCriterios); 
+    }
 }

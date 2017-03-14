@@ -323,4 +323,16 @@ class Criterio
     {
         return $this->brecha;
     }
+    
+    public function getPorcentajeAvance() {
+        $avance = null;
+        $cantAct = 0;
+        
+        foreach($this->getActividades() as $a){
+            $avance += $a->getPorcentajeAvance();
+            $cantAct++;
+        }
+        
+        return ( $avance == null) ? null : ($avance / $cantAct); 
+    }
 }
