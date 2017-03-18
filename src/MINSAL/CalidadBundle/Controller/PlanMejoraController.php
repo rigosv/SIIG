@@ -372,7 +372,7 @@ class PlanMejoraController extends Controller {
         foreach ($criterios as $c) {
             $arrCriterios[] = $c->getVariableCaptura()->getCodigo();
         }
-        
+        $formaEvaluacion = $planMejora->getEstandar()->getFormaEvaluacion();
         $historialCriterios = array();
         $limiteAceptacion = 80;
         //Historial de criterios
@@ -381,22 +381,25 @@ class PlanMejoraController extends Controller {
         $codigoFormulario = $planMejora->getEstandar()->getFormularioCaptura()->getCodigo();
         $anio = $periodoInicial->getAnio();
         $mes = (int) $periodoInicial->getMes();
-        for ($i = 0; $i < 7; $i++) {
-            //Periodo anterior
-            $anio = ($mes == 1) ? $anio - 1 : $anio;
-            $mes = ($mes == 1) ? 12 : $mes - 1;
-            
-            
-            //Buscar la evaluacion de los criterios para ese periodo
-            $criteriosEstandar = $em->getRepository('CalidadBundle:Estandar')
-                    ->getCriterios($codigoEstructura, $anio . '_' . str_pad($mes, 2, "0", STR_PAD_LEFT), $codigoFormulario);
-            
-            //Recuperar los criterios que están en el plan actual
-            if (count($criteriosEstandar['datos']) > 0){
-                foreach ($criteriosEstandar['datos'][$codigoFormulario]['resumen_criterios'] as $c) {
-                    if (in_array($c['codigo_variable'], $arrCriterios)) {
-                        $brecha = ( $c['porc_cumplimiento'] > $limiteAceptacion ) ? 0 : $limiteAceptacion - $c['porc_cumplimiento'];
-                        $historialCriterios[$c['codigo_variable']][ str_pad($mes, 2, "0", STR_PAD_LEFT).'/'.$anio] = $brecha;
+        
+        if ($formaEvaluacion == 'lista_chequeo'){
+            for ($i = 0; $i < 7; $i++) {
+                //Periodo anterior
+                $anio = ($mes == 1) ? $anio - 1 : $anio;
+                $mes = ($mes == 1) ? 12 : $mes - 1;
+
+
+                //Buscar la evaluacion de los criterios para ese periodo
+                $criteriosEstandar = $em->getRepository('CalidadBundle:Estandar')
+                        ->getCriterios($codigoEstructura, $anio . '_' . str_pad($mes, 2, "0", STR_PAD_LEFT), $codigoFormulario);
+
+                //Recuperar los criterios que están en el plan actual
+                if (count($criteriosEstandar['datos']) > 0){
+                    foreach ($criteriosEstandar['datos'][$codigoFormulario]['resumen_criterios'] as $c) {
+                        if (in_array($c['codigo_variable'], $arrCriterios)) {
+                            $brecha = ( $c['porc_cumplimiento'] > $limiteAceptacion ) ? 0 : $limiteAceptacion - $c['porc_cumplimiento'];
+                            $historialCriterios[$c['codigo_variable']][ str_pad($mes, 2, "0", STR_PAD_LEFT).'/'.$anio] = $brecha;
+                        }
                     }
                 }
             }
