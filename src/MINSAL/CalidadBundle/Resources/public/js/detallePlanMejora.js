@@ -1,5 +1,8 @@
 $(document).ready(function () {
     var idCriterio;
+    var agrupar = (formaEvaluacion === 'rango_colores');
+    
+
     // Grid de criterios
     $("#gridCriterios").jqGrid({
         url: Routing.generate('calidad_planmejora_get_criterios', {id: idPlan}),
@@ -7,6 +10,7 @@ $(document).ready(function () {
         editurl: Routing.generate('calidad_planmejora_set_criterio'),
         colModel: [
             {label: 'ID', name: 'id', key: true, width: 50, hidden: true},
+            {label: 'Indicador', name: 'indicador', width: 50, hidden: true},
             {label: 'Descripción', name: 'descripcion', width: 200, editable: true, editoptions: { readonly: "readonly" }},
             {label: 'Brecha', name: 'brecha', align: "right", sorttype: "number", width: 30, editable:true, editoptions: { readonly: "readonly" }},
             {label: 'Causa brecha', name: 'causaBrecha', width: 150, editable: true, edittype: 'textarea', editrules: {required: true}},
@@ -21,6 +25,12 @@ $(document).ready(function () {
                 editrules: {required: true}
             }
         ],
+        grouping: agrupar, 
+        groupingView : { 
+           groupField : ['indicador'],
+           groupDataSorted : true,
+           groupColumnShow: [false]
+        }, 
         autowidth: true,
         height: 150,
         rowNum: 100,

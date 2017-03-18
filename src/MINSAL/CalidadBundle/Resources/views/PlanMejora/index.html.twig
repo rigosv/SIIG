@@ -52,30 +52,32 @@
                             <TD>{{estEval.eval.calificacion}}</TD>
                             <TD>{{estEval.est.meta}}</TD>
                             <TD>{{estEval.est.meta - estEval.eval.calificacion}}</TD>
-                            {% if estEval.plan != null %}
-                                <TD>
-                                    <A 
-                                       href="{{path('calidad_planmejora_detalle', {'id': estEval.plan.id})}}" 
-                                       class="btn btn-info" role="button">
-                                        Editar
-                                    </A>
-                                    <A 
-                                       href="{{path('calidad_planmejora_ver', {'id': estEval.plan.id})}}" 
-                                       target="blank_"
-                                       class="btn btn-primary" role="button">
-                                        Ver
-                                    </A>
-                                </TD>
-                            {% else %}
-                                <TD>
-                                    <A 
-                                       href="{{path('calidad_planmejora_crear', 
-                                                {'id_establecimiento': establecimiento.id, 'anio': periodo.anio, 
-                                                'mes': periodo.mes, 'id_estandar': estEval.est.id})
-                                            }}" 
-                                       class="btn btn-success" role="button">Crear</a>
-                                </TD>
-                            {% endif %}
+                            {% include 'CalidadBundle:PlanMejora:enlacesPlanes.html.twig' with estEval %}
+                        </TR>
+                    {% endfor %}
+                </TBODY>
+            </TABLE>
+        </div>
+    {% endif %}
+    {% if estandaresNumEval|length > 0 %}
+        <div class="panel panel-warning">
+            <div class="panel-heading">{{'_evaluaciones_numericas_realizadas_no_meta_alcanzada_'|trans}}</div>
+            <TABLE class="table table-bordered table-condensed">
+                <THEAD>
+                    <TR>
+                        <TH>{{'_estandar_'|trans}}</TH>
+                        <TH>{{'_indicadores_reprobados_'|trans}}</TH>
+                        <TH>{{'_indicadores_evaluados_'|trans}}</TH>
+                        <TH>{{'_plan_mejora_'|trans}}</TH>
+                    </TR>
+                </THEAD>
+                <TBODY>
+                    {% for cod, estEval in estandaresNumEval %}
+                        <TR>
+                            <TD>{{estEval.est.descripcion}}</TD>
+                            <TD>{{estandaresNumTot[cod].reprobados|length}}</TD>
+                            <TD>{{estandaresNumTot[cod].evaluaciones|length}}</TD>
+                            {% include 'CalidadBundle:PlanMejora:enlacesPlanes.html.twig' with estEval %}
                         </TR>
                     {% endfor %}
                 </TBODY>

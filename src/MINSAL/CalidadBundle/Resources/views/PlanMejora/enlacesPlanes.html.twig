@@ -1,0 +1,24 @@
+{% if estEval.plan != null %}
+    <TD>
+        <A 
+            href="{{path('calidad_planmejora_detalle', {'id': estEval.plan.id})}}" 
+            class="btn btn-info" role="button">
+            Editar
+        </A>
+        <A 
+            href="{{path('calidad_planmejora_ver', {'id': estEval.plan.id})}}" 
+            target="blank_"
+            class="btn btn-primary" role="button">
+            Ver
+        </A>
+    </TD>
+{% else %}
+    <TD>
+        <A 
+            href="{{path('calidad_planmejora_crear', 
+                                                {'id_establecimiento': establecimiento.id, 'anio': periodo.anio, 
+                                                'mes': periodo.mes, 'id_estandar': estEval.est.id})
+            }}" 
+            class="btn btn-success" role="button">Crear</a>
+    </TD>
+{% endif %}

@@ -19,7 +19,8 @@
     <script type="text/javascript">
         var prioridades = JSON.parse("{{prioridades|escape('js')}}");
         var tiposIntervencion = JSON.parse("{{tiposIntervencion|escape('js')}}");
-        var idPlan = {{planMejora.id}}
+        var idPlan = {{planMejora.id}};
+        var formaEvaluacion = '{{planMejora.estandar.formaEvaluacion}}';
     </script>
     
 {% endblock %}
