@@ -354,23 +354,37 @@ class PlanMejoraController extends Controller {
         $em = $this->getDoctrine()->getManager();
 
         $criterios = $em->getRepository('CalidadBundle:PlanMejora')->getCriteriosOrden($planMejora);
+        $indicadores = array();
         
-        $historialCriterios = $this->getHistorialCriterios($planMejora, $criterios);
+        foreach ($criterios as $c){
+            if ($planMejora->getEstandar()->getFormaEvaluacion() == 'rango_colores'){
+                $ind =  $c->getVariableCaptura()->getIndicadores();
+                $indicadores[$ind[0]->getCodigo()]['descripcion'] = $ind[0]->getDescripcion();
+                $indicadores[$ind[0]->getCodigo()]['criterios'][] = $c;
+            } else {
+                $indicadores[0]['descripcion'] = '';
+                $indicadores[0]['criterios'][] = $c;
+            }
+        }
+        
+        $historialCriterios = $this->getHistorialCriterios($planMejora, $indicadores);
         
         return $this->render('CalidadBundle:PlanMejora:ver.html.twig', array('admin_pool' => $admin_pool,
                     'plan' => $planMejora,
-                    'criterios' => $criterios,
+                    'indicadores' => $indicadores,
                     'historialCriterios' => $historialCriterios
                         )
         );
     }
     
-    public function getHistorialCriterios(PlanMejora $planMejora, $criterios) {
+    public function getHistorialCriterios(PlanMejora $planMejora, $indicadores) {
        $em = $this->getDoctrine()->getManager();
        
         $arrCriterios = array();
-        foreach ($criterios as $c) {
-            $arrCriterios[] = $c->getVariableCaptura()->getCodigo();
+        foreach ($indicadores as $ind) {
+            foreach ($ind['criterios'] as $c){
+                $arrCriterios[] = $c->getVariableCaptura()->getCodigo();
+            }
         }
         $formaEvaluacion = $planMejora->getEstandar()->getFormaEvaluacion();
         $historialCriterios = array();

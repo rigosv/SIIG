@@ -46,13 +46,20 @@ class PlanMejoraRepository extends EntityRepository {
     
     public function getCriteriosOrden(PlanMejora $planMejora) {
         
+        $ind = '';
+        $ord = '';
+        if ($planMejora->getEstandar()->getFormaEvaluacion() == 'rango_colores'){
+            $ind = ' INNER JOIN V.area AR ';
+            $ord = ' V.area, ';
+        }
         $criterios =  $this->getEntityManager()
             ->createQuery(
                 "SELECT C
                     FROM CalidadBundle:Criterio C
                     INNER JOIN C.variableCaptura V
+                    $ind
                     WHERE C.planMejora = :plan
-                    ORDER BY V.posicion ASC
+                    ORDER BY $ord V.posicion ASC
                     "
             )
             ->setParameters(array('plan'=>$planMejora))
