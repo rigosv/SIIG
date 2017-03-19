@@ -4,6 +4,7 @@ namespace MINSAL\CostosBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use MINSAL\GridFormBundle\Entity\PeriodoIngreso;
+use MINSAL\CostosBundle\Entity\Estructura;
 
 /**
  * EstructuraRepository
@@ -32,5 +33,18 @@ class EstructuraRepository extends EntityRepository {
                 ->orderBy('e.nombreCorto')
                 ;
         return $qb;
+    }
+    
+    public function getEstablecimiento(Estructura $estructura) {
+        $codigo = $estructura->getCodigo();
+        
+        $sql = "SELECT A.descripcion nombre, B.descripcion as region
+                FROM ctl_establecimiento_simmow A
+                    INNER JOIN ctl_regiones_simmow B ON (A.idregion = B.id)
+                WHERE A.id = '$codigo' ";
+
+        $est = $this->getEntityManager()->getConnection()->executeQuery($sql)->fetch();
+
+        return $est;
     }
 }

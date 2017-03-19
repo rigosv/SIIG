@@ -354,6 +354,11 @@ class PlanMejoraController extends Controller {
         $em = $this->getDoctrine()->getManager();
 
         $criterios = $em->getRepository('CalidadBundle:PlanMejora')->getCriteriosOrden($planMejora);
+        $establecimiento = $em->getRepository('CostosBundle:Estructura')->getEstablecimiento($planMejora->getEstablecimiento());
+        
+        if ($establecimiento == false){
+            $establecimiento['region'] = '';
+        }
         $indicadores = array();
         
         foreach ($criterios as $c){
@@ -372,7 +377,8 @@ class PlanMejoraController extends Controller {
         return $this->render('CalidadBundle:PlanMejora:ver.html.twig', array('admin_pool' => $admin_pool,
                     'plan' => $planMejora,
                     'indicadores' => $indicadores,
-                    'historialCriterios' => $historialCriterios
+                    'historialCriterios' => $historialCriterios,
+                    'establecimiento' => $establecimiento
                         )
         );
     }
