@@ -47,14 +47,15 @@ class EstandarRepository extends EntityRepository {
                             AND indicador_id = E.id
                         ) AS meta,
                     array(
-                        SELECT mes||'/'||anio||'/'||codigo_criterio||'/'||ROUND(AVG(calificacion)::numeric,2)
+                        SELECT mes||'/'||anio||'/'||ROUND(AVG(calificacion)::numeric,2)
                             FROM datos_evaluacion_calidad_num AA
                             WHERE AA.id_indicador = A.id_indicador
                                 AND calificacion != 'NaN'
                                 AND (anio < $anio OR (anio = $anio AND mes::integer <= $mes::integer ) )
                                 AND AA.establecimiento = '$codigo'
-                            GROUP BY anio, mes, codigo_criterio
-                            ORDER BY anio, mes
+                                AND AA.codigo_criterio = A.codigo_criterio
+                            GROUP BY anio, mes
+                            ORDER BY anio DESC, mes DESC
                             LIMIT 10
                         ) AS historial
                     FROM datos_evaluacion_calidad_num A

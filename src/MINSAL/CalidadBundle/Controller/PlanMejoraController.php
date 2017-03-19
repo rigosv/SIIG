@@ -229,7 +229,7 @@ class PlanMejoraController extends Controller {
             $criteriosEvaluados = $criteriosEstandar['datos'][$codigoFormulario]['resumen_criterios'];
         } elseif ($formaEvaluacion == 'rango_colores'){
             //Obtener las otras evaluaciones que no son lista de chequeo
-            $criteriosEvaluados = $em->getRepository('CalidadBundle:Estandar')->getIndicadoresEvaluadosNumericos($planMejora->getEstablecimiento(), $planMejora->getPeriodo());            
+            $criteriosEvaluados = $em->getRepository('CalidadBundle:Estandar')->getIndicadoresEvaluadosNumericos($planMejora->getEstablecimiento(), $planMejora->getPeriodo());
         }
         
         $criteriosParaPlan = $this->getCriteriosParaPlan($formaEvaluacion, $criteriosEvaluados);
@@ -352,6 +352,7 @@ class PlanMejoraController extends Controller {
     public function verAction(PlanMejora $planMejora) {
         $admin_pool = $this->get('sonata.admin.pool');
         $em = $this->getDoctrine()->getManager();
+        $formaEvaluacion = $planMejora->getEstandar()->getFormaEvaluacion();
 
         $criterios = $em->getRepository('CalidadBundle:PlanMejora')->getCriteriosOrden($planMejora);
         $establecimiento = $em->getRepository('CostosBundle:Estructura')->getEstablecimiento($planMejora->getEstablecimiento());
@@ -418,6 +419,26 @@ class PlanMejoraController extends Controller {
                     foreach ($criteriosEstandar['datos'][$codigoFormulario]['resumen_criterios'] as $c) {
                         if (in_array($c['codigo_variable'], $arrCriterios)) {
                             $brecha = ( $c['porc_cumplimiento'] > $limiteAceptacion ) ? 0 : $limiteAceptacion - $c['porc_cumplimiento'];
+                            $historialCriterios[$c['codigo_variable']][ str_pad($mes, 2, "0", STR_PAD_LEFT).'/'.$anio] = $brecha;
+                        }
+                    }
+                }
+            }
+        } else {
+            $criteriosEvaluados = $em->getRepository('CalidadBundle:Estandar')->getIndicadoresEvaluadosNumericos($planMejora->getEstablecimiento(), $planMejora->getPeriodo());
+            if (count($criteriosEvaluados) > 0){
+                foreach ($criteriosEvaluados as $c) {
+                    if (in_array($c['codigo_variable'], $arrCriterios)) {
+                        $historial = explode(',', str_replace(array('{', '}'), array('', ''), $c['historial']));
+                        $limites = explode('-', $c['meta']);
+                        
+                        foreach ($historial as $h){
+                            list($mes, $anio, $calificacion) = explode('/', $h);
+                            if ($calificacion < $limites[0] ){
+                                $brecha = $limites[0] - $calificacion;
+                            } elseif ($calificacion > $limites[1]){
+                                $brecha = $calificacion - $limites[1];
+                            }
                             $historialCriterios[$c['codigo_variable']][ str_pad($mes, 2, "0", STR_PAD_LEFT).'/'.$anio] = $brecha;
                         }
                     }
