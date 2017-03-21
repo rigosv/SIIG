@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Doctrine\DBAL as DBAL;
 use MINSAL\IndicadoresBundle\Excel\Excel as Excel;
 use MINSAL\IndicadoresBundle\Entity\Campo;
+use Symfony\Component\HttpFoundation\Request;
 
 class OrigenDatoController extends Controller
 {
@@ -17,10 +18,10 @@ class OrigenDatoController extends Controller
     /**
      * @Route("/conexion/probar", name="origen_dato_conexion_probar", options={"expose"=true})
      */
-    public function probarConexionAction()
+    public function probarConexionAction(Request $request)
     {
         try {
-            $conn = $this->getConexionGenerica('base_datos');
+            $conn = $this->getConexionGenerica('base_datos', null, $request);
             if ($this->driver != 'pdo_dblib')
                 $conn->connect();
             $mensaje = '<span style="color: green">' . $this->get('translator')->trans('conexion_success') . '</span>';
@@ -48,7 +49,7 @@ class OrigenDatoController extends Controller
                 foreach ($conexiones as $cnx) {
                     $datos = array();
                     $cnxObj = $this->getDoctrine()->getManager()->find('IndicadoresBundle:Conexion', $cnx);
-                    $conn = $this->getConexionGenerica('consulta_sql', $cnxObj);
+                    $conn = $this->getConexionGenerica('consulta_sql', $cnxObj, $request);
                     $conexion = $cnxObj->getNombreConexion();
                     //$sql = str_ireplace('FROM', ", '" . $cnxObj->getNombreConexion() . "' AS origen_datos FROM ", $sql);
                     if ($this->driver == 'pdo_dblib') {
@@ -212,7 +213,7 @@ class OrigenDatoController extends Controller
                     $resultado['mensaje'] = $this->get('translator')->trans('sentencia_error') . ': ' . $this->get('translator')->trans('_no_conexion_configurada_');
                     $resultado['estado'] = 'error';
                 } else {
-                    $conn = $this->getConexionGenerica('consulta_sql', $conexiones[0]);
+                    $conn = $this->getConexionGenerica('consulta_sql', $conexiones[0], $request);
                     try {
                         if ($this->driver == 'pdo_dblib') {
                             $sentenciaSQL = str_ireplace('SELECT', 'SELECT TOP 20 ', $sentenciaSQL);
