@@ -22,12 +22,15 @@ class OrigenDatoController extends Controller
     {
         try {
             $conn = $this->getConexionGenerica('base_datos', null, $request);
-            if ($this->driver != 'pdo_dblib')
+            if ($this->driver != 'pdo_dblib'){
                 $conn->connect();
+            }
             $mensaje = '<span style="color: green">' . $this->get('translator')->trans('conexion_success') . '</span>';
         } catch (\PDOException $e) {
             $mensaje = '<span style="color: red">' . $this->get('translator')->trans('conexion_error') . ': ' . $e->getMessage() . '</span>';
-        }
+        } catch (DBAL\Exception\ConnectionException  $e) {
+            $mensaje = '<span style="color: red">' . $this->get('translator')->trans('conexion_error') . ': ' . $e->getMessage() . '</span>';
+        } 
 
         return new Response($mensaje);
     }
