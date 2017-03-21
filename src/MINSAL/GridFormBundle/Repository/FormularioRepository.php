@@ -330,6 +330,28 @@ class FormularioRepository extends EntityRepository {
                     INNER JOIN variable_captura BB ON (AA.variablecaptura_id = BB.id) 
                 WHERE formulario_id= $frm_id ";
         $em->getConnection()->executeQuery($sql);
+        
+        
+        //Para las variables que no se haya definido alertas, tomar las del indicador
+        //Al que pertenecen
+        $sql = "INSERT INTO rangos_alertas_tmp 
+                    SELECT DISTINCT ON (BB.id) BB.id AS variablecaptura_id, 
+                    (select array_to_string(
+                                array(
+                                    SELECT COALESCE(limite_inferior::varchar,'')||'-'||COALESCE(limite_superior::varchar, '')||'-'||color  
+                                        FROM indicador_rangoalerta A 
+                                            INNER JOIN rango_alerta B ON (A.rangoalerta_id = B.id) 
+                                        WHERE A.indicador_id = AA.indicador_id
+                                    ), ','
+                                ) AS alertas
+                    ) AS alertas 
+                
+                FROM variable_captura BB 
+                    INNER JOIN indicador_variablecaptura CC ON (BB.id = CC.variablecaptura_id)
+                    INNER JOIN indicador_rangoalerta AA ON (CC.indicador_id = AA.indicador_id) 
+                WHERE BB.formulario_id= $frm_id 
+                    AND BB.id NOT IN (SELECT variablecaptura_id FROM rangos_alertas_tmp)";
+        $em->getConnection()->executeQuery($sql);
     }
     /**
      * 
