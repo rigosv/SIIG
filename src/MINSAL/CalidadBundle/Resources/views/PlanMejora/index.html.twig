@@ -75,7 +75,7 @@
                     {% for cod, estEval in estandaresNumEval %}
                         <TR>
                             <TD>{{estEval.est.descripcion}}</TD>
-                            <TD>{{estandaresNumTot[cod].reprobados|length}}</TD>
+                            <TD>{{estandaresNumTot[cod].reprobados}}</TD>
                             <TD>{{estandaresNumTot[cod].evaluaciones|length}}</TD>
                             {% include 'CalidadBundle:PlanMejora:enlacesPlanes.html.twig' with estEval %}
                         </TR>

@@ -96,7 +96,7 @@ class PlanMejoraController extends Controller {
                 // Solo si el estándar tiene algún indicador que no cumplió la meta
                 $evaluacionesNum = array();
                 foreach ($dataNum as $d) {
-                    $evaluacionesNumTot[$d['codigo']]['evaluaciones'] = $d;
+                    $evaluacionesNumTot[$d['codigo']]['evaluaciones'][] = $d;
                     if ($d['meta'] != '' and $d['color'] != 'green'){
                         $evaluacionesNum[$d['codigo']] = $d;
                         if (array_key_exists('reprobados', $evaluacionesNumTot[$d['codigo']] )){
@@ -105,7 +105,10 @@ class PlanMejoraController extends Controller {
                             $evaluacionesNumTot[$d['codigo']]['reprobados'] = 1;
                         }
                     }
-                    
+                    //Si no tuvo ninguna reprobada
+                    if (!array_key_exists('reprobados', $evaluacionesNumTot[$d['codigo']] )) {
+                        $evaluacionesNumTot[$d['codigo']]['reprobados'] = 0;
+                    }
                 }
                 
                 //Obtener los estándares
@@ -219,7 +222,8 @@ class PlanMejoraController extends Controller {
 
         $codigoEstructura = $planMejora->getEstablecimiento()->getCodigo();
         $periodo = $planMejora->getPeriodo()->getAnio() . '_' . $planMejora->getPeriodo()->getMes();
-        $codigoFormulario = $planMejora->getEstandar()->getFormularioCaptura()->getCodigo();
+        $estandar = $planMejora->getEstandar();
+        $codigoFormulario = $estandar->getFormularioCaptura()->getCodigo();
 
         $formaEvaluacion = $planMejora->getEstandar()->getFormaEvaluacion();
         
@@ -229,11 +233,12 @@ class PlanMejoraController extends Controller {
             $criteriosEvaluados = $criteriosEstandar['datos'][$codigoFormulario]['resumen_criterios'];
         } elseif ($formaEvaluacion == 'rango_colores'){
             //Obtener las otras evaluaciones que no son lista de chequeo
-            $criteriosEvaluados = $em->getRepository('CalidadBundle:Estandar')->getIndicadoresEvaluadosNumericos($planMejora->getEstablecimiento(), $planMejora->getPeriodo());
+            $criteriosEvaluados = $em->getRepository('CalidadBundle:Estandar')
+                    ->getIndicadoresEvaluadosNumericos($planMejora->getEstablecimiento(), $planMejora->getPeriodo(), $estandar);
         }
         
         $criteriosParaPlan = $this->getCriteriosParaPlan($formaEvaluacion, $criteriosEvaluados);
-        
+
         //Guardar los criterios, por si hay nuevos
         $em->getRepository('CalidadBundle:PlanMejora')->agregarCriterios($planMejora, $criteriosParaPlan);
 
