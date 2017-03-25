@@ -5,6 +5,7 @@ namespace MINSAL\CalidadBundle\Repository;
 use Doctrine\ORM\EntityRepository;
 use MINSAL\CalidadBundle\Entity\PlanMejora;
 use MINSAL\CalidadBundle\Entity\Criterio;
+use MINSAL\CalidadBundle\Entity\Prioridad;
 
 /**
  * PlanMejoraRepository
@@ -30,13 +31,31 @@ class PlanMejoraRepository extends EntityRepository {
                 $nCriterio = new Criterio();
                 $nCriterio->setPlanMejora($planMejora);
                 $nCriterio->setVariableCaptura($variableCaptura);
-                $nCriterio->setBrecha($c['brecha']);
-                $em->persist($nCriterio);
-            } else {
-                //Si ya existe actualizar brecha
-                $criterio_check->setBrecha($c['brecha']);
-                $em->persist($criterio_check);
+                
+                $criterio_check = $nCriterio;
             }
+            
+            $criterio_check->setBrecha($c['brecha']);
+            //Calcular la prioridad de acuerdo a la brecha
+            $sql = "SELECT numero_rango FROM rangos_alertas_generales WHERE  $c[brecha] BETWEEN limite_inferior AND limite_superior ";
+            $prioridadEval = $em->getConnection()->executeQuery($sql)->fetchAll();
+            
+            //Prioridad baja por defecto
+            $codigoPrioridad = 'alta';
+            if (count($prioridadEval) > 0 ){
+                switch ($prioridadEval[0]['numero_rango']) {
+                    case '1':
+                        $codigoPrioridad = 'baja';
+                    break;
+                    case '2':
+                        $codigoPrioridad = 'media';
+                    break;
+                }
+            }
+                
+            $prioridad = $em->getRepository('CalidadBundle:Prioridad')->findOneBy(array('codigo'=>$codigoPrioridad));
+            $criterio_check->setPrioridad($prioridad);
+            $em->persist($criterio_check);
             
         }
         

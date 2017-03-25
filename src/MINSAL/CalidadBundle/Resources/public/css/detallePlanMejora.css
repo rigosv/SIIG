@@ -5,3 +5,19 @@
 .ui-jqdialog-titlebar-close{
     padding: 0px !important;
 }
+
+.prioridad_1, .Baja {
+    font-weight: bold;
+    background-color: #008D4C; /*Verde*/
+}
+
+.prioridad_2, .Media{
+    font-weight: bold;
+    background-color: #ffa500; /*naranja*/
+}
+
+.prioridad_3, .Alta {
+    font-weight: bold;
+    font-size: 12pt;
+    background-color: #D73925; /*rojo*/
+}

@@ -26,6 +26,7 @@
         }
     </style>
     <link rel="stylesheet" href="{{ app.request.schemeAndHttpHost ~ asset('bundles/sonatacore/vendor/bootstrap/dist/css/bootstrap.min.css') }}" type="text/css" media="all" />
+    <link rel="stylesheet" href="{{ app.request.schemeAndHttpHost ~ asset('bundles/calidad/css/detallePlanMejora.css') }}" type="text/css" media="all" />
 {% endblock %}
 
 {% block javascripts %}
@@ -109,7 +110,7 @@
                             <TD>{{c.oportunidadMejora}}</TD>
                             <TD>{{c.factoresMejoramiento}}</TD>
                             <TD>{{c.tipoIntervencion}}</TD>
-                            <TD>{{c.prioridad}}</TD>
+                            <TD class="{{c.prioridad}}">{{c.prioridad}}</TD>
                             <TD align='right'>{% if c.porcentajeAvance != null %} {{c.porcentajeAvance | number_format(1)}} {% endif %}</TD>
                         </TR>
                         {% if c.actividades | length > 0 %}

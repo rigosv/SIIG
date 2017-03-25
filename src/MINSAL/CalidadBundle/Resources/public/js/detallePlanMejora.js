@@ -21,7 +21,10 @@ $(document).ready(function () {
                 editrules: {required: true}
             },
             {label: 'Prioridad', name: 'prioridad', width: 50, editable: true, edittype: 'select', formatter:'select',
-                editoptions:{value: prioridades},
+                cellattr: function(rowId, tv, rawObject, cm, rdata) {
+                    return 'class="prioridad_'+rawObject.prioridad+' "';
+                },
+                editoptions:{value: prioridades, disabled: "disabled"},
                 editrules: {required: true}
             }
         ],
@@ -52,6 +55,12 @@ $(document).ready(function () {
             jQuery(this).jqGrid('editGridRow', rowid,
                             {editCaption: "Editar criterio", recreateForm: true, 
                                 checkOnUpdate: false, checkOnSubmit: false, closeAfterEdit: true,
+                                beforeShowForm: function(form) {
+                                    addPrioridadClass($("#prioridad", form));
+                                },
+                                afterclickPgButtons : function (whichbutton, form, rowid) {
+                                    addPrioridadClass($("#prioridad", form));
+                                },
                                 afterSubmit : function( data, postdata) {
                                     return actualizar(data, postdata, 'edit', 'gridCriterios');
                                 }
@@ -197,6 +206,12 @@ $(document).ready(function () {
             afterSubmit : function( data, postdata) {
                 return actualizar(data, postdata, 'edit', 'gridCriterios');
             },
+            beforeShowForm: function(form) {
+                addPrioridadClass($("#prioridad", form));
+            },
+            afterclickPgButtons : function (whichbutton, form, rowid) {
+                addPrioridadClass($("#prioridad", form));
+            }, 
             errorTextFormat: function (data) {
                 return 'Error: ' + data.responseText
             }
@@ -237,4 +252,11 @@ function clearSelection() {
     jQuery("#gridActividades").jqGrid('setCaption', 'Actividades :: ');
     jQuery("#gridActividades").trigger("reloadGrid");
 
+}
+
+function addPrioridadClass(obj){
+    $(obj).removeClass('prioridad_1');
+    $(obj).removeClass('prioridad_2');
+    $(obj).removeClass('prioridad_3');
+    $(obj).addClass('prioridad_'+$(obj).val());
 }
