@@ -16,7 +16,7 @@ $(document).ready(function () {
             {label: 'Causa brecha', name: 'causaBrecha', width: 150, editable: true, edittype: 'textarea', editrules: {required: true}},
             {label: 'Oportunidad mejora', name: 'oportunidadMejora', width: 150, editable: true, edittype: 'textarea', editrules: {required: true}},
             {label: 'Factores de mejoramiento', name: 'factoresMejoramiento', width: 150, editable: true, edittype: 'textarea', editrules: {required: true}},
-            {label: 'Tipo intervención', name: 'tipoIntervencion', width: 60, editable: true, edittype: 'select', formatter:'select',
+            {label: 'Periodo de intervención', name: 'tipoIntervencion', width: 60, editable: true, edittype: 'select', formatter:'select',
                 editoptions:{value:tiposIntervencion}, 
                 editrules: {required: true}
             },
