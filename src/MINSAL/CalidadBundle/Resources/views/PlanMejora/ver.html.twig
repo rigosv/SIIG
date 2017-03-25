@@ -170,11 +170,11 @@
                                                         <TD style="background-color: #D9534F; font-size: 12pt; font-weight: bold">{{'_vencida_'|trans}}</TD>
                                                     {% elseif a.porcentajeDiasTranscurrido > a.porcentajeAvance %}
                                                         <TD style="background-color: #F0AD4E; font-size: 10pt; font-weight: bold">
-                                                            {{'_en_progreso_'|trans}} (<span class="glyphicon glyphicon-minus" aria-hidden="true">)
+                                                            {{'_tardia_'|trans}}
                                                         </TD>
                                                     {% elseif a.porcentajeDiasTranscurrido < a.porcentajeAvance %}
                                                         <TD style="background-color: #34A853; font-size: 10pt; font-weight: bold">
-                                                            {{'_en_progreso_'|trans}} (<span class="glyphicon glyphicon-plus" aria-hidden="true">)
+                                                            {{'_en_tiempo_'|trans}}
                                                         </TD>
                                                     {% endif %}
                                                 </TR>
