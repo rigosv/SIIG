@@ -146,10 +146,17 @@ $(document).ready(function () {
             },
             afterShowForm: function () {
                 var idSelector = $.jgrid.jqID(this.p.id);
+                var mensaje = null;
                 if(idCriterio === undefined) {
+                    mensaje = 'Para agregar una actividad, debe seleccionar un criterio' ;
+                }
+                if ($('#gridActividades').getGridParam("reccount") == 5){
+                    mensaje = 'No puede agregar más de 5 actividades' ;
+                }
+                if (mensaje !== null){
                     $.jgrid.hideModal("#editmod" + idSelector, {gbox: "#gbox_" + idSelector});
                     $.notify({
-                        message: 'Seleccione un criterio' 
+                        message: mensaje
                     },{
                         animate: {
                             enter: 'animated jello'
@@ -164,7 +171,6 @@ $(document).ready(function () {
             },
             beforeShowForm: function(form) {
                 centrarfrm($.jgrid.jqID(this.p.id));
-                $("#rowed3").jqGrid('setGridParam', {editurl:'whatever/url/you/need/with/the/id'});
             },
             errorTextFormat: function (data) {
                 return 'Error: ' + data.responseText;
