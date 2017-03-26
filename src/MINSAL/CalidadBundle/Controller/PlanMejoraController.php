@@ -292,6 +292,7 @@ class PlanMejoraController extends Controller {
     public function setActividadAction(Criterio $criterio, Request $req) {
 
         $em = $this->getDoctrine()->getManager();
+        $t = $this->get('translator');
 
         if ($req->get('oper') === 'add') {
             $actividad = new Actividad();
@@ -308,7 +309,16 @@ class PlanMejoraController extends Controller {
             $ff = $fecha->createFromFormat('d/m/Y', $req->get('fechaFinalizacion'));
 
             if ($fi > $ff) {
-                return new Response(json_encode(array("error" => 'La fecha de inicio debe ser menor a la fecha de finalización')));
+                return new Response(json_encode(array("error" => $t->trans('_la_fecha_de_inicio_debe_ser_menor_a_la_fecha_de_finalizacion_'))));
+            }
+            
+            //Verificar que las fechas no sobrepasen el periodo de intervención del criterio 
+            // Recuperar la menor fecha de las actividades 
+            if ($criterio->getTipoIntervencion() == null){
+                return new Response(json_encode(array("error" => $t->trans('_debe_definir_periodo_intervencion_del_criterio_'))));
+            } elseif (! $this->estaDentroPeriodoIntervencion($criterio, $fi, $ff) ){
+                return new Response(json_encode(array("error" => $t->trans('_duración_actividad_sobrepasa_duración_de_acuerdo_periodo_intervención_criterio_'))));
+                
             }
 
             $actividad->setNombre($req->get('nombre'));
@@ -479,5 +489,37 @@ class PlanMejoraController extends Controller {
             }
         }
         return $criteriosParaPlan;
+    }
+    
+    public function estaDentroPeriodoIntervencion($criterio, $fi, $ff) {
+        $em = $this->getDoctrine()->getManager();
+        
+        $actividades = $em->getRepository('CalidadBundle:Actividad')->findBy(array('criterio'=>$criterio), array('fechaInicio'=>'ASC'));
+        $result = true;    
+        
+        $menorFechaReg = (count($actividades) > 0) ? $actividades[0]->getFechaInicio() : $fi;
+        $menorFecha = ($menorFechaReg < $fi) ? $menorFechaReg : $fi;
+        
+        //Cantidad de días 
+        $intervalo = $ff->diff($menorFecha);
+        $duración = $intervalo->format('%a') + 1;
+
+        
+        //Verificar que la duración de la actividad no exceda el periodo de intervención
+        switch ($criterio->getTipoIntervencion()->getCodigo()) {
+            case 'baja':
+                $limite = 30;
+                break;
+            case 'media':
+                $limite = 90;
+                break;
+            default:
+                $limite = 180;
+        }
+        if ($duración > $limite){
+            $result = false;
+        }
+        
+        return $result;
     }
 }
