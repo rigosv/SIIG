@@ -18,6 +18,7 @@ use Sonata\AdminBundle\Admin\Pool;
 use Sonata\AdminBundle\Event\ConfigureMenuEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Knp\Menu\MenuItem;
 
 /**
  * Sonata menu builder.
@@ -83,7 +84,7 @@ class MenuBuilder
             ;
             if (count($nName) > 1){
                 $menu[$nName[0]]
-                        ->addChild($nName[1], array('uri' => '#'))
+                        ->addChild($nName[1], array('uri' => null))
                         ->setExtra('translationdomain', 'messages');
             }
         }
@@ -207,13 +208,10 @@ class MenuBuilder
                     ;
                 }
             }
-            if (0 === count($menu[$name]->getChildren())) {
-                $menu->removeChild($name);
-            }
-        }
-        if (0 === count($menu['_reportes_']->getChildren())) {
-            $menu->removeChild('_reportes_');
-        }
+        }        
+        
+        $this->clearEmptyItem($menu);
+        
         $event = new ConfigureMenuEvent($this->factory, $menu);
         $this->eventDispatcher->dispatch(ConfigureMenuEvent::SIDEBAR, $event);
         //var_dump($event->getMenu()->getChild('_calidad2_')->getChild('_catalogos_'));
@@ -228,5 +226,17 @@ class MenuBuilder
     public function setRequest(Request $request = null)
     {
         $this->request = $request;
+    }
+    
+    public function clearEmptyItem(MenuItem $menuItem) {
+        $children = $menuItem->getChildren();
+        
+        if (0 == count($children) and $menuItem->getUri() == null){
+            $menuItem->getParent()->removeChild($menuItem->getName());
+        } else {
+            foreach ($children as $subMenuItem){
+                $this->clearEmptyItem($subMenuItem);
+            }
+        }
     }
 }
