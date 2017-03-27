@@ -15,7 +15,7 @@ class AccesoExternoController extends Controller {
     /**
      * @Route("/ae/{token}/", name="sala_acceso_externo")
      */
-    public function salaAccesoExterno($token) {
+    public function salaAccesoExterno($token, Request $request) {
         $em = $this->getDoctrine()->getManager();
         $ahora = new \DateTime();
 
@@ -25,7 +25,7 @@ class AccesoExternoController extends Controller {
             throw $this->createNotFoundException($this->get('translator')->trans('_token_no_valido_'));
         }
 
-        $this->accesoExterno('externo', 'externo');
+        $this->accesoExterno('externo', 'externo', $request);
         
         return $this->redirectToRoute('admin_minsal_indicadores_fichatecnica_tablero', array('token' => $token));
         
@@ -59,8 +59,8 @@ class AccesoExternoController extends Controller {
     /**
      * @Route("/externo/autenticar/ppal/{user}/{pw}", name="autenticar")
      */
-    public function accesoExternoAPrincipal($user, $pw) {
-        $this->accesoExterno($user, $pw);
+    public function accesoExternoAPrincipal($user, $pw, Request $request) {
+        $this->accesoExterno($user, $pw, $request);
         
         return $this->redirectToRoute('_inicio');
     }
