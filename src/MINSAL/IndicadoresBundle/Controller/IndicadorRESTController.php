@@ -71,7 +71,7 @@ class IndicadorRESTController extends Controller {
 
             $datos = $fichaRepository->getAnalisisDescriptivo($sql);
             
-            $tabla = time()."
+            $tabla = "
                 <TABLE CLASS= 'table table-striped'>
                     <THEAD>
                         <TR>
