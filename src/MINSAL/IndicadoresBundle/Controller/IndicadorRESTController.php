@@ -61,7 +61,7 @@ class IndicadorRESTController extends Controller {
         $fichaRepository = $em->getRepository('IndicadoresBundle:FichaTecnica');
 
         $fichaRepository->crearIndicador($fichaTec, $dimension, $filtros);
-        $resp['datos'] = $fichaRepository->calcularIndicador($fichaTec, $dimension, $filtros, $verSql);        
+        $resp['datos'] = $fichaRepository->calcularIndicador($fichaTec, $dimension, $filtros, $verSql);
         $respj = json_encode($resp);
         
         if ( is_array($resp['datos']) ){
@@ -69,16 +69,16 @@ class IndicadorRESTController extends Controller {
         }
         
         if ($verAnalisisDescriptivo){
-            $sql = $resp['datos'];
+            $sql = $resp['datos'];            
             $dimensionObj = $em->getRepository('IndicadoresBundle:SignificadoCampo')->findOneBy(array('codigo'=>$dimension));
 
-            $datos = $fichaRepository->getAnalisisDescriptivo($sql);
+            $datos = array_pop($fichaRepository->getAnalisisDescriptivo($sql));
             
             $tabla = "
                 <TABLE CLASS= 'table table-striped'>
                     <THEAD>
                         <TR>
-                            <TH>".$dimensionObj->getDescripcion()."</TH>
+                            
                             <TH>".$t->trans('_promedio_')."</TH>
                             <TH>".$t->trans('_desviacion_estandar_')."</TH>
                             <TH>".$t->trans('_maximo_')."</TH>
@@ -90,20 +90,20 @@ class IndicadorRESTController extends Controller {
                     </THEAD>
                     <TBODY>
                         ";
-            foreach ($datos AS $d){
+            //foreach ($datos AS $d){
                 $tabla .= "
                         <TR>
-                            <TD>$d[category]</TD>
-                            <TD>$d[promedio]</TD>
-                            <TD>$d[desviacion_estandar]</TD>
-                            <TD>$d[max]</TD>
-                            <TD>$d[cuartil_3]</TD>
-                            <TD>$d[cuartil_2]</TD>
-                            <TD>$d[cuartil_1]</TD>
-                            <TD>$d[min]</TD>
+                            
+                            <TD>$datos[promedio]</TD>
+                            <TD>$datos[desviacion_estandar]</TD>
+                            <TD>$datos[max]</TD>
+                            <TD>$datos[cuartil_3]</TD>
+                            <TD>$datos[cuartil_2]</TD>
+                            <TD>$datos[cuartil_1]</TD>
+                            <TD>$datos[min]</TD>
                         </TR>
                 ";
-            }
+            //}
             $tabla .= " 
                     </TBODY>
                 </TABLE>

@@ -678,7 +678,7 @@ function dibujarControles(zona, datos) {
     });
 
     $('#' + zona + ' .ver_sql').click(function() {
-        var filtro = $('#opciones_dimension_' + zona + ' .filtros_dimensiones').attr('data');
+        var filtro = $('#' + zona + ' .filtros_dimensiones').attr('data');
         var dimension = $('#opciones_dimension_' + zona + ' .dimensiones').val();
 
         $.getJSON(Routing.generate('get_indicador',
@@ -696,7 +696,7 @@ function dibujarControles(zona, datos) {
     });
 
     $('#' + zona + ' .ver_analisis_descriptivo').click(function() {
-        var filtro = $('#opciones_dimension_' + zona + ' .filtros_dimensiones').attr('data');
+        var filtro = $('#' + zona + ' .filtros_dimensiones').attr('data');
         var dimension = $('#opciones_dimension_' + zona + ' .dimensiones').val();
 
         $.getJSON(Routing.generate('get_indicador',
