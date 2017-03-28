@@ -19,13 +19,18 @@ class FichaTecnicaRepository extends EntityRepository {
         $existe = true;
         $acumulado = $fichaTecnica->getEsAcumulado();
         try {
-            $em->getConnection()->query("select * from temporales.tmp_ind_$nombre_indicador LIMIT 1");
+            $cons = $em->getConnection()->query("select * from temporales.tmp_ind_$nombre_indicador LIMIT 1");
+            //Si no tiene datos hacer que se recalcule
+            if ( count($cons->fetchAll()) == 0){
+                $existe = false;
+            }
         } catch (\Doctrine\DBAL\DBALException $e) {
             $existe = false;
         }
         if ($fichaTecnica->getUpdatedAt() != '' and $fichaTecnica->getUltimaLectura() != '' and $existe == true) {
-            if ($fichaTecnica->getUltimaLectura() < $fichaTecnica->getUpdatedAt())
+            if ($fichaTecnica->getUltimaLectura() < $fichaTecnica->getUpdatedAt()){
                 return true;
+            }
         }
 
         $campos = str_replace("'", '', $fichaTecnica->getCamposIndicador());
