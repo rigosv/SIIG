@@ -21,13 +21,16 @@ class IndicadorRESTController extends Controller {
     public function getIndicadorAction(FichaTecnica $fichaTec, $dimension, Request $request) {
         $response = new Response();
         $redis = new Predis\Client();
+        $t = $this->get('translator');
         
         $filtro = $request->get('filtro');
         $verSql = ($request->get('ver_sql') == 'true') ? true : false;
+        $verAnalisisDescriptivo = ($request->get('analisis_descriptivo') == 'true') ? true : false;
         $hash = md5($filtro.$verSql);
         
         // verifica que la respuesta no se ha modificado para la petición dada
-        if ($fichaTec->getUpdatedAt() != '' and $fichaTec->getUltimaLectura() != '' and $fichaTec->getUltimaLectura() < $fichaTec->getUpdatedAt()) {
+        if ($fichaTec->getUpdatedAt() != '' and $fichaTec->getUltimaLectura() != '' and $fichaTec->getUltimaLectura() < $fichaTec->getUpdatedAt()
+                and $verAnalisisDescriptivo == false ) {
             // Buscar la petición en la caché de Redis
             $respj = $redis->get('indicador_'.$fichaTec->getId().'_'.$dimension.$hash);
             if ($respj != null){
@@ -57,12 +60,58 @@ class IndicadorRESTController extends Controller {
         $fichaRepository->crearIndicador($fichaTec, $dimension, $filtros);
         $resp['datos'] = $fichaRepository->calcularIndicador($fichaTec, $dimension, $filtros, $verSql);        
         $respj = json_encode($resp);
-
-        $response->setContent($respj);
+        
         if ( is_array($resp['datos']) ){
             $redis->set('indicador_'.$fichaTec->getId().'_'.$dimension.$hash, $respj);
-        }        
+        }
+        
+        if ($verAnalisisDescriptivo){
+            $sql = $resp['datos'];
+            $dimensionObj = $em->getRepository('IndicadoresBundle:SignificadoCampo')->findOneBy(array('codigo'=>$dimension));
 
+            $datos = $fichaRepository->getAnalisisDescriptivo($sql);
+            
+            $tabla = time()."
+                <TABLE CLASS= 'table table-striped'>
+                    <THEAD>
+                        <TR>
+                            <TH>".$dimensionObj->getDescripcion()."</TH>
+                            <TH>".$t->trans('_promedio_')."</TH>
+                            <TH>".$t->trans('_desviacion_estandar_')."</TH>
+                            <TH>".$t->trans('_maximo_')."</TH>
+                            <TH>".$t->trans('_tercer_cuartil_')."</TH>
+                            <TH>".$t->trans('_segundo_cuartil_mediana_')."</TH>
+                            <TH>".$t->trans('_primer_cuartil_')."</TH>
+                            <TH>".$t->trans('_minimo_')."</TH>
+                        </TR>
+                    </THEAD>
+                    <TBODY>
+                        ";
+            foreach ($datos AS $d){
+                $tabla .= "
+                        <TR>
+                            <TD>$d[category]</TD>
+                            <TD>$d[promedio]</TD>
+                            <TD>$d[desviacion_estandar]</TD>
+                            <TD>$d[max]</TD>
+                            <TD>$d[cuartil_3]</TD>
+                            <TD>$d[cuartil_2]</TD>
+                            <TD>$d[cuartil_1]</TD>
+                            <TD>$d[min]</TD>
+                        </TR>
+                ";
+            }
+            $tabla .= " 
+                    </TBODY>
+                </TABLE>
+                ";
+            $resp['datos'] = $tabla;
+            $respj = json_encode($resp);
+        }
+        
+        
+
+        $response->setContent($respj);
         return $response;
         
     }

@@ -429,3 +429,10 @@ _ruta_: Ruta
 Action: Acción
 _proceso_: Proceso
 _catalogos_: Catálogos
+_analisis_descriptivo_: Análisis descriptivo
+_desviacion_estandar_: Desviación estándar
+_maximo_: Máximo
+_minimo_: Mínimo
+_tercer_cuartil_: Tercer cuartil
+_segundo_cuartil_mediana_: Segundo cuartil (mediana)
+_primer_cuartil_: Primer cuartil

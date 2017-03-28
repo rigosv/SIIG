@@ -406,6 +406,7 @@ function dibujarControles(zona, datos) {
                     </li>' +
                     '<li><A class="cambiar_vista" ><span class="glyphicon glyphicon-refresh" ></span> ' + trans._cambiar_vista_ + ' </A></li>' +
                     '<li><A class="ver_tabla_datos" ><span class="glyphicon glyphicon-list-alt" ></span> ' + trans.tabla_datos + ' </A></li>' +
+                    '<li><A class="ver_analisis_descriptivo" ><span class="glyphicon glyphicon-info-sign" ></span> ' + trans.analisis_descriptivo + ' </A></li>' +
                     '<li><A class="ver_sql" ><span class="glyphicon glyphicon-eye-open" ></span> ' + trans.ver_sql + ' </A></li>' +
                     '<li><A class="ver_imagen" ><span class="glyphicon glyphicon-picture"></span> ' + trans.descargar_grafico + '</A></li>' +
                     '<li><A class="quitar_indicador" ><span class="glyphicon glyphicon-remove-sign"></span> ' + trans.quitar_indicador + '</A></li>' +
@@ -691,9 +692,27 @@ function dibujarControles(zona, datos) {
             $('#div_carga').hide();
             $('#modal_msj_content').html('<div class="alert alert-danger" role="alert">'+trans._error_conexion_2_+'</div>');            
             $('#modal_msj').modal('show');            
-    });
+        });
     });
 
+    $('#' + zona + ' .ver_analisis_descriptivo').click(function() {
+        var filtro = $('#opciones_dimension_' + zona + ' .filtros_dimensiones').attr('data');
+        var dimension = $('#opciones_dimension_' + zona + ' .dimensiones').val();
+
+        $.getJSON(Routing.generate('get_indicador',
+                {id: $('#' + zona + ' .titulo_indicador').attr('data-id'), dimension: dimension}),
+                {filtro: filtro, ver_sql: true, analisis_descriptivo: true},
+        function(resp) {
+            $('#myModalLabel2').html($('#' + zona + ' .titulo_indicador').html());
+            $('#sql').html(resp.datos);
+            $('#myModal2').modal('show');
+        }, 'json').fail(function() {
+            $('#div_carga').hide();
+            $('#modal_msj_content').html('<div class="alert alert-danger" role="alert">'+trans._error_conexion_2_+'</div>');            
+            $('#modal_msj').modal('show');            
+        });
+    });
+    
     $('#' + zona + ' .ver_imagen').click(function() {
         var html = '<H5 style="text-align:center;">' + $('#' + zona + ' .titulo_indicador').html() +
                 ' (por ' + $('#' + zona + ' .dimension').html() + ')</H5>' +

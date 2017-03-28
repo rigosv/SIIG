@@ -520,4 +520,25 @@ class FichaTecnicaRepository extends EntityRepository {
         return $em->getConnection()->executeQuery($sql)->fetch();
     }
 
+    public function getAnalisisDescriptivo($sqlInicial) {
+        $em = $this->getEntityManager();
+        //Quitar operadores que no se deben utilizar
+        $partes = split('GROUP BY', $sqlInicial);
+        $sql_inicial = str_replace(array('SUM', 'AVG', 'MAX', 'MIN'), array(''), $partes[0]);
+        
+        //Recuperar la configuración
+        $sql = "SELECT  category, promedio, desviacion_estandar, quantile[1] AS min, quantile[2] AS cuartil_1,  
+                    quantile[3] AS cuartil_2, quantile[4] AS cuartil_3, quantile[5] AS max, quantile[3] AS mediana
+                FROM (
+                        SELECT category, avg(measure) AS promedio, stddev_samp(measure) AS desviacion_estandar,
+                            quantile(measure) AS quantile 
+                            FROM ($sql_inicial) A 
+                            WHERE measure is not null
+                            GROUP BY category
+                    ) AA ORDER BY category";
+        
+        $resp = $em->getConnection()->executeQuery($sql)->fetchAll();
+        
+        return $resp;
+    }
 }
