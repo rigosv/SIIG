@@ -32,10 +32,13 @@ class IndicadorRESTController extends Controller {
         if ($fichaTec->getUpdatedAt() != '' and $fichaTec->getUltimaLectura() != '' and $fichaTec->getUltimaLectura() < $fichaTec->getUpdatedAt()
                 and $verAnalisisDescriptivo == false ) {
             // Buscar la petición en la caché de Redis
-            $respj = $redis->get('indicador_'.$fichaTec->getId().'_'.$dimension.$hash);
+            $respj = $redis->get('indicador_'.$fichaTec->getId().'_'.$dimension.$hash);            
             if ($respj != null){
-                $response->setContent($respj);
-                return $response;
+                $dat = json_decode($respj);
+                if ( count($dat->datos) > 0){
+                    $response->setContent($respj);
+                    return $response;
+                }
             }
         }
         //La respuesta de la petición no estaba en Redis, hacer el cálculo
