@@ -35,3 +35,8 @@ _indicadores_evaluados_: Indicadores evaluados
 _la_fecha_de_inicio_debe_ser_menor_a_la_fecha_de_finalizacion_: 'La fecha de inicio debe ser menor a la fecha de finalización'
 _debe_definir_periodo_intervencion_del_criterio_: Debe definir el periodo de intervención del criterio
 _duración_actividad_sobrepasa_duración_de_acuerdo_periodo_intervención_criterio_: La duración de la actividad sobrepasa la duración del periodo de intervención del criterio
+_gestion_permisos_: Gestión de permisos
+_elemento_: Elemento
+_accion_: Acción
+_ver_: Ver
+_crear_editar_: Crear y editar
