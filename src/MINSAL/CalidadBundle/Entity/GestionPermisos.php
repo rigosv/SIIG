@@ -24,10 +24,12 @@ class GestionPermisos
     
     
     /**
-     * @ORM\ManyToOne(targetEntity="Estandar", inversedBy="planesMejora")
-     * 
-     * */
-    private $estandar;
+     * @var \Doctrine\Common\Collections\Collection|Estandar[]
+     *
+     * @ORM\ManyToMany(targetEntity="Estandar")
+     * @ORM\JoinTable(name="calidad.permisos_estandares")
+     */
+    private $estandares;
     
     /**
      * @ORM\ManyToOne(targetEntity="MINSAL\CostosBundle\Entity\Estructura")
@@ -113,30 +115,6 @@ class GestionPermisos
     }
 
     /**
-     * Set estandar
-     *
-     * @param \MINSAL\CalidadBundle\Entity\Estandar $estandar
-     *
-     * @return GestionPermisos
-     */
-    public function setEstandar(\MINSAL\CalidadBundle\Entity\Estandar $estandar = null)
-    {
-        $this->estandar = $estandar;
-
-        return $this;
-    }
-
-    /**
-     * Get estandar
-     *
-     * @return \MINSAL\CalidadBundle\Entity\Estandar
-     */
-    public function getEstandar()
-    {
-        return $this->estandar;
-    }
-
-    /**
      * Set establecimiento
      *
      * @param \MINSAL\CostosBundle\Entity\Estructura $establecimiento
@@ -182,5 +160,46 @@ class GestionPermisos
     public function getUsuario()
     {
         return $this->usuario;
+    }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->estandares = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add estandare
+     *
+     * @param \MINSAL\CalidadBundle\Entity\Estandar $estandar
+     *
+     * @return GestionPermisos
+     */
+    public function addEstandare(\MINSAL\CalidadBundle\Entity\Estandar $estandar)
+    {
+        $this->estandares[] = $estandar;
+
+        return $this;
+    }
+
+    /**
+     * Remove estandare
+     *
+     * @param \MINSAL\CalidadBundle\Entity\Estandar $estandar
+     */
+    public function removeEstandare(\MINSAL\CalidadBundle\Entity\Estandar $estandar)
+    {
+        $this->estandares->removeElement($estandar);
+    }
+
+    /**
+     * Get estandares
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getEstandares()
+    {
+        return $this->estandares;
     }
 }

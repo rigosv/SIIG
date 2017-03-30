@@ -16,7 +16,7 @@ class GestionPermisosAdmin extends Admin
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
-            ->add('estandar', null, array('label'=> ('_estandar_'), 'required' => true,))
+            ->add('estandares', null, array('label'=> ('_estandar_'), 'required' => true, 'multiple'=>true))
             ->add('establecimiento', null, array('label'=> ('_establecimiento_'), 'required' => true,))
             ->add('establecimiento', null, array('label' => ('_establecimiento_'),
                 'required' => true,
@@ -44,7 +44,7 @@ class GestionPermisosAdmin extends Admin
     {
         $datagridMapper
             ->add('usuario', null, array('label'=> ('_usuario_')))
-            ->add('estandar', null, array('label'=> ('_estandar_')))
+            ->add('estandares', null, array('label'=> ('_estandar_')))
             ->add('establecimiento', null, array('label'=> ('_establecimiento_')))
         ;
     }
@@ -54,7 +54,7 @@ class GestionPermisosAdmin extends Admin
         $listMapper
             ->addIdentifier('id', null, array('label'=> ('_id_')))
             ->add('usuario', null, array('label'=> ('_usuario_')))
-            ->add('estandar', null, array('label'=> ('_estandar_')))
+            ->add('estandares', null, array('label'=> ('_estandar_')))
             ->add('establecimiento', null, array('label'=> ('_establecimiento_')))
             ->add('elemento', null, array('label'=> ('_elemento_')))
             ->add('accion', null, array('label'=> ('_accion_')))

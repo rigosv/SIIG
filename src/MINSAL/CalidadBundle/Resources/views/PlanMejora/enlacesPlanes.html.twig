@@ -1,10 +1,12 @@
 {% if estEval.plan != null %}
     <TD>
+        {% if estEval.est.id in permisosEstandar or app.security.getToken().getUser().getUsername() == 'admin' %}
         <A 
             href="{{path('calidad_planmejora_detalle', {'id': estEval.plan.id})}}" 
             class="btn btn-info" role="button">
             Editar
         </A>
+        {% endif %}
         <A 
             href="{{path('calidad_planmejora_ver', {'id': estEval.plan.id})}}" 
             target="blank_"
@@ -14,11 +16,14 @@
     </TD>
 {% else %}
     <TD>
-        <A 
-            href="{{path('calidad_planmejora_crear', 
-                                                {'id_establecimiento': establecimiento.id, 'anio': periodo.anio, 
-                                                'mes': periodo.mes, 'id_estandar': estEval.est.id})
-            }}" 
-            class="btn btn-success" role="button">Crear</a>
+        {% if estEval.est.id in permisosEstandar or app.security.getToken().getUser().getUsername() == 'admin' %}
+            <A 
+                href="{{path('calidad_planmejora_crear', 
+                                                    {'id_establecimiento': establecimiento.id, 'anio': periodo.anio, 
+                                                    'mes': periodo.mes, 'id_estandar': estEval.est.id})
+                }}" 
+                class="btn btn-success" role="button">Crear
+            </a>
+        {% endif %}
     </TD>
 {% endif %}

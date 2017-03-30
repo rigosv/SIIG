@@ -52,18 +52,13 @@ class PlanMejoraController extends Controller {
             $datos = $form->getData();
             $periodo = $datos['periodo'];
 
-            if ($this->getUser()->getUsername() === 'admin') {
-                //Recuperar las unidades que tienen evaluaciones en el periodo seleccionado
-                $formB->add('establecimiento', EntityType::class, array(
-                    'class' => 'CostosBundle:Estructura',
-                    'query_builder' => function (EntityRepository $er) use ($periodo) {
-                        return $er->getEstablecimientosEvaluadosCalidad($periodo);
-                    }
-                ));
-            } else {
-                //El establecimiento será el asignado al usuario
-                $establecimiento = $this->getUser()->getEstablecimientoPrincipal();
-            }
+            //Recuperar las unidades que tienen evaluaciones en el periodo seleccionado
+            $formB->add('establecimiento', EntityType::class, array(
+                'class' => 'CostosBundle:Estructura',
+                'query_builder' => function (EntityRepository $er) use ($periodo) {
+                    return $er->getEstablecimientosEvaluadosCalidad($periodo);
+                }
+            ));
 
             //Actualizar el formulario con el campo agregado
             $form = $formB->getForm();
@@ -91,26 +86,26 @@ class PlanMejoraController extends Controller {
 
                 //Obtener las otras evaluaciones que no son lista de chequeo
                 $dataNum = $em->getRepository('CalidadBundle:Estandar')->getIndicadoresEvaluadosNumericos($establecimiento, $periodo);
-                
+
                 //Crear un arreglo donde la llave sea el código del formulario
                 // Solo si el estándar tiene algún indicador que no cumplió la meta
                 $evaluacionesNum = array();
                 foreach ($dataNum as $d) {
                     $evaluacionesNumTot[$d['codigo']]['evaluaciones'][] = $d;
-                    if ($d['meta'] != '' and $d['color'] != 'green'){
+                    if ($d['meta'] != '' and $d['color'] != 'green') {
                         $evaluacionesNum[$d['codigo']] = $d;
-                        if (array_key_exists('reprobados', $evaluacionesNumTot[$d['codigo']] )){
+                        if (array_key_exists('reprobados', $evaluacionesNumTot[$d['codigo']])) {
                             $evaluacionesNumTot[$d['codigo']]['reprobados'] ++;
                         } else {
                             $evaluacionesNumTot[$d['codigo']]['reprobados'] = 1;
                         }
                     }
                     //Si no tuvo ninguna reprobada
-                    if (!array_key_exists('reprobados', $evaluacionesNumTot[$d['codigo']] )) {
+                    if (!array_key_exists('reprobados', $evaluacionesNumTot[$d['codigo']])) {
                         $evaluacionesNumTot[$d['codigo']]['reprobados'] = 0;
                     }
                 }
-                
+
                 //Obtener los estándares
                 $estadares = $em->getRepository('CalidadBundle:Estandar')->findBy(array(), array('posicion' => 'ASC'));
 
@@ -120,22 +115,22 @@ class PlanMejoraController extends Controller {
                     $paraPlan = false;
                     $frm = $est->getFormularioCaptura();
                     $tipo = null;
-                    if ($frm != null){
+                    if ($frm != null) {
                         $tipo = (array_key_exists($frm->getCodigo(), $evaluaciones)) ? 'lista_chequeo' : null;
-                        $tipo = (array_key_exists($frm->getCodigo(), $evaluacionesNum)) ? 'numerico': $tipo;
+                        $tipo = (array_key_exists($frm->getCodigo(), $evaluacionesNum)) ? 'numerico' : $tipo;
                     }
-                                        
+
                     if ($tipo == 'lista_chequeo' and ( $est->getMeta() > $evaluaciones[$frm->getCodigo()]['calificacion'])) {
                         $paraPlan = true;
                         $estandaresEval[$est->getCodigo()]['est'] = $est;
                         $estandaresEval[$est->getCodigo()]['eval'] = $evaluaciones[$frm->getCodigo()];
-                    } elseif ($tipo == 'numerico'){
+                    } elseif ($tipo == 'numerico') {
                         $paraPlan = true;
                         $estandaresNumEval[$est->getCodigo()]['est'] = $est;
                         $estandaresNumEval[$est->getCodigo()]['eval'] = $evaluacionesNum[$frm->getCodigo()];
                     }
-                    
-                    if ($paraPlan){
+
+                    if ($paraPlan) {
                         //Verificar si tiene plan de mejora creado
                         $plan = $em->getRepository('CalidadBundle:PlanMejora')
                                 ->findOneBy(
@@ -144,7 +139,7 @@ class PlanMejoraController extends Controller {
                                     'estandar' => $est
                                 )
                         );
-                        if ($tipo === 'numerico'){
+                        if ($tipo === 'numerico') {
                             $estandaresNumEval[$est->getCodigo()]['plan'] = $plan;
                         } else {
                             $estandaresEval[$est->getCodigo()]['plan'] = $plan;
@@ -155,6 +150,18 @@ class PlanMejoraController extends Controller {
             $formB->setData($datos);
         }
 
+        //Recuperar los permisos para editar/crear planes de mejora para el usuario actual
+        $permisosCrearEditar = $em->getRepository('CalidadBundle:GestionPermisos')
+                ->findOneBy(array('usuario' => $this->getUser(), 'establecimiento' => $establecimiento,
+                        'elemento' => 'plan_mejora', 'accion' => 'crear_editar'
+                    ));
+                            
+        
+        $permisosCrearEditar = ($permisosCrearEditar === null) ? array() : $permisosCrearEditar->getEstandares();
+        $permisosEstandar = array();
+        foreach ($permisosCrearEditar as $p){
+            $permisosEstandar[] = $p->getId();
+        }
         return $this->render('CalidadBundle:PlanMejora:index.html.twig', array(
                     'admin_pool' => $admin_pool,
                     'form' => $formB->getForm()->createView(),
@@ -162,7 +169,8 @@ class PlanMejoraController extends Controller {
                     'periodo' => $periodo,
                     'estandaresEval' => $estandaresEval,
                     'estandaresNumEval' => $estandaresNumEval,
-                    'estandaresNumTot' => $evaluacionesNumTot
+                    'estandaresNumTot' => $evaluacionesNumTot,
+                    'permisosEstandar' => $permisosEstandar
         ));
     }
 
@@ -226,17 +234,17 @@ class PlanMejoraController extends Controller {
         $codigoFormulario = $estandar->getFormularioCaptura()->getCodigo();
 
         $formaEvaluacion = $planMejora->getEstandar()->getFormaEvaluacion();
-        
+
         $criteriosEvaluados = array();
-        if ($formaEvaluacion == 'lista_chequeo'){
+        if ($formaEvaluacion == 'lista_chequeo') {
             $criteriosEstandar = $em->getRepository('CalidadBundle:Estandar')->getCriterios($codigoEstructura, $periodo, $codigoFormulario);
             $criteriosEvaluados = $criteriosEstandar['datos'][$codigoFormulario]['resumen_criterios'];
-        } elseif ($formaEvaluacion == 'rango_colores'){
+        } elseif ($formaEvaluacion == 'rango_colores') {
             //Obtener las otras evaluaciones que no son lista de chequeo
             $criteriosEvaluados = $em->getRepository('CalidadBundle:Estandar')
                     ->getIndicadoresEvaluadosNumericos($planMejora->getEstablecimiento(), $planMejora->getPeriodo(), $estandar);
         }
-        
+
         $criteriosParaPlan = $this->getCriteriosParaPlan($formaEvaluacion, $criteriosEvaluados);
 
         //Guardar los criterios, por si hay nuevos
@@ -255,10 +263,10 @@ class PlanMejoraController extends Controller {
                 'prioridad' => ( $c->getPrioridad() === null ) ? null : $c->getPrioridad()->getId(),
                 'indicador' => null
             );
-            if ($formaEvaluacion == 'rango_colores'){
+            if ($formaEvaluacion == 'rango_colores') {
                 $datos['descripcion'] = $c->getVariableCaptura()->getArea()->getDescripcion();
-                 $indicador = $c->getVariableCaptura()->getIndicadores();
-                 $datos['indicador'] = $indicador[0]->getDescripcion();
+                $indicador = $c->getVariableCaptura()->getIndicadores();
+                $datos['indicador'] = $indicador[0]->getDescripcion();
             }
             $criterios['rows'][] = $datos;
         }
@@ -311,14 +319,13 @@ class PlanMejoraController extends Controller {
             if ($fi > $ff) {
                 return new Response(json_encode(array("error" => $t->trans('_la_fecha_de_inicio_debe_ser_menor_a_la_fecha_de_finalizacion_'))));
             }
-            
+
             //Verificar que las fechas no sobrepasen el periodo de intervención del criterio 
             // Recuperar la menor fecha de las actividades 
-            if ($criterio->getTipoIntervencion() == null){
+            if ($criterio->getTipoIntervencion() == null) {
                 return new Response(json_encode(array("error" => $t->trans('_debe_definir_periodo_intervencion_del_criterio_'))));
-            } elseif (! $this->estaDentroPeriodoIntervencion($criterio, $fi, $ff) ){
+            } elseif (!$this->estaDentroPeriodoIntervencion($criterio, $fi, $ff)) {
                 return new Response(json_encode(array("error" => $t->trans('_duración_actividad_sobrepasa_duración_de_acuerdo_periodo_intervención_criterio_'))));
-                
             }
 
             $actividad->setNombre($req->get('nombre'));
@@ -371,15 +378,15 @@ class PlanMejoraController extends Controller {
 
         $criterios = $em->getRepository('CalidadBundle:PlanMejora')->getCriteriosOrden($planMejora);
         $establecimiento = $em->getRepository('CostosBundle:Estructura')->getEstablecimiento($planMejora->getEstablecimiento());
-        
-        if ($establecimiento == false){
+
+        if ($establecimiento == false) {
             $establecimiento['region'] = '';
         }
         $indicadores = array();
-        
-        foreach ($criterios as $c){
-            if ($planMejora->getEstandar()->getFormaEvaluacion() == 'rango_colores'){
-                $ind =  $c->getVariableCaptura()->getIndicadores();
+
+        foreach ($criterios as $c) {
+            if ($planMejora->getEstandar()->getFormaEvaluacion() == 'rango_colores') {
+                $ind = $c->getVariableCaptura()->getIndicadores();
                 $indicadores[$ind[0]->getCodigo()]['descripcion'] = $ind[0]->getDescripcion();
                 $indicadores[$ind[0]->getCodigo()]['criterios'][] = $c;
             } else {
@@ -387,9 +394,9 @@ class PlanMejoraController extends Controller {
                 $indicadores[0]['criterios'][] = $c;
             }
         }
-        
+
         $historialCriterios = $this->getHistorialCriterios($planMejora, $indicadores);
-        
+
         return $this->render('CalidadBundle:PlanMejora:ver.html.twig', array('admin_pool' => $admin_pool,
                     'plan' => $planMejora,
                     'indicadores' => $indicadores,
@@ -398,13 +405,13 @@ class PlanMejoraController extends Controller {
                         )
         );
     }
-    
+
     public function getHistorialCriterios(PlanMejora $planMejora, $indicadores) {
-       $em = $this->getDoctrine()->getManager();
-       
+        $em = $this->getDoctrine()->getManager();
+
         $arrCriterios = array();
         foreach ($indicadores as $ind) {
-            foreach ($ind['criterios'] as $c){
+            foreach ($ind['criterios'] as $c) {
                 $arrCriterios[] = $c->getVariableCaptura()->getCodigo();
             }
         }
@@ -417,8 +424,8 @@ class PlanMejoraController extends Controller {
         $codigoFormulario = $planMejora->getEstandar()->getFormularioCaptura()->getCodigo();
         $anio = $periodoInicial->getAnio();
         $mes = (int) $periodoInicial->getMes();
-        
-        if ($formaEvaluacion == 'lista_chequeo'){
+
+        if ($formaEvaluacion == 'lista_chequeo') {
             for ($i = 0; $i < 7; $i++) {
                 //Periodo anterior
                 $anio = ($mes == 1) ? $anio - 1 : $anio;
@@ -430,44 +437,44 @@ class PlanMejoraController extends Controller {
                         ->getCriterios($codigoEstructura, $anio . '_' . str_pad($mes, 2, "0", STR_PAD_LEFT), $codigoFormulario);
 
                 //Recuperar los criterios que están en el plan actual
-                if (count($criteriosEstandar['datos']) > 0){
+                if (count($criteriosEstandar['datos']) > 0) {
                     foreach ($criteriosEstandar['datos'][$codigoFormulario]['resumen_criterios'] as $c) {
                         if (in_array($c['codigo_variable'], $arrCriterios)) {
                             $brecha = ( $c['porc_cumplimiento'] > $limiteAceptacion ) ? 0 : $limiteAceptacion - $c['porc_cumplimiento'];
-                            $historialCriterios[$c['codigo_variable']][ str_pad($mes, 2, "0", STR_PAD_LEFT).'/'.$anio] = $brecha;
+                            $historialCriterios[$c['codigo_variable']][str_pad($mes, 2, "0", STR_PAD_LEFT) . '/' . $anio] = $brecha;
                         }
                     }
                 }
             }
         } else {
             $criteriosEvaluados = $em->getRepository('CalidadBundle:Estandar')->getIndicadoresEvaluadosNumericos($planMejora->getEstablecimiento(), $planMejora->getPeriodo());
-            if (count($criteriosEvaluados) > 0){
+            if (count($criteriosEvaluados) > 0) {
                 foreach ($criteriosEvaluados as $c) {
                     if (in_array($c['codigo_variable'], $arrCriterios)) {
                         $historial = explode(',', str_replace(array('{', '}'), array('', ''), $c['historial']));
                         $limites = explode('-', $c['meta']);
-                        
-                        foreach ($historial as $h){
+
+                        foreach ($historial as $h) {
                             list($mes, $anio, $calificacion) = explode('/', $h);
-                            if ($calificacion < $limites[0] ){
+                            if ($calificacion < $limites[0]) {
                                 $brecha = $limites[0] - $calificacion;
-                            } elseif ($calificacion > $limites[1]){
+                            } elseif ($calificacion > $limites[1]) {
                                 $brecha = $calificacion - $limites[1];
                             }
-                            $historialCriterios[$c['codigo_variable']][ str_pad($mes, 2, "0", STR_PAD_LEFT).'/'.$anio] = $brecha;
+                            $historialCriterios[$c['codigo_variable']][str_pad($mes, 2, "0", STR_PAD_LEFT) . '/' . $anio] = $brecha;
                         }
                     }
                 }
             }
         }
-        
+
         return $historialCriterios;
     }
-    
+
     public function getCriteriosParaPlan($formaEvaluacion, $criterios) {
         $criteriosParaPlan = array();
-        
-        if ($formaEvaluacion == 'lista_chequeo'){
+
+        if ($formaEvaluacion == 'lista_chequeo') {
             $limiteAceptacion = 80;
             foreach ($criterios as $c) {
                 if ($c['porc_cumplimiento'] < $limiteAceptacion) {
@@ -477,11 +484,11 @@ class PlanMejoraController extends Controller {
             }
         } elseif ($formaEvaluacion == 'rango_colores') {
             foreach ($criterios as $c) {
-                if ($c['meta'] != '' and $c['color'] != 'green'){
+                if ($c['meta'] != '' and $c['color'] != 'green') {
                     $limites = explode('-', $c['meta']);
-                    if ($c['calificacion'] < $limites[0] ){
+                    if ($c['calificacion'] < $limites[0]) {
                         $c['brecha'] = $limites[0] - $c['calificacion'];
-                    } elseif ($c['calificacion'] > $limites[1]){
+                    } elseif ($c['calificacion'] > $limites[1]) {
                         $c['brecha'] = $c['calificacion'] - $limites[1];
                     }
                     array_push($criteriosParaPlan, $c);
@@ -490,21 +497,21 @@ class PlanMejoraController extends Controller {
         }
         return $criteriosParaPlan;
     }
-    
+
     public function estaDentroPeriodoIntervencion($criterio, $fi, $ff) {
         $em = $this->getDoctrine()->getManager();
-        
-        $actividades = $em->getRepository('CalidadBundle:Actividad')->findBy(array('criterio'=>$criterio), array('fechaInicio'=>'ASC'));
-        $result = true;    
-        
+
+        $actividades = $em->getRepository('CalidadBundle:Actividad')->findBy(array('criterio' => $criterio), array('fechaInicio' => 'ASC'));
+        $result = true;
+
         $menorFechaReg = (count($actividades) > 0) ? $actividades[0]->getFechaInicio() : $fi;
         $menorFecha = ($menorFechaReg < $fi) ? $menorFechaReg : $fi;
-        
+
         //Cantidad de días 
         $intervalo = $ff->diff($menorFecha);
         $duración = $intervalo->format('%a') + 1;
 
-        
+
         //Verificar que la duración de la actividad no exceda el periodo de intervención
         switch ($criterio->getTipoIntervencion()->getCodigo()) {
             case 'baja':
@@ -516,10 +523,11 @@ class PlanMejoraController extends Controller {
             default:
                 $limite = 180;
         }
-        if ($duración > $limite){
+        if ($duración > $limite) {
             $result = false;
         }
-        
+
         return $result;
     }
+
 }
