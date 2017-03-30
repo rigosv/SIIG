@@ -94,7 +94,7 @@ class MenuBuilder
         
         $router = $this->pool->getContainer()->get('router');
         if ($usuario != 'anon.') {
-            if ($usuario->hasRole('ROLE_SUPER_ADMIN') or $usuario->hasRole('ROLE_USER_TABLERO_CALIDAD')){
+            if ($usuario->hasRole('ROLE_SUPER_ADMIN') or $usuario->hasRole('ROLE_USER_PLAN_MEJORA_CALIDAD')){
                 $menu['_calidad_']->addChild('_plan_mejora_', array('uri' => $router->generate('calidad_planmejora')));
             }
         }
