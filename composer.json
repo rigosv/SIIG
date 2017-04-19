@@ -30,7 +30,7 @@
         "symfony/monolog-bundle": "^2.8",
         "sensio/distribution-bundle": "^5.0",
         "sensio/framework-extra-bundle": "^3.0.2",
-        "sensio/generator-bundle": "v3.0.7",
+        "sensio/generator-bundle": "v3.1.4",
         "incenteev/composer-parameter-handler": "^2.0",
         
         "knplabs/knp-menu-bundle":"dev-master",
@@ -43,7 +43,7 @@
         "sonata-project/doctrine-orm-admin-bundle": "3.*",
         "sonata-project/block-bundle": "3.*",
         "sonata-project/easy-extends-bundle": "2.x-dev",
-        "sonata-project/user-bundle": "dev-master",
+        "sonata-project/user-bundle": "3.*",
         
         	
         "simplethings/entity-audit-bundle": "v0.6",
@@ -61,10 +61,10 @@
         "friendsofsymfony/rest-bundle": "^1.1",
         "snc/redis-bundle": "v2.0.0",
         "predis/predis": "v1.1.1",
-        "h4cc/wkhtmlpdf-amd64": "0.12.3"
+        "h4cc/wkhtmltopdf-amd64": "0.12.3"
     },
     "require-dev": {
-        "sensio/generator-bundle": "^3.0",
+        "sensio/generator-bundle": "^3.1.4",
         "symfony/phpunit-bridge": "^3.0"
     },
     "scripts": {
