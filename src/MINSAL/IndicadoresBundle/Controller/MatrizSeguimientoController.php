@@ -24,9 +24,9 @@ class MatrizSeguimientoController extends Controller {
 
         $defaultData = array();
         $form = $this->createFormBuilder($defaultData)
-            ->add('desde', 'hidden', array('label'=>$this->get('translator')->trans('_desde_')))
-            ->add('hasta', 'hidden', array('label'=>$this->get('translator')->trans('_hasta_')))
-            ->add('send', 'submit', array('label'=>$this->get('translator')->trans('_cargar_reporte_')))
+            ->add('desde', HiddenType::class, array('label'=>$this->get('translator')->trans('_desde_')))
+            ->add('hasta', HiddenType::class, array('label'=>$this->get('translator')->trans('_hasta_')))
+            ->add('send', SubmitType::class, array('label'=>$this->get('translator')->trans('_cargar_reporte_')))
             ->getForm();
 
         $form->handleRequest($request);
