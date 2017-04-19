@@ -164,7 +164,7 @@ class FichaTecnicaAdmin extends Admin
         $actions = array();
 
         $actions['ver_ficha'] = array(
-            'label' => $this->trans('_ver_ficha_'),
+            'label' => '_ver_ficha_',
             'ask_confirmation' => false // If true, a confirmation will be asked before performing the action
         );
 
