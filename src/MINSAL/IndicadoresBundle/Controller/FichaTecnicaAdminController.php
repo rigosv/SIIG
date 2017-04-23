@@ -100,7 +100,7 @@ class FichaTecnicaAdminController extends Controller {
         
         $tipo_reporte = ($request->get('indicador') != null) ? 'indicador' : 'sala';
 
-        $html = $this->tableroAction($sala);
+        $html = $this->tableroAction($sala, $request);
         $html = $html->getContent();
 
         $info_indicador = '';
