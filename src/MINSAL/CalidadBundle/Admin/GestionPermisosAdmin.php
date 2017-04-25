@@ -6,6 +6,7 @@ use Sonata\AdminBundle\Admin\AbstractAdmin as Admin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Form\FormMapper;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 class GestionPermisosAdmin extends Admin
 {
@@ -26,12 +27,12 @@ class GestionPermisosAdmin extends Admin
                             ->where('e.nivel = 1');
                 }))
             ->add('usuario', null, array('label'=> ('_usuario_'), 'required' => true,))
-            ->add('elemento', 'choice', array('label' => ('_elemento_'),
+            ->add('elemento', ChoiceType::class, array('label' => ('_elemento_'),
                         'choices' => array(
                             'plan_mejora'=>('_plan_mejora_')
                             )
                         ))
-            ->add('accion', 'choice', array('label' => ('_accion_'),
+            ->add('accion', ChoiceType::class, array('label' => ('_accion_'),
                         'choices' => array(
                             'crear_editar'=>('_crear_editar_'),
                             'ver'=>('_ver_')
