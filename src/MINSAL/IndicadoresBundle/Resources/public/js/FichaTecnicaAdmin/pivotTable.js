@@ -227,6 +227,8 @@ $(document).ready(function() {
                 delete config_copy["rendererOptions"];
                 delete config_copy["localeStrings"];
                 configuracion = config_copy;
+                
+                arreglarValores0();
             });   
             
     var arreglarValores0 = function(){
