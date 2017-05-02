@@ -212,7 +212,7 @@ class TableroCalidadRESTController extends Controller {
                 $etiquetas = array();
                 $valores = array();
                 foreach ($aux as $f){
-                    $periodo_ = split('/', $f['mes']);
+                    $periodo_ = explode('/', $f['mes']);
                     $etiquetas[] = $this->meses[$periodo_[0]].'/'.$periodo_[1];
                     $valores[] = $f['valor'];
                 }
