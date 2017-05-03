@@ -708,20 +708,24 @@ class IndicadorRepository extends EntityRepository {
         $sql = "DROP TABLE IF EXISTS datos_tmp";
         $em->getConnection()->executeQuery($sql);
         
-        $sql = "            
-                SELECT $campos, A.datos->'establecimiento' as establecimiento, AC.indicador_id,
-                    A.datos->'es_poblacion' AS es_poblacion, A.datos->'codigo_tipo_control' AS tipo_control, 
-                    A.datos->'es_separador' AS es_separador, A.datos->'posicion' AS posicion
+       $sql = "            
+                SELECT AA.*, AC.indicador_id
                 INTO TEMP datos_tmp 
-                FROM almacen_datos.repositorio A
-                    INNER JOIN variable_captura AB ON (A.datos->'codigo_variable' = AB.codigo) 
+                FROM ( 
+                       SELECT $campos, A.datos->'establecimiento' as establecimiento,
+                            A.datos->'es_poblacion' AS es_poblacion, A.datos->'codigo_tipo_control' AS tipo_control, 
+                            A.datos->'es_separador' AS es_separador, A.datos->'posicion' AS posicion
+                        FROM almacen_datos.repositorio A
+                        WHERE A.datos->'es_separador' != 'true'
+                            AND A.datos->'anio' = '$anio'
+                            $periodo_lectura
+                    ) AS AA
+                    INNER JOIN variable_captura AB ON (AA.codigo_variable = AB.codigo) 
                     INNER JOIN indicador_variablecaptura AC ON (AB.id = AC.variablecaptura_id)
-                 WHERE A.datos->'es_separador' != 'true'
-                    AND A.datos->'anio' = '$anio'        
-                    AND AC.indicador_id = '$datosIndicador[indicador_id]' 
-                    $periodo_lectura                
+                 WHERE AC.indicador_id = '$datosIndicador[indicador_id]' 
+                                    
                  ";
-
+         
         $em->getConnection()->executeQuery($sql);
         
         $this->borrarVacios($mes);
