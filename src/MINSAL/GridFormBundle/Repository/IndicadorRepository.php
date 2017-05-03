@@ -56,18 +56,14 @@ class IndicadorRepository extends EntityRepository {
         //Obtener la suma de verificación de los datos       
         $sql = "SELECT md5(CAST((array_agg(f.* order by 1))AS text)) 
             FROM (
-                    SELECT A.*, AC.indicador_id                    
+                    SELECT A.*
                     FROM almacen_datos.repositorio A
-                        INNER JOIN variable_captura AB ON (A.datos->'codigo_variable' = AB.codigo) 
-                        INNER JOIN indicador_variablecaptura AC ON (AB.id = AC.variablecaptura_id)
-                        INNER JOIN indicador I ON (AC.indicador_id = I.id)
                      WHERE A.datos->'es_separador' != 'true'
-                        AND A.datos->'anio' = '$anio'        
-                        AND I.forma_evaluacion $simbolo 'promedio'
+                        AND A.datos->'anio' = '$anio'
                         AND (A.datos->'mes')::integer = '$mes'
                     ) AS f
              ";
-
+        
         $cons_checksum = $em->getConnection()->executeQuery($sql)->fetch();
         $checksum = $cons_checksum['md5'];
 
@@ -178,7 +174,7 @@ class IndicadorRepository extends EntityRepository {
         $indicadores = $em->getConnection()->executeQuery($sql)->fetchAll();
 
         $checkAllInd = $this->checkSum($periodo, 'lista_chequeo', $nivel);
-
+        
         foreach ($indicadores as $ind){
             $Frm = $em->getRepository('GridFormBundle:Formulario')->find($ind['estandar_id']);
 
