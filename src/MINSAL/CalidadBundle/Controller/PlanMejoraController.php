@@ -20,6 +20,9 @@ use Doctrine\ORM\EntityRepository;
  */
 class PlanMejoraController extends Controller {
 
+    // Umbral de aceptación para el criterio
+    private $limiteAceptacion = 100;
+    
     /**
      * @Route("/", name="calidad_planmejora")
      */
@@ -255,6 +258,7 @@ class PlanMejoraController extends Controller {
         foreach ($em->getRepository('CalidadBundle:Criterio')->findBy(array('planMejora' => $planMejora), array('variableCaptura' => 'ASC')) as $c) {
             $datos = array('id' => $c->getId(),
                 'descripcion' => $c->getVariableCaptura()->getDescripcion(),
+                'cumplimiento' => $this->limiteAceptacion - $c->getBrecha(),
                 'brecha' => $c->getBrecha(),
                 'causaBrecha' => $c->getCausaBrecha(),
                 'oportunidadMejora' => $c->getOportunidadMejora(),
@@ -417,7 +421,7 @@ class PlanMejoraController extends Controller {
         }
         $formaEvaluacion = $planMejora->getEstandar()->getFormaEvaluacion();
         $historialCriterios = array();
-        $limiteAceptacion = 80;
+        $limiteAceptacion = $this->limiteAceptacion;
         //Historial de criterios
         $codigoEstructura = $planMejora->getEstablecimiento()->getCodigo();
         $periodoInicial = $planMejora->getPeriodo();
@@ -475,7 +479,7 @@ class PlanMejoraController extends Controller {
         $criteriosParaPlan = array();
 
         if ($formaEvaluacion == 'lista_chequeo') {
-            $limiteAceptacion = 100;
+            $limiteAceptacion = $this->limiteAceptacion;
             foreach ($criterios as $c) {
                 if ($c['porc_cumplimiento'] < $limiteAceptacion) {
                     $c['brecha'] = $limiteAceptacion - $c['porc_cumplimiento'];

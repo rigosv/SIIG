@@ -92,11 +92,12 @@
                         {% else %}
                             <TH>{{'_area_'|trans}}</TH>
                         {% endif %}
+                        <TH>{{'_cumplimiento_'|trans}}</TH>
                         <TH>{{'_brecha_'|trans}}</TH>
                         <TH>{{'_prioridad_'|trans}}</TH>
                         <TH>{{'_causa_brecha_'|trans}}</TH>
-                        <TH>{{'_oportunidad_mejora_'|trans}}</TH>
                         <TH>{{'_factores_mejoramiento_'|trans}}</TH>
+                        <TH>{{'_oportunidad_mejora_'|trans}}</TH>
                         <TH>{{'_tipo_intervencion_'|trans}}</TH>
                         <TH>{{'_porcentaje_avance_'|trans}}</TH>
                     </TR>
@@ -105,18 +106,25 @@
                 <TBODY>
                     {% for c in ind.criterios %}
                         <TR {% if c.actividades | length > 0 %} class="tieneActividades"{% endif %}>
-                            <TD>{{c.variableCaptura.descripcion}}</TD>
-                            <TD>{{c.brecha}}</TD>
-                            <TD class="{{c.prioridad}}">{{c.prioridad}}</TD>
-                            <TD>{{c.causaBrecha}}</TD>
-                            <TD>{{c.oportunidadMejora}}</TD>
-                            <TD>{{c.factoresMejoramiento}}</TD>
-                            <TD>{{c.tipoIntervencion}}</TD>
-                            <TD align='right'>{% if c.porcentajeAvance != null %} {{c.porcentajeAvance | number_format(1)}} {% endif %}</TD>
+                            <TD title="{{ plan.estandar.formaEvaluacion == 'lista_chequeo' ? '_criterio_'|trans : '_area_'|trans }}">
+                                {{c.variableCaptura.descripcion}}
+                            </TD>
+                            <TD title="{{'_cumplimiento_'|trans}}">{{100 - c.brecha}}</TD>
+                            <TD title="{{'_brecha_'|trans}}">{{c.brecha}}</TD>
+                            <TD class="{{c.prioridad}}" title="{{'_prioridad_'|trans}}">{{c.prioridad}}</TD>
+                            <TD title="{{'_causa_brecha_'|trans}}">{{c.causaBrecha}}</TD>
+                            <TD title="{{'_factores_mejoramiento_'|trans}}">{{c.factoresMejoramiento}}</TD>
+                            <TD title="{{'_oportunidad_mejora_'|trans}}">{{c.oportunidadMejora}}</TD>
+                            <TD title="{{'_tipo_intervencion_'|trans}}">{{c.tipoIntervencion}}</TD>
+                            <TD align='right' title="{{'_porcentaje_avance_'|trans}}">
+                                {% if c.porcentajeAvance != null %} 
+                                    {{c.porcentajeAvance | number_format(1)}} 
+                                {% endif %}
+                            </TD>
                         </TR>
                         {% if c.actividades | length > 0 %}
                             <TR>
-                                <TD colspan="8">
+                                <TD colspan="9">
                                     {% if historialCriterios[c.variableCaptura.codigo] is defined %}
                                         <Br/>
                                         {{'_brecha_historica_'|trans}} 
