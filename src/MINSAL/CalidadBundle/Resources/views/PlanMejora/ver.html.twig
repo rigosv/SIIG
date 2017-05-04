@@ -106,7 +106,7 @@
                 <TBODY>
                     {% for c in ind.criterios %}
                         <TR {% if c.actividades | length > 0 %} class="tieneActividades"{% endif %}>
-                            <TD title="{{ plan.estandar.formaEvaluacion == 'lista_chequeo' ? '_criterio_'|trans : '_area_'|trans }}">
+                            <TD class = "nivel_{{c.variableCaptura.nivelIndentacion}}" title="{{ plan.estandar.formaEvaluacion == 'lista_chequeo' ? '_criterio_'|trans : '_area_'|trans }}">
                                 {{c.variableCaptura.descripcion}}
                             </TD>
                             <TD title="{{'_cumplimiento_'|trans}}">{{100 - c.brecha}}</TD>
@@ -122,6 +122,19 @@
                                 {% endif %}
                             </TD>
                         </TR>
+                        {% if subcriterios[c.id] is defined %}
+                            {% for sc in subcriterios[c.id] %}
+                                <TR>
+                                    <TD class = "nivel_1" >
+                                        {{sc.variableCaptura.descripcion}}
+                                    </TD>
+                                    <TD >{{100 - sc.brecha}}</TD>
+                                    <TD >{{sc.brecha}}</TD>
+                                    <TD class="{{sc.prioridad}}">{{sc.prioridad}}</TD>
+                                    <TD colspan="5"></TD>
+                                </TR>
+                            {% endfor %}
+                        {% endif %}
                         {% if c.actividades | length > 0 %}
                             <TR>
                                 <TD colspan="9">

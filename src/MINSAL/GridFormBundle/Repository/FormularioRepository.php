@@ -603,7 +603,7 @@ class FormularioRepository extends EntityRepository {
                 SELECT $campos, A.datos->'anio' AS anio, $mes_ A.datos->'establecimiento' as establecimiento, 
                     A.datos->'es_poblacion' AS es_poblacion, A.datos->'codigo_tipo_control' AS tipo_control, 
                     A.datos->'es_separador' AS es_separador, A.datos->'posicion' AS posicion, id_formulario
-                 INTO  datos_tmp 
+                 INTO  TEMP datos_tmp 
                  FROM almacen_datos.repositorio A
                  WHERE (id_formulario = '$idFrm'
                      OR id_formulario IN (SELECT id FROM costos.formulario WHERE id_formulario_sup = '$idFrm') )
@@ -826,7 +826,7 @@ class FormularioRepository extends EntityRepository {
                             WHEN tipo_control = 'checkbox_3_states' AND dato = 'false' or dato = '0' THEN 1
                             ELSE 0 
                         END AS no_cumplimiento 
-                        FROM datos_tmp 
+                        FROM datos_tmp
                         WHERE es_poblacion='false'
                             AND es_separador != 'true'
                             AND tipo_control != 'dropdownlist'

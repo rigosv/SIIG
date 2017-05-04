@@ -255,9 +255,11 @@ class PlanMejoraController extends Controller {
 
         //Recuperar los criterios del plan
         $criterios = array();
-        foreach ($em->getRepository('CalidadBundle:Criterio')->findBy(array('planMejora' => $planMejora), array('variableCaptura' => 'ASC')) as $c) {
+        $criteriosPlan = $em->getRepository('CalidadBundle:PlanMejora')->getCriteriosOrden($planMejora);
+        foreach ($criteriosPlan  as $c) {
             $datos = array('id' => $c->getId(),
                 'descripcion' => $c->getVariableCaptura()->getDescripcion(),
+                'nivel' => $c->getVariableCaptura()->getNivelIndentacion(),
                 'cumplimiento' => $this->limiteAceptacion - $c->getBrecha(),
                 'brecha' => $c->getBrecha(),
                 'causaBrecha' => $c->getCausaBrecha(),
@@ -388,14 +390,21 @@ class PlanMejoraController extends Controller {
         }
         $indicadores = array();
 
+        $ultCriterio = 0;
+        $subcriterios = array();
         foreach ($criterios as $c) {
             if ($planMejora->getEstandar()->getFormaEvaluacion() == 'rango_colores') {
                 $ind = $c->getVariableCaptura()->getIndicadores();
                 $indicadores[$ind[0]->getCodigo()]['descripcion'] = $ind[0]->getDescripcion();
                 $indicadores[$ind[0]->getCodigo()]['criterios'][] = $c;
-            } else {
+            } else {                
                 $indicadores[0]['descripcion'] = '';
-                $indicadores[0]['criterios'][] = $c;
+                if ($c->getVariableCaptura()->getNivelIndentacion() == 0 ){
+                    $indicadores[0]['criterios'][] = $c;
+                    $ultCriterio = $c->getId();
+                } else {
+                    $subcriterios[$ultCriterio][] = $c;
+                }
             }
         }
 
@@ -405,6 +414,7 @@ class PlanMejoraController extends Controller {
                     'plan' => $planMejora,
                     'indicadores' => $indicadores,
                     'historialCriterios' => $historialCriterios,
+                    'subcriterios' => $subcriterios,
                     'establecimiento' => $establecimiento
                         )
         );
@@ -416,7 +426,9 @@ class PlanMejoraController extends Controller {
         $arrCriterios = array();
         foreach ($indicadores as $ind) {
             foreach ($ind['criterios'] as $c) {
-                $arrCriterios[] = $c->getVariableCaptura()->getCodigo();
+                if ($c->getVariableCaptura()->getNivelIndentacion() == 0){
+                    $arrCriterios[] = $c->getVariableCaptura()->getCodigo();
+                }
             }
         }
         $formaEvaluacion = $planMejora->getEstandar()->getFormaEvaluacion();
