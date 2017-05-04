@@ -14,8 +14,8 @@ $(document).ready(function () {
             {label: 'Descripción', name: 'descripcion', width: 200, editable: true, editoptions: { readonly: "readonly" }},
             {label: 'Brecha', name: 'brecha', align: "right", sorttype: "number", width: 30, editable:true, editoptions: { readonly: "readonly" }},
             {label: 'Causa brecha', name: 'causaBrecha', width: 150, editable: true, edittype: 'textarea', editrules: {required: true}},
+            {label: 'Factores a mejorar', name: 'factoresMejoramiento', width: 150, editable: true, edittype: 'textarea', editrules: {required: true}},
             {label: 'Oportunidad mejora', name: 'oportunidadMejora', width: 150, editable: true, edittype: 'textarea', editrules: {required: true}},
-            {label: 'Factores de mejoramiento', name: 'factoresMejoramiento', width: 150, editable: true, edittype: 'textarea', editrules: {required: true}},
             {label: 'Periodo de intervención', name: 'tipoIntervencion', width: 60, editable: true, edittype: 'select', formatter:'select',
                 editoptions:{value:tiposIntervencion}, 
                 editrules: {required: true}
