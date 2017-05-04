@@ -475,7 +475,7 @@ class PlanMejoraController extends Controller {
         $criteriosParaPlan = array();
 
         if ($formaEvaluacion == 'lista_chequeo') {
-            $limiteAceptacion = 80;
+            $limiteAceptacion = 100;
             foreach ($criterios as $c) {
                 if ($c['porc_cumplimiento'] < $limiteAceptacion) {
                     $c['brecha'] = $limiteAceptacion - $c['porc_cumplimiento'];
