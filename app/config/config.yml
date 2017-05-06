@@ -113,7 +113,13 @@ knp_menu:
         template: knp_menu.html.twig
     templating: false # if true, enables the helper for PHP templates
     default_renderer: twig # The renderer to use, list is also available by default                
-    
+
+knp_snappy:
+    pdf:
+        enabled:    true
+        binary:     '%kernel.root_dir%/../vendor/bin/wkhtmltopdf-amd64'
+        options:    []
+
 sonata_admin:
     security:
         handler: sonata.admin.security.handler.role
@@ -270,15 +276,15 @@ services:
 #       user_manager: fos_user.user_manager          # Overrides default user manager
 #       ldap_manager: fr3d_ldap.ldap_manager.default # Overrides default ldap manager
             
-mobile_detect:
-    redirect:
-        mobile: ~
-        tablet: ~
-    switch_device_view: ~
+#mobile_detect:
+#    redirect:
+#        mobile: ~
+#        tablet: ~
+#    switch_device_view: ~
 
 sensio_framework_extra:
     view:
-        annotations: false
+        annotations: true
 
 fos_rest:
     param_fetcher_listener: true
