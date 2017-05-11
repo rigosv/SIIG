@@ -9,7 +9,9 @@
         {% block sonata_user_login_form %}
             {% block sonata_user_login_error %}
                 {% if error %}
-                    <div class="alert alert-danger">{{ error|trans }}</div>
+                    <div class="alert alert-danger alert-error">
+                        {{ error.messageKey|trans(error.messageData, 'security') }}
+                    </div>
                 {% endif %}
             {% endblock %}
 
@@ -47,7 +49,7 @@
                                 </label>                                    
                             </div>
                             <div>
-                               <a id='resetting' href="{{ path('fos_user_resetting_request') }}">{{ 'forgotten_password'|trans({}, 'SonataUserBundle') }}</a>
+                               <a href="{{ reset_route }}">{{ 'forgotten_password'|trans({}, 'SonataUserBundle') }}</a>
                             </div>
                         </div>
 
