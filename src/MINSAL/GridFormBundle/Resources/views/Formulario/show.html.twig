@@ -114,7 +114,7 @@
 
                 //Verifica si una fila tiene fórmula de cálculo
                 filaFormula_{{Frm.id}} = function(fila, columna){
-                    {% if Frm.calculoFilas != ''%}
+                    {% if Frm.calculoFilas != '' %}
                         for(i = 0; i < filasFormulas_{{Frm.id}}.length; i++){
                             if (filasFormulas_{{Frm.id}}[i] == fila)
                                 return true;
@@ -127,7 +127,7 @@
                     valorCeldaPreEdicion_{{Frm.id}} = value;
                     ultimaFilaFormula_{{Frm.id}} = null;
                     var datarow = $("#jqxgrid{{Frm.id}}").jqxGrid('getrowdata', row);
-                    if (datarow.es_poblacion == 'true'){                        
+                    if (datarow.es_poblacion == 'true'){
                         var celdas = $(".jqx-grid-cell:not('.oculto'):not('.celda_no_editable'):not('.no_aplica') .sw_etiqueta");
                         var no_completado;
                         celdas.each(function(index, item){
@@ -175,7 +175,7 @@
                         //Verificar si es lógica de salto
                         var posicion = filasFormulas_{{Frm.id}}.indexOf(row+'_LS');
                         if (posicion != -1 && columnfield != 'descripcion_variable'){
-                            noAplica_class = ( evalLadoDerecho(row, columnfield, value, datarowAct, operacionesFormulas_{{Frm.id}}[posicion], {{Frm.id}}) ) ? '' : 'no_aplica';
+                            noAplica_class = ( evalLadoDerecho(row, columnfield, value, operacionesFormulas_{{Frm.id}}[posicion], {{Frm.id}}) ) ? '' : 'no_aplica';
                         }
                     {% endif %}
                     return no_edit_class + ' ' + oculto_class + ' ' + noAplica_class;
@@ -566,20 +566,24 @@
                                                 if (lados_formula[0].trim() == '${F'+row+'}_CHECK'){
                                                     var datos_formula = lados_formula[1].split('//');
                                                     var mensaje = (datos_formula.length == 2 && datos_formula[1].length > 0 ) ? datos_formula[1] : 'Error en el dato ingresado';
-                                                    if (!evalLadoDerecho(row, columnaSeleccionada_{{Frm.id}}, valorNew, datarow, datos_formula[0], {{Frm.id}}) ){
-                                                        $.notify({
-                                                            message: mensaje 
-                                                        },{
-                                                            animate: {
-                                                                enter: 'animated jello'
-                                                            },
-                                                            type: 'danger',
-                                                            z_index: 5031
-                                                        });
+                                                    if (!evalLadoDerecho(row, columnaSeleccionada_{{Frm.id}}, valorNew, datos_formula[0], {{Frm.id}}) ){
+                                                        mensajeError(mensaje);
                                                         error = true;
                                                     }
                                                 }
                                             });
+                                            
+                                            if (datarow.es_poblacion == 'true'){
+                                                var veces = 0;
+                                                $('.poblacion').each(function(index, nodo){
+                                                    veces = ($(nodo).html() == valorNew) ? veces + 1 : veces;
+                                                });
+                                                
+                                                if (veces > 0){
+                                                    mensajeError('No puede volver a utilizar el valor de '+ valorNew);
+                                                    error = true;
+                                                }
+                                            }
                                             return (error) ? cellValue : valorNew;
                                             
                                         }
@@ -715,54 +719,6 @@
 
                     {% if Frm.calculoFilas != '' %}
                     
-                    evalLadoDerecho = function (fila, columna, valor_celda_actual, datarow, operaciones, idFrm){
-                        operadores = operaciones.toString().match(/\$\{F[0-9]{1,4}\}/g);
-                        if (operadores != null && operadores.length > 0){
-                            operadores.forEach(function(nodo2, index){
-                                fil = nodo2.toString().replace(/\$\{F|\}/gi,'');
-                                valor_oper = (fil == fila) ? valor_celda_actual :  $('#jqxgrid'+idFrm).jqxGrid('getcellvalue', fil, columna);
-                                valor_oper  = (valor_oper == '') ? false : valor_oper;
-                                
-                                var datarow_celda = $("#jqxgrid"+idFrm).jqxGrid('getrowdata', fil);
-                                if (datarow_celda.codigo_tipo_control == 'time'){
-                                    hora =  valor_oper.split(':');
-                                    valor_oper =  parseInt(hora[0]) * 60 + parseInt(hora[1]);
-                                } else if (datarow_celda.codigo_tipo_control == 'datetimeinput'){
-                                    fecha = moment(valor_oper, "DD/MM/YYYY HH:mm")
-                                    //valor de la fecha en milisegundos
-                                    valor_oper =  fecha.valueOf();
-                                } else if (datarow_celda.codigo_tipo_control == 'date'){
-                                    fecha = moment(valor_oper, "DD/MM/YYYY")
-                                    //valor de la fecha en milisegundos
-                                    valor_oper =  fecha.valueOf();
-                                }
-                                operaciones = operaciones.replace(nodo2.toString(), valor_oper);
-                            });
-                        }
-                        try {
-                            operaciones = operaciones.replace(/amp;/g, '')
-                                    .replace(/&#039;/g, "'")
-                                    .replace(/&lt;/g, '<')
-                                    .replace(/&gt;/g, '>')
-                                    .replace(/ and /g, ' && ')
-                                    .replace(/ or /g, ' || ')
-                                    .replace(/\$\{fecha_medicion\}/g, moment($('#fechaEvaluacion').val(), 'DD/MM/YYYY').valueOf())
-                                    .replace(/decimal-date-time/g, 'decimal_date_time')
-                                    .replace(/=/g, '==')
-                                    .replace(/====/g, '==')
-                                    .replace(/:==/g, ':=')
-                                    .replace(/>==/g, '>=')
-                                    .replace(/<==/g, '<=')
-                                    ; 
-
-                            var result =  eval(operaciones);
-                            return result;
-                        }                        
-                        catch(err) {
-                            return;
-                        }
-                    }
-
                     $("#jqxgrid{{Frm.id}}").bind('cellendedit', function (event) {
                         var fila = event.args.rowindex;
                         var columna = event.args.datafield;
@@ -777,53 +733,28 @@
                         if (tipo_control != 'descripcion_variable'){
                             var campos = camposFormulas_{{Frm.id}};
                             var formula = [];
+                            
                             //se espera el formato codigoColumna: {F2} := {F0}/{F1} * 100
                             // Primero se separa por : para obtener el nombre de la columna y la formula
                             // Luego se separa por = para obtener los dos lados de la ecuación
                             // Luego se sustituyen los valores por el dato de la fila correspondiente
                             // y se hace el cálculo 
                             campos.forEach(function(nodo, index){
-                                //formula = nodo.split(':');
-                                formula = nodo;
+                                formula = nodo.split(':=');
                                 //Procesar solamente las fórmulas donde la celda actual aparece
-                                if (formula.toString().indexOf('{F'+fila+'}') != -1){
+                                if (formula[1].toString().indexOf('{F'+fila+'}') != -1){
                                     filasp = /\$\{F[0-9]{1,4}\}/g;
-                                                                
-                                    lados_formula = formula.split(':=');
-                                    fila_destino = filasp.exec(lados_formula[0]).toString().replace(/\$\{F|\}/gi,'');
-                                    operaciones = lados_formula[1];
-                                    result = evalLadoDerecho(fila, columna, valor_celda_actual, datarow, operaciones, {{Frm.id}});
-
-                                    //Convertir el valor de acuerdo al tipo de dato de la celda destino
-                                    var datarow_dest = $("#jqxgrid{{Frm.id}}").jqxGrid('getrowdata', fila_destino);
-                                    if (datarow_dest.codigo_tipo_control == 'datetimeinput' || 
-                                                datarow_dest.codigo_tipo_control == 'time'){
-                                        //El resultado está en milisegundos, pasarlo a formato hora:minutos
-                                        horas_ = result / 1000 / 60 / 60 ;
-                                        horas = ~~(horas_);
-                                        horas = ( horas >=0 && horas < 10 ) ? '0'+horas : horas;
-
-                                        minutos = parseInt((horas_ - horas) * 60);
-                                        minutos = ( minutos >= 0 && minutos < 10 ) ? '0'+Math.abs(minutos) : Math.abs(minutos);
-                                        result =  horas+ ':' + minutos;
-                                    } else if (datarow_dest.codigo_tipo_control == 'float'){ 
-                                        result = result.toFixed(2);
-                                    } else if (datarow_dest.codigo_tipo_control == 'Number'){ 
-                                        result = result.toFixed(0);
-                                    }
                                     
-                                    var valor;
-                                    if ( lados_formula[0].replace(/\$\{F|\}/g,'').trim() == fila_destino+'_LS'){
-                                        valor = (result) ? (datarow_dest.codigo_tipo_control == 'checkbox' || datarow_dest.codigo_tipo_control == 'checkbox_3_states') ? false : null : ''; 
-                                    }else if ( lados_formula[0].replace(/\$\{F|\}/g,'').trim() == fila_destino+'_LSX'){
-                                        valor = result; 
-                                    }
-                                    else{
-                                        valor = result;
-                                    }
+                                    var fila_destino = filasp.exec(formula[0]).toString().replace(/\$\{F|\}/gi,'');
+                                    var datarow_dest = $("#jqxgrid{{Frm.id}}").jqxGrid('getrowdata', fila_destino);
+                                    
+                                    if (datarow_dest != undefined) {
+                                        var resultado = calcularCelda(fila, columna, valor_celda_actual, nodo, {{Frm.id}});
 
-                                    ultimaFilaFormula_{{Frm.id}} = fila;
-                                    $("#jqxgrid{{Frm.id}}").jqxGrid('setcellvalue', fila_destino, columna, valor);
+                                        ultimaFilaFormula_{{Frm.id}} = fila;
+
+                                        $("#jqxgrid{{Frm.id}}").jqxGrid('setcellvalue', fila_destino, columna, resultado);
+                                    }
                                 }
                             });
                         }
@@ -848,6 +779,7 @@
             }
             {% endfor %}
 
+            
             {% if cantidad_formularios == 1 %}
                 initGrid{{Formularios[0].id}}()
                 $("#exportar").click(function () {
@@ -870,7 +802,7 @@
                 }
                 $('#jqxTabs').jqxTabs({ width: '100%', height: 560,  initTabContent: initWidgets, theme: 'summer' });
             {% endif %}
-
+            
             $("#guardar").click(function () {
                 if (error){
                     $('#modal_msj_content').html('<div class="alert alert-warning" role="alert">{{'_error_anterior_'|trans}}</div>');
@@ -895,17 +827,146 @@
                                 function(resp) {
                                 }, 'json'
                            );
-                    $('#myModalConf').modal('toggle')
+                   //Recalcular las celdas que se calculan a partir de fecha de evaluación
+                   {% for Frm in Formularios %}
+                        var campos = camposFormulas_{{Frm.id}};
+                        var filasp = /\$\{F[0-9]{1,4}\}/g;
+                        campos.forEach(function(nodo, index){
+                            if (nodo.toString().indexOf('${fecha_medicion}') != -1){
+                                //Obtener todas las columnas del formulario
+                                var cols = $("#jqxgrid{{Frm.id}}").jqxGrid("columns");
+                                for (var i = 0; i < cols.records.length; i++) {
+                                    if (cols.records[i].datafield != 'codigo_variable' && cols.records[i].datafield != 'descripcion_variable'){
+                                        var columna = cols.records[i].datafield;
+                                        
+                                        formula = nodo.split(':=');
+                                        //Como no se está recalculando por la edición de una celda, se pone
+                                        // valores arbitrarios de fila=-3 y valor_celda_actual = 0
+                                        var resultado = calcularCelda(-3, columna, 0, nodo, {{Frm.id}});
+                                        var fila_destino = formula[0].toString().replace(/\$\{F|\}/gi,'');
+
+                                        $("#jqxgrid{{Frm.id}}").jqxGrid('setcellvalue', fila_destino, columna, resultado);
+                                    }
+                                }
+                            }
+                        });
+                   {% endfor %}
+                   $('#myModalConf').modal('toggle');
                 } else {
                     $('#myModalConf').modal('show');
                 }
             });
+            
             $('#myModalConf').on('hidden.bs.modal', function (e) {
                 if (!validarFrmConf()){
                     $('#myModalConf').modal('show');
                 }               
             });
-                       
+            
+            var evalLadoDerecho = function (fila, columna, valor_celda_actual, operaciones, idFrm){
+                
+                operadores = operaciones.toString().match(/\$\{F[0-9]{1,4}\}/g);
+                if (operadores != null && operadores.length > 0){
+                    operadores.forEach(function(nodo2, index){
+                        fil = nodo2.toString().replace(/\$\{F|\}/gi,'');
+                        valor_oper = (fil == fila) ? valor_celda_actual :  $('#jqxgrid'+idFrm).jqxGrid('getcellvalue', fil, columna);
+                        valor_oper  = (valor_oper == '') ? false : valor_oper;
+
+                        var datarow_celda = $("#jqxgrid"+idFrm).jqxGrid('getrowdata', fil);
+                        if (datarow_celda.codigo_tipo_control == 'time'){
+                            hora =  valor_oper.split(':');
+                            valor_oper =  parseInt(hora[0]) * 60 + parseInt(hora[1]);
+                        } else if (datarow_celda.codigo_tipo_control == 'datetimeinput'){
+                            fecha = moment(valor_oper, "DD/MM/YYYY HH:mm")
+                            //valor de la fecha en milisegundos
+                            valor_oper =  fecha.valueOf();
+                        } else if (datarow_celda.codigo_tipo_control == 'date'){
+                            fecha = moment(valor_oper, "DD/MM/YYYY")
+                            //valor de la fecha en milisegundos
+                            valor_oper =  fecha.valueOf();
+                        }
+                        operaciones = operaciones.replace(nodo2.toString(), valor_oper);
+                    });
+                }
+                try {
+                    operaciones = operaciones.replace(/amp;/g, '')
+                            .replace(/&#039;/g, "'")
+                            .replace(/&lt;/g, '<')
+                            .replace(/&gt;/g, '>')
+                            .replace(/ and /g, ' && ')
+                            .replace(/ or /g, ' || ')
+                            .replace(/\$\{fecha_medicion\}/g, moment($('#fechaEvaluacion').val(), 'DD/MM/YYYY').valueOf())
+                            .replace(/decimal-date-time/g, 'decimal_date_time')
+                            .replace(/=/g, '==')
+                            .replace(/====/g, '==')
+                            .replace(/:==/g, ':=')
+                            .replace(/>==/g, '>=')
+                            .replace(/<==/g, '<=')
+                            ; 
+
+                    var result =  eval(operaciones);
+                    return result;
+                }                        
+                catch(err) {
+                    return;
+                }
+            }
+            
+            //Calcula el resultado de una fórmula
+            // y lo almacena en la celda destino
+            function calcularCelda( fila, columna, valor_celda_actual, formula, frmId){
+                
+                var filasp = /\$\{F[0-9]{1,4}\}/g;
+                var lados_formula = formula.split(':=');
+                var fila_destino = filasp.exec(lados_formula[0]).toString().replace(/\$\{F|\}/gi,'');
+                
+                var operaciones = lados_formula[1];
+                
+                var result = evalLadoDerecho(fila, columna, valor_celda_actual, operaciones, frmId);
+
+                //Convertir el valor de acuerdo al tipo de dato de la celda destino
+                var datarow_dest = $("#jqxgrid"+frmId).jqxGrid('getrowdata', fila_destino);
+                
+                if (datarow_dest.codigo_tipo_control == 'datetimeinput' || 
+                            datarow_dest.codigo_tipo_control == 'time'){
+                    //El resultado está en milisegundos, pasarlo a formato hora:minutos
+                    var horas_ = result / 1000 / 60 / 60 ;
+                    horas = ~~(horas_);
+                    horas = ( horas >=0 && horas < 10 ) ? '0'+horas : horas;
+
+                    var minutos = parseInt((horas_ - horas) * 60);
+                    minutos = ( minutos >= 0 && minutos < 10 ) ? '0'+Math.abs(minutos) : Math.abs(minutos);
+                    result =  horas+ ':' + minutos;
+                } else if (datarow_dest.codigo_tipo_control == 'float'){ 
+                    result = result.toFixed(2);
+                } else if (datarow_dest.codigo_tipo_control == 'Number'){ 
+                    result = result.toFixed(0);
+                }
+
+                var valor;
+                if ( lados_formula[0].replace(/\$\{F|\}/g,'').trim() == fila_destino+'_LS'){
+                    valor = (result) ? (datarow_dest.codigo_tipo_control == 'checkbox' || datarow_dest.codigo_tipo_control == 'checkbox_3_states') ? false : null : ''; 
+                }else if ( lados_formula[0].replace(/\$\{F|\}/g,'').trim() == fila_destino+'_LSX'){
+                    valor = result; 
+                }
+                else{
+                    valor = result;
+                }
+                
+                return valor;
+            }
+            
+            function mensajeError(mensaje){
+                $.notify({
+                    message: mensaje 
+                },{
+                    animate: {
+                        enter: 'animated jello'
+                    },
+                    type: 'danger',
+                    z_index: 5031
+                });
+            }
             function validarFrmConf(){
                 var msj = '';
                 {% if periodoSeleccionado.formulario.periodoLecturaDatos == 'mensual' %}
