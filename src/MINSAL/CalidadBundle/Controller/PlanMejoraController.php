@@ -247,7 +247,12 @@ class PlanMejoraController extends Controller {
             $criteriosEvaluados = $em->getRepository('CalidadBundle:Estandar')
                     ->getIndicadoresEvaluadosNumericos($planMejora->getEstablecimiento(), $planMejora->getPeriodo(), $estandar);
         }
-
+        
+        $criteriosEvaluadosDatos = array();
+        foreach ($criteriosEvaluados as $c){
+            $criteriosEvaluadosDatos[$c['codigo_variable']] = $c;
+        }
+        
         $criteriosParaPlan = $this->getCriteriosParaPlan($formaEvaluacion, $criteriosEvaluados);
 
         //Guardar los criterios, por si hay nuevos
@@ -260,8 +265,9 @@ class PlanMejoraController extends Controller {
             $datos = array('id' => $c->getId(),
                 'descripcion' => $c->getVariableCaptura()->getDescripcion(),
                 'nivel' => $c->getVariableCaptura()->getNivelIndentacion(),
+                'umbral'=> $this->limiteAceptacion,
                 'cumplimiento' => $this->limiteAceptacion - $c->getBrecha(),
-                'brecha' => $c->getBrecha(),
+                'brecha' => number_format($c->getBrecha(), 2),
                 'causaBrecha' => $c->getCausaBrecha(),
                 'oportunidadMejora' => $c->getOportunidadMejora(),
                 'factoresMejoramiento' => $c->getFactoresMejoramiento(),
@@ -273,6 +279,14 @@ class PlanMejoraController extends Controller {
                 $datos['descripcion'] = $c->getVariableCaptura()->getArea()->getDescripcion();
                 $indicador = $c->getVariableCaptura()->getIndicadores();
                 $datos['indicador'] = $indicador[0]->getDescripcion();
+                $datos['cumplimiento'] = number_format($criteriosEvaluadosDatos[$c->getVariableCaptura()->getCodigo()]['calificacion'], 2);
+                $datos['umbral'] = $criteriosEvaluadosDatos[$c->getVariableCaptura()->getCodigo()]['meta'];
+                //Verificar si los límites son iguales, en ese caso el umbral 
+                // se mostrará como un solo número
+                $limites = explode('-', $datos['umbral']);
+                if (count($limites) > 1){
+                    $datos['umbral'] = ( trim($limites[0]) == trim($limites[1]) ) ? trim($limites[0]) : $datos['umbral'] ;
+                }
             }
             $criterios['rows'][] = $datos;
         }

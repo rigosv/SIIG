@@ -17,6 +17,7 @@ $(document).ready(function () {
                     return 'class="nivel_'+rawObject.nivel+'"';
                 }
             },
+            {label: 'Umbral', name: 'umbral', align: "right", sorttype: "number", width: 30, hidden: !agrupar, editable:true, editoptions: { readonly: "readonly" }},
             {label: 'Cumplimiento', name: 'cumplimiento', align: "right", sorttype: "number", width: 50, editable:true, editoptions: { readonly: "readonly" }},
             {label: 'Brecha', name: 'brecha', align: "right", sorttype: "number", width: 30, editable:true, editoptions: { readonly: "readonly" }},
             {label: 'Causa brecha', name: 'causaBrecha', width: 150, editable: true, edittype: 'textarea', editrules: {required: true}},
