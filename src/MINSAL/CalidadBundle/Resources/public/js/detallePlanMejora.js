@@ -211,7 +211,7 @@ $(document).ready(function () {
             beforeInitData: function (formid) {
                 var selectedRow = jQuery("#gridCriterios").jqGrid('getGridParam','selrow');  //get selected rows
                 var nivel = $("#gridCriterios").jqGrid('getCell', selectedRow, 'nivel');
-                if(nivel != 0 && nivel != '' )
+                if(formaEvaluacion == 'lista_chequeo' && nivel != 0 && nivel != '' )
                 {
                     mensajito('No puede editar subcriterios, por favor trabaje sobre el criterio');
                     return false;
