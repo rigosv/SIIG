@@ -52,7 +52,8 @@ $(document).ready(function () {
             if (idCriterio != null) {
                 var nivel = jQuery("#gridCriterios").jqGrid ('getCell', idCriterio, 'nivel');
                 if (jQuery("#gridCriterios").jqGrid ('getCell', idCriterio, 'nivel') == 0
-                        || jQuery("#gridCriterios").jqGrid ('getCell', idCriterio, 'nivel') == '')
+                        || jQuery("#gridCriterios").jqGrid ('getCell', idCriterio, 'nivel') == ''
+                        || formaEvaluacion != 'lista_chequeo')
                 {
                     var descripcionCriterio = jQuery("#gridCriterios").jqGrid ('getCell', idCriterio, 'descripcion');
                     jQuery("#gridActividades").jqGrid('setGridParam', {url: Routing.generate('calidad_planmejora_get_actividades', {criterio: idCriterio}), datatype: 'json'});
@@ -64,7 +65,8 @@ $(document).ready(function () {
         },
         ondblClickRow: function(rowid) {
             if (jQuery("#gridCriterios").jqGrid ('getCell', rowid, 'nivel') == 0
-                        || jQuery("#gridCriterios").jqGrid ('getCell', rowid, 'nivel') == '')
+                        || jQuery("#gridCriterios").jqGrid ('getCell', rowid, 'nivel') == ''
+                        || formaEvaluacion != 'lista_chequeo')
             {
                 jQuery(this).jqGrid('editGridRow', rowid,
                             {editCaption: "Editar criterio", recreateForm: true, 
@@ -175,7 +177,8 @@ $(document).ready(function () {
                 } else if ($('#gridActividades').getGridParam("reccount") == 5){
                     mensaje = 'No puede agregar más de 5 actividades' ;
                 } else if (jQuery("#gridCriterios").jqGrid ('getCell', idCriterio, 'nivel') != 0
-                        && jQuery("#gridCriterios").jqGrid ('getCell', idCriterio, 'nivel') != ''){
+                        && jQuery("#gridCriterios").jqGrid ('getCell', idCriterio, 'nivel') != ''
+                        && formaEvaluacion == 'lista_chequeo'){
                     mensaje = 'Solamente puede agregar actividades a nivel de criterio' ;
                 }
                 if (mensaje !== null){
