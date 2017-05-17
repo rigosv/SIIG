@@ -15,6 +15,14 @@ use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\UserBundle\Model\UserInterface;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\UserBundle\Admin\Model\UserAdmin as BaseAdmin;
+use Sonata\AdminBundle\Form\Type\ModelType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\TimezoneType;
+use Symfony\Component\Form\Extension\Core\Type\LocaleType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Sonata\UserBundle\Form\Type\UserGenderListType;
+use Sonata\UserBundle\Form\Type\SecurityRolesType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 
 class UserAdmin extends BaseAdmin {
 
@@ -67,28 +75,26 @@ class UserAdmin extends BaseAdmin {
                 ->with('General')
                 ->add('username')
                 ->add('email')
-                ->add('plainPassword', 'text', array(
+                ->add('plainPassword', TextType::class, array(
                     'required' => (!$this->getSubject() || is_null($this->getSubject()->getId()))
                 ))
                 ->add('establecimientoPrincipal', null, array('label' => $this->getTranslator()->trans('_establecimiento_principal_')))
                 ->end()
                 ->with($this->getTranslator()->trans('_perfil_'))
-                ->add('dateOfBirth', 'sonata_type_date_picker', array(
+                ->add('dateOfBirth', DateType::class, array(
                     'years' => range(1900, $now->format('Y')),
-                    'dp_min_date' => '1-1-1900',
-                    'dp_max_date' => $now->format('c'),
                     'required' => false
                 ))
                 ->add('firstname', null, array('required' => false))
                 ->add('lastname', null, array('required' => false))
                 ->add('website', 'url', array('required' => false))
-                ->add('biography', 'text', array('required' => false))
-                ->add('gender', 'sonata_user_gender', array(
+                ->add('biography', TextType::class, array('required' => false))
+                ->add('gender', UserGenderListType::class, array(
                     'required' => true,
                     'translation_domain' => $this->getTranslationDomain()
                 ))
-                ->add('locale', 'locale', array('required' => false))
-                ->add('timezone', 'timezone', array('required' => false))
+                ->add('locale', LocaleType::class, array('required' => false))
+                ->add('timezone', TimezoneType::class, array('required' => false))
                 ->add('phone', null, array('required' => false))
                 ->end()
                 ->end()
@@ -104,14 +110,15 @@ class UserAdmin extends BaseAdmin {
                     ->add('credentialsExpired', null, array('required' => false))
                     ->end()
                     ->with('Groups')
-                    ->add('groups', 'sonata_type_model', array(
+                    ->add('groups', ModelType::class, array(
+                        'choices_as_values' => true,
                         'required' => false,
                         'expanded' => true,
                         'multiple' => true
                     ))
                     ->end()
                     ->with('Roles')
-                    ->add('realRoles', 'sonata_security_roles', array(
+                    ->add('realRoles', SecurityRolesType::class, array(
                         'label' => 'form.label_roles',
                         'expanded' => true,
                         'multiple' => true,
@@ -131,7 +138,7 @@ class UserAdmin extends BaseAdmin {
                             'property'=>'grupoIndicadores.id',
                             'expanded' => true,
                             'mapped' => false))
-                        ->add('salas', 'entity', array(
+                        ->add('salas', EntityType::class, array(
                             'class' => 'IndicadoresBundle:GrupoIndicadores',                    
                             'label' => $this->getTranslator()->trans('_salas_situacionales_'),
                             'expanded' => true,

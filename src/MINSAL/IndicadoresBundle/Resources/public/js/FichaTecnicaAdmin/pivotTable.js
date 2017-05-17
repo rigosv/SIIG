@@ -181,16 +181,22 @@ $(document).ready(function() {
     });
     
     function cargarTablaDinamica(datos){
-        var renderers = $.extend($.pivotUtilities.renderers,
+        var renderers = $.extend($.pivotUtilities.renderers, $.pivotUtilities.subtotal_renderers,
             $.pivotUtilities.c3_renderers);
+        var dataClass = $.pivotUtilities.SubtotalPivotData;
+        
 
         if (esCalidad){
             $("#output").pivotUI(datos, {
                 renderers: renderers,
+                dataClass: dataClass,
                 menuLimit: 500,
-                unusedAttrsVertical: false,
+                unusedAttrsVertical: false,                
                 onRefresh: arreglarValores0,
                 rendererOptions: {
+                    arrowCollapsed: "[+] ",
+                    arrowExpanded: "[-] ",
+                    collapseRowsAt: 0, 
                     heatmap: {
                         colorScaleGenerator : function(values) {
                             var max, min;
@@ -211,9 +217,15 @@ $(document).ready(function() {
         } else {
             $("#output").pivotUI(datos, {
                 renderers: renderers,
+                dataClass: dataClass,
                 menuLimit: 500,
                 unusedAttrsVertical: false,
-                onRefresh: onChangeTable
+                onRefresh: onChangeTable,
+                rendererOptions: {
+                    arrowCollapsed: "[+] ",
+                    arrowExpanded: "[-] ",
+                    collapseRowsAt: 0 
+                }
             }, true, 'es');
         }
     }
