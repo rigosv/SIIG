@@ -1,7 +1,7 @@
 #!/bin/bash
 
 PHP=`which php`
-CONSOLE="$PHP ../app/console --env=prod"
+CONSOLE="$PHP ../bin/console --env=prod"
 
 cd "$( dirname "${BASH_SOURCE[0]}" )";
 
