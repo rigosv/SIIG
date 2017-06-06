@@ -78,6 +78,9 @@
             $.jqx.theme = 'ui-redmond';
             listSource = [];
             
+            var columna = '';
+            var valor_celda_actual = '';
+            
             {% for Frm in Formularios %}
             var columnaSeleccionada_{{Frm.id}} = '';
             var ultimaFilaFormula_{{Frm.id}} = '';
@@ -169,7 +172,7 @@
                         var datarowAct = $("#jqxgrid{{Frm.id}}").jqxGrid('getrowdata', row);
                         if (datarowExp.es_poblacion == 'true' && datarowAct.es_poblacion != 'true'){
                             var num_exp = $("#jqxgrid{{Frm.id}}").jqxGrid('getcellvalue',0, columnfield);
-                            oculto_class = (num_exp == '') ? 'oculto': ''
+                            //oculto_class = (num_exp == '') ? 'oculto': ''
                             
                         }
                         //Verificar si es lógica de salto
@@ -199,6 +202,8 @@
                                             {datos_frm: $('#frm_').serialize(),
                                                 pk: pk,
                                                 fila: JSON.stringify(rowdata),
+                                                columna : columna,
+                                                valor : valor_celda_actual
                                             },
                                 function(resp) {
                                     if (resp.estado == 'ok') {
@@ -721,11 +726,13 @@
                     
                     $("#jqxgrid{{Frm.id}}").bind('cellendedit', function (event) {
                         var fila = event.args.rowindex;
-                        var columna = event.args.datafield;
+                        columna = event.args.datafield;
+                        valor_celda_actual = event.args.value;
+                        
                         //Evitar que entre en bucle infinito
                         if (ultimaFilaFormula_{{Frm.id}} == fila) return;
                         
-                        var valor_celda_actual = event.args.value;
+                        
                         var operaciones = '';
                         var datarow = $("#jqxgrid{{Frm.id}}").jqxGrid('getrowdata', fila);
                         

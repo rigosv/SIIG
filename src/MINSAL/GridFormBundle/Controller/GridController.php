@@ -83,28 +83,6 @@ class GridController extends Controller
         
         $datos = json_decode($request->get('fila'), true);
         
-        /*if (array_key_exists('regla_validacion', $datos) and $datos['regla_validacion'] != ''){
-            $regla = $datos['regla_validacion'];
-            
-            foreach ($datos as $n=>$d){
-                //Buscar campos pivote: cant_mensual y importe_mensual, por el momento
-                if (strpos($n, 'cant_mensual_') !== false or strpos($n, 'importe_mensual_') !== false){
-                    $r_ = true;
-                    //aplicar la regla de validación
-                    $regla_ = str_replace('value', $d, $regla);
-                    echo $regla_;
-                    $regla_msj = str_replace('value', 'valor_celda', $regla);
-                    
-                    eval('$r_ = ('.$regla_.');');
-                    if (!$r_){
-                        $response->setContent('{"estado" : "error", "msj": "' . $this->get('translator')->trans('_error_validation_') .' <h3>'.$regla_msj. '</h3>"}');
-                        return $response;
-                    }
-                }
-            }
-        }*/
-        
-        //$periodoEstructura =  $em->getRepository('CostosBundle:PeriodoIngresoDatosFormulario')->find($periodo_ingreso);
         if (!$periodoEstructura) {
             $response->setContent('{"estado" : "error", "msj": "' . $this->get('translator')->trans('_parametros_no_establecidos_') . '"}');
         } else{
@@ -116,6 +94,15 @@ class GridController extends Controller
             }
             $data_ = json_encode($this->setPorcentajeCompletado($datos), JSON_UNESCAPED_UNICODE);
             $user = $this->getUser();
+            if ($Frm->getFormaEvaluacion() == 'lista_chequeo'){
+                //Guardar solo el valor de la columna, no se hace con todos
+                // los formularios porque los otros, pueden traer columnas calculadas
+                $datosColumna[$request->get('columna')] =  $request->get('valor');                
+                $datosColumna[$request->get('pk')] =  $datos[$request->get('pk')];
+                
+                $data_ = json_encode( $datosColumna);
+                
+            }            
             $request->attributes->set('fila', $data_);
             $guardar = $em->getRepository('GridFormBundle:Formulario')->setDatos($Frm, $periodoEstructura->getId(), $tipo_periodo, $request, $user);
         
