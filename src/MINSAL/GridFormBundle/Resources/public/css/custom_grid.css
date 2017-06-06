@@ -72,26 +72,26 @@ div.na{
     float: none !important;
     width: 90% !important;
 }
-.jqx-checkbox-check-checked {
+.jqx-checkbox-check-checked:not(#jqxlistbox .jqx-checkbox-check-checked) {
     background: transparent url("/bundles/gridform/images/check_si.png") no-repeat scroll center left;
     background-color: #08C65B !important;
     background-size: 60px 25px;
 }
-.jqx-checkbox-check-indeterminate{
+.jqx-checkbox-check-indeterminate:not(#jqxlistbox .jqx-checkbox-check-indeterminate){
     background: transparent url("/bundles/gridform/images/check_na.png") no-repeat scroll center center;
     background-color: #F7B138 !important;
     background-size: 60px 25px;
 }
-.jqx-checkbox-default {
+.jqx-checkbox-default:not(#jqxlistbox .jqx-checkbox-default) {
     background: transparent url("/bundles/gridform/images/check_no.png") no-repeat scroll center right;
     background-color: #FF5656 !important;
     background-size: 60px 25px;    
 }
-.jqx-checkbox-default > div, .jqx-checkbox-default > div > span {
+.jqx-checkbox-default:not(#jqxlistbox .jqx-checkbox-default) > div, .jqx-checkbox-default:not(#jqxlistbox .jqx-checkbox-default) > div > span {
     width: 55px !important;
     height: 23px !important;
 }
-.jqx-checkbox{
+.jqx-checkbox:not(#jqxlistbox .jqx-checkbox){
     width: 55px !important;
     height: 23px !important;
 }

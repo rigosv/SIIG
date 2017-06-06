@@ -704,6 +704,14 @@
                         $("#jqxgrid{{Frm.id}}").jqxGrid('beginupdate');
                         var elemento = $( "div.separador_variable" ).parent().parent();
                         elemento.addClass('fila_separador');
+                        
+                        $('.selectorColumna').each(function (index, nodo) {
+                            if ($(nodo).is(':checked')){
+                                $("#jqxgrid{{Formularios[0].id}}").jqxGrid('showcolumn', $(nodo).val());
+                            } else {
+                                $("#jqxgrid{{Formularios[0].id}}").jqxGrid('hidecolumn', $(nodo).val());
+                            }
+                        });
                         $("#jqxgrid{{Frm.id}}").jqxGrid('endupdate');
                     }
                 });
@@ -712,11 +720,11 @@
                     {% for campo in Frm.campos %}
                         {% if campo.origenPivote %}
                             {% for campoPivote in pivotes[Frm.id][campo.significadoCampo.codigo] %}
-                                { label: '{{campoPivote.descripcion}}', value: '{{campo.significadoCampo.codigo}}_{{campoPivote.id}}', checked: true },
+                                { label: '{{campoPivote.descripcion}}', value: '{{campo.significadoCampo.codigo}}_{{campoPivote.id}}', checked: false },
                             {% endfor %}
                         {% else %}
                             {% if not(campo.oculto) %}
-                                { label: '{{campo.significadoCampo.descripcion}}', value: '{{campo.significadoCampo.codigo}}', checked: true },
+                                { label: '{{campo.significadoCampo.descripcion}}', value: '{{campo.significadoCampo.codigo}}', checked: false },
                             {% endif %}
                         {% endif %}
                     {% endfor %}
@@ -994,6 +1002,14 @@
                 $('#msjConf').html('');
                 $('#myModalConf').modal('show');
             }
+            
+            $('.selectorColumna').on('ifChecked', function (event) {
+                $("#jqxgrid{{Formularios[0].id}}").jqxGrid('showcolumn', $(this).val());
+            });
+            
+            $('.selectorColumna').on('ifUnchecked', function (event) {
+                $("#jqxgrid{{Formularios[0].id}}").jqxGrid('hidecolumn', $(this).val());
+            });
 
         });
         
@@ -1051,14 +1067,42 @@
                     <div id='jqxWidget' style="padding: 10px;">
                         {% if cantidad_formularios == 1 %}
                         <div role="tabpanel">
-                            <ul class="nav nav-tabs" role="tablist">
-                                <li role="presentation" class="active"><a href="#jqxgrid{{Formularios[0].id}}" role="tab" data-toggle="tab">{{'_cuadro_datos_'|trans}}</a></li>
-                                <li role="presentation"><a href="#jqxlistbox" aria-controls="profile" role="tab" data-toggle="tab">{{'_columnas_'|trans}}</a></li>
-                            </ul>
-                            <div class="tab-content">
-                                <div id="jqxgrid{{Formularios[0].id}}" role="tabpanel" class="tab-pane active"></div>
-                                <div role="tabpanel" class="tab-pane" id="jqxlistbox"></div>
-                            </div>
+                            {% if Formularios[0].areaCosteo() == 'calidad' and Formularios[0].formaEvaluacion() == 'lista_chequeo' %}
+                                {% for campo in Formularios[0].campos %}
+                                    {% if campo.origenPivote %}
+                                        <TABLE class='table table-condensed'>
+                                        <TR>
+                                            <TD>Activar columna</TD>
+                                        {% for campoPivote in pivotes[Formularios[0].id][campo.significadoCampo.codigo] %}
+                                            <TD>{{campoPivote.descripcion}}</TD>
+                                        {% endfor %}
+                                        </TR>
+                                        <TR>
+                                            <TD></TD>
+                                        {% for campoPivote in pivotes[Formularios[0].id][campo.significadoCampo.codigo] %}
+                                            <TD><INPUT name='selectorColumna' TYPE="radio" class="selectorColumna" value="{{campo.significadoCampo.codigo}}_{{campoPivote.id}}"></TD>
+                                        {% endfor %}
+                                        </TR>
+                                        </TABLE>
+                                    {% endif %}
+                                {% endfor %}
+                                <ul class="nav nav-tabs" role="tablist">
+                                    <li role="presentation" class="active"><a href="#jqxgrid{{Formularios[0].id}}" role="tab" data-toggle="tab">{{'_cuadro_datos_'|trans}}</a></li>
+                                </ul>
+                                <div class="tab-content">
+                                    <div id="jqxgrid{{Formularios[0].id}}" role="tabpanel" class="tab-pane active"></div>
+                                    <div role="tabpanel" class="tab-pane" id="jqxlistbox"></div>
+                                </div>                            
+                            {% else %}
+                                <ul class="nav nav-tabs" role="tablist">
+                                    <li role="presentation" class="active"><a href="#jqxgrid{{Formularios[0].id}}" role="tab" data-toggle="tab">{{'_cuadro_datos_'|trans}}</a></li>
+                                    <li role="presentation"><a href="#jqxlistbox" aria-controls="profile" role="tab" data-toggle="tab">{{'_columnas_'|trans}}</a></li>
+                                </ul>
+                                <div class="tab-content">
+                                    <div id="jqxgrid{{Formularios[0].id}}" role="tabpanel" class="tab-pane active"></div>
+                                    <div role="tabpanel" class="tab-pane" id="jqxlistbox"></div>
+                                </div>
+                            {% endif %}
                         </div>
                         {% elseif cantidad_formularios > 1%}
                         <div id='jqxTabs'>
