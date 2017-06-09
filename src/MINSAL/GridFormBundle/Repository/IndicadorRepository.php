@@ -71,8 +71,6 @@ class IndicadorRepository extends EntityRepository {
         $sql = "SELECT * FROM suma_verificacion 
                     WHERE anio = '$anio' 
                         AND mes = '$mes'
-                        AND nivel = '$nivel'
-                        AND tipo_ind = '$tipoInd'
                         AND checksum = '$checksum'
                 ";
         
@@ -83,13 +81,11 @@ class IndicadorRepository extends EntityRepository {
             $sql = "DELETE FROM suma_verificacion 
                     WHERE anio = '$anio' 
                         AND mes = '$mes'
-                        AND nivel = '$nivel'
-                        AND tipo_ind = '$tipoInd'
                 ";
             $em->getConnection()->executeQuery($sql);
             
-            $sql = "INSERT INTO suma_verificacion (anio, mes, tipo_ind, nivel, checksum)
-                        VALUES ('$anio', '$mes', '$tipoInd', '$nivel', '$checksum')  ";
+            $sql = "INSERT INTO suma_verificacion (anio, mes,  checksum)
+                        VALUES ('$anio', '$mes', '$checksum')  ";
             $em->getConnection()->executeQuery($sql);
         }
         //create table suma_verificacion( anio integer, mes varchar(3), tipo_ind varchar(30), nivel varchar(30), checksum varchar(255))
