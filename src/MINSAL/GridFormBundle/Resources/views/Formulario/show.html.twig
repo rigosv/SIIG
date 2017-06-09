@@ -699,17 +699,16 @@
                             $($($(nodo).children()[0]).children()[0]).css('margin-top',0).css('margin-bottom',0);
                         });
                     },
-                    ready: function(){
-                        //var texto = $( "div.separador_variable" ).html();
+                    ready: function(){                        
                         $("#jqxgrid{{Frm.id}}").jqxGrid('beginupdate');
                         var elemento = $( "div.separador_variable" ).parent().parent();
                         elemento.addClass('fila_separador');
-                        
                         $('.selectorColumna').each(function (index, nodo) {
+                            var frm = $(this).attr('data-form');
                             if ($(nodo).is(':checked')){
-                                $("#jqxgrid{{Formularios[0].id}}").jqxGrid('showcolumn', $(nodo).val());
+                                $("#jqxgrid"+frm).jqxGrid('showcolumn', $(nodo).val());
                             } else {
-                                $("#jqxgrid{{Formularios[0].id}}").jqxGrid('hidecolumn', $(nodo).val());
+                                $("#jqxgrid"+frm).jqxGrid('hidecolumn', $(nodo).val());
                             }
                         });
                         $("#jqxgrid{{Frm.id}}").jqxGrid('endupdate');
@@ -1004,11 +1003,13 @@
             }
             
             $('.selectorColumna').on('ifChecked', function (event) {
-                $("#jqxgrid{{Formularios[0].id}}").jqxGrid('showcolumn', $(this).val());
+                var frm = $(this).attr('data-form');
+                $("#jqxgrid"+frm).jqxGrid('showcolumn', $(this).val());
             });
             
             $('.selectorColumna').on('ifUnchecked', function (event) {
-                $("#jqxgrid{{Formularios[0].id}}").jqxGrid('hidecolumn', $(this).val());
+                var frm = $(this).attr('data-form');
+                $("#jqxgrid"+frm).jqxGrid('hidecolumn', $(this).val());
             });
 
         });
@@ -1040,7 +1041,7 @@
                                 <button type="button" class="btn btn-success" data-toggle="modal" data-target="#ModalParametros">
                                     <span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>{{'_cargar_formulario_'|trans}}
                                 </button>
-                                {#<button class="btn btn-danger" name="clear" id="clear" ><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>{{'_limpiar_'|trans}}</button>#}
+                                
                                 <button class="btn btn-warning" type="button" name="guardar" id="guardar" ><i class="fa fa-save" data-original-title="" title=""></i>{{'_guardar_'|trans}}</button>
                                 {% if periodoSeleccionado != null and parametros.periodo_estructura != '-1' %}
                                     {% if Formularios[0].areaCosteo() == 'calidad' %}
@@ -1068,29 +1069,14 @@
                         {% if cantidad_formularios == 1 %}
                         <div role="tabpanel">
                             {% if Formularios[0].areaCosteo() == 'calidad' and Formularios[0].formaEvaluacion() == 'lista_chequeo' %}
-                                {% for campo in Formularios[0].campos %}
-                                    {% if campo.origenPivote %}
-                                        <TABLE class='table table-condensed'>
-                                        <TR>
-                                            <TD>Activar columna</TD>
-                                        {% for campoPivote in pivotes[Formularios[0].id][campo.significadoCampo.codigo] %}
-                                            <TD>{{campoPivote.descripcion}}</TD>
-                                        {% endfor %}
-                                        </TR>
-                                        <TR>
-                                            <TD></TD>
-                                        {% for campoPivote in pivotes[Formularios[0].id][campo.significadoCampo.codigo] %}
-                                            <TD><INPUT name='selectorColumna' TYPE="radio" class="selectorColumna" value="{{campo.significadoCampo.codigo}}_{{campoPivote.id}}"></TD>
-                                        {% endfor %}
-                                        </TR>
-                                        </TABLE>
-                                    {% endif %}
-                                {% endfor %}
                                 <ul class="nav nav-tabs" role="tablist">
-                                    <li role="presentation" class="active"><a href="#jqxgrid{{Formularios[0].id}}" role="tab" data-toggle="tab">{{'_cuadro_datos_'|trans}}</a></li>
+                                    <li role="presentation" class="active"><a href="#contenedor-jqxgrid{{Formularios[0].id}}" role="tab" data-toggle="tab">{{'_cuadro_datos_'|trans}}</a></li>
                                 </ul>
                                 <div class="tab-content">
-                                    <div id="jqxgrid{{Formularios[0].id}}" role="tabpanel" class="tab-pane active"></div>
+                                    <DIV role="tabpanel" id="contenedor-jqxgrid{{Formularios[0].id}}" class="tab-pane active">
+                                        {{ include('GridFormBundle:Formulario:selectoresColumnas.html.twig', {'Frm':Formularios[0],'pivotes':pivotes}) }}
+                                        <div id="jqxgrid{{Formularios[0].id}}" ></div>
+                                    </DIV>
                                     <div role="tabpanel" class="tab-pane" id="jqxlistbox"></div>
                                 </div>                            
                             {% else %}
@@ -1115,6 +1101,7 @@
                             </ul>
                             {% for Frm in Formularios %}
                                 <div style="overflow: hidden;">
+                                    {{ include('GridFormBundle:Formulario:selectoresColumnas.html.twig', {'Frm':Frm,'pivotes':pivotes}) }}
                                     <div style="border:none;" id="jqxgrid{{Frm.id}}"></div>
                                 </div>
                             {% endfor %}
