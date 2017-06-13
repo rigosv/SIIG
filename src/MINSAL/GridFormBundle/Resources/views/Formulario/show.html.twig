@@ -536,6 +536,7 @@
                                     geteditorvalue : function (row, cellValue, editor) {
                                         var datarow = $("#jqxgrid{{Frm.id}}").jqxGrid('getrowdata', row);
                                         var tipo_control = (datarow.codigo_tipo_control == undefined) ?  '{{campo.tipoControl.codigo}}' : datarow.codigo_tipo_control;
+                                        
                                         if (datarow.es_separador != 'true'){
                                             if (tipo_control == 'checkbox' || tipo_control == 'checkbox_3_states'){
                                                 var checkBoxHTMLElement = editor.find('div:first');
@@ -565,6 +566,12 @@
                                                 valorNew = editor.val()
                                             }
                                             
+                                            //Verificar que el número de expediente no pueda quedar vacío
+                                            if (datarow.es_poblacion == 'true' && valorNew == ''){
+                                                mensajeError('Celda no puede quedar vacía ');
+                                                return cellValue;
+                                            }
+                                            
                                             var error = false;
                                             reglasValidacion_{{Frm.id}}.forEach(function(nodo, index){
                                                 lados_formula = nodo.split(':=');
@@ -579,9 +586,10 @@
                                             });
                                             
                                             if (datarow.es_poblacion == 'true'){
-                                                var veces = 0;
-                                                $('.poblacion').each(function(index, nodo){
-                                                    veces = ($(nodo).html() == valorNew) ? veces + 1 : veces;
+                                                var veces = 0;                                                
+                                                Object.keys(datarow).forEach(function (key) {
+                                                    var val = datarow[key];
+                                                    veces = (val == valorNew) ? veces + 1 : veces;
                                                 });
                                                 
                                                 if (veces > 0){
