@@ -128,23 +128,9 @@
                 var rowbeginedit =  function (row, datafield, columntype, value) {
                     columnaSeleccionada_{{Frm.id}} = datafield;
                     valorCeldaPreEdicion_{{Frm.id}} = value;
-                    ultimaFilaFormula_{{Frm.id}} = null;
+                    ultimaFilaFormula_{{Frm.id}} = null;                    
                     var datarow = $("#jqxgrid{{Frm.id}}").jqxGrid('getrowdata', row);
-                    if (datarow.es_poblacion == 'true'){
-                        var celdas = $(".jqx-grid-cell:not('.oculto'):not('.celda_no_editable'):not('.no_aplica') .sw_etiqueta");
-                        var no_completado;
-                        celdas.each(function(index, item){
-                            if ($(item).html().trim() == ''){                                
-                                no_completado = true;
-                            }
-                        });
-                        if (no_completado && value=='') {
-                            $('#msj').html('<div class="alert alert-danger" role="alert">Complete todos los criterios antes de agregar otro expediente</div>');
-                            $('#msjModal').modal('show');
-                            return false;
-                        };
-                        
-                    }
+                    
                     var clase = cellclass(row, datafield, value);
                     var patt = new RegExp("oculto");
                     if (patt.test(clase))
@@ -566,13 +552,7 @@
                                                 valorNew = editor.val()
                                             }
                                             
-                                            //Verificar que el número de expediente no pueda quedar vacío
-                                            if (datarow.es_poblacion == 'true' && valorNew == ''){
-                                                mensajeError('Celda no puede quedar vacía ');
-                                                return cellValue;
-                                            }
-                                            
-                                            var error = false;
+                                            var error = false;                                            
                                             reglasValidacion_{{Frm.id}}.forEach(function(nodo, index){
                                                 lados_formula = nodo.split(':=');
                                                 if (lados_formula[0].trim() == '${F'+row+'}_CHECK'){
@@ -585,14 +565,14 @@
                                                 }
                                             });
                                             
-                                            if (datarow.es_poblacion == 'true'){
-                                                var veces = 0;                                                
+                                            if (datarow.es_poblacion == 'true' && valorNew != ''){
+                                                var veces = 0;
                                                 Object.keys(datarow).forEach(function (key) {
                                                     var val = datarow[key];
                                                     veces = (val == valorNew) ? veces + 1 : veces;
                                                 });
                                                 
-                                                if (veces > 0){
+                                                if (veces > 1){
                                                     mensajeError('No puede volver a utilizar el valor de '+ valorNew);
                                                     error = true;
                                                 }
@@ -644,19 +624,19 @@
                                             var element_aux = $('<div></div>')
                                             if (tipo_control == 'checkbox_3_states'){                                                
                                                 if (cellValue.toString() == 'true' || cellValue.toString() == "1")
-                                                    estado_ = '<div class="si"><div class="sw_etiqueta">{{'_si_'|trans}}</div><div class="sw_separador"></div></div>';
+                                                    estado_ = '<div class="si"><div class="sw_etiqueta '+datafield+'">{{'_si_'|trans}}</div><div class="sw_separador"></div></div>';
                                                 else if (cellValue.toString() == 'false' || cellValue.toString() == "0")
-                                                    estado_ = '<div class="no"><div class="sw_separador"></div><div class="sw_etiqueta">{{'_no_'|trans}}</div></div>';
+                                                    estado_ = '<div class="no"><div class="sw_separador"></div><div class="sw_etiqueta '+datafield+'">{{'_no_'|trans}}</div></div>';
                                                 else 
-                                                    estado_ = '<div class="na"><div class="sw_etiqueta">{{'_na_'|trans}}</div></div>';
+                                                    estado_ = '<div class="na"><div class="sw_etiqueta '+datafield+'">{{'_na_'|trans}}</div></div>';
                                                 var element = estado_;
                                             } else{
                                                 if (cellValue.toString() == 'true' || cellValue.toString() == "1"){
-                                                    estado_ =  '<div class="si"><div class="sw_etiqueta">{{'_si_'|trans}}</div><div class="sw_separador"></div></div>';
+                                                    estado_ =  '<div class="si"><div class="sw_etiqueta '+datafield+'">{{'_si_'|trans}}</div><div class="sw_separador"></div></div>';
                                                 } else if (cellValue.toString() == 'false' || cellValue.toString() == "0"){
-                                                    estado_ = '<div class="no"><div class="sw_separador"></div><div class="sw_etiqueta">{{'_no_'|trans}}</div></div>';
+                                                    estado_ = '<div class="no"><div class="sw_separador"></div><div class="sw_etiqueta '+datafield+'">{{'_no_'|trans}}</div></div>';
                                                 } else {
-                                                    estado_ = '<div ><div class="sw_separador"></div><div class="sw_etiqueta"></div></div>';
+                                                    estado_ = '<div ><div class="sw_separador"></div><div class="sw_etiqueta '+datafield+'"></div></div>';
                                                 }
                                                 var element = estado_;
                                             }
@@ -665,7 +645,7 @@
                                         } else if(tipo_control == 'datetimeinput'){
                                             fecha = moment(cellValue, "DD/MM/YYYY HH:mm");
                                             valorCelda = (fecha.isValid()) ? fecha.format("DD/MM/YYYY HH:mm"): cellValue
-                                            return "<div class='"+clase_poblacion+" jqx-{{campo.alineacion.codigo|default('left')}}-align nivel_"+0+"' "+ estilo + " title='"+datarow.ayuda+"'  >" + valorCelda +"</div>";
+                                            return "<div class='"+clase_poblacion+" "+datafield+" jqx-{{campo.alineacion.codigo|default('left')}}-align nivel_"+0+"' "+ estilo + " title='"+datarow.ayuda+"'  >" + valorCelda +"</div>";
                                         } else if (tipo_control == 'dropdownlist' && datafield != 'descripcion_variable'){
                                             var origenLista = eval(datarow.origen_fila);
                                             valorEtiqueta =  '';
@@ -674,10 +654,10 @@
                                                     valorEtiqueta = nodo.label;
                                             });
                                             //return "<div class='jqx-{{campo.alineacion.codigo|default('left')}}-align nivel_"+datarow.nivel_indentacion+"' "+ estilo + " title='"+datarow.ayuda+"'  data-placement= 'top' >" + valorEtiqueta +"</div>";
-                                            return "<div class='"+clase_poblacion+" jqx-{{campo.alineacion.codigo|default('left')}}-align nivel_"+0+"' "+ estilo + " title='"+valorEtiqueta+"'  >" + valorEtiqueta.split(' ').join('.') +"</div>";
+                                            return "<div class='"+clase_poblacion+" "+datafield+" jqx-{{campo.alineacion.codigo|default('left')}}-align nivel_"+0+"' "+ estilo + " title='"+valorEtiqueta+"'  >" + valorEtiqueta.split(' ').join('.') +"</div>";
                                         } else {
                                             valor = (isNaN(cellValue)) ? ((cellValue == 'NaN') ? '' : cellValue) : ( (esFormula) ? parseFloat(cellValue).toFixed(2)  : cellValue);                                            
-                                            return "<div class='"+clase_poblacion+" jqx-{{campo.alineacion.codigo|default('left')}}-align nivel_"+0+"' "+ estilo + " title='"+datarow.ayuda+"'  >" + valor +"</div>";
+                                            return "<div class='"+clase_poblacion+" "+datafield+" jqx-{{campo.alineacion.codigo|default('left')}}-align nivel_"+0+"' "+ estilo + " title='"+datarow.ayuda+"'  >" + valor +"</div>";
                                         }    
                                     {% else %}
                                         return "<div class='jqx-{{campo.alineacion.codigo|default('left')}}-align nivel_"+datarow.nivel_indentacion+"' "+ estilo + " title='"+datarow.ayuda+"'  data-placement= 'top' >" + cellValue +"</div>";
@@ -713,7 +693,8 @@
                         elemento.addClass('fila_separador');
                         $('.selectorColumna').each(function (index, nodo) {
                             var frm = $(this).attr('data-form');
-                            if ($(nodo).is(':checked')){
+                            if (index == 0 ){
+                                $(nodo).iCheck('check'); 
                                 $("#jqxgrid"+frm).jqxGrid('showcolumn', $(nodo).val());
                             } else {
                                 $("#jqxgrid"+frm).jqxGrid('hidecolumn', $(nodo).val());
@@ -766,15 +747,15 @@
                                 //Procesar solamente las fórmulas donde la celda actual aparece
                                 if (formula[1].toString().indexOf('{F'+fila+'}') != -1){
                                     filasp = /\$\{F[0-9]{1,4}\}/g;
-                                    
+
                                     var fila_destino = filasp.exec(formula[0]).toString().replace(/\$\{F|\}/gi,'');
                                     var datarow_dest = $("#jqxgrid{{Frm.id}}").jqxGrid('getrowdata', fila_destino);
                                     
                                     if (datarow_dest != undefined) {
                                         var resultado = calcularCelda(fila, columna, valor_celda_actual, nodo, {{Frm.id}});
-
+                                         
                                         ultimaFilaFormula_{{Frm.id}} = fila;
-
+                                        
                                         $("#jqxgrid{{Frm.id}}").jqxGrid('setcellvalue', fila_destino, columna, resultado);
                                     }
                                 }
@@ -943,9 +924,9 @@
                 var fila_destino = filasp.exec(lados_formula[0]).toString().replace(/\$\{F|\}/gi,'');
                 
                 var operaciones = lados_formula[1];
-                
-                var result = evalLadoDerecho(fila, columna, valor_celda_actual, operaciones, frmId);
 
+                var result = evalLadoDerecho(fila, columna, valor_celda_actual, operaciones, frmId);
+                
                 //Convertir el valor de acuerdo al tipo de dato de la celda destino
                 var datarow_dest = $("#jqxgrid"+frmId).jqxGrid('getrowdata', fila_destino);
                 
@@ -1010,16 +991,39 @@
                 $('#myModalConf').modal('show');
             }
             
-            $('.selectorColumna').on('ifChecked', function (event) {
-                var frm = $(this).attr('data-form');
-                $("#jqxgrid"+frm).jqxGrid('showcolumn', $(this).val());
+            $('.selectorColumna').on('ifClicked', function (event) {
+                if ( ! $(this).is(':checked') ){
+                    var frm = $(this).attr('data-form');
+                    var Grid = $("#contentjqxgrid"+frm);
+                    //Control checheado actualmente
+                    var ant = $('.selectorColumna[data-form="'+frm+'"]:checked'); 
+                    
+                    //Verificar que no tenga celdas vacías
+                    var celdas = Grid.find(" .jqx-grid-cell:not('.oculto'):not('.celda_no_editable'):not('.no_aplica') ."+ant.val());
+                    var no_completado;
+                    celdas.each(function(index, item){
+                        no_completado = ($(item).html().trim() == '') ? true : no_completado;
+                    });
+
+                    if (no_completado) {
+                        $('#msj').html('<div class="alert alert-danger" role="alert">Complete todos los criterios antes de agregar otro expediente</div>');
+                        $('#msjModal').modal('show');
+                        
+                        event.stopPropagation();
+                        
+                        setTimeout(function() {
+                            ant.iCheck('check');
+                            $(this).iCheck('uncheck');
+                        }, 100);
+                        
+                        
+                    } else {
+                        $("#jqxgrid"+frm).jqxGrid('hidecolumn', ant.val());
+                        $("#jqxgrid"+frm).jqxGrid('showcolumn', $(this).val());
+                    } 
+                }
             });
             
-            $('.selectorColumna').on('ifUnchecked', function (event) {
-                var frm = $(this).attr('data-form');
-                $("#jqxgrid"+frm).jqxGrid('hidecolumn', $(this).val());
-            });
-
         });
         
         

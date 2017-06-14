@@ -11,7 +11,7 @@
             <TR>
                 <TD></TD>
             {% for campoPivote in pivotes[Frm.id][campo.significadoCampo.codigo] %}
-                <TD><INPUT name='selectorColumna_{{Frm}}' TYPE="radio" data-form = '{{Frm.id}}' class="selectorColumna" value="{{campo.significadoCampo.codigo}}_{{campoPivote.id}}"></TD>
+                <TD><INPUT name='selectorColumna_{{Frm.id}}' TYPE="radio" data-orden = '{{loop.index}}' data-form = '{{Frm.id}}' class="selectorColumna" value="{{campo.significadoCampo.codigo}}_{{campoPivote.id}}"></TD>
             {% endfor %}
             </TR>
             </TABLE>
