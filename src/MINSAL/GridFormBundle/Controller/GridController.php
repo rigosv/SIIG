@@ -95,7 +95,7 @@ class GridController extends Controller
             $data_ = json_encode($this->setPorcentajeCompletado($datos), JSON_UNESCAPED_UNICODE);
             $user = $this->getUser();
             $datosColumna = array();
-            if ($Frm->getFormaEvaluacion() == 'lista_chequeo'){
+            if ($Frm->getFormaEvaluacion() == 'lista_chequeo' and $request->get('columna') != ''){
                 //Guardar solo el valor de la columna, no se hace con todos
                 // los formularios porque los otros, pueden traer columnas calculadas
                 $datosColumna[$request->get('columna')] =  $datos[$request->get('columna')];
