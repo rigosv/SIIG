@@ -392,11 +392,16 @@ function dibujarControles(zona, datos) {
     icon_favoritos =  ($('#fav-' + datos.id_indicador).length === 0) ? '' : '-empty';
 
     var combo_tipo_grafico = trans.tipo_grafico + ": <SELECT class='form-control tipo_grafico_principal'  ></SELECT>";
+    
+    var btn_abrir_opciones_grafico = '<button class="btn btn-info" data-dismiss="modal" data-toggle="modal" data-target="#opciones_'+zona+'" title="' + trans.opciones_grafico + '">' +
+                            '<span class="glyphicon glyphicon-stats"></span>' +
+                        '</button>';
+    var btn_abrir_opciones_dimension = '<button class="btn btn-info" data-dismiss="modal" data-toggle="modal" data-target="#opciones_dimension_'+zona+'" title="' + trans.dimension_opciones + '">' +            
+                    '<span class="glyphicon glyphicon-check"></span>' +
+                '</button>';
     var botones = 
             '<div class="btn-group sobre_div">' +
-                '<button class="btn btn-info" data-toggle="modal" data-target="#opciones_'+zona+'" title="' + trans.opciones_grafico + '">' +            
-                    '<span class="glyphicon glyphicon-stats"></span>' +
-                '</button>'+
+                btn_abrir_opciones_grafico +
                 '<button class="zoom btn btn-info" data-toggle="modal" title="Zoom">' +            
                     '<span class="glyphicon glyphicon-zoom-in"></span>' +
                 '</button>'+
@@ -417,9 +422,7 @@ function dibujarControles(zona, datos) {
                         '<span class="glyphicon glyphicon-star'+icon_favoritos+'"></span> ' + msj_favoritos + '</A>'+
                     '</li>'+
                 '</ul>'+                
-                '<button class="btn btn-info" data-toggle="modal" data-target="#opciones_dimension_'+zona+'" title="' + trans.dimension_opciones + '">' +            
-                    '<span class="glyphicon glyphicon-check"></span>' +
-                '</button>'+
+                btn_abrir_opciones_dimension +
                 '<button class="btn btn-info refrescar"  title="' + trans._recargar_ + '" data-id="'+datos.id_indicador+'">' +
                     '<i class="glyphicon glyphicon-refresh"></i>' +
                 '</button>';
@@ -437,9 +440,8 @@ function dibujarControles(zona, datos) {
             "</SELECT>";
     var filtro_posicion = trans.filtro_posicion + "<BR/> " + trans.desde +
             "<INPUT class='valores_filtro filtro_desde' type='text' length='5' value=''> " + trans.hasta +
-            "<INPUT class='valores_filtro filtro_hasta' type='text' length='5' value=''> ";
+            "<INPUT class='valores_filtro filtro_hasta' type='text' length='5' value=''> ";        
     
-
     var opciones_indicador_modal= 
             '<div class="modal fade" id="opciones_'+zona+'"  role="dialog" aria-labelledby="myModalLabel'+zona+'">'+
                 '<div class="modal-dialog" role="document">'+
@@ -465,6 +467,9 @@ function dibujarControles(zona, datos) {
                         '</div>'+
                     '</div>'+
                     '<div class="modal-footer">'+
+                        '<span class="pull-left">'+
+                        btn_abrir_opciones_dimension+
+                        '</span>'+
                       '<button type="button" class="btn btn-warning" data-dismiss="modal">' + trans._cerrar_ + '</button>'+
                     '</div>'+
                   '</div>'+
@@ -496,7 +501,10 @@ function dibujarControles(zona, datos) {
                         '</div>'+
                     '</div>'+
                     '<div class="modal-footer">'+
-                      '<button type="button" class="btn btn-warning" data-dismiss="modal">' + trans._cerrar_ + '</button>'+
+                        '<span class="pull-left">'+
+                            btn_abrir_opciones_grafico+
+                        '</span>'+
+                        '<button type="button" class="btn btn-warning" data-dismiss="modal">' + trans._cerrar_ + '</button>'+
                     '</div>'+
                   '</div>'+
                 '</div>'+
