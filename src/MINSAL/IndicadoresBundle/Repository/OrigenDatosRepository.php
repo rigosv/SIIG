@@ -277,5 +277,16 @@ class OrigenDatosRepository extends EntityRepository
 
     }
 
+    /*
+    public function getMuni(){
+        
+            $sql = "SELECT id, abrev_municipio FROM ctl_municipios";
+            $sth = $this->_em->getConnection()->prepare($sql);
+
+        $sth->execute();
+        $act = $sth->fetchAll(\PDO::FETCH_ASSOC);
+        return $act;
+
+    }*/
 
 }

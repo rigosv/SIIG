@@ -1,7 +1,4 @@
 graficoMapa = function(ubicacion, datos, colorChosen, categoryChoosen) {
-    //Variable de prueba, buscar una mejor forma de hacer esto
-    // Esta variable me permite asociar el elmento del gráfico con los códigos utilizados
-    // por los departamentos
     this.dibujar = function() {
         var dimension = $('#' + ubicacion + ' .dimensiones').val();
         var elemento_id_codigo = new Object();
@@ -11,16 +8,17 @@ graficoMapa = function(ubicacion, datos, colorChosen, categoryChoosen) {
                 currentDatasetChart = datos,
                 centered,
                 arreglo_datos = new Object();
-
+        var colors = ['#D6C3BC', '#D4B6AC', '#D2AA9C', '#CF9C8C', '#CD8E7C', '#CB806C', '#C8705D', '#C6604F', '#C45042', '#C23E37', '#C0282E', '#BD0926'];
         var categorias = currentDatasetChart.map(function(d) {
-            return d.id_category;
+            return d.category;
         });
         var medidas = currentDatasetChart.map(function(d) {
             return d.measure;
         });
-        $.each(categorias, function(i, nodo) {
-            arreglo_datos[nodo] = medidas[i];
+        $.each(categorias, function(i, nodo) {            
+            arreglo_datos[i] = medidas[i];
         });
+        
         //Recuperar las coordenadas a utilizar 
         var coordenadas = $('#' + ubicacion + ' .dimensiones option[value="' + dimension + '"]');
         coordenadas = $(coordenadas[0]);
@@ -32,20 +30,19 @@ graficoMapa = function(ubicacion, datos, colorChosen, categoryChoosen) {
             dibujarGrafico(ubicacion, $('#' + ubicacion + ' .dimensiones').val());
             return;
         }
-        /* Datos para el mapa de El Salvador
-         * .scale(9000)
-         -                .origin([-88.9, 13.7])
-         */
-        var escala = coordenadas.attr('data-escala');
-        var projection = d3.geo.albers()
-                .scale(escala)
-                .parallels([coordenadas.attr('data-x'), coordenadas.attr('data-y')])
-                .translate([-escala / 9.2, -escala / 2.8]);
-
-
-        var path = d3.geo.path()
-                .projection(projection);
-
+        
+        var datasetPrincipal_bk = JSON.parse($('#' + ubicacion).attr('datasetPrincipal_bk'));
+        var max_y = d3.max(datasetPrincipal_bk, function(d) { return parseFloat(d.measure);});
+        var min_y = d3.min(datasetPrincipal_bk, function(d) { return parseFloat(d.measure);});
+        
+        var colorScale = d3.scale.quantile()
+                .domain([ min_y, max_y])
+                .range(colors)
+                ;
+        var rangos_alertas = JSON.parse($('#' + ubicacion + ' .titulo_indicador').attr('rangos_alertas'));        
+    
+        
+        
         $('#' + ubicacion + ' .grafico').html('');
         var svg = d3.select("#" + ubicacion + ' .grafico')
                 .append("svg")
@@ -72,14 +69,27 @@ graficoMapa = function(ubicacion, datos, colorChosen, categoryChoosen) {
                 {id: $('#' + ubicacion + ' .titulo_indicador').attr('data-id'), dimension: dimension,
                     filtro: filtro, tipo_peticion: 'mapa'}),
                 function(datos) {
-                    //+dimension.replace('id_','')
-                    var objetos = 'datos.objects.departamento';
+                    
+                    var objetos = 'datos.objects.elementos';
                     if (topojson.feature(datos, eval(objetos)).features === '') {
                         alert(trans.no_mapa);
                         $('#' + ubicacion + ' .tipo_grafico_principal').val('columnas');
                         dibujarGrafico(ubicacion, $('#' + ubicacion + ' .dimensiones').val());
                         return;
                     }
+                    /* Datos para el mapa de El Salvador
+                     * .scale(9000)
+                     * .parallels([-90.12486,13.152632513245145])
+                     */ 
+                    
+                    var escala = coordenadas.attr('data-escala');
+                    var projection = d3.geo.albers()
+                            .scale(escala)
+                            .parallels(datos.transform.translate)
+                            .translate([-escala / 9.2, -escala / 2.8]);
+
+                    var path = d3.geo.path()
+                            .projection(projection);
 
                     var seccion = g.append("g")
                             .attr("id", "states")
@@ -88,10 +98,7 @@ graficoMapa = function(ubicacion, datos, colorChosen, categoryChoosen) {
                             .enter().append("path")
                             .attr("d", path)
                             .attr('fill', function(d, i) {
-                                if (arreglo_datos[d.properties.ID] === undefined)
-                                    return '#E5DBDB';
-                                else
-                                    return colores_alertas(ubicacion, arreglo_datos[d.properties.ID], i);
+                                return (rangos_alertas.length === 0) ? colorScale(arreglo_datos[d.properties.ID]) : colores_alertas(ubicacion, arreglo_datos[d.properties.ID], i) ;
                             });
 
                     seccion.append("title").

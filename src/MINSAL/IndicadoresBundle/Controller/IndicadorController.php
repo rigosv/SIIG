@@ -108,13 +108,7 @@ class IndicadorController extends Controller {
     public function getMapaAction(Request $request) {
         $em = $this->getDoctrine()->getManager();
         $dimension = $request->get('dimension');
-        $tipo_peticion = $request->get('tipo_peticion');
-
-        if ($tipo_peticion == 'mapa')
-            $tipo = '';
-        elseif ($tipo_peticion == 'equivalencias')
-            $tipo = '-equiv';
-
+        
         //Obtener el nombre del mapa asociado a la dimension
         $significado = $em->getRepository("IndicadoresBundle:SignificadoCampo")
                 ->findOneBy(array('codigo' => $dimension));
@@ -122,12 +116,46 @@ class IndicadorController extends Controller {
         $mapa = $significado->getNombreMapa();
         if ($mapa != '') {
             try {
-                $mapa = $this->renderView('IndicadoresBundle:Indicador:' . $mapa . $tipo . '.json.twig');
+                $mapa = $this->renderView('IndicadoresBundle:Indicador:' . $mapa . '.json.twig');
             } catch (\Exception $e) {
                 $mapa = json_encode(array('features' => ''));
             }
         } else
             $mapa = json_encode(array('features' => ''));
+        /*
+        $m = json_decode($mapa);
+        $equiv = json_decode($this->renderView('IndicadoresBundle:Indicador:' . $significado->getNombreMapa() . '-equiv.json.twig'));
+        $e_ = array();
+        foreach ($equiv->equivalencias as $e){
+            $e_[$e->id] = $e->abrev;
+        }
+        $muni = $em->getRepository('IndicadoresBundle:OrigenDatos')->getMuni();
+        $m_ = array();
+        foreach ($muni as $e){
+            $m_[$e['abrev_municipio']] = $e['id'];
+        }
+        
+        $id_ = array();
+        foreach ($e_ as $id=>$abrv){
+            if (array_key_exists($abrv, $m_)){
+                $id_[$id] = $m_[$abrv];
+            }
+        }
+        
+        $new = array();        
+        foreach ($m->objects->elementos->geometries as $g){
+            $g_ = $g;
+            if (array_key_exists($g_->id, $id_) ){
+                $nid = $id_[$g->id];
+                $g_->id = $nid;
+                $g_->properties->ID = $nid;
+            }
+            $new[]=$g_;
+        }
+        $m->objects->elementos->geometries = $new;
+        $conversion = json_encode($m);
+        echo $conversion;
+        exit;*/
         $headers = array('Content-Type' => 'application/json');
         $response = new Response($mapa, 200, $headers);
         if ($this->get('kernel')->getEnvironment() != 'dev')
