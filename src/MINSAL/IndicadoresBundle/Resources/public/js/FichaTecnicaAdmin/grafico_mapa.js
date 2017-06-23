@@ -1,13 +1,15 @@
 graficoMapa = function(ubicacion, datos, colorChosen, categoryChoosen) {
     this.dibujar = function() {
-        var dimension = $('#' + ubicacion + ' .dimensiones').val();
+        var $contenedor = $('#' + ubicacion);
+        var dimension = $contenedor.find('.dimensiones').val();
         var elemento_id_codigo = new Object();
-
-        var width = 370,
-                height = 250,
-                currentDatasetChart = datos,
-                centered,
-                arreglo_datos = new Object();
+        
+        var currentDatasetChart = datos,
+            centered,
+            arreglo_datos = new Object();
+        var height = ($contenedor.hasClass('zona_maximizada')) ? 250 * 2.2 : 250;
+        var width = ($contenedor.hasClass('zona_maximizada')) ? 360 * 2.1 : 360;
+        
         var colors = ['#D6C3BC', '#D4B6AC', '#D2AA9C', '#CF9C8C', '#CD8E7C', '#CB806C', '#C8705D', '#C6604F', '#C45042', '#C23E37', '#C0282E', '#BD0926'];
         var categorias = currentDatasetChart.map(function(d) {
             return d.category;
@@ -20,18 +22,18 @@ graficoMapa = function(ubicacion, datos, colorChosen, categoryChoosen) {
         });
         
         //Recuperar las coordenadas a utilizar 
-        var coordenadas = $('#' + ubicacion + ' .dimensiones option[value="' + dimension + '"]');
+        var coordenadas = $contenedor.find('.dimensiones option[value="' + dimension + '"]');
         coordenadas = $(coordenadas[0]);
         if (coordenadas.attr('data-escala') === 'null'
                 || coordenadas.attr('data-x') === 'null'
                 || coordenadas.attr('data-y') === 'null') {
             alert(trans.no_mapa);
-            $('#' + ubicacion + ' .tipo_grafico_principal').val('columnas');
-            dibujarGrafico(ubicacion, $('#' + ubicacion + ' .dimensiones').val());
+            $contenedor.find('.tipo_grafico_principal').val('columnas');
+            dibujarGrafico(ubicacion, $contenedor.find('.dimensiones').val());
             return;
         }
         
-        var datasetPrincipal_bk = JSON.parse($('#' + ubicacion).attr('datasetPrincipal_bk'));
+        var datasetPrincipal_bk = JSON.parse($contenedor.attr('datasetPrincipal_bk'));
         var max_y = d3.max(datasetPrincipal_bk, function(d) { return parseFloat(d.measure);});
         var min_y = d3.min(datasetPrincipal_bk, function(d) { return parseFloat(d.measure);});
         
@@ -39,11 +41,10 @@ graficoMapa = function(ubicacion, datos, colorChosen, categoryChoosen) {
                 .domain([ min_y, max_y])
                 .range(colors)
                 ;
-        var rangos_alertas = JSON.parse($('#' + ubicacion + ' .titulo_indicador').attr('rangos_alertas'));        
+        var rangos_alertas = JSON.parse($contenedor.find('.titulo_indicador').attr('rangos_alertas'));        
     
         
-        
-        $('#' + ubicacion + ' .grafico').html('');
+        $contenedor.find('.grafico').html('');
         var svg = d3.select("#" + ubicacion + ' .grafico')
                 .append("svg")
                 .attr("viewBox", '-5 0 440 310')
@@ -63,17 +64,17 @@ graficoMapa = function(ubicacion, datos, colorChosen, categoryChoosen) {
 
         var g = svg.append("g");
 
-        var filtro = $('#' + ubicacion + ' .filtros_dimensiones').attr('data');
+        var filtro = $contenedor.find('.filtros_dimensiones').attr('data');
 
         d3.json(Routing.generate('indicador_datos_mapa',
-                {id: $('#' + ubicacion + ' .titulo_indicador').attr('data-id'), dimension: dimension,
+                {id: $contenedor.find('.titulo_indicador').attr('data-id'), dimension: dimension,
                     filtro: filtro, tipo_peticion: 'mapa'}),
                 function(datos) {
                     
                     var objetos = 'datos.objects.elementos';
                     if (topojson.feature(datos, eval(objetos)).features === '') {
                         alert(trans.no_mapa);
-                        $('#' + ubicacion + ' .tipo_grafico_principal').val('columnas');
+                        $contenedor.find('.tipo_grafico_principal').val('columnas');
                         dibujarGrafico(ubicacion, $('#' + ubicacion + ' .dimensiones').val());
                         return;
                     }
