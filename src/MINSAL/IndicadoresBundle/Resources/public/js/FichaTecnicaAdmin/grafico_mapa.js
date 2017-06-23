@@ -10,15 +10,15 @@ graficoMapa = function(ubicacion, datos, colorChosen, categoryChoosen) {
         var height = ($contenedor.hasClass('zona_maximizada')) ? 250 * 2.2 : 250;
         var width = ($contenedor.hasClass('zona_maximizada')) ? 360 * 2.1 : 360;
         
-        var colors = ['#D6C3BC', '#D4B6AC', '#D2AA9C', '#CF9C8C', '#CD8E7C', '#CB806C', '#C8705D', '#C6604F', '#C45042', '#C23E37', '#C0282E', '#BD0926'];
+        var colors = ['#faf3f3', '#D4B6AC', '#D2AA9C', '#CF9C8C', '#CD8E7C', '#CB806C', '#C8705D', '#C6604F', '#C45042', '#C23E37', '#C0282E', '#BD0926'];
         var categorias = currentDatasetChart.map(function(d) {
-            return d.category;
+            return d.id_category;
         });
         var medidas = currentDatasetChart.map(function(d) {
             return d.measure;
         });
-        $.each(categorias, function(i, nodo) {            
-            arreglo_datos[i] = medidas[i];
+        $.each(categorias, function(i, nodo) {
+            arreglo_datos[nodo] = medidas[i];
         });
         
         //Recuperar las coordenadas a utilizar 
