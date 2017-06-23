@@ -903,7 +903,7 @@ class FormularioRepository extends EntityRepository {
         
         $datos_ =  $em->getConnection()->executeQuery($sql)->fetch();
         $datos = json_decode('{'.str_replace(array('=>'), array( ':'), $datos_['datos']).'}', true);
-        
+
         return $datos;
     }
     

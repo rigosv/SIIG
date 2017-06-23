@@ -817,7 +817,9 @@
                 }
             });            
             {% if periodoSeleccionado.formulario.periodoLecturaDatos == 'mensual' %}
-                $("#fechaEvaluacion").jqxDateTimeInput({ width: '200px', height: '25px', culture: 'es-SV' });
+                var f = $("#fechaEvaluacion").val();
+                var fecha = (moment(f, "DD/MM/YYYY").isValid()) ? moment(f, "DD/MM/YYYY") : moment();
+                $("#fechaEvaluacion").jqxDateTimeInput({ value:fecha.toDate(), width: '200px', height: '25px', culture: 'es-SV' , formatString: 'dd/MM/yyyy'});
             {% endif%}
             $("#guardarConf").click(function () {
                 if (validarFrmConf()){
@@ -1151,7 +1153,7 @@
                     {% if periodoSeleccionado != null and periodoSeleccionado.formulario.periodoLecturaDatos == 'mensual' %}
                         <div class="form-group">
                           <label for="fechaEvaluacion">{{'_fecha_evaluacion_'|trans}}</label>
-                          <input name="fechaEvaluacion" type="date" class="form-control" id="fechaEvaluacion" 
+                          <input name="fechaEvaluacion" class="form-control" id="fechaEvaluacion" 
                                  {% if encabezado.fecha_evaluacion is defined and encabezado.fecha_evaluacion != '' %} 
                                      value="{{encabezado.fecha_evaluacion}}"
                                 {% endif %}
