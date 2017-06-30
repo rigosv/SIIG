@@ -596,7 +596,7 @@
                                         valor = parseInt(partes[0]) * 60 + parseInt(partes[1]);
                                     }
                                     if (datarow.alertas != undefined && datarow.alertas != '' && datafield != 'descripcion_variable'){
-                                        var rangos = datarow.alertas.split(',');
+                                        var rangos = datarow.alercomtas.split(',');
                                         rangos.forEach(function(nodo, index){
                                             limites = nodo.split('-');
                                             //Si no existe alguno de los límites del rango ponerle valores 
@@ -624,19 +624,19 @@
                                             var element_aux = $('<div></div>')
                                             if (tipo_control == 'checkbox_3_states'){                                                
                                                 if (cellValue.toString() == 'true' || cellValue.toString() == "1")
-                                                    estado_ = '<div class="si"><div class="sw_etiqueta '+datafield+'">{{'_si_'|trans}}</div><div class="sw_separador"></div></div>';
+                                                    estado_ = '<div class="si"><div data-fila="'+index+'" class="sw_etiqueta '+datafield+'">{{'_si_'|trans}}</div><div class="sw_separador"></div></div>';
                                                 else if (cellValue.toString() == 'false' || cellValue.toString() == "0")
-                                                    estado_ = '<div class="no"><div class="sw_separador"></div><div class="sw_etiqueta '+datafield+'">{{'_no_'|trans}}</div></div>';
+                                                    estado_ = '<div class="no"><div data-fila="'+index+'" class="sw_separador"></div><div class="sw_etiqueta '+datafield+'">{{'_no_'|trans}}</div></div>';
                                                 else 
-                                                    estado_ = '<div class="na"><div class="sw_etiqueta '+datafield+'">{{'_na_'|trans}}</div></div>';
+                                                    estado_ = '<div class="na"><div data-fila="'+index+'" class="sw_etiqueta '+datafield+'">{{'_na_'|trans}}</div></div>';
                                                 var element = estado_;
                                             } else{
                                                 if (cellValue.toString() == 'true' || cellValue.toString() == "1"){
-                                                    estado_ =  '<div class="si"><div class="sw_etiqueta '+datafield+'">{{'_si_'|trans}}</div><div class="sw_separador"></div></div>';
+                                                    estado_ =  '<div class="si"><div data-fila="'+index+'" class="sw_etiqueta '+datafield+'">{{'_si_'|trans}}</div><div class="sw_separador"></div></div>';
                                                 } else if (cellValue.toString() == 'false' || cellValue.toString() == "0"){
-                                                    estado_ = '<div class="no"><div class="sw_separador"></div><div class="sw_etiqueta '+datafield+'">{{'_no_'|trans}}</div></div>';
+                                                    estado_ = '<div data-fila="'+index+'" class="no"><div class="sw_separador"></div><div data-fila="'+index+'" class="sw_etiqueta '+datafield+'">{{'_no_'|trans}}</div></div>';
                                                 } else {
-                                                    estado_ = '<div ><div class="sw_separador"></div><div class="sw_etiqueta '+datafield+'"></div></div>';
+                                                    estado_ = '<div ><div data-fila="'+index+'" class="sw_separador"></div><div data-fila="'+index+'" class="sw_etiqueta '+datafield+'"></div></div>';
                                                 }
                                                 var element = estado_;
                                             }
@@ -645,7 +645,7 @@
                                         } else if(tipo_control == 'datetimeinput'){
                                             fecha = moment(cellValue, "DD/MM/YYYY HH:mm");
                                             valorCelda = (fecha.isValid()) ? fecha.format("DD/MM/YYYY HH:mm"): cellValue
-                                            return "<div class='"+clase_poblacion+" "+datafield+" jqx-{{campo.alineacion.codigo|default('left')}}-align nivel_"+0+"' "+ estilo + " title='"+datarow.ayuda+"'  >" + valorCelda +"</div>";
+                                            return "<div data-fila='"+index+"' class='"+clase_poblacion+" "+datafield+" jqx-{{campo.alineacion.codigo|default('left')}}-align nivel_"+0+"' "+ estilo + " title='"+datarow.ayuda+"'  >" + valorCelda +"</div>";
                                         } else if (tipo_control == 'dropdownlist' && datafield != 'descripcion_variable'){
                                             var origenLista = eval(datarow.origen_fila);
                                             valorEtiqueta =  '';
@@ -654,13 +654,13 @@
                                                     valorEtiqueta = nodo.label;
                                             });
                                             //return "<div class='jqx-{{campo.alineacion.codigo|default('left')}}-align nivel_"+datarow.nivel_indentacion+"' "+ estilo + " title='"+datarow.ayuda+"'  data-placement= 'top' >" + valorEtiqueta +"</div>";
-                                            return "<div class='"+clase_poblacion+" "+datafield+" jqx-{{campo.alineacion.codigo|default('left')}}-align nivel_"+0+"' "+ estilo + " title='"+valorEtiqueta+"'  >" + valorEtiqueta.split(' ').join('.') +"</div>";
+                                            return "<div data-fila='"+index+"' class='"+clase_poblacion+" "+datafield+" jqx-{{campo.alineacion.codigo|default('left')}}-align nivel_"+0+"' "+ estilo + " title='"+valorEtiqueta+"'  >" + valorEtiqueta.split(' ').join('.') +"</div>";
                                         } else {
                                             valor = (isNaN(cellValue)) ? ((cellValue == 'NaN') ? '' : cellValue) : ( (esFormula) ? parseFloat(cellValue).toFixed(2)  : cellValue);                                            
-                                            return "<div class='"+clase_poblacion+" "+datafield+" jqx-{{campo.alineacion.codigo|default('left')}}-align nivel_"+0+"' "+ estilo + " title='"+datarow.ayuda+"'  >" + valor +"</div>";
+                                            return "<div data-fila='"+index+"' class='"+clase_poblacion+" "+datafield+" jqx-{{campo.alineacion.codigo|default('left')}}-align nivel_"+0+"' "+ estilo + " title='"+datarow.ayuda+"'  >" + valor +"</div>";
                                         }    
                                     {% else %}
-                                        return "<div class='jqx-{{campo.alineacion.codigo|default('left')}}-align nivel_"+datarow.nivel_indentacion+"' "+ estilo + " title='"+datarow.ayuda+"'  data-placement= 'top' >" + cellValue +"</div>";
+                                        return "<div data-fila='"+index+"' class='jqx-{{campo.alineacion.codigo|default('left')}}-align nivel_"+datarow.nivel_indentacion+"' "+ estilo + " title='"+datarow.ayuda+"'  data-placement= 'top' >" + cellValue +"</div>";
                                     {% endif %}
                                 },
                             },
@@ -1003,12 +1003,18 @@
                     //Verificar que no tenga celdas vacías
                     var celdas = Grid.find(" .jqx-grid-cell:not('.oculto'):not('.celda_no_editable'):not('.no_aplica') ."+ant.val());
                     var no_completado;
-                    celdas.each(function(index, item){
-                        no_completado = ($(item).html().trim() == '') ? true : no_completado;
+                    var criterio = '';
+                    celdas.each(function(index, item){                        
+                        if ($(item).html().trim() == ''){
+                            no_completado = true;
+                            
+                            criterio = (criterio == '') ? $('.descripcion_variable[data-fila="'+$(item).attr('data-fila')+'"]').html() : criterio;
+                        }                        
                     });
+                    
 
                     if (no_completado) {
-                        $('#msj').html('<div class="alert alert-danger" role="alert">Complete todos los criterios antes de agregar otro expediente</div>');
+                        $('#msj').html('<div class="alert alert-danger" role="alert">Complete el criterio: '+criterio+'</div>');
                         $('#msjModal').modal('show');
                         
                         event.stopPropagation();
@@ -1022,7 +1028,7 @@
                     } else {
                         $("#jqxgrid"+frm).jqxGrid('hidecolumn', ant.val());
                         $("#jqxgrid"+frm).jqxGrid('showcolumn', $(this).val());
-                    } 
+                    }
                 }
             });
             
