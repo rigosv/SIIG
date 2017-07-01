@@ -258,13 +258,19 @@ class PlanMejoraController extends Controller {
         //Guardar los criterios, por si hay nuevos
         $em->getRepository('CalidadBundle:PlanMejora')->agregarCriterios($planMejora, $criteriosParaPlan);
 
+        //Corregir el nivel, aquellos que tengan nivel 1, pero el inmediato 
+        // anterior de nivel 0 es separador, entonces su nivel cambiará a 1
+        $variables = $planMejora->getEstandar()->getFormularioCaptura()->getVariables();
+        $nivelesCorregidos = $this->corregirNiveles($variables);
+        
         //Recuperar los criterios del plan
         $criterios = array();
         $criteriosPlan = $em->getRepository('CalidadBundle:PlanMejora')->getCriteriosOrden($planMejora);
         foreach ($criteriosPlan  as $c) {
+            $nivel = ( in_array($c->getVariableCaptura()->getCodigo(), $nivelesCorregidos) ) ? 0 : $c->getVariableCaptura()->getNivelIndentacion();
             $datos = array('id' => $c->getId(),
                 'descripcion' => $c->getVariableCaptura()->getDescripcion(),
-                'nivel' => $c->getVariableCaptura()->getNivelIndentacion(),
+                'nivel' => $nivel,
                 'umbral'=> $this->limiteAceptacion,
                 'cumplimiento' => $this->limiteAceptacion - $c->getBrecha(),
                 'brecha' => number_format($c->getBrecha(), 2),
@@ -558,6 +564,32 @@ class PlanMejoraController extends Controller {
         }
 
         return $result;
+    }
+    
+    protected function corregirNiveles($variables) {
+        $var_nivel1 = array();
+        $var_nivel0 = array();
+        foreach($variables as $v){
+            if ($v->getNivelIndentacion() == 0 ){
+                $var_nivel0[$v->getPosicion()] = $v;
+            } elseif ($v->getNivelIndentacion() == 1 ){
+                $var_nivel1[$v->getPosicion()] = $v;
+            }
+        }
+                
+        $nivelesCambio = array();
+        $ant = 10000000;
+        foreach ($var_nivel0 as $pos0 => $v0){
+            if ($v0->getEsSeparador()){
+                foreach ($var_nivel1 as $pos1 => $v1){
+                    if ($pos1 < $ant and $pos1 > $pos0){
+                        $nivelesCambio[] = $v1->getCodigo();
+                    }
+                }
+            }
+            $ant = $pos0;
+        }
+        return $nivelesCambio;
     }
 
 }
