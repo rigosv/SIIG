@@ -567,6 +567,7 @@ class PlanMejoraController extends Controller {
     }
     
     protected function corregirNiveles($variables) {
+        $var_nivel2 = array();
         $var_nivel1 = array();
         $var_nivel0 = array();
         foreach($variables as $v){
@@ -574,10 +575,23 @@ class PlanMejoraController extends Controller {
                 $var_nivel0[$v->getPosicion()] = $v;
             } elseif ($v->getNivelIndentacion() == 1 ){
                 $var_nivel1[$v->getPosicion()] = $v;
+            } elseif ($v->getNivelIndentacion() == 2 ){
+                $var_nivel2[$v->getPosicion()] = $v;
             }
-        }
-                
+        }  
         $nivelesCambio = array();
+        $ant = 10000000;
+        foreach ($var_nivel1 as $pos1=> $v1){
+            if ($v1->getEsSeparador()){
+                foreach ($var_nivel2 as $pos2 => $v2){
+                    if ($pos2 < $ant and $pos2 > $pos1){
+                        $var_nivel1[$v2->getPosicion()] = $v2;
+                    }
+                }
+            }
+            $ant = $pos1;
+        }
+        
         $ant = 10000000;
         foreach ($var_nivel0 as $pos0 => $v0){
             if ($v0->getEsSeparador()){
@@ -590,6 +604,7 @@ class PlanMejoraController extends Controller {
             $ant = $pos0;
         }
         return $nivelesCambio;
+        
     }
 
 }
