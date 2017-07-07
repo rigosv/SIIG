@@ -261,7 +261,8 @@ class PlanMejoraController extends Controller {
         //Corregir el nivel, aquellos que tengan nivel 1, pero el inmediato 
         // anterior de nivel 0 es separador, entonces su nivel cambiará a 1
         $variables = $planMejora->getEstandar()->getFormularioCaptura()->getVariables();
-        $nivelesCorregidos = $this->corregirNiveles($variables);
+        $version = $planMejora->getEstandar()->getFormularioCaptura()->getVersion();
+        $nivelesCorregidos = $this->corregirNiveles($variables, $version);
         
         //Recuperar los criterios del plan
         $criterios = array();
@@ -412,7 +413,8 @@ class PlanMejoraController extends Controller {
         //Corregir el nivel, aquellos que tengan nivel 1, pero el inmediato 
         // anterior de nivel 0 es separador, entonces su nivel cambiará a 1
         $variables = $planMejora->getEstandar()->getFormularioCaptura()->getVariables();
-        $variablesCriterio = $this->corregirNiveles($variables);
+        $version = $planMejora->getEstandar()->getFormularioCaptura()->getVersion();
+        $variablesCriterio = $this->corregirNiveles($variables, $version);
         
         $indicadores = array();
         $ultCriterio = 0;
@@ -572,17 +574,19 @@ class PlanMejoraController extends Controller {
         return $result;
     }
     
-    protected function corregirNiveles($variables) {
+    protected function corregirNiveles($variables, $versionFrm) {
         $var_nivel2 = array();
         $var_nivel1 = array();
         $var_nivel0 = array();
         foreach($variables as $v){
-            if ($v->getNivelIndentacion() == 0 ){
-                $var_nivel0[$v->getPosicion()] = $v;
-            } elseif ($v->getNivelIndentacion() == 1 ){
-                $var_nivel1[$v->getPosicion()] = $v;
-            } elseif ($v->getNivelIndentacion() == 2 ){
-                $var_nivel2[$v->getPosicion()] = $v;
+            if($versionFrm == $v->getVersionFormulario()){
+                if ($v->getNivelIndentacion() == 0 ){
+                    $var_nivel0[$v->getPosicion()] = $v;
+                } elseif ($v->getNivelIndentacion() == 1 ){
+                    $var_nivel1[$v->getPosicion()] = $v;
+                } elseif ($v->getNivelIndentacion() == 2 ){
+                    $var_nivel2[$v->getPosicion()] = $v;
+                }
             }
         }
         
