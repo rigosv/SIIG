@@ -408,10 +408,15 @@ class PlanMejoraController extends Controller {
         if ($establecimiento == false) {
             $establecimiento['region'] = '';
         }
+        
+        //Corregir el nivel, aquellos que tengan nivel 1, pero el inmediato 
+        // anterior de nivel 0 es separador, entonces su nivel cambiará a 1
+        $variables = $planMejora->getEstandar()->getFormularioCaptura()->getVariables();
+        $variablesCriterio = $this->corregirNiveles($variables);
+        
         $indicadores = array();
-
         $ultCriterio = 0;
-        $subcriterios = array();
+        $subcriterios = array();   
         foreach ($criterios as $c) {
             if ($planMejora->getEstandar()->getFormaEvaluacion() == 'rango_colores') {
                 $ind = $c->getVariableCaptura()->getIndicadores();
@@ -419,7 +424,8 @@ class PlanMejoraController extends Controller {
                 $indicadores[$ind[0]->getCodigo()]['criterios'][] = $c;
             } else {                
                 $indicadores[0]['descripcion'] = '';
-                if ($c->getVariableCaptura()->getNivelIndentacion() == 0 ){
+                if (in_array($c->getVariableCaptura()->getCodigo(), $variablesCriterio) ) {
+                //if ($this->esCriterio($planMejora , $c) ){
                     $indicadores[0]['criterios'][] = $c;
                     $ultCriterio = $c->getId();
                 } else {
@@ -427,7 +433,7 @@ class PlanMejoraController extends Controller {
                 }
             }
         }
-
+       
         $historialCriterios = $this->getHistorialCriterios($planMejora, $indicadores);
 
         return $this->render('CalidadBundle:PlanMejora:ver.html.twig', array('admin_pool' => $admin_pool,
@@ -439,7 +445,7 @@ class PlanMejoraController extends Controller {
                         )
         );
     }
-
+    
     public function getHistorialCriterios(PlanMejora $planMejora, $indicadores) {
         $em = $this->getDoctrine()->getManager();
 
@@ -578,7 +584,11 @@ class PlanMejoraController extends Controller {
             } elseif ($v->getNivelIndentacion() == 2 ){
                 $var_nivel2[$v->getPosicion()] = $v;
             }
-        }  
+        }
+        
+        krsort($var_nivel0);
+        krsort($var_nivel1);
+        krsort($var_nivel2);
         $nivelesCambio = array();
         $ant = 10000000;
         foreach ($var_nivel1 as $pos1=> $v1){
@@ -594,7 +604,7 @@ class PlanMejoraController extends Controller {
         
         $ant = 10000000;
         foreach ($var_nivel0 as $pos0 => $v0){
-            if ($v0->getEsSeparador()){
+            if ($v0->getEsSeparador()){                
                 foreach ($var_nivel1 as $pos1 => $v1){
                     if ($pos1 < $ant and $pos1 > $pos0){
                         $nivelesCambio[] = $v1->getCodigo();
@@ -602,6 +612,10 @@ class PlanMejoraController extends Controller {
                 }
             }
             $ant = $pos0;
+        }
+
+        foreach ($var_nivel0 as $v){
+            $nivelesCambio[] = $v->getCodigo();
         }
         return $nivelesCambio;
         
