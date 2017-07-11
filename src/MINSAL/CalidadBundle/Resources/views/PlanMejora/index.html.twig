@@ -46,16 +46,34 @@
                     </TR>
                 </THEAD>
                 <TBODY>
+                    {% set planesParaVer = '' %}
                     {% for estEval in estandaresEval %}
+                        {% if estEval.plan != null %}
+                            {% set planesParaVer = planesParaVer ~','~ estEval.plan.id %}
+                        {% endif %}
                         <TR>
                             <TD>{{estEval.est.descripcion}}</TD>
                             <TD>{{estEval.eval.calificacion}}</TD>
                             <TD>{{estEval.est.meta}}</TD>
                             <TD>{{estEval.est.meta - estEval.eval.calificacion}}</TD>
-                            {% include 'CalidadBundle:PlanMejora:enlacesPlanes.html.twig' with estEval %}
+                            {{ include ('CalidadBundle:PlanMejora:enlacesPlanes.html.twig') }}
                         </TR>
-                    {% endfor %}
+                    {% endfor %}                    
                 </TBODY>
+                {% if planesParaVer != '' %}
+                    <TFOOT>
+                        <TR> 
+                            <TD colspan="5" align="right">
+                                <A 
+                                    href="{{path('calidad_planmejora_ver_todos', {'planes': planesParaVer|trim(',') })}}" 
+                                    target="blank_"
+                                    class="btn btn-primary" role="button">
+                                    {{'_ver_todos_'|trans}}
+                                </A>
+                            </TD>
+                        </TR>
+                    </TFOOT>
+                {% endif %}
             </TABLE>
         </div>
     {% endif %}

@@ -398,7 +398,7 @@ class PlanMejoraController extends Controller {
     /**
      * @Route("/{id}/ver/", name="calidad_planmejora_ver")
      */
-    public function verAction(PlanMejora $planMejora) {
+    public function verAction(PlanMejora $planMejora, $paraVerTodos = false) {
         $admin_pool = $this->get('sonata.admin.pool');
         $em = $this->getDoctrine()->getManager();
         $formaEvaluacion = $planMejora->getEstandar()->getFormaEvaluacion();
@@ -438,7 +438,8 @@ class PlanMejoraController extends Controller {
        
         $historialCriterios = $this->getHistorialCriterios($planMejora, $indicadores);
 
-        return $this->render('CalidadBundle:PlanMejora:ver.html.twig', array('admin_pool' => $admin_pool,
+        //$this->renderView($indicadores, $subcriterios)
+        $view = $this->renderView("CalidadBundle:PlanMejora:ver.html.twig", array('admin_pool' => $admin_pool,
                     'plan' => $planMejora,
                     'indicadores' => $indicadores,
                     'historialCriterios' => $historialCriterios,
@@ -446,6 +447,26 @@ class PlanMejoraController extends Controller {
                     'establecimiento' => $establecimiento
                         )
         );
+        
+        return ($paraVerTodos) ? $view : new Response($view);
+    }
+    
+    /**
+     * @Route("/{planes}/vertodos/", name="calidad_planmejora_ver_todos")
+     */
+    public function verTodosAction($planes) {
+        $em = $this->getDoctrine()->getManager();
+        
+        $planesId = explode(',', $planes);
+        
+        $planesHtml = '';
+        foreach ($planesId as $pId){
+            $plan = $em->find('CalidadBundle:PlanMejora', $pId);
+            
+            $planesHtml .= $this->verAction($plan, true); 
+        }
+        
+        return new Response($planesHtml);
     }
     
     public function getHistorialCriterios(PlanMejora $planMejora, $indicadores) {
