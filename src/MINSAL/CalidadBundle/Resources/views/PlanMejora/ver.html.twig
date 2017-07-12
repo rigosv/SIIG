@@ -24,6 +24,10 @@
         .table { 
             width: 98% !important;
         }
+        table td.primary{
+            color: white;
+            background-color: #3c8dbc;
+        }
     </style>
     <link rel="stylesheet" href="{{ app.request.schemeAndHttpHost ~ asset('bundles/sonatacore/vendor/bootstrap/dist/css/bootstrap.min.css') }}" type="text/css" media="all" />
     <link rel="stylesheet" href="{{ app.request.schemeAndHttpHost ~ asset('bundles/calidad/css/detallePlanMejora.css') }}" type="text/css" media="all" />
@@ -49,13 +53,6 @@
         <H4>{{'_titulo_4_plan_mejora_'|trans}}</H4>
     </CENTER>
     {% endif %}
-    {% if orden > 0 %}
-        <div class='row' style='text-align: center'>
-            <div class='col-md-4'><H4>************</H4></div>
-            <div class='col-md-4'><H4>************ </H4></div>
-            <div class='col-md-4'><H4>************</H4></div>
-        </div>
-    {% endif %}
     <div class='row' style='text-align: center'>
         <div class='col-md-4'><H4>{% if orden == 0 %} {{'_fecha_generacion_'|trans}} {{'now'|date('d/m/Y')}} {% endif %}</H4></div>
         <div class='col-md-4'><H4>{% if orden == 0 %} {{'_periodo_'|trans}} {{plan.periodo.mesTexto}} / {{plan.periodo.anio}} {% endif %} </H4></div>
@@ -80,8 +77,8 @@
                     </TR>
                 {% endif %}
                 <TR>
-                    <TD style="width: 15%" class="info"><B>{{'_estandar_'|trans}}</B></TD>
-                    <TD colspan="3"><h4>{{plan.estandar.descripcion}}</h4></TD>
+                    <TD style="width: 15%" class="{% if orden == 0 %} info {% else %} primary {% endif %}"><B>{{'_estandar_'|trans}}</B></TD>
+                    <TD colspan="3" {% if orden > 0 %}class="primary"{% endif %}><h4>{{plan.estandar.descripcion}}</h4></TD>
                     
                 </TR>
             </TBODY>

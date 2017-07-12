@@ -415,7 +415,6 @@ class PlanMejoraController extends Controller {
         $variables = $planMejora->getEstandar()->getFormularioCaptura()->getVariables();
         $version = $planMejora->getEstandar()->getFormularioCaptura()->getVersion();
         $variablesCriterio = $this->corregirNiveles($variables, $version);
-        
         $indicadores = array();
         $ultCriterio = 0;
         $subcriterios = array();   
@@ -427,7 +426,6 @@ class PlanMejoraController extends Controller {
             } else {                
                 $indicadores[0]['descripcion'] = '';
                 if (in_array($c->getVariableCaptura()->getCodigo(), $variablesCriterio) ) {
-                //if ($this->esCriterio($planMejora , $c) ){
                     $indicadores[0]['criterios'][] = $c;
                     $ultCriterio = $c->getId();
                 } else {
@@ -601,12 +599,13 @@ class PlanMejoraController extends Controller {
         $var_nivel1 = array();
         $var_nivel0 = array();
         foreach($variables as $v){
+            $nivel = $v->getNivelIndentacion();
             if($versionFrm == $v->getVersionFormulario()){
-                if ($v->getNivelIndentacion() == 0 ){
+                if ($nivel == 0 or $nivel == ''){
                     $var_nivel0[$v->getPosicion()] = $v;
-                } elseif ($v->getNivelIndentacion() == 1 ){
+                } elseif ($nivel == 1 ){
                     $var_nivel1[$v->getPosicion()] = $v;
-                } elseif ($v->getNivelIndentacion() == 2 ){
+                } elseif ($nivel == 2 ){
                     $var_nivel2[$v->getPosicion()] = $v;
                 }
             }
