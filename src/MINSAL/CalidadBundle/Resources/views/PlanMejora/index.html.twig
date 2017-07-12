@@ -90,7 +90,11 @@
                     </TR>
                 </THEAD>
                 <TBODY>
+                    {% set planesParaVer = '' %}
                     {% for cod, estEval in estandaresNumEval %}
+                        {% if estEval.plan != null %}
+                            {% set planesParaVer = planesParaVer ~','~ estEval.plan.id %}
+                        {% endif %}
                         <TR>
                             <TD>{{estEval.est.descripcion}}</TD>
                             <TD>{{estandaresNumTot[cod].reprobados}}</TD>
@@ -99,6 +103,20 @@
                         </TR>
                     {% endfor %}
                 </TBODY>
+                {% if planesParaVer != '' %}
+                    <TFOOT>
+                        <TR> 
+                            <TD colspan="5" align="right">
+                                <A 
+                                    href="{{path('calidad_planmejora_ver_todos', {'planes': planesParaVer|trim(',') })}}" 
+                                    target="blank_"
+                                    class="btn btn-primary" role="button">
+                                    {{'_ver_todos_'|trans}}
+                                </A>
+                            </TD>
+                        </TR>
+                    </TFOOT>
+                {% endif %}
             </TABLE>
         </div>
     {% endif %}
