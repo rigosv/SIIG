@@ -398,7 +398,7 @@ class PlanMejoraController extends Controller {
     /**
      * @Route("/{id}/ver/", name="calidad_planmejora_ver")
      */
-    public function verAction(PlanMejora $planMejora, $paraVerTodos = false) {
+    public function verAction(PlanMejora $planMejora, $paraVerTodos = false, $orden = 0) {
         $admin_pool = $this->get('sonata.admin.pool');
         $em = $this->getDoctrine()->getManager();
         $formaEvaluacion = $planMejora->getEstandar()->getFormaEvaluacion();
@@ -444,6 +444,7 @@ class PlanMejoraController extends Controller {
                     'indicadores' => $indicadores,
                     'historialCriterios' => $historialCriterios,
                     'subcriterios' => $subcriterios,
+                    'orden' => $orden,
                     'establecimiento' => $establecimiento
                         )
         );
@@ -460,10 +461,10 @@ class PlanMejoraController extends Controller {
         $planesId = explode(',', $planes);
         
         $planesHtml = '';
-        foreach ($planesId as $pId){
+        foreach ($planesId as $k => $pId){
             $plan = $em->find('CalidadBundle:PlanMejora', $pId);
             
-            $planesHtml .= $this->verAction($plan, true); 
+            $planesHtml .= $this->verAction($plan, true, $k); 
         }
         
         return new Response($planesHtml);
