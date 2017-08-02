@@ -126,17 +126,20 @@ class IndicadorRESTController extends Controller {
      * @Get("/rest-service/data/{id}", options={"expose"=true})
      * @Rest\View
      */
-    public function getDatosIndicadorAction(FichaTecnica $fichaTec) {
+    public function getDatosIndicadorAction(FichaTecnica $fichaTec, Request $request) {
         $response = new Response();        
                 
         $redis = new Predis\Client();
+        
+        $parte = $request->get('parte');
         
         if ($fichaTec->getUpdatedAt() != '' and $fichaTec->getUltimaLectura() != '' and $fichaTec->getUltimaLectura() < $fichaTec->getUpdatedAt()) {
             // Buscar la petición en la caché de Redis
             $respj = $redis->get('indicador_'.$fichaTec->getId());
             if ($respj != null){
-                $response->setContent($respj);
-                    return $response;
+                $respParte = $this->obtenerParteRespuesta(json_decode($respj), $parte, $request);
+                $response->setContent($respParte);
+                return $response;
             }
         }
         
@@ -157,8 +160,29 @@ class IndicadorRESTController extends Controller {
             $redis->set('indicador_'.$fichaTec->getId(), $respj);
         }        
 
+        $respParte = $this->obtenerParteRespuesta($resp, $parte, $request);
+        $response->setContent($respParte);
         return $response;
         
+    }
+    
+    private function obtenerParteRespuesta($datos, $parte, Request $request) {
+        $tamanio = 200000; 
+        //Verificar si son más de $tamanio registros y si es una consulta ajax
+        if ($request->isXmlHttpRequest() and ( count($datos) > $tamanio or $parte != null ) ){
+            $total_partes = ceil( count($datos) / $tamanio );
+            $porcion = ( $parte == null) ? 0 : ( $parte -1 ) * $tamanio ;
+            
+            $porcionDatos = array_slice($datos, $porcion, $tamanio);
+            $resp['datos'] = $porcionDatos;
+            $resp['total_partes'] = $total_partes;
+            
+        } else {
+            $resp['datos'] = $datos;
+            $resp['total_partes'] = 1;
+            
+        }
+        return json_encode($resp);
     }
 
     /**
