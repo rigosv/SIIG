@@ -117,11 +117,13 @@ $(document).ready(function() {
             $('#myTab a:first').tab('show');
             idIndicadorActivo = id_indicador;
             
+            var cargadas = 1;
             if (mps.total_partes != undefined && mps.total_partes > 1){
                 for(var i = 2; i <= mps.total_partes ; i++){
                     $.getJSON(Routing.generate('get_datos_indicador', {id: id_indicador}), {parte: i}, function(mpsx) {
                         datos = datos.concat(mpsx.datos);
-                        if (i > mps.total_partes){
+                        cargadas++;
+                        if (cargadas == mps.total_partes){
                             cargarTablaDinamica(datos);
                         }
                     });

@@ -11,6 +11,8 @@ use Predis;
 use Symfony\Component\HttpFoundation\Request;
 
 class IndicadorRESTController extends Controller {
+    
+    protected $tamanio = 200000; 
 
     /**
      * @param integer $fichaTec
@@ -135,10 +137,12 @@ class IndicadorRESTController extends Controller {
         
         if ($fichaTec->getUpdatedAt() != '' and $fichaTec->getUltimaLectura() != '' and $fichaTec->getUltimaLectura() < $fichaTec->getUpdatedAt()) {
             // Buscar la petición en la caché de Redis
-            $respj = $redis->get('indicador_'.$fichaTec->getId());
+            $porcion = ( $parte == null) ? 0 : ( $parte -1 ) * $this->tamanio ;
+            $respj = $redis->get('indicador_'.$fichaTec->getId().'_parte_'.$porcion);
             if ($respj != null){
-                $respParte = $this->obtenerParteRespuesta(json_decode($respj), $parte, $request);
-                $response->setContent($respParte);
+                //$respParte = $this->obtenerParteRespuesta(json_decode($respj), $parte, $request);
+                $resp = '{"datos": '. $respj.', "total_partes": "'. $redis->get('indicador_'.$fichaTec->getId().'_tamanio_') . '"}';
+                $response->setContent($resp);
                 return $response;
             }
         }
@@ -151,13 +155,23 @@ class IndicadorRESTController extends Controller {
 
         $fichaRepository->crearIndicador($fichaTec);
         $resp = $fichaRepository->getDatosIndicador($fichaTec);
-        $respj = json_encode($resp);
+        //$respj = json_encode($resp);
 
         //Guardar los datos en caché de redis            
-        $response->setContent($respj);
+        //$response->setContent($respj);
         
         if ( is_array($resp) ){
-            $redis->set('indicador_'.$fichaTec->getId(), $respj);
+            //Guardarlo en caché por partes
+            $total_partes = ceil( count($resp) / $this->tamanio );
+            
+            for ($parteX = 1 ; $parteX <= $total_partes ; $parteX++){
+                $porcion = ( $parteX -1 ) * $this->tamanio ;
+
+                $porcionDatos = array_slice($resp, $porcion, $this->tamanio);
+                
+                $redis->set('indicador_'.$fichaTec->getId().'_tamanio_', $total_partes);
+                $redis->set('indicador_'.$fichaTec->getId().'_parte_'.$porcion, json_encode($porcionDatos));
+            }
         }        
 
         $respParte = $this->obtenerParteRespuesta($resp, $parte, $request);
@@ -167,7 +181,7 @@ class IndicadorRESTController extends Controller {
     }
     
     private function obtenerParteRespuesta($datos, $parte, Request $request) {
-        $tamanio = 200000; 
+        $tamanio = $this->tamanio;
         //Verificar si son más de $tamanio registros y si es una consulta ajax
         if ($request->isXmlHttpRequest() and ( count($datos) > $tamanio or $parte != null ) ){
             $total_partes = ceil( count($datos) / $tamanio );
