@@ -17,23 +17,26 @@ class Util
 
     public function encriptar_clave($cadena)
     {
-        $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
-        $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
+        //$iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
+        //$iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
         $key = md5('m1ns4l');
 
-        $crypttext = mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $key, $cadena, MCRYPT_MODE_ECB, $iv);
-
+        //$crypttext = mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $key, $cadena, MCRYPT_MODE_ECB, $iv);
+        
+        $crypttext = openssl_encrypt($cadena, 'bf-ecb', $key, true);
+        
         return base64_encode($crypttext);
     }
 
     public function desencriptar_clave($cadena)
     {
         $cadena = base64_decode($cadena);
-        $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
-        $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
+        //$iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
+        //$iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
         $key = md5('m1ns4l');
 
-        $texto = mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $key, $cadena, MCRYPT_MODE_ECB, $iv);
+        //$texto = mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $key, $cadena, MCRYPT_MODE_ECB, $iv);
+        $texto = openssl_decrypt($cadena, 'bf-ecb', $key, true);
 
         return trim($texto);
     }
