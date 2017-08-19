@@ -28,54 +28,32 @@ class GuardarRegistroOrigenDatoConsumer implements ConsumerInterface {
         // correctamente el mensaje y será enviado nuevamente
         if ($msg['method'] == 'BEGIN') {
             // Iniciar borrando los datos que pudieran existir en la tabla auxiliar
-            //$sql = " DELETE FROM fila_origen_dato_aux WHERE id_origen_dato='$msg[id_origen_dato]' ;";
             $sql = ' DROP TABLE IF EXISTS '.$tabla.'_tmp ;
-                SELECT * INTO '.$tabla."_tmp FROM fila_origen_dato LIMIT 0;
+                SELECT * INTO '.$tabla."_tmp FROM fila_origen_dato_v2 LIMIT 0;
                 UPDATE origen_datos SET carga_finalizada = false WHERE id = '$msg[id_origen_dato]'
                ";
             $this->em->getConnection()->exec($sql);
             return true;
             
-        } elseif ($msg['method'] == 'PUT') {
-            $fila1 = $msg['datos'][0];
-
-            $llaves_aux1 = '';
-            foreach ($fila1 as $k => $campo)
-                $llaves_aux1 .= "'$k', ";
-            $llaves_aux1 = trim($llaves_aux1, ', ');
-
+        } elseif ($msg['method'] == 'PUT') {            
+            
             $sql = "INSERT INTO $tabla"."_tmp(id_origen_dato, datos, ultima_lectura)
                     VALUES ";
-            $i = 0;
+            
+            //$i = 0;
             foreach ($msg['datos'] as $fila) {
-                $llaves_aux2 = '';
-                foreach ($fila as $k => $campo)
-                    $llaves_aux2 .= ":$k" . "_$i, ";
-                $llaves_aux2 = trim($llaves_aux2, ', ');
-
-                $sql .= "(:id_origen_dato, hstore(ARRAY[$llaves_aux1], ARRAY[$llaves_aux2]), :ultima_lectura), ";
-                $i++;
+                $filaJson = json_encode($fila);
+                $sql .= "(:id_origen_dato, '$filaJson', :ultima_lectura), ";
             }
             $sql = trim($sql, ', ');
             $sth = $this->em->getConnection()->prepare($sql);
+
             $sth->bindParam(':id_origen_dato', $msg['id_origen_dato']);
             $sth->bindParam(':ultima_lectura', $msg['ultima_lectura']);
 
-            //$this->em->getConnection()->beginTransaction();
-            $i = 0;
-            foreach ($msg['datos'] as $fila) {
-                foreach ($fila as $k => $value) {
-                    $llave = ':' . $k . '_' . $i;
-                    $sth->bindValue("$llave", trim($value));
-                }
-                $i++;
-            }
             $result = $sth->execute();
-            if (!$result)
-                return false;
-            //$this->em->getConnection()->commit();
-
-            return true;
+            return (!$result) ? false : true;
+            
         } elseif ($msg['method'] == 'DELETE') {            
             //verificar si la tabla existe
             if ($tabla == 'origenes.fila_origen_dato_' . $msg['id_origen_dato']) {
@@ -121,10 +99,10 @@ class GuardarRegistroOrigenDatoConsumer implements ConsumerInterface {
                         
                 } else {
                     //Borrar los datos anteriores
-                    $sql = "DELETE FROM $tabla WHERE id_origen_dato='$msg[id_origen_dato]'  ;";
+                    $sql = "DROP TABLE IF EXISTS $tabla ;";
                     $this->em->getConnection()->exec($sql);
 
-                    $sql = "INSERT INTO $tabla SELECT * FROM $tabla"."_tmp WHERE id_origen_dato='$msg[id_origen_dato]' ";
+                    $sql = "SELECT * INTO $tabla FROM $tabla"."_tmp WHERE id_origen_dato='$msg[id_origen_dato]' ";
                     $this->em->getConnection()->exec($sql);
                     /*        
                     $tamanio = 100000;
@@ -151,6 +129,10 @@ class GuardarRegistroOrigenDatoConsumer implements ConsumerInterface {
                     UPDATE origen_datos SET carga_finalizada = true WHERE id = '$msg[id_origen_dato]'";
             $this->em->getConnection()->exec($sql);
             
+            echo '
+Carga finalizada de origen ' . $msg['id_origen_dato'] . '
+
+';
             //$this->em->getConnection()->commit();
 
             /* Mover esto a otro lugar más adecuado, aquí hace que la carga de los indicadores tarde mucho
