@@ -24,6 +24,10 @@
         .table { 
             width: 98% !important;
         }
+        table td.primary{
+            color: white;
+            background-color: #3c8dbc;
+        }
     </style>
     <link rel="stylesheet" href="{{ app.request.schemeAndHttpHost ~ asset('bundles/sonatacore/vendor/bootstrap/dist/css/bootstrap.min.css') }}" type="text/css" media="all" />
     <link rel="stylesheet" href="{{ app.request.schemeAndHttpHost ~ asset('bundles/calidad/css/detallePlanMejora.css') }}" type="text/css" media="all" />
@@ -41,36 +45,40 @@
 {% endblock %}
 
 {% block content %}
+    {% if orden == 0 %}
     <CENTER>
         <H3>{{'_titulo_1_plan_mejora_'|trans}}</H3>
         <H3>{{'_titulo_2_plan_mejora_'|trans}}</H3>
         <H4>{{'_titulo_3_plan_mejora_'|trans}}</H4>
         <H4>{{'_titulo_4_plan_mejora_'|trans}}</H4>
     </CENTER>
+    {% endif %}
     <div class='row' style='text-align: center'>
-        <div class='col-md-4'><H4>{{'_fecha_generacion_'|trans}} {{'now'|date('d/m/Y')}}</H4></div>
-        <div class='col-md-4'><H4>{{'_periodo_'|trans}} {{plan.periodo.mesTexto}} / {{plan.periodo.anio}}</H4></div>
+        <div class='col-md-4'><H4>{% if orden == 0 %} {{'_fecha_generacion_'|trans}} {{'now'|date('d/m/Y')}} {% endif %}</H4></div>
+        <div class='col-md-4'><H4>{% if orden == 0 %} {{'_periodo_'|trans}} {{plan.periodo.mesTexto}} / {{plan.periodo.anio}} {% endif %} </H4></div>
         <div class='col-md-4'><H4>{{'_porcentaje_ejecucion_'|trans}}:  {{plan.porcentajeAvance|number_format(1)}}%</H4></div>
     </div>
     <div class="table-responsive">
         <TABLE align='center' class="table table-bordered table-condensed">
             <TBODY>        
+                {% if orden == 0 %}
+                    <TR>
+                        <TD style="width: 15%" class="info"><B>{{'_region_'|trans}}</B></TD>
+                        <TD style="width: 35%">{{establecimiento.region}}</TD>
+                        <TD style="width: 15%" class="info"><B>{{'_establecimiento_'|trans}}</B></TD>
+                        <TD style="width: 35%">{{plan.establecimiento.nombre}}</TD>
+
+                    </TR>
+                    <TR>
+                        <TD style="width: 15%" class="info"><B>{{'_categoria_'|trans}}</B></TD>
+                        <TD style="width: 35%"></TD>
+                        <TD style="width: 15%" class="info"><B>{{'_proceso_'|trans}}</B></TD>
+                        <TD style="width: 35%"></TD>
+                    </TR>
+                {% endif %}
                 <TR>
-                    <TD style="width: 15%" class="info"><B>{{'_region_'|trans}}</B></TD>
-                    <TD style="width: 35%">{{establecimiento.region}}</TD>
-                    <TD style="width: 15%" class="info"><B>{{'_establecimiento_'|trans}}</B></TD>
-                    <TD style="width: 35%">{{plan.establecimiento.nombre}}</TD>
-                    
-                </TR>
-                <TR>
-                    <TD style="width: 15%" class="info"><B>{{'_categoria_'|trans}}</B></TD>
-                    <TD style="width: 35%"></TD>
-                    <TD style="width: 15%" class="info"><B>{{'_proceso_'|trans}}</B></TD>
-                    <TD style="width: 35%"></TD>
-                </TR>
-                <TR>
-                    <TD style="width: 15%" class="info"><B>{{'_estandar_'|trans}}</B></TD>
-                    <TD colspan="3">{{plan.estandar.descripcion}}</TD>
+                    <TD style="width: 15%" class="{% if orden == 0 %} info {% else %} primary {% endif %}"><B>{{'_estandar_'|trans}}</B></TD>
+                    <TD colspan="3" {% if orden > 0 %}class="primary"{% endif %}><h4>{{plan.estandar.descripcion}}</h4></TD>
                     
                 </TR>
             </TBODY>

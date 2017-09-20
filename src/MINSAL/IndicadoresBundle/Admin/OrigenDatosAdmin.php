@@ -122,6 +122,7 @@ class OrigenDatosAdmin extends Admin
         $datagridMapper
                 ->add('nombre', null, array('label' => ('nombre')))
                 ->add('sentenciaSql', null, array('label' => ('sentencia_sql')))
+                ->add('conexiones', null, array('label' => ('conexiones')))
         ;
     }
 

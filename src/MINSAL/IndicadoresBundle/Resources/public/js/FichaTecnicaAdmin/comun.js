@@ -902,6 +902,7 @@ function procesarDimensiones(resp, datos, zona_g, desde_sala) {
                 $('#opciones_dimension_' + zona_g + ' .filtro_desde').val(datos.filtroPosicionDesde);
                 $('#opciones_dimension_' + zona_g + ' .filtro_hasta').val(datos.filtroPosicionHasta);
                 $('#' + zona_g + ' .titulo_indicador').attr('filtro-elementos', datos.filtroElementos);
+                setTiposGraficos(zona_g);
                 $('#' + zona_g + ' .tipo_grafico_principal').val(datos.tipoGrafico);
                 $('#' + zona_g + ' .tipo_grafico_principal').trigger("chosen:updated");
 

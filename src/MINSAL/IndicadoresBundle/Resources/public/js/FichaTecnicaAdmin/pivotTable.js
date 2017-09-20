@@ -107,13 +107,30 @@ $(document).ready(function() {
         var nombre_indicador = $(this).html();
         
         $.getJSON(Routing.generate('get_datos_indicador', {id: id_indicador}), function(mps) {
-            datos_ = mps;
+            datos = []; 
+                    
             tipoElemento = 'indicador';
             identificadorElemento = id_indicador;
-            cargarTablaDinamica(mps);
+            var datos = datos.concat(mps.datos);
+            
             $('#marco-sala').attr('data-content', nombre_indicador);
             $('#myTab a:first').tab('show');
             idIndicadorActivo = id_indicador;
+            
+            var cargadas = 1;
+            if (mps.total_partes != undefined && mps.total_partes > 1){
+                for(var i = 2; i <= mps.total_partes ; i++){
+                    $.getJSON(Routing.generate('get_datos_indicador', {id: id_indicador}), {parte: i}, function(mpsx) {
+                        datos = datos.concat(mpsx.datos);
+                        cargadas++;
+                        if (cargadas == mps.total_partes){
+                            cargarTablaDinamica(datos);
+                        }
+                    });
+                }
+            } else {
+                cargarTablaDinamica(datos);
+            }
         });
     });
     

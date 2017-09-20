@@ -398,7 +398,7 @@ class PlanMejoraController extends Controller {
     /**
      * @Route("/{id}/ver/", name="calidad_planmejora_ver")
      */
-    public function verAction(PlanMejora $planMejora) {
+    public function verAction(PlanMejora $planMejora, $paraVerTodos = false, $orden = 0) {
         $admin_pool = $this->get('sonata.admin.pool');
         $em = $this->getDoctrine()->getManager();
         $formaEvaluacion = $planMejora->getEstandar()->getFormaEvaluacion();
@@ -415,7 +415,6 @@ class PlanMejoraController extends Controller {
         $variables = $planMejora->getEstandar()->getFormularioCaptura()->getVariables();
         $version = $planMejora->getEstandar()->getFormularioCaptura()->getVersion();
         $variablesCriterio = $this->corregirNiveles($variables, $version);
-        
         $indicadores = array();
         $ultCriterio = 0;
         $subcriterios = array();   
@@ -427,7 +426,6 @@ class PlanMejoraController extends Controller {
             } else {                
                 $indicadores[0]['descripcion'] = '';
                 if (in_array($c->getVariableCaptura()->getCodigo(), $variablesCriterio) ) {
-                //if ($this->esCriterio($planMejora , $c) ){
                     $indicadores[0]['criterios'][] = $c;
                     $ultCriterio = $c->getId();
                 } else {
@@ -438,14 +436,36 @@ class PlanMejoraController extends Controller {
        
         $historialCriterios = $this->getHistorialCriterios($planMejora, $indicadores);
 
-        return $this->render('CalidadBundle:PlanMejora:ver.html.twig', array('admin_pool' => $admin_pool,
+        //$this->renderView($indicadores, $subcriterios)
+        $view = $this->renderView("CalidadBundle:PlanMejora:ver.html.twig", array('admin_pool' => $admin_pool,
                     'plan' => $planMejora,
                     'indicadores' => $indicadores,
                     'historialCriterios' => $historialCriterios,
                     'subcriterios' => $subcriterios,
+                    'orden' => $orden,
                     'establecimiento' => $establecimiento
                         )
         );
+        
+        return ($paraVerTodos) ? $view : new Response($view);
+    }
+    
+    /**
+     * @Route("/{planes}/vertodos/", name="calidad_planmejora_ver_todos")
+     */
+    public function verTodosAction($planes) {
+        $em = $this->getDoctrine()->getManager();
+        
+        $planesId = explode(',', $planes);
+        
+        $planesHtml = '';
+        foreach ($planesId as $k => $pId){
+            $plan = $em->find('CalidadBundle:PlanMejora', $pId);
+            
+            $planesHtml .= $this->verAction($plan, true, $k); 
+        }
+        
+        return new Response($planesHtml);
     }
     
     public function getHistorialCriterios(PlanMejora $planMejora, $indicadores) {
@@ -579,12 +599,13 @@ class PlanMejoraController extends Controller {
         $var_nivel1 = array();
         $var_nivel0 = array();
         foreach($variables as $v){
+            $nivel = $v->getNivelIndentacion();
             if($versionFrm == $v->getVersionFormulario()){
-                if ($v->getNivelIndentacion() == 0 ){
+                if ($nivel == 0 or $nivel == ''){
                     $var_nivel0[$v->getPosicion()] = $v;
-                } elseif ($v->getNivelIndentacion() == 1 ){
+                } elseif ($nivel == 1 ){
                     $var_nivel1[$v->getPosicion()] = $v;
-                } elseif ($v->getNivelIndentacion() == 2 ){
+                } elseif ($nivel == 2 ){
                     $var_nivel2[$v->getPosicion()] = $v;
                 }
             }

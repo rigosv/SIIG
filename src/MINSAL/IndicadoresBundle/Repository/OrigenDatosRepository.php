@@ -105,6 +105,9 @@ class OrigenDatosRepository extends EntityRepository
                     //$nombre_campos = array_keys($datos[0]);
 		    
                 }
+                
+                //Cerrar la conexión
+                $conn = null;
             } catch (\PDOException $e) {
                 echo $e->getMessage();
                 return false;

@@ -581,7 +581,9 @@ class FormularioRepository extends EntityRepository {
         $mes_ = '';
         if ($Frm->getPeriodoLecturaDatos() == 'mensual' ){
             $mes_ = " A.datos->'mes' AS mes, ";
-            $periodo_lectura = " AND (A.datos->'mes')::integer = '$mes' ";
+            if ($mes != null){
+                $periodo_lectura = " AND (A.datos->'mes')::integer = '$mes' ";
+            }
         }
         $whereAnio = '';
         if ($anio != null){

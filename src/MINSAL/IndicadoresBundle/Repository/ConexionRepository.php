@@ -33,9 +33,7 @@ class ConexionRepository extends EntityRepository {
             try {
                 if ($conexion->getIdMotor()->getCodigo() == 'pdo_mysql' or $conexion->getIdMotor()->getCodigo() == 'pdo_pgsql') {
                     $motor = explode('_', $conexion->getIdMotor()->getCodigo());
-                    $dbh = new \PDO($motor[1].':host='.$conexion->getIp().';dbname='.$conexion->getNombreBaseDatos(), $conexion->getUsuario(), $conexion->getClave(), array(
-                        \PDO::ATTR_PERSISTENT => true
-                    ));
+                    $dbh = new \PDO($motor[1].':host='.$conexion->getIp().';dbname='.$conexion->getNombreBaseDatos(), $conexion->getUsuario(), $conexion->getClave());
                     $connectionParams['pdo'] = $dbh;
                 }
                 if ($conexion->getPuerto() != '' and $conexion->getIdMotor()->getCodigo() != 'pdo_sqlite') {

@@ -50,7 +50,7 @@ class CargarOrigenDatoConsumer implements ConsumerInterface {
                 $sql = $msg['sql'];
 
                 foreach ($origenDato->getConexiones() as $cnx) {
-                    $leidos = 10001;
+                    $leidos = $tamanio + 1;
                     $i = 0;
                     echo '
 
@@ -161,8 +161,39 @@ class CargarOrigenDatoConsumer implements ConsumerInterface {
         $i = 0;
         $ii = 0;
         $grpMsj = 1;
-        if ($datos) {
+
+        if ( count($datos) > 0 ) {
+            //Cambiar el nombre de las llaves, en lugar de usar el nombre del campo
+            // se usará el nombre del significado
+            $datos_a_enviar = array();
             foreach ($datos as $fila) {
+                $nueva_fila = array();
+                foreach ($fila as $k => $v) {
+                    $nueva_fila[$campos_sig[$util->slug($k)]] = $v;
+                }
+                $datos_a_enviar[] = $nueva_fila;
+            }
+            
+            $msg_guardar = array('id_origen_dato' => $idOrigen,
+                'method' => 'PUT',
+                'datos' => $datos_a_enviar,
+                'ultima_lectura' => $ultima_lectura,
+                'r' => microtime(true),
+                'numMsj' => $this->numMsj++
+            );
+            
+            $msg_ = base64_encode(serialize($msg_guardar));
+            // Quitar caracteres no permitidos que podrian existir en el nombre de campo (tildes, eñes, etc)
+            //Verificar si ya está en UTF-8, si no, codificarlo
+            $msg = trim(mb_check_encoding($msg_, 'UTF-8') ? $msg_ : utf8_encode($msg_));
+            try {
+                $this->container->get('old_sound_rabbit_mq.guardar_registro_producer')
+                        ->publish($msg);
+            } catch (\Exception $e) {
+                echo $e->getMessage();
+            }
+            
+            /*foreach ($datos as $fila) {
                 $nueva_fila = array();
                 foreach ($fila as $k => $v) {
                     // Quitar caracteres no permitidos que podrian existir en el nombre de campo (tildes, eñes, etc)
@@ -195,10 +226,10 @@ class CargarOrigenDatoConsumer implements ConsumerInterface {
                     
                 }
                 $i++;
-            }
+            }*/
         }
         //Verificar si quedaron pendientes de enviar
-        if (count($datos_a_enviar) > 0) {
+        /*if (count($datos_a_enviar) > 0) {
             $msg_guardar = array('id_origen_dato' => $idOrigen,
                 'method' => 'PUT',
                 'datos' => $datos_a_enviar,
@@ -214,7 +245,7 @@ class CargarOrigenDatoConsumer implements ConsumerInterface {
             } catch (\Exception $e) {
                 echo $e->getMessage();
             }            
-        }
+        }*/
         echo ' 
             ';
     }
