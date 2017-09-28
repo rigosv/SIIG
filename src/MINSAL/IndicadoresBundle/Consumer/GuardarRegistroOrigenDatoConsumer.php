@@ -24,8 +24,6 @@ class GuardarRegistroOrigenDatoConsumer implements ConsumerInterface {
         
         $tabla = ($areaCosteo['area_costeo'] == '') ? 'origenes.fila_origen_dato_' . $msg['id_origen_dato'] : 'costos.fila_origen_dato_' . $areaCosteo['area_costeo'];
 
-        // Si se retorna falso se enviará un mensaje que le indicará al producer que no se pudo procesar
-        // correctamente el mensaje y será enviado nuevamente
         if ($msg['method'] == 'BEGIN') {
             // Iniciar borrando los datos que pudieran existir en la tabla auxiliar
             $sql = ' DROP TABLE IF EXISTS '.$tabla.'_tmp ;
@@ -38,21 +36,23 @@ class GuardarRegistroOrigenDatoConsumer implements ConsumerInterface {
         } elseif ($msg['method'] == 'PUT') {            
             
             $sql = "INSERT INTO $tabla"."_tmp(id_origen_dato, datos, ultima_lectura)
-                    VALUES ";
-            
+                    VALUES ($msg[id_origen_dato], :datos, '$msg[ultima_lectura]') ";
+            $sth = $this->em->getConnection()->prepare($sql);
             //$i = 0;
+            echo '(inicio: '.microtime(true);
             foreach ($msg['datos'] as $fila) {
                 $filaJson = json_encode($fila);
-                $sql .= "(:id_origen_dato, '$filaJson', :ultima_lectura), ";
+                $sth->bindParam(':datos', $filaJson);
+                try {
+                    $sth->execute();
+                } catch (\Doctrine\DBAL\DBALException $e) {
+                    echo $e->getMessage();
+                    return false;
+                }
+                
             }
-            $sql = trim($sql, ', ');
-            $sth = $this->em->getConnection()->prepare($sql);
-
-            $sth->bindParam(':id_origen_dato', $msg['id_origen_dato']);
-            $sth->bindParam(':ultima_lectura', $msg['ultima_lectura']);
-
-            $result = $sth->execute();
-            return (!$result) ? false : true;
+            echo ' - fin: '.microtime(true) . ') ****';
+            return true;
             
         } elseif ($msg['method'] == 'DELETE') {            
             //verificar si la tabla existe
