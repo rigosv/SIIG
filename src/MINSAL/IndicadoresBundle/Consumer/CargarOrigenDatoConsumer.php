@@ -42,8 +42,8 @@ class CargarOrigenDatoConsumer implements ConsumerInterface {
             $this->container->get('old_sound_rabbit_mq.guardar_registro_producer')
                     ->publish(base64_encode(serialize($msg_init)));
 
-            //Leeré los datos en grupos de 10,000
-            $tamanio = 10000;
+            //Leeré los datos en grupos de 5,000
+            $tamanio = 5000;
 
             if ($origenDato->getSentenciaSql() != '') {
                 //$sql = $origenDato->getSentenciaSql();
