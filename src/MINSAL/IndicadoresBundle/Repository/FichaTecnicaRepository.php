@@ -225,13 +225,30 @@ class FichaTecnicaRepository extends EntityRepository {
         }
 
         return $sql;
-    }
+    }       
 
+    public function totalRegistrosIndicador(FichaTecnica $fichaTecnica){
+        $nombre_indicador = $fichaTecnica->getId();
+        $tabla_indicador = 'temporales.tmp_ind_' . $nombre_indicador;
+        
+        $sql = "SELECT count(*) as total
+            FROM $tabla_indicador
+                ";
+
+        try {
+            $fila = $this->getEntityManager()->getConnection()->executeQuery($sql)->fetch();
+            return $fila['total'];
+        } catch (\PDOException $e) {
+            return $e->getMessage();
+        } catch (\Doctrine\DBAL\DBALException $e) {
+            return $e->getMessage();
+        }
+    }
     /**
      * Devuelve los datos del indicador sin procesar la fórmula
      * esto será utilizado en la tabla dinámica
      */
-    public function getDatosIndicador(FichaTecnica $fichaTecnica) {
+    public function getDatosIndicador(FichaTecnica $fichaTecnica, $offset = 0 , $limit = 100000000) {
         //$util = new \MINSAL\IndicadoresBundle\Util\Util();
 
         $nombre_indicador = $fichaTecnica->getId();
@@ -279,8 +296,10 @@ class FichaTecnicaRepository extends EntityRepository {
         $sql = "SELECT $campos, $variables
             FROM $tabla_indicador A 
                 $rel_catalogos
-            GROUP BY $campos_grp    ";
-
+            GROUP BY $campos_grp
+            OFFSET $offset LIMIT $limit
+                ";
+        
         try {
             return $this->getEntityManager()->getConnection()->executeQuery($sql)->fetchAll();
         } catch (\PDOException $e) {
