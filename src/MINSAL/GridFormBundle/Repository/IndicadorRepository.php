@@ -1024,7 +1024,10 @@ class IndicadorRepository extends EntityRepository {
     public function getDatosCalidad($idFormulario) {
         $em = $this->getEntityManager();
         
-        if ($idFormulario == 'general'){
+        if ($idFormulario == 'general_pna' or $idFormulario == 'general_hosp'){
+            $nivel = explode('_', $idFormulario);
+            $niveles = $this->getNivelesEstablecimiento($nivel[1]);
+            
             $sql = "SELECT codigo_estandar, B.nombre AS estandar, codigo_indicador, anio, mes, 
                         descripcion_indicador, calificacion AS calificacion_indicador, 
                         nombre_establecimiento, nombre_corto AS establecimiento_nombre_corto,
@@ -1047,7 +1050,9 @@ class IndicadorRepository extends EntityRepository {
                         )::numeric * 100,2) AS calificacion_estandar
                     FROM datos_evaluacion_calidad A
                         INNER JOIN costos.formulario B ON (A.codigo_estandar = B.codigo)
-                    WHERE B.id IN (96, 97, 98, 99, 103, 104)
+                        INNER JOIN ctl_establecimiento_simmow C ON (A.establecimiento = C.id::varchar)
+                        
+                    WHERE C.id_tipo_establecimiento IN $niveles
                         ";
             return $em->getConnection()->executeQuery($sql)->fetchAll();
         }
@@ -1198,5 +1203,23 @@ class IndicadorRepository extends EntityRepository {
             $establecimientosAutorizados[] = $e['codigo_establecimiento'];
         }
         return $establecimientosAutorizados;
+    }
+    
+    public function getIndicadoresEvaluadosListaChequeoNivel($nivel){
+        $em = $this->getEntityManager();
+        $niveles = $this->getNivelesEstablecimiento($nivel);
+        
+        $sql = "SELECT A.codigo_estandar, B.id AS id_formulario, D.codigo, D.nombre
+                    FROM datos_evaluacion_calidad A
+                        INNER JOIN costos.formulario B ON (A.codigo_estandar = B.codigo)                        
+                        INNER JOIN ctl_establecimiento_simmow C ON (A.establecimiento = C.id::varchar)
+                        INNER JOIN calidad.estandar D ON (B.id = D.formulariocaptura_id)
+                    WHERE  id_formulario_sup is null
+                        AND C.id_tipo_establecimiento IN $niveles
+                    GROUP BY A.codigo_estandar, B.id, D.posicion, D.codigo, D.nombre
+                    ORDER BY D.posicion
+                    ";
+        
+        return $em->getConnection()->executeQuery($sql)->fetchAll();
     }
 }

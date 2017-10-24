@@ -249,12 +249,21 @@ class FichaTecnicaAdminController extends Controller {
             //Recuperar los formularios 
             $formularios = $em->getRepository('GridFormBundle:Formulario')->findBy(array('areaCosteo'=>'almacen_datos'));            
         }
-
+        
+        $estandaresCalidad = array('pna' => array(), 'hosp'=>array());
+        if ($usuario->hasRole('ROLE_SUPER_ADMIN') or $usuario->hasRole('ROLE_USER_TABLERO_CALIDAD')) {
+            //Recuperar los formularios 
+            $estandaresCalidad['pna'] = $em->getRepository('GridFormBundle:Indicador')->getIndicadoresEvaluadosListaChequeoNivel('pna');
+            $estandaresCalidad['hosp'] = $em->getRepository('GridFormBundle:Indicador')->getIndicadoresEvaluadosListaChequeoNivel('hosp');
+            
+        }
+        
         return $this->render('IndicadoresBundle:FichaTecnicaAdmin:pivotTable.html.twig', array(
                     'categorias' => $datos['categorias'],
                     'clasificacionUso' => $datos['clasficacion_uso'],
                     'indicadores_no_clasificados' => $datos['indicadores_no_clasificados'],
-                    'formularios' => $formularios
+                    'formularios' => $formularios,
+                    'estandaresCalidad' => $estandaresCalidad
         ));
     }
     

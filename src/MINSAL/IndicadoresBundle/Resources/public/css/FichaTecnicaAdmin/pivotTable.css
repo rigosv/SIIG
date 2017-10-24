@@ -127,3 +127,7 @@ div.popover-content, div.popover-title{
     padding: 0 10px;
     min-height: 450px;
 }
+
+.calidad_datos_item {
+    cursor: pointer;
+}
