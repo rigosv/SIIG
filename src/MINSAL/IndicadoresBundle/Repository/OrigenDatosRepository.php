@@ -109,16 +109,16 @@ class OrigenDatosRepository extends EntityRepository
                 //Cerrar la conexión
                 $conn = null;
             } catch (\PDOException $e) {
-                echo $e->getMessage();
+                echo 'OD 1' . $e->getMessage();
                 return false;
             } catch (\Exception $e) {
-                echo $e->getMessage();
+                echo 'OD 2' .$e->getMessage();
                 return false;
             } catch (\ErrorException $e) {
-                echo $e->getMessage();
+                echo 'OD 3' .$e->getMessage();
                 return false;
             }catch (DBAL\DBALException $e) {
-                echo $e->getMessage();
+                echo 'OD 4' .$e->getMessage();
                 return false;
             }
         } else {

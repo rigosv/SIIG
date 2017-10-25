@@ -54,12 +54,13 @@ class CargarOrigenDatoConsumer implements ConsumerInterface {
                     $i = 0;
                     echo '
 
-    *********************************************************************************************
-    *********************************************************************************************
-    Conexion '.$cnx.' '.microtime(true).' Origen: '.$idOrigen.' 
+                    *********************************************************************************************
+                    *********************************************************************************************
+                    Conexion '.$cnx.' '.microtime(true).' Origen: '.$idOrigen.' 
                         ';
                     $lect = 1;
-                    while ($leidos >= $tamanio) {
+                    $datos = true;
+                    while ($leidos >= $tamanio and $datos != false) {
                         if ($cnx->getIdMotor()->getCodigo() == 'oci8') {
                             $sql_aux = ($msg['esLecturaIncremental']) ?
                                     "SELECT * FROM ( $sql )  sqlOriginal 
@@ -145,9 +146,9 @@ class CargarOrigenDatoConsumer implements ConsumerInterface {
             $origenDato->setUltimaActualizacion($fecha);
             $em->flush();
         } catch (\Exception $e) {
-            echo $e->getMessage();
+            echo 'CODC 1' . $e->getMessage();
         } catch (\ErrorException $e) {
-            echo $e->getMessage();
+            echo 'CODC 1' . $e->getMessage();
         }
         return true;
     }
@@ -193,59 +194,8 @@ class CargarOrigenDatoConsumer implements ConsumerInterface {
                 echo $e->getMessage();
             }
             
-            /*foreach ($datos as $fila) {
-                $nueva_fila = array();
-                foreach ($fila as $k => $v) {
-                    // Quitar caracteres no permitidos que podrian existir en el nombre de campo (tildes, eñes, etc)
-                    //Verificar si ya está en UTF-8, si no, codificarlo
-                    $nueva_fila[$campos_sig[$util->slug($k)]] = trim(mb_check_encoding($v, 'UTF-8') ? $v : utf8_encode($v));
-                }
-                $datos_a_enviar[] = $nueva_fila;
-                //Enviaré en grupos de 200
-                if ($i == 200) {
-                    $msg_guardar = array('id_origen_dato' => $idOrigen,
-                        'method' => 'PUT',
-                        'datos' => $datos_a_enviar,
-                        'ultima_lectura' => $ultima_lectura,
-                        'num_msj' => $ii++,
-                        'r' => microtime(true),
-                        'numMsj' => $this->numMsj++
-                    );
-                    echo ' Envio grupo '. $grpMsj++ .' Origen: '.$idOrigen;
-                    try {
-                        $this->container->get('old_sound_rabbit_mq.guardar_registro_producer')
-                                ->publish(base64_encode(serialize($msg_guardar)));
-                    } catch (\Exception $e) {
-                        echo $e->getMessage();
-                    }
-                    
-                    unset($datos_a_enviar);
-                    $datos_a_enviar = array();
-                    $i = 0;
-                    
-                    
-                }
-                $i++;
-            }*/
+            
         }
-        //Verificar si quedaron pendientes de enviar
-        /*if (count($datos_a_enviar) > 0) {
-            $msg_guardar = array('id_origen_dato' => $idOrigen,
-                'method' => 'PUT',
-                'datos' => $datos_a_enviar,
-                'ultima_lectura' => $ultima_lectura,
-                'num_msj' => $ii++,
-                'r' => microtime(true),
-                'numMsj' => $this->numMsj++
-            );
-            try {
-                //echo ' Envio grupo '. $grpMsj++ ;
-                $this->container->get('old_sound_rabbit_mq.guardar_registro_producer')
-                        ->publish(base64_encode(serialize($msg_guardar)));
-            } catch (\Exception $e) {
-                echo $e->getMessage();
-            }            
-        }*/
         echo ' 
             ';
     }
