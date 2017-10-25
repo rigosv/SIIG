@@ -69,7 +69,6 @@ $(document).ready(function() {
             //Construir los options de tipo_datoe
             var tipos_datos = '';
             if (resp.estado === 'error') {
-                alert(resp.mensaje);
                 $('#mensajito_cambio').html('<DIV class="alert alert-error">' + resp.mensaje + '</DIV>');
             }
             else {

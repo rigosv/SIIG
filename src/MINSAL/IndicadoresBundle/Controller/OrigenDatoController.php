@@ -211,7 +211,7 @@ class OrigenDatoController extends Controller
                 $resultado['tipo_origen'] = 'sql';
                 $sentenciaSQL = $origenDato->getSentenciaSql();
                 $conexiones = $origenDato->getConexiones();
-
+                
                 if (count($conexiones) == 0) {
                     $resultado['mensaje'] = $this->get('translator')->trans('sentencia_error') . ': ' . $this->get('translator')->trans('_no_conexion_configurada_');
                     $resultado['estado'] = 'error';
@@ -220,7 +220,7 @@ class OrigenDatoController extends Controller
                     $resultado['estado'] = 'error';
                     while ($jj < count($conexiones) and $resultado['estado'] != 'ok')
                     {
-                        $resultado = $this->getDatosMuestra($conexiones[$jj], $sentenciaSQL, $request);
+                        $resultado = $this->getDatosMuestra($conexiones[$jj++], $sentenciaSQL, $request);
                     }
 
                 }
@@ -360,7 +360,7 @@ class OrigenDatoController extends Controller
         try {
             $em->flush();
         } catch (\Exception $e) {
-            $resultado = array('estado' => 'error', 'mensaje' => $this->get('translator')->trans('camio_no_realizado'));
+            $resultado = array('estado' => 'error', 'mensaje' => $this->get('translator')->trans('cambio_no_realizado'));
         }
 
         return new Response(json_encode($resultado));
@@ -392,40 +392,43 @@ class OrigenDatoController extends Controller
         $conn = $this->getConexionGenerica('consulta_sql', $conexion, $request);
         $resultado = array();
         $resultado['estado'] = 'error';
-        try {
-            if ($this->driver == 'pdo_dblib') {
-                $sentenciaSQL = str_ireplace('SELECT', 'SELECT TOP 20 ', $sentenciaSQL);
-                $query = mssql_query($sentenciaSQL, $conn);
-                if (mssql_num_rows($query) > 0) {
-                    while ($row = mssql_fetch_assoc($query))
-                        $resultado['datos'][] = $row;
-                    //$resultado['nombre_campos'] = array_keys($resultado['datos'][0]);
-                }
-            } else {
-                $query = $conn->query($sentenciaSQL);
+        $resultado['mensaje'] = $this->get('translator')->trans('_error_conexion_');
+        if ($conexion != false){
+            try {
+                if ($this->driver == 'pdo_dblib') {
+                    $sentenciaSQL = str_ireplace('SELECT', 'SELECT TOP 20 ', $sentenciaSQL);
+                    $query = mssql_query($sentenciaSQL, $conn);
+                    if (mssql_num_rows($query) > 0) {
+                        while ($row = mssql_fetch_assoc($query))
+                            $resultado['datos'][] = $row;
+                        //$resultado['nombre_campos'] = array_keys($resultado['datos'][0]);
+                    }
+                } else {
+                    $query = $conn->query($sentenciaSQL);
 
-                $i = 0; $datos = array();
-                while ($row = $query->fetch() and $i++ < 20) {
-                    $datos[] = $row;
+                    $i = 0; $datos = array();
+                    while ($row = $query->fetch() and $i++ < 20) {
+                        $datos[] = $row;
+                    }
+                    $resultado['datos'] = $datos;
                 }
-                $resultado['datos'] = $datos;
+
+                if (count($resultado['datos']) > 0){
+                    $resultado['nombre_campos'] = array_keys($resultado['datos'][0]);
+
+                    $resultado['estado'] = 'ok';
+                    $resultado['mensaje'] = '<span style="color: green">' . $this->get('translator')->trans('sentencia_success');
+                } else {
+                    $resultado['estado'] = 'error';
+                    $resultado['mensaje'] = $this->get('translator')->trans('_no_datos_');
+                }
+            } catch (\PDOException $e) {
+                $resultado['mensaje'] = $this->get('translator')->trans('sentencia_error') . ' 1: ' . $e->getMessage();
+            } catch (DBAL\DBALException $e) {
+                $resultado['mensaje'] = $this->get('translator')->trans('sentencia_error') . ' 2: ' . $e->getMessage();
+            } catch (\Exception $e) {
+                $resultado['mensaje'] = $this->get('translator')->trans('sentencia_error') . ' 3: ' . $e->getMessage();
             }
-            
-            if (count($resultado['datos']) > 0){
-                $resultado['nombre_campos'] = array_keys($resultado['datos'][0]);
-                
-                $resultado['estado'] = 'ok';
-                $resultado['mensaje'] = '<span style="color: green">' . $this->get('translator')->trans('sentencia_success');
-            } else {
-                $resultado['estado'] = 'error';
-                $resultado['mensaje'] = '<span style="color: green">' . $this->get('translator')->trans('_no_datos_');
-            }
-        } catch (\PDOException $e) {
-            $resultado['mensaje'] = $this->get('translator')->trans('sentencia_error') . ' 1: ' . $e->getMessage();
-        } catch (DBAL\DBALException $e) {
-            $resultado['mensaje'] = $this->get('translator')->trans('sentencia_error') . ' 2: ' . $e->getMessage();
-        } catch (\Exception $e) {
-            $resultado['mensaje'] = $this->get('translator')->trans('sentencia_error') . ' 3: ' . $e->getMessage();
         }
         
         return $resultado;
