@@ -102,6 +102,7 @@ class GuardarRegistroOrigenDatoConsumer implements ConsumerInterface {
                                     AND datos->'$msg[campo_lectura_incremental]' >= '$msg[lim_inf]'
                                     AND datos->'$msg[campo_lectura_incremental]' <= '$msg[lim_sup]'
                                     $conexionWhere
+                                    OR (id_origen_dato = '$msg[id_origen_dato]' AND id_conexion is null)
                                     ;
                         INSERT INTO $tabla SELECT * FROM $tabla"."_tmp WHERE id_origen_dato='$msg[id_origen_dato]' $conexionWhere;
                         DROP TABLE IF EXISTS ".$tabla.'_tmp ;';
@@ -110,7 +111,8 @@ class GuardarRegistroOrigenDatoConsumer implements ConsumerInterface {
                     //Borrar los datos anteriores
                     $sql = "DELETE 
                                 FROM $tabla 
-                                WHERE id_origen_dato = '$msg[id_origen_dato]' $conexionWhere ";
+                                WHERE (id_origen_dato = '$msg[id_origen_dato]' $conexionWhere) 
+                                    OR (id_origen_dato = '$msg[id_origen_dato]' AND id_conexion is null) ";
                     $this->em->getConnection()->exec($sql);
 
                     $sql = "INSERT INTO $tabla SELECT * FROM $tabla"."_tmp WHERE id_origen_dato='$msg[id_origen_dato]' $conexionWhere";
@@ -130,7 +132,7 @@ class GuardarRegistroOrigenDatoConsumer implements ConsumerInterface {
             $this->em->getConnection()->exec($sql);
             
             echo '
-            Carga finalizada de origen ' . $msg['id_origen_dato'] . '
+            Carga finalizada de origen ' . $msg['id_origen_dato'] . ' Para la conexión ' . $idConexion . '  
 
             ';
             //$this->em->getConnection()->commit();
