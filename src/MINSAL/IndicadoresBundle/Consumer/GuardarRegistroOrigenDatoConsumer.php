@@ -20,10 +20,10 @@ class GuardarRegistroOrigenDatoConsumer implements ConsumerInterface {
 
         //Verificar si tiene código de costeo
         $sql = "SELECT area_costeo FROM origen_datos WHERE id = $msg[id_origen_dato]";
-        $areaCosteo = $this->em->getConnection()->executeQuery($sql)->fetch();
+        $areaCosteo = $this->em->getConnection()->executeQuery($sql)->fetch();        
         
         $tabla = ($areaCosteo['area_costeo'] == '') ? 'origenes.fila_origen_dato_' . $msg['id_origen_dato'] : 'costos.fila_origen_dato_' . $areaCosteo['area_costeo'];
-
+        $idConexion = ( array_key_exists('id_conexion', $msg) ) ? $msg['id_conexion'] : 'null' ;
         if ($msg['method'] == 'BEGIN') {
             // Iniciar borrando los datos que pudieran existir en la tabla auxiliar
             $sql = ' DROP TABLE IF EXISTS '.$tabla.'_tmp ;
@@ -33,10 +33,11 @@ class GuardarRegistroOrigenDatoConsumer implements ConsumerInterface {
             $this->em->getConnection()->exec($sql);
             return true;
             
-        } elseif ($msg['method'] == 'PUT') {            
+        } elseif ($msg['method'] == 'PUT') {
             
-            $sql = "INSERT INTO $tabla"."_tmp(id_origen_dato, datos, ultima_lectura)
-                    VALUES ($msg[id_origen_dato], :datos, '$msg[ultima_lectura]') ";
+            
+            $sql = "INSERT INTO $tabla"."_tmp(id_origen_dato, datos, ultima_lectura, id_conexion)
+                    VALUES ($msg[id_origen_dato], :datos, '$msg[ultima_lectura]' , $idConexion) ";
             $sth = $this->em->getConnection()->prepare($sql);
             //$i = 0;
             echo '(inicio: '.microtime(true);
@@ -55,6 +56,7 @@ class GuardarRegistroOrigenDatoConsumer implements ConsumerInterface {
             return true;
             
         } elseif ($msg['method'] == 'DELETE') {            
+            $conexionWhere = ( $idConexion == 'null' ) ? ' AND id_conexion is null ' : ' AND id_conexion = ' . $idConexion;  
             //verificar si la tabla existe
             if ($tabla == 'origenes.fila_origen_dato_' . $msg['id_origen_dato']) {
                 try {
@@ -93,31 +95,23 @@ class GuardarRegistroOrigenDatoConsumer implements ConsumerInterface {
                                 WHERE id_origen_dato='$msg[id_origen_dato]'  
                                     AND datos->'$msg[campo_lectura_incremental]' >= '$msg[lim_inf]'
                                     AND datos->'$msg[campo_lectura_incremental]' <= '$msg[lim_sup]'
+                                    $conexionWhere
                                     ;
-                        INSERT INTO $tabla SELECT * FROM $tabla"."_tmp WHERE id_origen_dato='$msg[id_origen_dato]';
+                        INSERT INTO $tabla SELECT * FROM $tabla"."_tmp WHERE id_origen_dato='$msg[id_origen_dato]' $conexionWhere;
                         DROP TABLE IF EXISTS ".$tabla.'_tmp ;';
                         
                 } else {
                     //Borrar los datos anteriores
-                    $sql = "DROP TABLE IF EXISTS $tabla ;";
+                    $sql = "DELETE 
+                                FROM $tabla 
+                                WHERE id_origen_dato = '$msg[id_origen_dato]' $conexionWhere ";
                     $this->em->getConnection()->exec($sql);
 
-                    $sql = "SELECT * INTO $tabla FROM $tabla"."_tmp WHERE id_origen_dato='$msg[id_origen_dato]' ";
+                    $sql = "INSERT INTO $tabla SELECT * FROM $tabla"."_tmp WHERE id_origen_dato='$msg[id_origen_dato]' $conexionWhere";
                     $this->em->getConnection()->exec($sql);
-                    /*        
-                    $tamanio = 100000;
-                    $totalReg = 0;
-                    $leidos = 1;
-                    $i = 0;
-                    while ($leidos > 0) {
-                        $sql_aux = $sql . ' LIMIT ' . $tamanio . ' OFFSET ' . $i * $tamanio;
-                        $leidos = $this->em->getConnection()->exec($sql_aux);
-                        $i++;
-                    }*/
+                    
                     $sql = ' DROP TABLE IF EXISTS '.$tabla.'_tmp ';
-                    //$sql = "
-                      //  DELETE FROM fila_origen_dato_aux WHERE id_origen_dato='$msg[id_origen_dato]' ;
-                        //";
+                    
                 }
             }
             $this->em->getConnection()->exec($sql);
@@ -130,9 +124,9 @@ class GuardarRegistroOrigenDatoConsumer implements ConsumerInterface {
             $this->em->getConnection()->exec($sql);
             
             echo '
-Carga finalizada de origen ' . $msg['id_origen_dato'] . '
+            Carga finalizada de origen ' . $msg['id_origen_dato'] . '
 
-';
+            ';
             //$this->em->getConnection()->commit();
 
             /* Mover esto a otro lugar más adecuado, aquí hace que la carga de los indicadores tarde mucho

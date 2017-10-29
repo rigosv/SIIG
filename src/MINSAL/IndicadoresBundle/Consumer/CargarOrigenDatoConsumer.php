@@ -33,15 +33,6 @@ class CargarOrigenDatoConsumer implements ConsumerInterface {
             ';
         
         try {
-            //Iniciar borrando los datos de la tabla auxiliar
-            $msg_init = array('id_origen_dato' => $idOrigen,
-                'method' => 'BEGIN',
-                'r' => microtime(true),
-                'numMsj' => $this->numMsj++
-            );
-            $this->container->get('old_sound_rabbit_mq.guardar_registro_producer')
-                    ->publish(base64_encode(serialize($msg_init)));
-
             //Leeré los datos en grupos de 5,000
             $tamanio = 5000;
 
@@ -60,6 +51,7 @@ class CargarOrigenDatoConsumer implements ConsumerInterface {
                         ';
                     $lect = 1;
                     $datos = true;
+                    $this->enviarMsjInicio($idOrigen);
                     while ($leidos >= $tamanio and $datos != false) {
                         if ($cnx->getIdMotor()->getCodigo() == 'oci8') {
                             $sql_aux = ($msg['esLecturaIncremental']) ?
@@ -105,7 +97,7 @@ class CargarOrigenDatoConsumer implements ConsumerInterface {
 
                             ' ;
                         } else {
-                            $this->enviarDatos($idOrigen, $datos, $campos_sig, $ahora);
+                            $this->enviarDatos($idOrigen, $datos, $campos_sig, $ahora, $cnx->getId());
                             if ($cnx->getIdMotor()->getCodigo() == 'pdo_dblib')
                                 $leidos = 1;
                             else
@@ -118,30 +110,24 @@ class CargarOrigenDatoConsumer implements ConsumerInterface {
                         }
                         $lect++;
 
-                    }
+                    }                    
+                    
+                    $this->enviarMsjFinal($msg, $idOrigen, $ahora, $cnx->getId());
                 }
             } else {
                 $datos = $em->getRepository('IndicadoresBundle:OrigenDatos')->getDatos(null, null, $origenDato->getAbsolutePath());
-                $this->enviarDatos($idOrigen, $datos, $campos_sig, $ahora);
+                $this->enviarMsjInicio($idOrigen);
+                
+                $this->enviarDatos($idOrigen, $datos, $campos_sig, $ahora, $cnx->getId(), null);
+                
+                $this->enviarMsjFinal($msg, $idOrigen, $ahora, null);
             }
-            //Después de enviados todos los registros para guardar, mandar mensaje para borrar los antiguos
-            $msg_guardar = array('id_origen_dato' => $idOrigen,
-                'method' => 'DELETE',
-                'ultima_lectura' => $ahora,
-                'es_lectura_incremental' => $msg['esLecturaIncremental'],
-                'lim_inf' => $msg['lim_inf'],
-                'lim_sup' => $msg['lim_sup'],
-                'campo_lectura_incremental' => $msg['campoLecturaIncremental'],
-                'r' => microtime(true),
-                'numMsj' => $this->numMsj++
-            );
+            
 
             echo '
                 ==========FIN DE CARGA=========== '. $origenDato .' TIEMPO: '. microtime(true).' Origen: '.$idOrigen.' 
                     ULTIMO MENSAJE # '. $this->numMsj.' 
-                ';
-            $this->container->get('old_sound_rabbit_mq.guardar_registro_producer')
-                    ->publish(base64_encode(serialize($msg_guardar)));
+                ';            
 
             $origenDato->setUltimaActualizacion($fecha);
             $em->flush();
@@ -152,8 +138,36 @@ class CargarOrigenDatoConsumer implements ConsumerInterface {
         }
         return true;
     }
+    
+    private function enviarMsjFinal ($msg, $idOrigen, $ahora, $idConexion) {
+        //Después de enviados todos los registros para guardar, mandar mensaje para borrar los antiguos
+        $msg_guardar = array('id_origen_dato' => $idOrigen,
+            'method' => 'DELETE',
+            'ultima_lectura' => $ahora,
+            'es_lectura_incremental' => $msg['esLecturaIncremental'],
+            'lim_inf' => $msg['lim_inf'],
+            'lim_sup' => $msg['lim_sup'],
+            'id_conexion' =>$idConexion,
+            'campo_lectura_incremental' => $msg['campoLecturaIncremental'],
+            'r' => microtime(true),
+            'numMsj' => $this->numMsj++
+        );
 
-    public function enviarDatos($idOrigen, $datos, $campos_sig, $ultima_lectura) {
+        $this->container->get('old_sound_rabbit_mq.guardar_registro_producer')
+            ->publish(base64_encode(serialize($msg_guardar)));
+    }
+    
+    private function enviarMsjInicio ($idOrigen) {
+        $msg_init = array('id_origen_dato' => $idOrigen,
+                'method' => 'BEGIN',
+                'r' => microtime(true),
+                'numMsj' => $this->numMsj++
+            );
+            $this->container->get('old_sound_rabbit_mq.guardar_registro_producer')
+                    ->publish(base64_encode(serialize($msg_init)));
+    }
+
+    public function enviarDatos($idOrigen, $datos, $campos_sig, $ultima_lectura, $idConexion) {
         //Esta cola la utilizaré solo para leer todos los datos y luego mandar uno por uno
         // a otra cola que se encarará de guardarlo en la base de datos
         // luego se puede probar a mandar por grupos
@@ -179,6 +193,7 @@ class CargarOrigenDatoConsumer implements ConsumerInterface {
                 'method' => 'PUT',
                 'datos' => $datos_a_enviar,
                 'ultima_lectura' => $ultima_lectura,
+                'id_conexion' => $idConexion,
                 'r' => microtime(true),
                 'numMsj' => $this->numMsj++
             );
