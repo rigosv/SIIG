@@ -146,7 +146,7 @@ sonata_admin:
         #delete:  IndicadoresBundle:CRUD:delete.html.twig
         list_block: IndicadoresBundle:Block:block_admin_list.html.twig
         knp_menu_template: IndicadoresBundle:Menu:main_menu.html.twig
-                
+        
         
 fos_user:
     db_driver:        orm # can be orm or odm
@@ -235,30 +235,6 @@ old_sound_rabbit_mq:
             callback:         indicadores.guardar_registro_origen_dato
             qos_options:      {prefetch_size: 0, prefetch_count: 1, global: false}
             enable_logger: true
-            
-services:
-    my_listener:
-        class: MINSAL\IndicadoresBundle\Listener\LocaleListener
-        arguments: [%locale%]
-        tags:
-            -  { name: kernel.event_subscriber }
-    
-    monolog.processor.siig:
-        class: MINSAL\IndicadoresBundle\FormatoVitacora
-        arguments:  ["@service_container"]
-        tags:
-            - { name: monolog.processor, handler: vitacora.siig}
-            
-    vitacora.siig:
-        class: Symfony\Bridge\Monolog\Logger
-        arguments: [ACTIVIDAD]
-        calls:
-            - [pushHandler, [@monolog.handler.vitacora.siig]]
-        
-    monolog.handler.vitacora.siig:
-        class: Monolog\Handler\StreamHandler
-        arguments: [%archivo_vitacora%, 200] #definido en Parameters.yml
-
 
 #Fr3d_LDAP
 #fr3d_ldap:
