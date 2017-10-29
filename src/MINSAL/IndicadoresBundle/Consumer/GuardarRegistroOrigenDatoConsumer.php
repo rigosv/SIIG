@@ -89,6 +89,12 @@ class GuardarRegistroOrigenDatoConsumer implements ConsumerInterface {
                                     (SELECT datos->'codigo_af' FROM $tabla); 
                         DROP TABLE IF EXISTS ".$tabla.'_tmp; ';
             } else {
+                //Código temporal para agregar una columna si la tabla no la tiene
+                try {
+                    $sql = "ALTER TABLE $tabla ADD column id_conexion integer";
+                    $this->em->getConnection()->exec($sql);
+                } catch (\Exception $exc) {}
+                
                 if ($msg['es_lectura_incremental']) {
                     $sql = "DELETE 
                                 FROM $tabla 
@@ -99,7 +105,7 @@ class GuardarRegistroOrigenDatoConsumer implements ConsumerInterface {
                                     ;
                         INSERT INTO $tabla SELECT * FROM $tabla"."_tmp WHERE id_origen_dato='$msg[id_origen_dato]' $conexionWhere;
                         DROP TABLE IF EXISTS ".$tabla.'_tmp ;';
-                        
+
                 } else {
                     //Borrar los datos anteriores
                     $sql = "DELETE 
@@ -109,9 +115,9 @@ class GuardarRegistroOrigenDatoConsumer implements ConsumerInterface {
 
                     $sql = "INSERT INTO $tabla SELECT * FROM $tabla"."_tmp WHERE id_origen_dato='$msg[id_origen_dato]' $conexionWhere";
                     $this->em->getConnection()->exec($sql);
-                    
+
                     $sql = ' DROP TABLE IF EXISTS '.$tabla.'_tmp ';
-                    
+
                 }
             }
             $this->em->getConnection()->exec($sql);
