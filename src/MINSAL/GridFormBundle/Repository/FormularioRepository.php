@@ -655,7 +655,7 @@ class FormularioRepository extends EntityRepository {
      */
     
     public function getCriterios($establecimiento, $periodo, $formulario) {
-        $em = $this->getEntityManager();        
+        $em = $this->getEntityManager();
         list($anio, $mes) = explode('_', $periodo);
         
         
