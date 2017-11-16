@@ -38,13 +38,19 @@ class FormularioAdminController extends Controller {
         $periodosEstructura = array();
         if ($codigoFrm == 'captura_variables') {
             $Frm = null;
+            $aux = array();
             if ($periodo != '-1') {
                 //Si ya se eligió un periodo ya se puede determinar el formulario, seleccionado
                 $Frm = $periodoSeleccionado->getFormulario();
-            }
-            //Buscar todos los formularios del areaCosteo almacen_datos asignados al usuario
-            $aux = $em->getRepository("GridFormBundle:PeriodoIngresoDatosFormulario")
+                
+                //Buscar los periodos activos para ese usuario en el formulario elegido
+                $aux = $em->getRepository("GridFormBundle:PeriodoIngresoDatosFormulario")
+                    ->findBy(array('usuario' => $this->getUser(), 'formulario'=>$Frm), array('formulario' => 'ASC', 'periodo' => 'ASC'));
+            } else {
+                //Buscar todos los formularios del areaCosteo almacen_datos asignados al usuario
+                $aux = $em->getRepository("GridFormBundle:PeriodoIngresoDatosFormulario")
                     ->findBy(array('usuario' => $this->getUser()), array('formulario' => 'ASC', 'periodo' => 'ASC'));
+            }            
 
             foreach ($aux as $p) {
                 if ($p->getFormulario()->getAreaCosteo() == 'almacen_datos' or $p->getFormulario()->getAreaCosteo() == 'calidad')

@@ -175,7 +175,7 @@ $(document).ready(function() {
         $('.zona_actual').removeClass('zona_actual');
         var cantidad = parseInt(cant + 1);
         var html = 
-                '<div id="zgrafico_' + cantidad + '" ><div class="area_grafico zona_actual panel panel-success" id="grafico_' + parseInt(cant + 1) + '" >' +
+                '<div id="zgrafico_' + cantidad + '" class="contenedorGrafico"><div class="area_grafico zona_actual panel panel-success" id="grafico_' + parseInt(cant + 1) + '" >' +
                 "<DIV class= 'titulo panel-heading'><h5><span class='titulo_indicador '></span>" +
                 "<span>(" + trans.por + " <span class='dimension' ></span>)</span></h5>" +
                 '</DIV>' +

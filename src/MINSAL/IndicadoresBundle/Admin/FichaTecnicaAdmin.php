@@ -11,6 +11,7 @@ use MINSAL\IndicadoresBundle\Entity\FichaTecnica;
 use Sonata\AdminBundle\Route\RouteCollection;
 use Sonata\AdminBundle\Show\ShowMapper;
 use Sonata\DoctrineORMAdminBundle\Datagrid\ProxyQuery;
+use Sonata\CoreBundle\Form\Type\CollectionType;
 
 class FichaTecnicaAdmin extends Admin
 {
@@ -71,12 +72,11 @@ class FichaTecnicaAdmin extends Admin
                 ->end()
                 ->tab(('_configuracion_'))
                     ->with(('alertas'))
-                        ->add('alertas', 'sonata_type_collection', array(
+                        ->add('alertas', CollectionType::class, array(
                             'label' => ('alertas'),
                             'required' => true), array(
                             'edit' => 'inline',
-                            'inline' => 'table',
-                            'sortable' => 'position'
+                            'inline' => 'table'
                         ))
                     ->end()
                     ->with(('_dimensiones_'))

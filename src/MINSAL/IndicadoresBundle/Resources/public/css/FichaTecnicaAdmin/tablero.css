@@ -68,10 +68,12 @@ input.valores_filtro{
     border-bottom: 3px solid green;
 }
 
+.contenedorGrafico{
+    float: left;
+}
 .area_grafico { 
     position: relative;
-    margin: 3px 12px 3px 0; 
-    float: left;     
+    margin: 3px 12px 3px 0;
     overflow-y: auto;
     border: 1px gray dashed; 
 }
