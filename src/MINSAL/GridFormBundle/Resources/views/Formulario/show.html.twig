@@ -163,8 +163,12 @@
                         }
                         //Verificar si es lógica de salto
                         var posicion = filasFormulas_{{Frm.id}}.indexOf(row+'_LS');
-                        if (posicion != -1 && columnfield != 'descripcion_variable'){
+                        if (posicion != -1 && columnfield != 'descripcion_variable'){                            
                             noAplica_class = ( evalLadoDerecho(row, columnfield, value, operacionesFormulas_{{Frm.id}}[posicion], {{Frm.id}}) ) ? '' : 'no_aplica';
+                        }
+                        
+                        if ( noAplica_class == 'no_aplica' && value != '' ){
+                            $("#jqxgrid{{Frm.id}}").jqxGrid('setcellvalue', row, columnfield, '');
                         }
                     {% endif %}
                     return no_edit_class + ' ' + oculto_class + ' ' + noAplica_class;
@@ -948,8 +952,8 @@
                     result = result.toFixed(0);
                 }
 
-                var valor;
-                if ( lados_formula[0].replace(/\$\{F|\}/g,'').trim() == fila_destino+'_LS'){
+                var valor;                
+                if ( lados_formula[0].replace(/\$\{F|\}/g,'').trim() == fila_destino+'_LS'){                    
                     valor = (result) ? (datarow_dest.codigo_tipo_control == 'checkbox' || datarow_dest.codigo_tipo_control == 'checkbox_3_states') ? false : null : ''; 
                 }else if ( lados_formula[0].replace(/\$\{F|\}/g,'').trim() == fila_destino+'_LSX'){
                     valor = result; 
