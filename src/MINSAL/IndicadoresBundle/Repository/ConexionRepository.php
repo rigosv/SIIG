@@ -33,13 +33,14 @@ class ConexionRepository extends EntityRepository {
             try {
                 if ($conexion->getIdMotor()->getCodigo() == 'pdo_mysql' or $conexion->getIdMotor()->getCodigo() == 'pdo_pgsql') {
                     $motor = explode('_', $conexion->getIdMotor()->getCodigo());
-                    $dbh = new \PDO($motor[1].':host='.$conexion->getIp().';dbname='.$conexion->getNombreBaseDatos(), $conexion->getUsuario(), $conexion->getClave());
-                    $connectionParams['pdo'] = $dbh;
+                    $cadena = $motor[1].':host='.$conexion->getIp().';dbname='.$conexion->getNombreBaseDatos();                                        
                 }
                 if ($conexion->getPuerto() != '' and $conexion->getIdMotor()->getCodigo() != 'pdo_sqlite') {
                     $connectionParams['port'] = $conexion->getPuerto();
+                    $cadena .= ';port='.$conexion->getPuerto();
                 }
-
+                $dbh = new \PDO($cadena, $conexion->getUsuario(), $conexion->getClave());
+                $connectionParams['pdo'] = $dbh;
             
                 $conn = DBAL\DriverManager::getConnection($connectionParams, $config);
                 $conn->connect();
