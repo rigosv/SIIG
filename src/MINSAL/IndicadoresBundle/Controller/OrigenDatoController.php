@@ -56,7 +56,7 @@ class OrigenDatoController extends Controller
                     $conexion = $cnxObj->getNombreConexion();
                     //$sql = str_ireplace('FROM', ", '" . $cnxObj->getNombreConexion() . "' AS origen_datos FROM ", $sql);
                     if ($this->driver == 'pdo_dblib') {
-                        $sql_ = 'SELECT * TOP 20 FROM ('. $sql . ') cons';
+                        $sql_ = 'SELECT TOP 20 * FROM ('. $sql . ') cons';
                         $query = mssql_query($sql_, $conn);
                         if (mssql_num_rows($query) > 0)
                             while ($row = mssql_fetch_assoc($query)) {
