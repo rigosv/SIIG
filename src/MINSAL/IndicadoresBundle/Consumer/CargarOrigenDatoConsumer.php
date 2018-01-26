@@ -154,7 +154,7 @@ class CargarOrigenDatoConsumer implements ConsumerInterface {
         );
 
         $this->container->get('old_sound_rabbit_mq.guardar_registro_producer')
-            ->publish(base64_encode(serialize($msg_guardar)));
+            ->publish(json_encode($msg_guardar));
     }
     
     private function enviarMsjInicio ($idOrigen) {
@@ -164,7 +164,7 @@ class CargarOrigenDatoConsumer implements ConsumerInterface {
                 'numMsj' => $this->numMsj++
             );
             $this->container->get('old_sound_rabbit_mq.guardar_registro_producer')
-                    ->publish(base64_encode(serialize($msg_init)));
+                    ->publish(json_encode($msg_init));
     }
 
     public function enviarDatos($idOrigen, $datos, $campos_sig, $ultima_lectura, $idConexion) {
@@ -184,7 +184,7 @@ class CargarOrigenDatoConsumer implements ConsumerInterface {
             foreach ($datos as $fila) {
                 $nueva_fila = array();
                 foreach ($fila as $k => $v) {
-                    $nueva_fila[$campos_sig[$util->slug($k)]] = $v;
+                    $nueva_fila[$campos_sig[$util->slug($k)]] = trim(mb_check_encoding($v, 'UTF-8') ? $v : utf8_encode($v));
                 }
                 $datos_a_enviar[] = $nueva_fila;
             }
@@ -198,10 +198,8 @@ class CargarOrigenDatoConsumer implements ConsumerInterface {
                 'numMsj' => $this->numMsj++
             );
             
-            $msg_ = base64_encode(serialize($msg_guardar));
-            // Quitar caracteres no permitidos que podrian existir en el nombre de campo (tildes, eñes, etc)
-            //Verificar si ya está en UTF-8, si no, codificarlo
-            $msg = trim(mb_check_encoding($msg_, 'UTF-8') ? $msg_ : utf8_encode($msg_));
+            $msg = json_encode($msg_guardar);
+            
             try {
                 $this->container->get('old_sound_rabbit_mq.guardar_registro_producer')
                         ->publish($msg);

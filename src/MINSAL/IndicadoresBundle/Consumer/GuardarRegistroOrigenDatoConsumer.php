@@ -15,7 +15,7 @@ class GuardarRegistroOrigenDatoConsumer implements ConsumerInterface {
     }
 
     public function execute(AMQPMessage $mensaje) {
-        $msg = unserialize(base64_decode($mensaje->body));
+        $msg = json_decode($mensaje->body, true);
         echo '  Msj: '. $msg['id_origen_dato']. '/'. $msg['numMsj'] . '  ';
 
         //Verificar si tiene código de costeo
