@@ -59,6 +59,7 @@ class UbicacionAdmin extends Admin
     public function getBatchActions()
     {
         $actions = parent::getBatchActions();
-        $actions['delete'] = null;
+        unset($actions['delete']);
+        return $actions;
     }
 }

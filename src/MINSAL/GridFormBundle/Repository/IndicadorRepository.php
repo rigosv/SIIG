@@ -28,7 +28,7 @@ class IndicadorRepository extends EntityRepository {
                 11=>'Nov',
                 12=>'Dic'
                 );
-    private function getNivelesEstablecimiento($nivel) {
+    public function getNivelesEstablecimiento($nivel) {
         $niveles = '';
         if ($nivel == 'hosp'){
             $niveles = " (1, 14, 30, 31, 35 )";
