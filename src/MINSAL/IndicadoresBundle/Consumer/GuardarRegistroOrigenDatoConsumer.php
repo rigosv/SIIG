@@ -5,6 +5,7 @@ namespace MINSAL\IndicadoresBundle\Consumer;
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
 use Doctrine\ORM\EntityManager;
+use MINSAL\IndicadoresBundle\Entity\OrigenDatos;
 
 class GuardarRegistroOrigenDatoConsumer implements ConsumerInterface {
 
@@ -16,7 +17,7 @@ class GuardarRegistroOrigenDatoConsumer implements ConsumerInterface {
 
     public function execute(AMQPMessage $mensaje) {
         $msg = json_decode($mensaje->body, true);
-        echo '  Msj: '. $msg['id_origen_dato']. '/'. $msg['numMsj'] . '  ';
+        echo '  Msj: '. $msg['id_origen_dato']. '/'.  (array_key_exists('numMsj', $msg) ? $msg['numMsj'] : '--') . '  ';
 
         //Verificar si tiene código de costeo
         $sql = "SELECT area_costeo FROM origen_datos WHERE id = $msg[id_origen_dato]";
@@ -37,25 +38,27 @@ class GuardarRegistroOrigenDatoConsumer implements ConsumerInterface {
             
             
             $sql = "INSERT INTO $tabla"."_tmp(id_origen_dato, datos, ultima_lectura, id_conexion)
-                    VALUES ($msg[id_origen_dato], :datos, '$msg[ultima_lectura]' , $idConexion) ";
-            $sth = $this->em->getConnection()->prepare($sql);
+                    VALUES ";
+            //$sth = $this->em->getConnection()->prepare($sql);
             //$i = 0;
             echo '(inicio: '.microtime(true);
             foreach ($msg['datos'] as $fila) {
                 $filaJson = json_encode($fila);
-                $sth->bindParam(':datos', $filaJson);
-                try {
-                    $sth->execute();
-                } catch (\Doctrine\DBAL\DBALException $e) {
-                    echo $e->getMessage();
-                    return false;
-                }
-                
+                $sql .= " ($msg[id_origen_dato], '$filaJson', '$msg[ultima_lectura]' , $idConexion),";                                
+            }
+            
+            try {
+                $this->em->getConnection()->exec( trim($sql, ',') );
+            } catch (\Doctrine\DBAL\DBALException $e) {
+                echo $e->getMessage();
+                return false;
             }
             echo ' - fin: '.microtime(true) . ') ****';
             return true;
-            
-        } elseif ($msg['method'] == 'DELETE') {            
+        } elseif ($msg['method'] == 'ERROR_LECTURA') {
+            $sql = ' DROP TABLE IF EXISTS '.$tabla.'_tmp ';
+            $this->em->getConnection()->exec($sql);
+        } elseif ($msg['method'] == 'DELETE') {
             $conexionWhere = ( $idConexion == 'null' ) ? ' AND id_conexion is null ' : ' AND id_conexion = ' . $idConexion;  
             //verificar si la tabla existe
             if ($tabla == 'origenes.fila_origen_dato_' . $msg['id_origen_dato']) {
@@ -130,6 +133,19 @@ class GuardarRegistroOrigenDatoConsumer implements ConsumerInterface {
             $sql = "UPDATE origen_datos SET tiempo_segundos_ultima_carga = $diffInSeconds WHERE id = '$msg[id_origen_dato]';
                     UPDATE origen_datos SET carga_finalizada = true WHERE id = '$msg[id_origen_dato]'";
             $this->em->getConnection()->exec($sql);
+            
+            //Poner la fecha de última lectura para todas las fichas que tienen este origen de datos
+            $ahora = new \DateTime();            
+            $origenDato = $this->em->find(OrigenDatos::class, $msg['id_origen_dato']);
+            $origenDato->setUltimaActualizacion($ahora);
+            
+            if ($origenDato != false ){
+                foreach ($origenDato->getVariables() as $var) {
+                    foreach ($var->getIndicadores() as $ind) {
+                        $ind->setUltimaLectura($ahora);
+                    }
+                }
+            }
             
             echo '
             Carga finalizada de origen ' . $msg['id_origen_dato'] . ' Para la conexión ' . $idConexion . '  

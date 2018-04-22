@@ -113,21 +113,18 @@ class CargarOrigenDatoCommand extends ContainerAwareCommand
                                     'r' => microtime(true) 
 
                             );                                        
-                        
-                        foreach ($origenDato->getVariables() as $var) {
-                            foreach ($var->getIndicadores() as $ind) {
-                                $ind->setUltimaLectura($ahora);
-                            }
-                        }
+                                                
                         $em->flush();
                         $carga_directa = $origenDato->getEsCatalogo();
                         // No mandar a la cola de carga los que son catálogos, Se cargarán directamente
-                        if ($carga_directa)
+                        if ($carga_directa){
                             $em->getRepository('IndicadoresBundle:OrigenDatos')->cargarCatalogo($origenDato);
-                        else
+                            $ind->setUltimaLectura($ahora);
+                        }
+                        else {
                             $this->getContainer()->get('old_sound_rabbit_mq.cargar_origen_datos_producer')
                                     ->publish(serialize($msg));
-                        $ind->setUltimaLectura($ahora);
+                        }
                     }
                 }
             }

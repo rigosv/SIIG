@@ -33,13 +33,13 @@ class CargarOrigenDatoConsumer implements ConsumerInterface {
             ';
         
         try {
-            //Leeré los datos en grupos de 5,000
-            $tamanio = 5000;
+            //Leeré los datos en grupos de 10,000
+            $tamanio = 10000;
 
             if ($origenDato->getSentenciaSql() != '') {
                 //$sql = $origenDato->getSentenciaSql();
                 $sql = $msg['sql'];
-
+                
                 foreach ($origenDato->getConexiones() as $cnx) {
                     $leidos = $tamanio + 1;
                     $i = 0;
@@ -53,6 +53,7 @@ class CargarOrigenDatoConsumer implements ConsumerInterface {
                     $datos = true;
                     $this->enviarMsjInicio($idOrigen);
                     while ($leidos >= $tamanio and $datos != false) {
+                        $errorEnLectura = false;
                         if ($cnx->getIdMotor()->getCodigo() == 'oci8') {
                             $sql_aux = ($msg['esLecturaIncremental']) ?
                                     "SELECT * FROM ( $sql )  sqlOriginal 
@@ -92,6 +93,7 @@ class CargarOrigenDatoConsumer implements ConsumerInterface {
 
                         if ($datos === false){
                             $leidos = 1;
+                            $errorEnLectura = true;
                             echo '
                                     SIN REGISTROS  ---> Origen: '.$idOrigen.' 
 
@@ -112,7 +114,20 @@ class CargarOrigenDatoConsumer implements ConsumerInterface {
 
                     }                    
                     
-                    $this->enviarMsjFinal($msg, $idOrigen, $ahora, $cnx->getId());
+                    if ( $errorEnLectura ){
+                        $msg_ = array('id_origen_dato' => $idOrigen,
+                            'method' => 'ERROR_LECTURA',
+                            'id_conexion' =>$cnx->getId(),
+                            'numMsj' => $this->numMsj++,
+                            'r' => microtime(true),
+                        );
+
+                        $this->container->get('old_sound_rabbit_mq.guardar_registro_producer')
+                            ->publish(json_encode($msg_));
+                    }
+                    else{
+                        $this->enviarMsjFinal($msg, $idOrigen, $ahora, $cnx->getId());
+                    }
                 }
             } else {
                 $datos = $em->getRepository('IndicadoresBundle:OrigenDatos')->getDatos(null, null, $origenDato->getAbsolutePath());
