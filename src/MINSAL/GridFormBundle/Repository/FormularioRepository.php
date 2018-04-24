@@ -694,7 +694,7 @@ class FormularioRepository extends EntityRepository {
             $this->ActualizarVariables($Frm->getId());
             
             $sql_forms .= "
-                SELECT $datos, B.id, B.codigo, B.descripcion, B.forma_evaluacion, 
+                SELECT $datos, B.id, B.codigo, B.descripcion, B.forma_evaluacion, D.logica_salto,
                     array_to_string(
                         ARRAY(
                             SELECT BB.codigo 
@@ -730,7 +730,7 @@ class FormularioRepository extends EntityRepository {
         
         $pivotes_borrar = "'".implode("','", $mes_borrar)."'";
         
-        $sql = "SELECT AA.id, AA.codigo, AA.descripcion, AA.forma_evaluacion , AA.codigo_indicador, delete(AA.datos, ARRAY[$pivotes_borrar]) AS datos
+        $sql = "SELECT AA.id, AA.codigo, AA.descripcion, AA.forma_evaluacion , AA.logica_salto, AA.codigo_indicador, delete(AA.datos, ARRAY[$pivotes_borrar]) AS datos
                 FROM (
                     $sql_forms
                 ) AS AA
@@ -742,7 +742,11 @@ class FormularioRepository extends EntityRepository {
             foreach ($datos_ as $d) {
                 $datos[$d['codigo']]['descripcion'] = $d['descripcion'];
                 $datos[$d['codigo']]['forma_evaluacion'] = $d['forma_evaluacion'];
-                $datos[$d['codigo']]['criterios'][] = json_decode('{' . str_replace('=>', ':', $d['datos'].', "codigo_indicador": "'.$d['codigo_indicador'].'"' ) . '}', true);
+                $criterios = json_decode('{' . str_replace('=>', ':', $d['datos'].', "codigo_indicador": "'.$d['codigo_indicador'].'"' ) . '}', true);
+                if ($criterios['codigo_tipo_control'] == 'checkbox' and $d['logica_salto'] != '' ){
+                    $criterios['codigo_tipo_control'] = 'checkbox_3_states';
+                }
+                $datos[$d['codigo']]['criterios'][] = $criterios;
             }
             
             $datosConEval = array();
