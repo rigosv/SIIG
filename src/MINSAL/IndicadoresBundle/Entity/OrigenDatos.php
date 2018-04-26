@@ -101,6 +101,20 @@ class OrigenDatos
      * @ORM\Column(name="carga_finalizada", type="boolean", nullable=true)
      */
     private $cargaFinalizada;
+    
+    /**
+     * @var string $errorCarga
+     *
+     * @ORM\Column(name="error_carga", type="boolean", nullable=true)
+     */
+    private $errorCarga;
+    
+    /**
+     * @var string $mensajeErrorCarga
+     *
+     * @ORM\Column(name="mensaje_error_carga", type="text", nullable=true)
+     */
+    private $mensajeErrorCarga;
 
     /**
      * @var string $camposFusionados
@@ -817,5 +831,53 @@ class OrigenDatos
     public function getCargaFinalizada()
     {
         return $this->cargaFinalizada;
+    }
+
+    /**
+     * Set errorCarga
+     *
+     * @param boolean $errorCarga
+     *
+     * @return OrigenDatos
+     */
+    public function setErrorCarga($errorCarga)
+    {
+        $this->errorCarga = $errorCarga;
+
+        return $this;
+    }
+
+    /**
+     * Get errorCarga
+     *
+     * @return boolean
+     */
+    public function getErrorCarga()
+    {
+        return $this->errorCarga;
+    }
+
+    /**
+     * Set mensajeErrorCarga
+     *
+     * @param string $mensajeErrorCarga
+     *
+     * @return OrigenDatos
+     */
+    public function setMensajeErrorCarga($mensajeErrorCarga)
+    {
+        $this->mensajeErrorCarga = $mensajeErrorCarga;
+
+        return $this;
+    }
+
+    /**
+     * Get mensajeErrorCarga
+     *
+     * @return string
+     */
+    public function getMensajeErrorCarga()
+    {
+        return $this->mensajeErrorCarga;
     }
 }

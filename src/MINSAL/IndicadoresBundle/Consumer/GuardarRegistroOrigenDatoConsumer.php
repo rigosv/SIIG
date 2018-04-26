@@ -18,6 +18,8 @@ class GuardarRegistroOrigenDatoConsumer implements ConsumerInterface {
     public function execute(AMQPMessage $mensaje) {
         $msg = json_decode($mensaje->body, true);
         echo '  Msj: '. $msg['id_origen_dato']. '/'.  (array_key_exists('numMsj', $msg) ? $msg['numMsj'] : '--') . '  ';
+        
+        $origenDato = $this->em->find(OrigenDatos::class, $msg['id_origen_dato']);
 
         //Verificar si tiene código de costeo
         $sql = "SELECT area_costeo FROM origen_datos WHERE id = $msg[id_origen_dato]";
@@ -25,6 +27,8 @@ class GuardarRegistroOrigenDatoConsumer implements ConsumerInterface {
         
         $tabla = ($areaCosteo['area_costeo'] == '') ? 'origenes.fila_origen_dato_' . $msg['id_origen_dato'] : 'costos.fila_origen_dato_' . $areaCosteo['area_costeo'];
         $idConexion = ( array_key_exists('id_conexion', $msg) ) ? $msg['id_conexion'] : 'null' ;
+        
+        
         if ($msg['method'] == 'BEGIN') {
             // Iniciar borrando los datos que pudieran existir en la tabla auxiliar
             $sql = ' DROP TABLE IF EXISTS '.$tabla.'_tmp ;
@@ -33,10 +37,10 @@ class GuardarRegistroOrigenDatoConsumer implements ConsumerInterface {
                ";
             $this->em->getConnection()->exec($sql);
             return true;
-            
+
         } elseif ($msg['method'] == 'PUT') {
-            
-            
+
+
             $sql = "INSERT INTO $tabla"."_tmp(id_origen_dato, datos, ultima_lectura, id_conexion)
                     VALUES ";
             //$sth = $this->em->getConnection()->prepare($sql);
@@ -46,12 +50,16 @@ class GuardarRegistroOrigenDatoConsumer implements ConsumerInterface {
                 $filaJson = json_encode($fila);
                 $sql .= " ($msg[id_origen_dato], '$filaJson', '$msg[ultima_lectura]' , $idConexion),";                                
             }
-            
+
             try {
                 $this->em->getConnection()->exec( trim($sql, ',') );
             } catch (\Doctrine\DBAL\DBALException $e) {
-                echo $e->getMessage();
-                return false;
+                $error = ' Conexion : ' .$idConexion . ' Error: ' . $e->getMessage() ;
+                echo $error;
+                $origenDato->setErrorCarga(true);
+                $origenDato->setMensajeErrorCarga($error);
+                $em->flush();
+                return true;
             }
             echo ' - fin: '.microtime(true) . ') ****';
             return true;
@@ -97,7 +105,7 @@ class GuardarRegistroOrigenDatoConsumer implements ConsumerInterface {
                     $sql = "ALTER TABLE $tabla ADD column id_conexion integer";
                     $this->em->getConnection()->exec($sql);
                 } catch (\Exception $exc) {}
-                
+
                 if ($msg['es_lectura_incremental']) {
                     $sql = "DELETE 
                                 FROM $tabla 
@@ -126,19 +134,22 @@ class GuardarRegistroOrigenDatoConsumer implements ConsumerInterface {
                 }
             }
             $this->em->getConnection()->exec($sql);
-            
+
             $inicio = new \DateTime($msg['ultima_lectura']);
             $fin = new \DateTime("now");
             $diffInSeconds = $fin->getTimestamp() - $inicio->getTimestamp();
-            $sql = "UPDATE origen_datos SET tiempo_segundos_ultima_carga = $diffInSeconds WHERE id = '$msg[id_origen_dato]';
-                    UPDATE origen_datos SET carga_finalizada = true WHERE id = '$msg[id_origen_dato]'";
-            $this->em->getConnection()->exec($sql);
-            
+            /*$sql = "UPDATE origen_datos SET tiempo_segundos_ultima_carga = $diffInSeconds WHERE id = '$msg[id_origen_dato]';
+                    UPDATE origen_datos SET carga_finalizada = true WHERE id = '$msg[id_origen_dato]'";*/
+
+            $origenDato->setTiempoSegundosUltimaCarga($diffInSeconds);
+            $origenDato->setCargaFinalizada(true);            
+            //$this->em->getConnection()->exec($sql);
+
             //Poner la fecha de última lectura para todas las fichas que tienen este origen de datos
             $ahora = new \DateTime();            
-            $origenDato = $this->em->find(OrigenDatos::class, $msg['id_origen_dato']);
+            //$origenDato = $this->em->find(OrigenDatos::class, $msg['id_origen_dato']);
             $origenDato->setUltimaActualizacion($ahora);
-            
+
             if ($origenDato != false ){
                 foreach ($origenDato->getVariables() as $var) {
                     foreach ($var->getIndicadores() as $ind) {
@@ -146,7 +157,9 @@ class GuardarRegistroOrigenDatoConsumer implements ConsumerInterface {
                     }
                 }
             }
-            
+
+            $em->flush();
+
             echo '
             Carga finalizada de origen ' . $msg['id_origen_dato'] . ' Para la conexión ' . $idConexion . '  
 

@@ -27,6 +27,10 @@ class CargarOrigenDatoConsumer implements ConsumerInterface {
 
         $fecha = new \DateTime("now");
         $ahora = $fecha->format('Y-m-d H:i:s');
+        
+        $origenDato->setErrorCarga(false);
+        $origenDato->setMensajeErrorCarga('');
+        $em->flush();
 
         echo '
             ========== INICIO CARGA=========== '. $origenDato .' TIEMPO: '. microtime(true).' 
@@ -124,6 +128,10 @@ class CargarOrigenDatoConsumer implements ConsumerInterface {
 
                         $this->container->get('old_sound_rabbit_mq.guardar_registro_producer')
                             ->publish(json_encode($msg_));
+                        
+                        $origenDato->setErrorCarga(true);
+                        $origenDato->setMensajeErrorCarga(' Conexion: ' . $cnx->getId() . ' Error: ' . $datos);
+                        $em->flush();
                     }
                     else{
                         $this->enviarMsjFinal($msg, $idOrigen, $ahora, $cnx->getId());
