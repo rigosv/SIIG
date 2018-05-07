@@ -98,6 +98,19 @@ class VariableCaptura
      * */
     private $indicadores;
     
+    
+    /**
+     * @var \Doctrine\Common\Collections\ArrayCollection
+     * 
+     * @ORM\ManyToMany(targetEntity="Indicador", inversedBy="criteriosNoPonderados")
+     * @ORM\JoinTable(name="calidad.indicador_criterio_no_ponderado",
+     *      joinColumns={@ORM\JoinColumn(name="variablecaptura_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="indicador_id", referencedColumnName="id")}
+     *      )
+     * */
+    private $indicadoresNoPonderar;
+    
+    
     /**
      * @var string $regla_validacion
      *
@@ -644,5 +657,40 @@ class VariableCaptura
     public function getMensajeValidacion()
     {
         return $this->mensajeValidacion;
+    }
+
+    /**
+     * Add indicadoresNoPonderar
+     *
+     * @param \MINSAL\GridFormBundle\Entity\Indicador $indicadoresNoPonderar
+     *
+     * @return VariableCaptura
+     */
+    public function addIndicadoresNoPonderar(\MINSAL\GridFormBundle\Entity\Indicador $indicadoresNoPonderar)
+    {
+        $this->indicadoresNoPonderar[] = $indicadoresNoPonderar;
+        $indicadoresNoPonderar->addCriteriosNoPonderado($this);
+
+        return $this;
+    }
+
+    /**
+     * Remove indicadoresNoPonderar
+     *
+     * @param \MINSAL\GridFormBundle\Entity\Indicador $indicadoresNoPonderar
+     */
+    public function removeIndicadoresNoPonderar(\MINSAL\GridFormBundle\Entity\Indicador $indicadoresNoPonderar)
+    {
+        $this->indicadoresNoPonderar->removeElement($indicadoresNoPonderar);
+    }
+
+    /**
+     * Get indicadoresNoPonderar
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getIndicadoresNoPonderar()
+    {
+        return $this->indicadoresNoPonderar;
     }
 }

@@ -604,9 +604,11 @@ class FormularioRepository extends EntityRepository {
         $sql = "
                 SELECT $campos, A.datos->'anio' AS anio, $mes_ A.datos->'establecimiento' as establecimiento, 
                     A.datos->'es_poblacion' AS es_poblacion, A.datos->'codigo_tipo_control' AS tipo_control, 
-                    A.datos->'es_separador' AS es_separador, A.datos->'posicion' AS posicion, id_formulario
+                    A.datos->'es_separador' AS es_separador, A.datos->'posicion' AS posicion, id_formulario,
+                    D.logica_salto
                  INTO  TEMP datos_tmp 
                  FROM almacen_datos.repositorio A
+                    INNER JOIN variable_captura D ON (A.datos->'codigo_variable' = D.codigo)
                  WHERE (id_formulario = '$idFrm'
                      OR id_formulario IN (SELECT id FROM costos.formulario WHERE id_formulario_sup = '$idFrm') )
                     $whereEstablecimiento
@@ -633,9 +635,10 @@ class FormularioRepository extends EntityRepository {
         
         if ($Frm->getFormaEvaluacion() == 'lista_chequeo'){
             $sql = "SELECT CASE WHEN dato = 'true' THEN 1 ELSE 0 END AS cumplimiento, 
-                        CASE WHEN tipo_control = 'checkbox' AND dato != 'true' THEN 1 
-                             WHEN tipo_control = 'checkbox_3_states' AND dato = 'false' THEN 1
-                             ELSE 0 
+                        CASE WHEN tipo_control = 'checkbox' AND dato != 'true' AND dato != '1' AND logica_salto ='' THEN 1 
+                             WHEN tipo_control = 'checkbox' AND logica_salto != '' AND ( dato = 'false' OR dato = '0') THEN 1
+                             WHEN tipo_control = 'checkbox_3_states' AND ( dato = 'false' OR dato = '0' ) THEN 1                             
+                            ELSE 0 
                         END AS no_cumplimiento 
                     FROM datos_tmp";
             $sql = "SELECT SUM(cumplimiento) AS total_cumplimiento, SUM(no_cumplimiento) AS total_no_cumplimiento
@@ -701,6 +704,7 @@ class FormularioRepository extends EntityRepository {
                                 FROM indicador_variablecaptura  AA
                                 INNER JOIN indicador BB ON (AA.indicador_id = BB.id)
                                 WHERE variablecaptura_id = D.id
+                                    AND (AA.variablecaptura_id, AA.indicador_id) NOT IN (SELECT variablecaptura_id, indicador_id FROM calidad.indicador_criterio_no_ponderado)
                             )
                     , ' ') AS codigo_indicador
                     FROM  almacen_datos.repositorio A
@@ -814,7 +818,9 @@ class FormularioRepository extends EntityRepository {
                         IN 
                         (SELECT AA.codigo 
                             FROM variable_captura AA 
-                                INNER JOIN indicador_variablecaptura BB ON (AA.id = BB.variablecaptura_id)) "
+                                INNER JOIN indicador_variablecaptura BB ON (AA.id = BB.variablecaptura_id)
+                            WHERE (BB.variablecaptura_id , BB.indicador_id) NOT IN (SELECT variablecaptura_id, indicador_id FROM calidad.indicador_criterio_no_ponderado)
+                        ) "
                     : '';
             
             
@@ -828,8 +834,9 @@ class FormularioRepository extends EntityRepository {
                 FROM (
                     SELECT $opc[campo], COALESCE(NULLIF(posicion, ''), '0')::numeric AS posicion, id_formulario,
                         CASE WHEN dato = 'true' OR dato = '1' THEN 1 ELSE 0 END AS cumplimiento, 
-                        CASE WHEN tipo_control = 'checkbox' AND dato != 'true' and dato != '1' THEN 1 
-                            WHEN tipo_control = 'checkbox_3_states' AND dato = 'false' or dato = '0' THEN 1
+                        CASE WHEN tipo_control = 'checkbox' AND dato != 'true' AND dato != '1' AND logica_salto ='' THEN 1 
+                             WHEN tipo_control = 'checkbox' AND logica_salto != '' AND ( dato = 'false' OR dato = '0') THEN 1
+                             WHEN tipo_control = 'checkbox_3_states' AND ( dato = 'false'OR dato = '0' ) THEN 1                             
                             ELSE 0 
                         END AS no_cumplimiento 
                         FROM datos_tmp

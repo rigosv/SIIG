@@ -96,6 +96,13 @@ class Indicador
     /**
      * @var \Doctrine\Common\Collections\ArrayCollection
      *
+     * @ORM\ManyToMany(targetEntity="VariableCaptura", mappedBy="indicadoresNoPonderar")     
+     **/
+    private $criteriosNoPonderados;        
+    
+    /**
+     * @var \Doctrine\Common\Collections\ArrayCollection
+     *
      * @ORM\ManyToMany(targetEntity="RangoAlerta", inversedBy="indicadores")
      * @ORM\OrderBy({"limiteInferior" = "ASC", "limiteSuperior" = "ASC", "color" = "ASC"})
      **/
@@ -454,5 +461,39 @@ class Indicador
     public function getFormulario()
     {
         return $this->formulario;
+    }
+
+    /**
+     * Add criteriosNoPonderado
+     *
+     * @param \MINSAL\GridFormBundle\Entity\VariableCaptura $criteriosNoPonderado
+     *
+     * @return Indicador
+     */
+    public function addCriteriosNoPonderado(\MINSAL\GridFormBundle\Entity\VariableCaptura $criteriosNoPonderado)
+    {
+        $this->criteriosNoPonderados[] = $criteriosNoPonderado;
+
+        return $this;
+    }
+
+    /**
+     * Remove criteriosNoPonderado
+     *
+     * @param \MINSAL\GridFormBundle\Entity\VariableCaptura $criteriosNoPonderado
+     */
+    public function removeCriteriosNoPonderado(\MINSAL\GridFormBundle\Entity\VariableCaptura $criteriosNoPonderado)
+    {
+        $this->criteriosNoPonderados->removeElement($criteriosNoPonderado);
+    }
+
+    /**
+     * Get criteriosNoPonderados
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getCriteriosNoPonderados()
+    {
+        return $this->criteriosNoPonderados;
     }
 }

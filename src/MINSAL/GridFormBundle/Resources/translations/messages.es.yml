@@ -240,3 +240,5 @@ _acumulable_help_: Indica que el campo se debe acumular cuando se utilice en un 
 _version_: Versión
 _version_formulario_: Versión de formulario
 _acumulable_help_: Si el formulario al que pertenece la variable, tiene versión, ingresar en este campo a qué versión de formulario corresponde la variable
+_criterios_no_ponderados_: Criterios no ponderados
+_criterios_no_ponderados_help_: Criterios que se mostrarán en el formulario, pero que no se ponderan en el indicador

@@ -8,6 +8,7 @@ use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Route\RouteCollection;
 use Doctrine\ORM\EntityRepository;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 class IndicadorAdmin extends Admin
 {
@@ -27,6 +28,8 @@ class IndicadorAdmin extends Admin
 
     protected function configureFormFields(FormMapper $formMapper)
     {
+        $subject = $this->getSubject();
+        $idIndicador = $subject->getId();
         $formMapper
             ->add('codigo', null, array('label'=> ('_codigo_')))
             ->add('descripcion', null, array('label'=> ('_descripcion_')))
@@ -58,6 +61,22 @@ class IndicadorAdmin extends Admin
                                         ->orderBy('f.posicion, c.posicion')
                                         ;
                             }))
+            ->add('criteriosNoPonderados', EntityType::class, 
+                    array('label'=> ('_criterios_no_ponderados_'), 
+                        'expanded' => false,
+                        'group_by'=> 'formulario',
+                        'multiple' => true,
+                        'by_reference' => false,
+                        'class' => 'GridFormBundle:VariableCaptura',
+                            'query_builder' => function ($repository) use ($idIndicador){
+                                return $repository->createQueryBuilder('c')
+                                        ->join('c.formulario', 'f')
+                                        ->join('c.indicadores', 'i')
+                                        ->where("f.areaCosteo = 'calidad'")
+                                        ->andWhere("i.id = $idIndicador")
+                                        ->orderBy('f.posicion, c.posicion')
+                                        ;
+                            }))
             ->add('alertas', 'entity', 
                     array('label'=> ('_alertas_'), 
                     'expanded' => false, 
@@ -76,7 +95,8 @@ class IndicadorAdmin extends Admin
                 'estandar' => ('_indicador_estandar_help_'),
                 'esTrazador' => ('_es_trazador_help_'),
                 'ponderaEstandar' => ('_pondera_estandar_help_'),
-                'posicion' => ('_posicion_help_')
+                'posicion' => ('_posicion_help_'),
+                'criteriosNoPonderados' => '_criterios_no_ponderados_help_'
             ));
     }
 
@@ -123,5 +143,26 @@ class IndicadorAdmin extends Admin
         $collection->add('tableroCalidad');
         $collection->add('tableroGeneralCalidad');
 
+    }
+    
+    public function preUpdate($indicador) {
+                
+        $container = $this->getConfigurationPool()->getContainer();
+        $em = $container->get('doctrine.orm.entity_manager');
+        
+        $indicadorFrm = $this->getSubject();
+        $criterios = $indicador->getCriteriosNoPonderados();
+        
+        foreach ($indicador->getCriteriosNoPonderados()->getSnapshot() as $c ) {
+            $indicador->removeCriteriosNoPonderado($c);
+            $c->removeIndicadoresNoPonderar($indicador);
+        }
+        
+        //Agregar
+        foreach ($indicadorFrm->getCriteriosNoPonderados() as $c ) {
+            $c->addIndicadoresNoPonderar($indicador);
+        }
+        $em->persist($indicador);
+        $em->flush();
     }
 }

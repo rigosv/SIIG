@@ -450,6 +450,7 @@ class IndicadorRepository extends EntityRepository {
                                         WHERE A.datos->'es_poblacion' = 'false'
                                             AND A.id_formulario = '$frmId'                        
                                             AND A.datos->'es_separador' = 'false'
+                                            AND (C.indicador_id, C.variablecaptura_id) NOT IN (SELECT indicador_id, variablecaptura_id FROM calidad.indicador_criterio_no_ponderado )
                                             AND A.datos->'anio' = '$anio'
                                             $periodo_lectura
                                     ) AS AA
