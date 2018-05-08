@@ -805,7 +805,8 @@ class FormularioRepository extends EntityRepository {
                                                 'campo'=> "ltrim(substring(nombre_pivote, '_[0-9]{1,}'),'_') as pivote",
                                                 'campo2'=> "pivote"
                                             ), 
-                            'codigo_variable'=>array('grupo'=> "GROUP BY id_formulario, codigo_variable, descripcion_variable, posicion $condicion ORDER BY id_formulario, ROUND((SUM(cumplimiento)::numeric / ( SUM(cumplimiento)::numeric + SUM(no_cumplimiento)::numeric ) * 100),0), posicion::numeric ", 
+                            'codigo_variable'=>array('grupo'=> "GROUP BY id_formulario, codigo_variable, descripcion_variable, posicion $condicion 
+                                                                ORDER BY id_formulario, ROUND((SUM(cumplimiento)::numeric / ( SUM(cumplimiento)::numeric + SUM(no_cumplimiento)::numeric ) * 100),0), posicion::numeric ", 
                                                 'campo'=>'codigo_variable, descripcion_variable',
                                                 'campo2'=>'codigo_variable, descripcion_variable'
                                                 )
@@ -813,15 +814,15 @@ class FormularioRepository extends EntityRepository {
         $resp = array();
         foreach ($opciones as $campo => $opc){
             //Contar solo los que son criterios de indicadores
-            $soloCriteriosInd = ($campo == 'pivote') ? 
+            $soloCriteriosInd = 
                     " AND codigo_variable 
                         IN 
                         (SELECT AA.codigo 
                             FROM variable_captura AA 
                                 INNER JOIN indicador_variablecaptura BB ON (AA.id = BB.variablecaptura_id)
-                            WHERE (BB.variablecaptura_id , BB.indicador_id) NOT IN (SELECT variablecaptura_id, indicador_id FROM calidad.indicador_criterio_no_ponderado)
+                            WHERE (BB.variablecaptura_id , BB.indicador_id) NOT IN ( SELECT variablecaptura_id, indicador_id FROM calidad.indicador_criterio_no_ponderado )
                         ) "
-                    : '';
+                    ;
             
             
             $sql = "SELECT $opc[campo2], SUM(cumplimiento) as cumplimiento, 
