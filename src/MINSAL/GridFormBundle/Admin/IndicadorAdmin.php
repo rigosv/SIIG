@@ -153,8 +153,8 @@ class IndicadorAdmin extends Admin
         $indicadorFrm = $this->getSubject();
         $criterios = $indicador->getCriteriosNoPonderados();
         
-        if ($indicador->getCriteriosNoPonderados() != null ) {
-            foreach ($indicador->getCriteriosNoPonderados()->getSnapshot() as $c ) {
+        if ($criterios != null ) {
+            foreach ($criterios->getSnapshot() as $c ) {
                 $indicador->removeCriteriosNoPonderado($c);
                 $c->removeIndicadoresNoPonderar($indicador);
             }
