@@ -257,8 +257,8 @@
                             $scope.datosCriteriosOrd = [];                        
                             for (var i in data){
                                 var datos = data[i];
-                                for(var r in datos.resumen_criterios){
-                                    var res_criterios = datos.resumen_criterios[r];
+                                for(var r in datos.resumen_criterios_ord){
+                                    var res_criterios = datos.resumen_criterios_ord[r];
                                     $scope.datosCriteriosOrd.push(res_criterios);
                                 }
 

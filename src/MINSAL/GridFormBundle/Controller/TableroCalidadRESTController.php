@@ -133,12 +133,18 @@ class TableroCalidadRESTController extends Controller {
                                                         : array();
         $data = $datos_resumen['datos'];
         $data_ = array();
-        foreach ($data as $d) {            
+        
+        foreach ($data as $d) {
+            $resumenCriteriosOrd = array();
+            foreach ( $d['resumen_criterios']  as $rc){
+                $resumenCriteriosOrd[] = $rc;
+            }
             $data_[] = array('descripcion' => $d['descripcion'], 
                 'forma_evaluacion' => $d['forma_evaluacion'],
                 'criterios' => $d['criterios'],
                 'resumen_expedientes' => $d['resumen_expedientes'],
                 'resumen_criterios' => $d['resumen_criterios'],
+                'resumen_criterios_ord' => $resumenCriteriosOrd,
                 'resumen_general_criterios' => $d['resumen_general_criterios'],
                 'resumen_indicadores' => $resumen_indicadores,
             );
