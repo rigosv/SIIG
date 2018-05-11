@@ -158,7 +158,7 @@ class GuardarRegistroOrigenDatoConsumer implements ConsumerInterface {
                 }
             }
 
-            $em->flush();
+            $this->em->flush();
 
             echo '
             Carga finalizada de origen ' . $msg['id_origen_dato'] . ' Para la conexión ' . $idConexion . '  
