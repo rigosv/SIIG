@@ -96,7 +96,7 @@ class Indicador
     /**
      * @var \Doctrine\Common\Collections\ArrayCollection
      *
-     * @ORM\ManyToMany(targetEntity="VariableCaptura", mappedBy="indicadoresNoPonderar")     
+     * @ORM\ManyToMany(targetEntity="VariableCaptura", mappedBy="indicadoresNoPonderar", cascade={"persist", "remove"})     
      **/
     private $criteriosNoPonderados;        
     

@@ -151,18 +151,21 @@ class IndicadorAdmin extends Admin
         $em = $container->get('doctrine.orm.entity_manager');
         
         $indicadorFrm = $this->getSubject();
-        $criterios = $indicador->getCriteriosNoPonderados();
+        $criteriosFrm = $indicadorFrm->getCriteriosNoPonderados();
+        
+        /*$criterios = $indicador->getCriteriosNoPonderados();
         
         if ($criterios != null ) {
-            foreach ($criterios->getSnapshot() as $c ) {
+            foreach ($criterios as $c ) {
                 $indicador->removeCriteriosNoPonderado($c);
                 $c->removeIndicadoresNoPonderar($indicador);
             }
-        }
+        }*/
         
         //Agregar
-        foreach ($indicadorFrm->getCriteriosNoPonderados() as $c ) {
+        foreach ($criteriosFrm as $c ) {
             $c->addIndicadoresNoPonderar($indicador);
+            $indicador->addCriteriosNoPonderado($c);
         }
         $em->persist($indicador);
         $em->flush();
