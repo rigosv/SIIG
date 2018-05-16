@@ -706,7 +706,7 @@ class IndicadorRepository extends EntityRepository {
         $em->getConnection()->executeQuery($sql);
         
        $sql = "            
-                SELECT AA.*, AC.indicador_id
+                SELECT AA.*, AC.indicador_id, AB.logica_salto
                 INTO TEMP datos_tmp 
                 FROM ( 
                        SELECT $campos, A.datos->'establecimiento' as establecimiento,
@@ -739,12 +739,13 @@ class IndicadorRepository extends EntityRepository {
                 FROM (
                     SELECT establecimiento, ltrim(substring(nombre_pivote, '_[0-9]{1,}'),'_') as pivote, 
                         CASE WHEN dato = 'true' OR dato = '1' THEN 1 ELSE 0 END AS cumplimiento, 
-                        CASE WHEN tipo_control = 'checkbox' AND dato != 'true' AND dato != '1' THEN 1 
-                            WHEN tipo_control = 'checkbox_3_states' AND dato = 'false' OR dato = '0' THEN 1
+                        CASE WHEN tipo_control = 'checkbox' AND dato != 'true' AND dato != '1' AND logica_salto ='' THEN 1 
+                             WHEN tipo_control = 'checkbox' AND logica_salto != '' AND ( dato = 'false' OR dato = '0') THEN 1
+                             WHEN tipo_control = 'checkbox_3_states' AND ( dato = 'false'OR dato = '0' ) THEN 1
                             ELSE 0 
                         END AS no_cumplimiento 
                         FROM datos_tmp 
-                        WHERE es_poblacion='false'
+                        WHERE es_poblacion = 'false'
                             AND es_separador != 'true'
                     ) AS A 
                 GROUP BY establecimiento, pivote 
@@ -986,7 +987,7 @@ class IndicadorRepository extends EntityRepository {
     }
     
     public function getEvaluaciones($establecimiento, $periodo, $nivelAprobacionIndicador = 0) {
-        $em = $this->getEntityManager();
+        $em = $this->getEntityManager();                
         list($anio, $mes) = explode('_', $periodo);
         $sqlEvalEstandar = $this->getSQLEvaluacionEstandar();
         $sql = "SELECT A.codigo, A.descripcion, A.periodo_lectura_datos, A.meta, A.evaluacion_por_expedientes,
