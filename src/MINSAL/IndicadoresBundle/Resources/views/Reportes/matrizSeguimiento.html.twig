@@ -85,7 +85,7 @@
                                 </TD>
                             {% endfor %}
                         {% endfor %}
-                        <TD rowspan="3" >{{datosFrm[variable].observaciones}}</TD>
+                        <TD rowspan="3" >{{datosFrm[variable].observaciones|default('')}}</TD>
                     </TR>
                     <TR>
                         

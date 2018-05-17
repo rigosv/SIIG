@@ -324,7 +324,7 @@ class MatrizSeguimientoController extends Controller {
         //Combinar datos
         
         foreach ($datosFrmFormat['vacunacion_spr']['datos']['real'] as $k=>$f){
-            if (array_key_exists($k, $datosFrmFormat['ninios_12_23_meses']['datos']['planificado'])){
+            if (array_key_exists('datos', $datosFrmFormat['ninios_12_23_meses']) and array_key_exists($k, $datosFrmFormat['ninios_12_23_meses']['datos']['planificado'])){
                 $datosFrmFormat['vacunacion_spr']['datos']['real'][$k] = number_format($f / $datosFrmFormat['ninios_12_23_meses']['datos']['planificado'][$k] * 100);
             } else {
                 $datosFrmFormat['vacunacion_spr']['datos']['real'][$k] = 0;
@@ -396,11 +396,11 @@ class MatrizSeguimientoController extends Controller {
         $planf = ($tipo == 'planificado') ? "||'_p'" : '';
         if ($sql == null){
             $sql = "SELECT anio::integer, mes::varchar, id_mes::integer, SUM(calculo::numeric) AS calculo FROM 
-                       (SELECT datos->'anio' as anio, datos->'id_mes' AS id_mes,
-                            'cant_mensual_calidad_'||lpad(datos->'id_mes', 2, '0')$planf AS mes, 
-                            datos->'calculo' AS calculo 
+                       (SELECT datos->>'anio' as anio, datos->>'id_mes' AS id_mes,
+                            'cant_mensual_calidad_'||lpad(datos->>'id_mes', 2, '0'::varchar)$planf AS mes, 
+                            datos->>'calculo' AS calculo 
                         FROM origenes.fila_origen_dato_$var[id] 
-                        WHERE datos->'calculo' != ''
+                        WHERE datos->>'calculo' != ''
                         ) AS A  
                     GROUP BY anio::integer, mes::varchar, id_mes::integer ";
         }
