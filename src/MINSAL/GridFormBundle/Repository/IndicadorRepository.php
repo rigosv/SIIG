@@ -739,10 +739,11 @@ class IndicadorRepository extends EntityRepository {
                 FROM (
                     SELECT establecimiento, ltrim(substring(nombre_pivote, '_[0-9]{1,}'),'_') as pivote, 
                         CASE WHEN dato = 'true' OR dato = '1' THEN 1 ELSE 0 END AS cumplimiento, 
-                        CASE WHEN tipo_control = 'checkbox' AND dato != 'true' AND dato != '1'  THEN 1                             
+                        CASE WHEN tipo_control = 'checkbox' AND dato != 'true' AND dato != '1' AND ( logica_salto is null or trim(logica_salto) = '') THEN 1 
+                             WHEN tipo_control = 'checkbox' AND trim(logica_salto) != '' AND ( dato = 'false' OR dato = '0') THEN 1
                              WHEN tipo_control = 'checkbox_3_states' AND ( dato = 'false'OR dato = '0' ) THEN 1
                             ELSE 0 
-                        END AS no_cumplimiento 
+                        END AS no_cumplimiento
                         FROM datos_tmp 
                         WHERE es_poblacion = 'false'
                             AND es_separador != 'true'

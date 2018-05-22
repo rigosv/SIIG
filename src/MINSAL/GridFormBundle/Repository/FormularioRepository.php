@@ -635,11 +635,11 @@ class FormularioRepository extends EntityRepository {
         
         if ($Frm->getFormaEvaluacion() == 'lista_chequeo'){
             $sql = "SELECT CASE WHEN dato = 'true' THEN 1 ELSE 0 END AS cumplimiento, 
-                        CASE WHEN tipo_control = 'checkbox' AND dato != 'true' AND dato != '1' THEN 1 
-                             
-                             WHEN tipo_control = 'checkbox_3_states' AND ( dato = 'false' OR dato = '0' ) THEN 1                             
+                        CASE WHEN tipo_control = 'checkbox' AND dato != 'true' AND dato != '1' AND ( logica_salto is null or trim(logica_salto) = '') THEN 1 
+                             WHEN tipo_control = 'checkbox' AND trim(logica_salto) != '' AND ( dato = 'false' OR dato = '0') THEN 1
+                             WHEN tipo_control = 'checkbox_3_states' AND ( dato = 'false'OR dato = '0' ) THEN 1
                             ELSE 0 
-                        END AS no_cumplimiento 
+                        END AS no_cumplimiento
                     FROM datos_tmp";
             $sql = "SELECT SUM(cumplimiento) AS total_cumplimiento, SUM(no_cumplimiento) AS total_no_cumplimiento
                 FROM ( " . $sql . ") AS A";
@@ -747,9 +747,9 @@ class FormularioRepository extends EntityRepository {
                 $datos[$d['codigo']]['descripcion'] = $d['descripcion'];
                 $datos[$d['codigo']]['forma_evaluacion'] = $d['forma_evaluacion'];
                 $criterios = json_decode('{' . str_replace('=>', ':', $d['datos'].', "codigo_indicador": "'.$d['codigo_indicador'].'"' ) . '}', true);
-                /*if ($criterios['codigo_tipo_control'] == 'checkbox' and $d['logica_salto'] != '' ){
+                if ($criterios['codigo_tipo_control'] == 'checkbox' and $d['logica_salto'] != '' ){
                     $criterios['codigo_tipo_control'] = 'checkbox_3_states';
-                }*/
+                }
                 $datos[$d['codigo']]['criterios'][] = $criterios;
             }
             
@@ -835,11 +835,11 @@ class FormularioRepository extends EntityRepository {
                 FROM (
                     SELECT $opc[campo], COALESCE(NULLIF(posicion, ''), '0')::numeric AS posicion, id_formulario,
                         CASE WHEN dato = 'true' OR dato = '1' THEN 1 ELSE 0 END AS cumplimiento, 
-                        CASE WHEN tipo_control = 'checkbox' AND dato != 'true' AND dato != '1' THEN 1 
-                             
-                             WHEN tipo_control = 'checkbox_3_states' AND ( dato = 'false'OR dato = '0' ) THEN 1                             
+                        CASE WHEN tipo_control = 'checkbox' AND dato != 'true' AND dato != '1' AND ( logica_salto is null or trim(logica_salto) = '') THEN 1 
+                             WHEN tipo_control = 'checkbox' AND trim(logica_salto) != '' AND ( dato = 'false' OR dato = '0') THEN 1
+                             WHEN tipo_control = 'checkbox_3_states' AND ( dato = 'false'OR dato = '0' ) THEN 1
                             ELSE 0 
-                        END AS no_cumplimiento 
+                        END AS no_cumplimiento
                         FROM datos_tmp
                         WHERE es_poblacion='false'
                             AND es_separador != 'true'
