@@ -718,9 +718,9 @@ class IndicadorRepository extends EntityRepository {
                             $periodo_lectura
                     ) AS AA
                     INNER JOIN variable_captura AB ON (AA.codigo_variable = AB.codigo) 
-                    INNER JOIN indicador_variablecaptura AC ON (AB.id = AC.variablecaptura_id)
+                    INNER JOIN indicador_variablecaptura AC ON (AB.id = AC.variablecaptura_id)                    
                  WHERE AC.indicador_id = '$datosIndicador[indicador_id]' 
-                                    
+                   AND (AC.variablecaptura_id, AC.indicador_id) NOT IN (SELECT variablecaptura_id, indicador_id FROM calidad.indicador_criterio_no_ponderado)
                  ";
          
         $em->getConnection()->executeQuery($sql);
@@ -740,7 +740,7 @@ class IndicadorRepository extends EntityRepository {
                     SELECT establecimiento, ltrim(substring(nombre_pivote, '_[0-9]{1,}'),'_') as pivote, 
                         CASE WHEN dato = 'true' OR dato = '1' THEN 1 ELSE 0 END AS cumplimiento, 
                         CASE WHEN tipo_control = 'checkbox' AND dato != 'true' AND dato != '1' AND ( logica_salto is null or trim(logica_salto) = '') THEN 1 
-                             WHEN tipo_control = 'checkbox' AND trim(logica_salto) != '' AND ( dato = 'false' OR dato = '0') THEN 1
+                             WHEN tipo_control = 'checkbox' AND ( logica_salto is not null or trim(logica_salto) != '') AND ( dato = 'false' OR dato = '0') THEN 1
                              WHEN tipo_control = 'checkbox_3_states' AND ( dato = 'false'OR dato = '0' ) THEN 1
                             ELSE 0 
                         END AS no_cumplimiento
@@ -1093,6 +1093,7 @@ class IndicadorRepository extends EntityRepository {
                             ) AS B ON (A.codigo = B.codigo_indicador)
                     ORDER BY A.codigo
                      ";
+        
         return $em->getConnection()->executeQuery($sql)->fetchAll();
     }
     

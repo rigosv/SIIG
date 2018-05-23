@@ -636,7 +636,7 @@ class FormularioRepository extends EntityRepository {
         if ($Frm->getFormaEvaluacion() == 'lista_chequeo'){
             $sql = "SELECT CASE WHEN dato = 'true' THEN 1 ELSE 0 END AS cumplimiento, 
                         CASE WHEN tipo_control = 'checkbox' AND dato != 'true' AND dato != '1' AND ( logica_salto is null or trim(logica_salto) = '') THEN 1 
-                             WHEN tipo_control = 'checkbox' AND trim(logica_salto) != '' AND ( dato = 'false' OR dato = '0') THEN 1
+                             WHEN tipo_control = 'checkbox' AND ( logica_salto is not null or trim(logica_salto) != '') AND ( dato = 'false' OR dato = '0') THEN 1
                              WHEN tipo_control = 'checkbox_3_states' AND ( dato = 'false'OR dato = '0' ) THEN 1
                             ELSE 0 
                         END AS no_cumplimiento
@@ -836,7 +836,7 @@ class FormularioRepository extends EntityRepository {
                     SELECT $opc[campo], COALESCE(NULLIF(posicion, ''), '0')::numeric AS posicion, id_formulario,
                         CASE WHEN dato = 'true' OR dato = '1' THEN 1 ELSE 0 END AS cumplimiento, 
                         CASE WHEN tipo_control = 'checkbox' AND dato != 'true' AND dato != '1' AND ( logica_salto is null or trim(logica_salto) = '') THEN 1 
-                             WHEN tipo_control = 'checkbox' AND trim(logica_salto) != '' AND ( dato = 'false' OR dato = '0') THEN 1
+                             WHEN tipo_control = 'checkbox' AND ( logica_salto is not null or trim(logica_salto) != '') AND ( dato = 'false' OR dato = '0') THEN 1
                              WHEN tipo_control = 'checkbox_3_states' AND ( dato = 'false'OR dato = '0' ) THEN 1
                             ELSE 0 
                         END AS no_cumplimiento
