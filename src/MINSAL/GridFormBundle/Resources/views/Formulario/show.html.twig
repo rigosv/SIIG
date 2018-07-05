@@ -5,6 +5,32 @@
     <link rel="stylesheet" href="{{ asset('bundles/gridform/js/jqwidgets/styles/jqx.ui-redmond.css') }}" type="text/css" media="all" />
     <link rel="stylesheet" href="{{ asset('bundles/gridform/css/custom_grid.css') }}" type="text/css" media="all" />
     <link rel="stylesheet" href="{{ asset('bundles/gridform/vendor/animate.min.css') }}" type="text/css" media="all" />
+    <style>
+        #div_carga {
+            position: fixed;
+            top:0;
+            left:0;
+            width:100%;
+            height:100%;
+            /* Para CSS3 */
+            background: rgba(98, 135, 167, .4);
+            /* IE8*/
+            filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#886287a7', endColorstr='#886287a7');
+            /* anteriores a IE8 */
+            -ms-filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#886287a7', endColorstr='#886287a7');
+
+            display:none;
+            z-index:10000;
+        }
+        
+        #cargador{
+            position:absolute;
+            top:50%;
+            left: 50%;
+            margin-top: -25px;
+            margin-left: -25px;
+        }
+    </style>
 
 {% endblock stylesheets %}
 {% block javascripts %}
@@ -56,6 +82,14 @@
     {% if periodoSeleccionado != null and parametros.periodo_estructura != '-1' %}
     {% set titulos = Frm.tituloColumnas | jsonDecode(true) %}
     <script type="text/javascript">
+        
+        
+        $(document).ajaxStart(function(){
+            $('#div_carga').show();
+        });
+        $(document).ajaxComplete(function(){
+            $('#div_carga').hide();
+        });
         function decimal_date_time(fechaEnms){
             //convertirlo a días
             return fechaEnms / 1000 / 60 / 60 / 24;
@@ -131,7 +165,7 @@
                     ultimaFilaFormula_{{Frm.id}} = null;                    
                     var datarow = $("#jqxgrid{{Frm.id}}").jqxGrid('getrowdata', row);
                     
-                    var clase = cellclass(row, datafield, value);
+                    var clase = cellclass(row, datafield, value);                    
                     var patt = new RegExp("oculto");
                     if (patt.test(clase))
                         return false;
@@ -139,7 +173,7 @@
                     var patt = new RegExp("no_aplica");
                     if (patt.test(clase))
                         return false;
-                    
+                       
                     //Verificar si es campo calculado
                     {% if Frm.calculoFilas != '' %}
                         return  !(filaFormula_{{Frm.id}}(row, datafield));
@@ -1198,5 +1232,8 @@
               </div>              
             </div>
         </div>
+    </div>
+    <div id="div_carga" class='affix'>
+        <img id="cargador" src="{{ app.request.schemeAndHttpHost ~ asset('bundles/indicadores/images/ajax-loader.gif') }}"/>
     </div>
 {% endblock content %}

@@ -43,14 +43,13 @@ class GridController extends Controller
             if ($Frm->getAreaCosteo() == 'almacen_datos' or $Frm->getAreaCosteo() == 'calidad')
                 $data = $em->getRepository('GridFormBundle:Formulario')->getDatos($Frm, $periodoEstructura->getId(),$tipo_periodo , $request, $user);
             else 
-                $data = $this->get('costos.repository.formulario')->getDatos($Frm, $periodoEstructura->getId(),$tipo_periodo , $request, $user);
+                $data = $this->get('costos.repository.formulario')->getDatos($Frm, $periodoEstructura->getId(),$tipo_periodo , $request, $user);            
             if (count($data) > 0){
                 $data_ = '';
-                $ultimo = array_pop($data);
                 foreach ($data as $f){
-                    $data_ .= '{'.  str_replace('=>', ':', $f['datos']). '},';
+                    $data_ .=  $f['datos'] . ',';
                 }
-                $data_ .= '{'.  str_replace('=>', ':', $ultimo['datos']). '}';
+                $data_ =  trim( $data_,',');
                 $data_ = preg_replace("/[\n|\r|\n\r]/i",'', $data_);
                 $response->setContent('{"estado" : "ok", "data": ['. $data_. ']}');
             }
@@ -112,7 +111,8 @@ class GridController extends Controller
             }
             else{
                 $fila = array_pop($guardar);
-                $data_ = '{'.  str_replace('=>', ':', $fila['datos']). ', "local": "si"}';
+                
+                $data_ = trim($fila['datos'],'}') . ', "local" : "si"}';
                                 
                 $fila_array = json_decode($data_, true);
                 $data_ = json_encode($this->setPorcentajeCompletado($fila_array), JSON_UNESCAPED_UNICODE);

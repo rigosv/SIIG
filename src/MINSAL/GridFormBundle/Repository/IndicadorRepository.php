@@ -39,58 +39,6 @@ class IndicadorRepository extends EntityRepository {
         }
         return $niveles;
     }
-    /**
-     * 
-     * @param Formulario $Frm
-     * @param type $periodo
-     * @param type $idIndicador
-     * @return true si no ha cambiado y false si hubo algún cambio
-     */
-    private function checkSum($periodo, $tipoInd, $nivel ){
-        list($anio, $mes) = explode('_', $periodo);
-        $em = $this->getEntityManager();
-        
-        $simbolo = ($tipoInd == 'lista_chequeo') ? '!=' : '=';
-        
-        //Verificar si hay algún cambio en los datos
-        //Obtener la suma de verificación de los datos       
-        $sql = "SELECT md5(CAST((array_agg(f.* order by 1))AS text)) 
-            FROM (
-                    SELECT A.*
-                    FROM almacen_datos.repositorio A
-                     WHERE A.datos->'es_separador' != 'true'
-                        AND A.datos->'anio' = '$anio'
-                        AND (A.datos->'mes')::integer = '$mes'
-                    ) AS f
-             ";
-        
-        $cons_checksum = $em->getConnection()->executeQuery($sql)->fetch();
-        $checksum = $cons_checksum['md5'];
-
-        //Verificar si ha cambiado
-        $sql = "SELECT * FROM suma_verificacion 
-                    WHERE anio = '$anio' 
-                        AND mes = '$mes'
-                        AND checksum = '$checksum'
-                ";
-        
-        $check = $em->getConnection()->executeQuery($sql)->rowCount();
-        
-        if ($check == 0){
-            //Guardar la suma de verificación
-            $sql = "DELETE FROM suma_verificacion 
-                    WHERE anio = '$anio' 
-                        AND mes = '$mes'
-                ";
-            $em->getConnection()->executeQuery($sql);
-            
-            $sql = "INSERT INTO suma_verificacion (anio, mes,  checksum)
-                        VALUES ('$anio', '$mes', '$checksum')  ";
-            $em->getConnection()->executeQuery($sql);
-        }
-        //create table suma_verificacion( anio integer, mes varchar(3), tipo_ind varchar(30), nivel varchar(30), checksum varchar(255))
-        return ($check > 0 ) ?  true: false;
-    }
     
     /**
      * 
@@ -137,8 +85,8 @@ class IndicadorRepository extends EntityRepository {
                                 IN 
                                 (SELECT AA.id_formulario
                                      FROM (
-                                         SELECT DISTINCT ON  (id_formulario, datos->'establecimiento') 
-                                             id_formulario, datos->'establecimiento' AS establecimiento 
+                                         SELECT DISTINCT ON  (id_formulario, datos->>'establecimiento') 
+                                             id_formulario, datos->>'establecimiento' AS establecimiento 
                                          FROM almacen_datos.repositorio
                                          ) AS AA                                    
                                          INNER JOIN ctl_establecimiento_simmow BB ON (AA.establecimiento = BB.id::varchar)
@@ -152,8 +100,8 @@ class IndicadorRepository extends EntityRepository {
                                  IN
                                  (SELECT CC.id_formulario_sup 
                                      FROM (
-                                         SELECT DISTINCT ON  (id_formulario, datos->'establecimiento') 
-                                             id_formulario, datos->'establecimiento' AS establecimiento 
+                                         SELECT DISTINCT ON  (id_formulario, datos->>'establecimiento') 
+                                             id_formulario, datos->>'establecimiento' AS establecimiento 
                                          FROM almacen_datos.repositorio
                                          ) AS AA                                    
                                          INNER JOIN ctl_establecimiento_simmow BB ON (AA.establecimiento = BB.id::varchar)
@@ -169,29 +117,51 @@ class IndicadorRepository extends EntityRepository {
 
         $indicadores = $em->getConnection()->executeQuery($sql)->fetchAll();
 
-        $checkAllInd = $this->checkSum($periodo, 'lista_chequeo', $nivel);
-        
         foreach ($indicadores as $ind){
             $Frm = $em->getRepository('GridFormBundle:Formulario')->find($ind['estandar_id']);
 
-            if ($checkAllInd){
-                //los datos no han cambiado, recuperar los que ya están calculados
-                $sql = "SELECT A.*, (SELECT color 
-                                    FROM rangos_alertas_generales
-                                    WHERE A.calificacion BETWEEN COALESCE(limite_inferior, -100000) AND COALESCE(limite_superior, 1000000)
-                                    ) AS color 
-                        FROM datos_evaluacion_calidad A
-                            INNER JOIN ctl_establecimiento_simmow BB ON (A.establecimiento = BB.id::varchar)
-                            $joinDepto
-                            WHERE codigo_indicador =  '$ind[codigo]'
-                                AND anio = '$anio'
-                                AND mes = '$mes'
-                                $whereDepto
-                        ";
-                $eval_ = $em->getConnection()->executeQuery($sql)->fetchAll();
+            $sqlNoCambio = "SELECT A.*, (SELECT color 
+                                FROM rangos_alertas_generales
+                                WHERE A.calificacion BETWEEN COALESCE(limite_inferior, -100000) AND COALESCE(limite_superior, 1000000)
+                                ) AS color 
+                    FROM datos_evaluacion_calidad A
+                        INNER JOIN ctl_establecimiento_simmow BB ON (A.establecimiento = BB.id::varchar)
+                        $joinDepto
+                        WHERE codigo_indicador =  '$ind[codigo]'
+                            AND anio = '$anio'
+                            AND mes = '$mes'
+                            $whereDepto
+                    ";
+            
+            //Verificar si hay nuevos datos            
+            $sql = "SELECT actualizacion, ultima_lectura_tablero 
+                        FROM control_ingreso_datos_frm 
+                        WHERE formulariocaptura_id = $ind[estandar_id] 
+                            AND anio= $anio 
+                            AND  mes = $mes::integer ";
+            $cons = $em->getConnection()->executeQuery($sql);                    
+            $actualizar = false;
+            if ($cons->rowCount() == 0){
+                $sql = "INSERT INTO control_ingreso_datos_frm(formulariocaptura_id, anio, mes, actualizacion, ultima_lectura_tablero) 
+                    VALUES ($ind[estandar_id] , $anio, $mes::integer, now(), now())";
+                $em->getConnection()->executeQuery($sql);
+                $actualizar = true;
             } else {
+                $datosCambio = $cons->fetch(0);
+                
+                if ( $datosCambio['actualizacion'] > $datosCambio['ultima_lectura_tablero'] ){
+                    $actualizar = true;                    
+                }
+                $sql = "UPDATE control_ingreso_datos_frm SET ultima_lectura_tablero = NOW() WHERE formulariocaptura_id = $ind[estandar_id] AND anio= $anio AND  mes = $mes::integer ";
+                $em->getConnection()->executeQuery($sql);
+            }
+                    
+            if ($actualizar){
                 //Volver a hacer los cálculos
-                $eval_ = $this->getDatosEvaluacionListaChequeo($Frm, $periodo, $ind, $departamento);
+               $eval_ = $this->getDatosEvaluacionListaChequeo($Frm, $periodo, $ind, $departamento);
+            } else {
+                //los datos no han cambiado, recuperar los que ya están calculados                
+                $eval_ = $em->getConnection()->executeQuery($sqlNoCambio)->fetchAll();                
                 
             }
             
@@ -411,7 +381,7 @@ class IndicadorRepository extends EntityRepository {
         $frmId = $Frm->getId();
         
         if ($Frm->getPeriodoLecturaDatos() == 'mensual' and $mes != null){
-            $periodo_lectura = " AND (A.datos->'mes')::integer = '$mes' ";
+            $periodo_lectura = " AND (A.datos->>'mes')::integer = '$mes' ";
             $where_ = '';
         } else {            
             $where_ = " AND (substring(nombre_pivote::text from '..$') = '$mes' OR substring(nombre_pivote::text from '..$') = '0$mes') "; 
@@ -442,16 +412,16 @@ class IndicadorRepository extends EntityRepository {
                                                     (split_part(replace(dato, '-', ''),'=>', 1)::numeric * 60 + split_part(dato,'=>', 2)::numeric) * -1
                                                 END
                                         END AS dato
-                                FROM (SELECT $campos, A.datos->'establecimiento' as establecimiento, 
+                                FROM (SELECT $campos, A.datos->>'establecimiento' as establecimiento, 
                                         A.id_formulario, C.indicador_id, B.area_id
                                         FROM almacen_datos.repositorio A
-                                            INNER JOIN variable_captura B ON (A.datos->'codigo_variable' = B.codigo) 
+                                            INNER JOIN variable_captura B ON (A.datos->>'codigo_variable' = B.codigo) 
                                             INNER JOIN indicador_variablecaptura C ON (B.id = C.variablecaptura_id)
-                                        WHERE A.datos->'es_poblacion' = 'false'
+                                        WHERE A.datos->>'es_poblacion' = 'false'
                                             AND A.id_formulario = '$frmId'                        
-                                            AND A.datos->'es_separador' = 'false'
+                                            AND A.datos->>'es_separador' = 'false'
                                             AND (C.indicador_id, C.variablecaptura_id) NOT IN (SELECT indicador_id, variablecaptura_id FROM calidad.indicador_criterio_no_ponderado )
-                                            AND A.datos->'anio' = '$anio'
+                                            AND A.datos->>'anio' = '$anio'
                                             $periodo_lectura
                                     ) AS AA
                                     WHERE dato is not null
@@ -504,7 +474,7 @@ class IndicadorRepository extends EntityRepository {
           $evaluacion = " ROUND((A.criterios_cumplidos::numeric / (A.criterios_aplicables::numeric) * 100),2) AS calificacion ";
         }
         
-        $this->prepararTabla($datosIndicador['codigo_estandar'], $datosIndicador['codigo'], $anio, $mes);
+        //$this->prepararTabla($datosIndicador['codigo_estandar'], $datosIndicador['codigo'], $anio, $mes);
         
         $joinDepto = '';
         $whereDepto = '';
@@ -579,7 +549,7 @@ class IndicadorRepository extends EntityRepository {
                                     FROM rangos_alertas_generales
                                     WHERE A.calificacion BETWEEN COALESCE(limite_inferior, -100000) AND COALESCE(limite_superior, 1000000)
                                     ) AS color 
-                    FROM auxiliar_tmp A";
+                    FROM datos_evaluacion_calidad A";
         return $em->getConnection()->executeQuery($sql)->fetchAll();
         
         
@@ -699,22 +669,19 @@ class IndicadorRepository extends EntityRepository {
         
         $periodo_lectura = '';
         if ($Frm->getPeriodoLecturaDatos() == 'mensual' and $mes != null){
-            $periodo_lectura = " AND (A.datos->'mes')::integer = '$mes' ";
+            $periodo_lectura = " AND (A.datos->>'mes')::integer = '$mes' ";
         }
-               
-        $sql = "DROP TABLE IF EXISTS datos_tmp";
-        $em->getConnection()->executeQuery($sql);
         
-       $sql = "            
+       $sql = " 
                 SELECT AA.*, AC.indicador_id, AB.logica_salto
-                INTO TEMP datos_tmp 
+                INTO TEMP datos_tmp
                 FROM ( 
-                       SELECT $campos, A.datos->'establecimiento' as establecimiento,
-                            A.datos->'es_poblacion' AS es_poblacion, A.datos->'codigo_tipo_control' AS tipo_control, 
-                            A.datos->'es_separador' AS es_separador, A.datos->'posicion' AS posicion
+                       SELECT $campos, A.datos->>'establecimiento' as establecimiento,
+                            A.datos->>'es_poblacion' AS es_poblacion, A.datos->>'codigo_tipo_control' AS tipo_control, 
+                            A.datos->>'es_separador' AS es_separador, A.datos->>'posicion' AS posicion
                         FROM almacen_datos.repositorio A
-                        WHERE A.datos->'es_separador' != 'true'
-                            AND A.datos->'anio' = '$anio'
+                        WHERE A.datos->>'es_separador' != 'true'
+                            AND A.datos->>'anio' = '$anio'
                             $periodo_lectura
                     ) AS AA
                     INNER JOIN variable_captura AB ON (AA.codigo_variable = AB.codigo) 
@@ -722,8 +689,7 @@ class IndicadorRepository extends EntityRepository {
                  WHERE AC.indicador_id = '$datosIndicador[indicador_id]' 
                    AND (AC.variablecaptura_id, AC.indicador_id) NOT IN (SELECT variablecaptura_id, indicador_id FROM calidad.indicador_criterio_no_ponderado)
                  ";
-         
-        $em->getConnection()->executeQuery($sql);
+        $em->getConnection()->executeQuery($sql);                
         
         $this->borrarVacios($mes);
         
@@ -744,49 +710,52 @@ class IndicadorRepository extends EntityRepository {
                              WHEN tipo_control = 'checkbox_3_states' AND ( dato = 'false'OR dato = '0' ) THEN 1
                             ELSE 0 
                         END AS no_cumplimiento
-                        FROM datos_tmp 
+                        FROM datos_tmp_$datosIndicador[indicador_id]   
                         WHERE es_poblacion = 'false'
-                            AND es_separador != 'true'
+                            AND es_separador != 'true'                            
                     ) AS A 
                 GROUP BY establecimiento, pivote 
                 HAVING (SUM(cumplimiento)::numeric + SUM(no_cumplimiento)::numeric) > 0
                 ORDER BY pivote::numeric";
-        $em->getConnection()->executeQuery($sql);
+        $em->getConnection()->executeQuery($sql);        
     }
     
-    public function borrarVacios($mes) {
+    public function borrarVacios($mes, $indicadorId = null) {
         $em = $this->getEntityManager();
         
+        $nombreTabla = ( $indicadorId == null ) ? 'datos_tmp': 'datos_tmp_'.$indicadorId;
+        
         //Verificar si tiene la variable num_exp para obtener qué expedientes se ingresaron
-        $sql = "SELECT codigo_variable FROM datos_tmp WHERE es_poblacion = 'true'";
-        $cons = $em->getConnection()->executeQuery($sql);
+        $sql = "SELECT codigo_variable FROM $nombreTabla WHERE es_poblacion = 'true'";
+        $cons = $em->getConnection()->executeQuery($sql);                
 
         if ($cons->rowCount() > 0){
             //Quitar las columnas para las que no se ingresó número de expediente
-            $sql = "DELETE FROM datos_tmp 
+            $sql = "DELETE FROM $nombreTabla 
                     WHERE (establecimiento::text, nombre_pivote::text)
                         NOT IN 
                         (SELECT establecimiento::text, nombre_pivote::text 
-                            FROM datos_tmp 
+                            FROM $nombreTabla 
                             WHERE es_poblacion::text = 'true' 
                                 AND dato is not null 
                                 AND trim(dato::text) != ''
+                                AND trim(dato::text) != '\"\"'
                         )";
             $em->getConnection()->executeQuery($sql);
         }
 
         //Verificar si tiene la variable mes_check para dejar solo el que 
         // corresponde al mes que se está verificando
-        $sql = "SELECT codigo_variable FROM datos_tmp WHERE nombre_pivote ~* 'mes_check_'";
+        $sql = "SELECT codigo_variable FROM $nombreTabla WHERE nombre_pivote ~* 'mes_check_'";
         $cons = $em->getConnection()->executeQuery($sql);
 
         if ($cons->rowCount() > 0){
             //Quitar las columnas para las que no se ingresó número de expediente
-            $sql = "DELETE FROM datos_tmp 
+            $sql = "DELETE FROM $nombreTabla 
                     WHERE (establecimiento::text, nombre_pivote::text)
                         NOT IN 
                         (SELECT establecimiento::text, nombre_pivote::text 
-                            FROM datos_tmp 
+                            FROM $nombreTabla 
                             WHERE 
                                 (nombre_pivote::text = 'mes_check_$mes' OR nombre_pivote::text = 'mes_check_0$mes')
                                 AND dato is not null 
@@ -1044,7 +1013,7 @@ class IndicadorRepository extends EntityRepository {
                     $alias = ($array) ? '' : ' AS "'.$p->descripcion.'" ';
                     if ($soloMes){
                         if ($p->id == $mes)
-                            $campos .= " datos->'".$codigoCampo."_".$p->id."'". $alias.", ";
+                            $campos .= " datos->>'".$codigoCampo."_".$p->id."'". $alias.", ";
                     } else {
                         $campos .= " datos->'".$codigoCampo."_".$p->id."'". $alias.", ";
                     }
@@ -1065,7 +1034,7 @@ class IndicadorRepository extends EntityRepository {
                 $campos = ($array) ? trim($campos, ', ') : $campos;
                 $campos .= ($array) ? "]::varchar[]) AS nombre_pivote, " : '';
             } else {
-                $campos .= " datos->'$codigoCampo' AS $codigoCampo, ";
+                $campos .= " datos->>'$codigoCampo' AS $codigoCampo, ";
             }
         }
         return trim($campos, ', ');
@@ -1112,9 +1081,9 @@ class IndicadorRepository extends EntityRepository {
                             FROM almacen_datos.repositorio A
                                 INNER JOIN costos.formulario B ON (A.id_formulario = B.id)
                             WHERE area_costeo = 'calidad'
-                                AND A.datos->'establecimiento' = '$establecimiento'
-                                AND A.datos->'anio' = '$anio'
-                                AND A.datos->'es_separador' != 'true'
+                                AND A.datos->>'establecimiento' = '$establecimiento'
+                                AND A.datos->>'anio' = '$anio'
+                                AND A.datos->>'es_separador' != 'true'
                                 AND B.forma_evaluacion != 'lista_chequeo'
                         )
                 ORDER BY posicion    

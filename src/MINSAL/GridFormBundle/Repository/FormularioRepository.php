@@ -77,7 +77,7 @@ class FormularioRepository extends EntityRepository {
             $origen = " $this->campo IN (" . implode(',', $this->origenes) . ") ";
             //Si el formulario tiene versión calcular solo los datos correspondientes
             if ($Frm->getVersion() != ''){
-                $join = " INNER JOIN variable_captura B ON (datos->'codigo_variable' = B.codigo ) ";
+                $join = " INNER JOIN variable_captura B ON (datos->>'codigo_variable' = B.codigo ) ";
                 $whereVersion = " AND B.version_formulario = '".$Frm->getVersion()."' ";
             }
         }
@@ -108,19 +108,19 @@ class FormularioRepository extends EntityRepository {
             //Crear la tabla de la fila que contiene los números de expedientes
             $em->getConnection()->executeQuery("DROP TABLE IF EXISTS num_expes_tmp");
             $sql = "SELECT $campos, datos->'establecimiento' AS establecimiento, 
-                        datos->'anio' AS anio
+                        datos->>'anio' AS anio
                         INTO TEMP num_expes_tmp
                         FROM almacen_datos.repositorio
                         WHERE id_formulario = '$idFrm'
                             $params_string
-                            AND datos->'es_poblacion' = 'true'
+                            AND datos->>'es_poblacion' = 'true'
                         ";
             $em->getConnection()->executeQuery($sql);
             
             //Recuperar los campos para los que no se ha ingresado número de expediente
             $sql = "SELECT codigo_variable, nombre_pivote
                         FROM num_expes_tmp A 
-                    WHERE dato is null OR dato = '' ";
+                    WHERE dato is null OR dato = '' OR dato='\"\"' ";
 
             $expeVacios = $em->getConnection()->executeQuery($sql)->fetchAll();
             $cantExpeVacios = count($expeVacios);
@@ -128,7 +128,7 @@ class FormularioRepository extends EntityRepository {
             //Recuperar números ya utilizados
             $sql = "SELECT dato
                         FROM num_expes_tmp A 
-                    WHERE dato is not null AND dato != '' ";
+                    WHERE dato is not null AND dato != '' AND dato != '\"\"'";
             $expeUtilizados = $em->getConnection()->executeQuery($sql)->fetchAll();
 
             if ($cantExpeVacios > 0){
@@ -171,11 +171,11 @@ class FormularioRepository extends EntityRepository {
                     $expeDisp = array_shift($expeDisponibles);
                     
                     $sql = " UPDATE almacen_datos.repositorio 
-                                SET datos = datos ||('\"$campoNumExpe\"=>'||'\"'||$expeDisp||'\"')::hstore                        
+                                SET datos = datos ||'{\"$campoNumExpe\" : \"$expeDisp\"}'::jsonb                        
                                 WHERE id_formulario = '$idFrm'
                                     $params_string
-                                    AND datos->'es_poblacion' = 'true'
-                                    AND datos->'codigo_variable' = '$codVariable' 
+                                    AND datos->>'es_poblacion' = 'true'
+                                    AND datos->>'codigo_variable' = '$codVariable' 
                                     ";
                     $em->getConnection()->executeQuery($sql);
                     $cantExpeAplicados++;
@@ -196,7 +196,7 @@ class FormularioRepository extends EntityRepository {
         }*/
         
         //Cargar los campos del formulario para que estén disponibles por defecto
-        $campos_ = array("datos->'anio' AS anio");
+        $campos_ = array("datos->>'anio' AS anio");
         foreach ($Frm->getCampos() as $c){
             $codigo = $c->getSignificadoCampo()->getCodigo();
             
@@ -235,15 +235,15 @@ class FormularioRepository extends EntityRepository {
         $dependencia2 = ''; $dependencia3='';
         if (array_key_exists('dependencia', $this->parametros)){
             $dependencia2 = "'". $this->parametros['dependencia'] . "' , ";
-            $dependencia3 = " datos->'dependencia', ";
+            $dependencia3 = " datos->>'dependencia', ";
         }
 
         //Si es mensual agregar el mes a la consulta
         $mes_val = ""; $mes_txt2 = ""; $mes_condicion = "";
         if ($Frm->getPeriodoLecturaDatos() == 'mensual'){
             $mes_val = " '" . $this->parametros['mes'] . "', ";
-            $mes_txt2 = " datos->'mes',";
-            $mes_condicion = " AND datos->'mes' = '" . $this->parametros['mes'] . "' ";
+            $mes_txt2 = " datos->>'mes',";
+            $mes_condicion = " AND datos->>'mes' = '" . $this->parametros['mes'] . "' ";
         }
         
         $datosIni = $this->getCamposInicializar($Frm);
@@ -253,7 +253,7 @@ class FormularioRepository extends EntityRepository {
         //Cargar las variables que no están en el año elegido
         $sql = "INSERT INTO almacen_datos.repositorio (id_formulario, datos)
                 (SELECT ".$Frm->getId()." AS id_formulario, 
-                        hstore(
+                        jsonb_object(
                             ARRAY[" . implode(", ", $datosIni['llaves']) . "], 
                             ARRAY[" . implode(", ", $datosIni['valores']) . "]
                         ) 
@@ -262,18 +262,18 @@ class FormularioRepository extends EntityRepository {
                     WHERE 
                          (".$Frm->getId(). ", A.codigo, '".$this->parametros['anio']."', $mes_val $dependencia2 '".$this->parametros['establecimiento']."' )
                             NOT IN 
-                            (SELECT id_formulario,  datos->'codigo_variable', datos->'anio', $mes_txt2 $dependencia3 datos->'establecimiento'
+                            (SELECT id_formulario,  datos->>'codigo_variable', datos->>'anio', $mes_txt2 $dependencia3 datos->>'establecimiento'
                                 FROM almacen_datos.repositorio
                                 WHERE id_formulario = ".$Frm->getId()."
-                                    AND datos->'establecimiento' = '".$this->parametros['establecimiento']."'
-                                    AND datos->'anio' = '".$this->parametros['anio']."'
+                                    AND datos->>'establecimiento' = '".$this->parametros['establecimiento']."'
+                                    AND datos->>'anio' = '".$this->parametros['anio']."'
                                     $mes_condicion
                             )
                         AND A.formulario_id =  ".$Frm->getId()."
                         AND A.codigo !~* 'kobo'
                         $whereVersion
                 )";
-        $this->orden = "ORDER BY datos->'es_poblacion' DESC, COALESCE(NULLIF(datos->'posicion', ''), '100000000')::numeric, datos->'descripcion_categoria_variable', datos->'descripcion_variable'";
+        $this->orden = "ORDER BY datos->>'es_poblacion' DESC, COALESCE(NULLIF(datos->>'posicion', ''), '100000000')::numeric, datos->>'descripcion_categoria_variable', datos->>'descripcion_variable'";
         $em->getConnection()->executeQuery($sql);                
         
         $this->actualizarVariables($Frm->getId());
@@ -287,28 +287,29 @@ class FormularioRepository extends EntityRepository {
         
         //Actualizar los datos de las variables ya existentes
         $sql = " UPDATE almacen_datos.repositorio 
-                    SET datos = datos ||('\"ayuda\"=>'||'\"'||COALESCE(A.texto_ayuda,'')||'\"')::hstore 
-                        ||('\"codigo_categoria_variable\"=>'||'\"'||COALESCE(B.codigo,'')||'\"')::hstore 
-                        ||('\"descripcion_categoria_variable\"=>'||'\"'||COALESCE(B.descripcion,'')||'\"')::hstore
-                        ||('\"es_poblacion\"=>'||'\"'||COALESCE(A.es_poblacion::varchar,'')||'\"')::hstore
-                        ||('\"es_separador\"=>'||'\"'||COALESCE(A.es_separador::varchar,'')||'\"')::hstore
-                        ||('\"posicion\"=>'||'\"'||COALESCE(A.posicion::varchar,'')||'\"')::hstore
-                        ||('\"nivel_indentacion\"=>'||'\"'||COALESCE(A.nivel_indentacion::varchar,'')||'\"')::hstore
-                        ||('\"descripcion_variable\"=>'||'\"'|| COALESCE(A.descripcion::varchar, '') ||'\"')::hstore
-                        ||('\"regla_validacion\"=>'||'\"'||COALESCE(A.regla_validacion::varchar,'')||'\"')::hstore
-                        ||('\"codigo_tipo_control\"=>'||'\"'||COALESCE(C.codigo::varchar,'')||'\"')::hstore
-                        ||('\"origen_fila\"=>'||'\"'||COALESCE(A.origen_fila::varchar,'')||'\"')::hstore
-                        ||('\"alertas\"=>'||'\"'||COALESCE(D.alertas::varchar,'')||'\"')::hstore
+                    SET datos = datos || jsonb_build_object ('ayuda', COALESCE(A.texto_ayuda,''), 
+                                    'codigo_categoria_variable', COALESCE(B.codigo,''),
+                                    'descripcion_categoria_variable', COALESCE(B.descripcion,'') ,
+                                    'es_poblacion', COALESCE(A.es_poblacion::varchar,'') ,
+                                    'es_separador', COALESCE(A.es_separador::varchar,'') ,
+                                    'posicion', COALESCE(A.posicion::varchar,'') ,
+                                    'nivel_indentacion', COALESCE(A.nivel_indentacion::varchar,'') ,
+                                    'descripcion_variable', COALESCE(A.descripcion::varchar, '') ,
+                                    'regla_validacion', COALESCE(A.regla_validacion::varchar,'') ,
+                                    'codigo_tipo_control', COALESCE(C.codigo::varchar,'') ,
+                                    'origen_fila', COALESCE(A.origen_fila::varchar,'') ,
+                                    'alertas', COALESCE(D.alertas::varchar,'')
+                                )
                     FROM (SELECT texto_ayuda, es_poblacion, es_separador, origen_fila, posicion, nivel_indentacion, regla_validacion, 
                         replace(descripcion, '\"', '\\\"') AS descripcion, id_categoria_captura, id_tipo_control, codigo, id
                         FROM variable_captura ) AS A
                         INNER JOIN categoria_variable_captura B ON (A.id_categoria_captura = B.id)
                         LEFT JOIN costos.tipo_control C ON (A.id_tipo_control = C.id)
                         LEFT JOIN rangos_alertas_tmp D ON (A.id = D.variablecaptura_id)
-                    WHERE almacen_datos.repositorio.datos->'codigo_variable' = A.codigo
+                    WHERE almacen_datos.repositorio.datos->>'codigo_variable' = A.codigo
                             AND almacen_datos.repositorio.id_formulario = $frm_id ";        
         $em->getConnection()->executeQuery($sql);
-    }
+    }    
     protected function crearRangosAlertas($frm_id){
         $em = $this->getEntityManager();
         //Los rangos de alertas
@@ -464,7 +465,7 @@ class FormularioRepository extends EntityRepository {
             }
         }
         foreach ($this->parametros as $key => $value) {
-            $params_string .= " AND datos->'" . $key . "' = '" . $value . "' ";
+            $params_string .= " AND datos->>'" . $key . "' = '" . $value . "' ";
         }
         
         return $params_string;
@@ -479,7 +480,7 @@ class FormularioRepository extends EntityRepository {
         } elseif($tipo_periodo == 'pg'){
             $periodoIngreso = $em->getRepository("GridFormBundle:PeriodoIngresoGrupoUsuarios")->find($periodoIngreso);
         }
-
+        
         $params_string = $this->getParameterString($Frm, $parametros, $periodoIngreso->getId(), $tipo_periodo, $user);
         $area = $Frm->getAreaCosteo();
         if ($area != 'ga_variables' and $area != 'ga_compromisosFinancieros' and $area != 'ga_distribucion' and $area != 'almacen_datos' and $area != 'calidad'){
@@ -493,18 +494,19 @@ class FormularioRepository extends EntityRepository {
         }
 
         $datosObj = json_decode($request->get('fila'));
-        $datos = str_replace(array('{', '}', ':', 'null'), array('', '', '=>', '""'), $request->get('fila'));
+        //$datos = str_replace(array('{', '}', ':', 'null'), array('', '', '=>', '""'), $request->get('fila'));
+        $datos = $request->get('fila');
         // eliminar mensajes de ayuda que vienen separados por ||
         //$datos = preg_replace('/\|\|[\s\S]*j?"/', '"', $datos);
         
         //Cambiar formato de fecha
         $datos = preg_replace('/([0-9]{4})-([0-9]{2})-([0-9]{2})T[0-9]{2}=>[0-9]{2}=>[0-9]{2}.[0-9]{3}Z/', '${3}/${2}/${1}', $datos);
 
-        $params_string .= "AND datos->'" . $request->get('pk') . "' = '" . $datosObj->{$request->get('pk')} . "'";
+        $params_string .= "AND datos->>'" . $request->get('pk') . "' = '" . $datosObj->{$request->get('pk')} . "'";
                 
         $sql = "
             UPDATE $tabla
-            SET datos = datos || '" . $datos . "'::hstore
+            SET datos = datos || '$datos'::jsonb
             WHERE $campo IN (" . implode(',', $origenes) . ")
                 $params_string
             ;";
@@ -519,7 +521,22 @@ class FormularioRepository extends EntityRepository {
             WHERE $campo IN (" . implode(',', $origenes) . ")
                 $params_string                
             ;";
-            return $em->getConnection()->executeQuery($sql)->fetchAll();
+            $fila = $em->getConnection()->executeQuery($sql)->fetchAll();
+            
+            //Actualizar fecha de cambio
+            $mes = (integer) $periodoIngreso->getPeriodo()->getMes(); 
+            $anio = $periodoIngreso->getPeriodo()->getAnio(); 
+                        
+            $idFrm = $Frm->getId();
+            $sql = "UPDATE control_ingreso_datos_frm SET actualizacion = NOW() WHERE formulariocaptura_id = $idFrm AND anio= $anio AND  mes = $mes ";
+            $act = $em->getConnection()->executeQuery($sql);
+            
+            if ($act->rowCount() == 0){
+                $sql = "INSERT INTO control_ingreso_datos_frm(formulariocaptura_id, anio, mes) VALUES ($idFrm, $anio, $mes)";
+                $em->getConnection()->executeQuery($sql);
+            }
+            
+            return $fila;
             //return true;
         } catch (\PDOException $e) {
             return false;
@@ -533,34 +550,34 @@ class FormularioRepository extends EntityRepository {
             (mes::integer)||'/'||anio AS etiqueta
             FROM (
                 
-                SELECT A.datos->'anio' AS anio, A.datos->'mes' AS mes
+                SELECT A.datos->>'anio' AS anio, A.datos->>'mes' AS mes
                 FROM  almacen_datos.repositorio A
                     INNER JOIN costos.formulario B ON (A.id_formulario = B.id)
                 WHERE B.area_costeo = 'calidad'
                     AND B.periodo_lectura_datos = 'mensual'
-                    AND A.datos->'anio' != ''
-                    AND A.datos->'mes' != ''
-                    AND A.datos->'es_separador' != 'true'
+                    AND A.datos->>'anio' != ''
+                    AND A.datos->>'mes' != ''
+                    AND A.datos->>'es_separador' != 'true'
                 
                 UNION ALL
                 
                 SELECT BB.anio, BB.mes 
                     FROM (
-                        SELECT A.datos->'anio' AS anio, 
+                        SELECT A.datos->>'anio' AS anio, 
                             unnest(array['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']) AS mes, 
-                            unnest(array[datos->'mes_check_01', datos->'mes_check_02',
-                                datos->'mes_check_03' , datos->'mes_check_04' ,
-                                datos->'mes_check_05' , datos->'mes_check_06' ,
-                                datos->'mes_check_07' , datos->'mes_check_08' , 
-                                datos->'mes_check_09' , datos->'mes_check_10' , 
-                                datos->'mes_check_11' , datos->'mes_check_12']
+                            unnest(array[datos->>'mes_check_01', datos->>'mes_check_02',
+                                datos->>'mes_check_03' , datos->>'mes_check_04' ,
+                                datos->>'mes_check_05' , datos->>'mes_check_06' ,
+                                datos->>'mes_check_07' , datos->>'mes_check_08' , 
+                                datos->>'mes_check_09' , datos->>'mes_check_10' , 
+                                datos->>'mes_check_11' , datos->>'mes_check_12']
                                 ) AS dato
                             FROM  almacen_datos.repositorio A
                                 INNER JOIN costos.formulario B ON (A.id_formulario = B.id)
                             WHERE B.area_costeo = 'calidad'
                                 AND B.periodo_lectura_datos = 'anual'
-                                AND A.datos->'anio' != ''
-                                AND A.datos->'es_separador' != 'true'
+                                AND A.datos->>'anio' != ''
+                                AND A.datos->>'es_separador' != 'true'
                         ) AS BB
                         WHERE BB.dato = 'true'
                 ) AS AA
@@ -580,35 +597,35 @@ class FormularioRepository extends EntityRepository {
         $idFrm = $Frm->getId();
         $mes_ = '';
         if ($Frm->getPeriodoLecturaDatos() == 'mensual' ){
-            $mes_ = " A.datos->'mes' AS mes, ";
+            $mes_ = " A.datos->>'mes' AS mes, ";
             if ($mes != null){
-                $periodo_lectura = " AND (A.datos->'mes')::integer = '$mes' ";
+                $periodo_lectura = " AND (A.datos->>'mes')::integer = '$mes' ";
             }
         }
         $whereAnio = '';
         if ($anio != null){
-            $whereAnio = " AND A.datos->'anio' = '$anio' ";
+            $whereAnio = " AND A.datos->>'anio' = '$anio' ";
         }
         
         $whereEstablecimiento = '';
         if ($establecimiento != null){
-           $whereEstablecimiento = " AND A.datos->'establecimiento' = '$establecimiento' "; 
+           $whereEstablecimiento = " AND A.datos->>'establecimiento' = '$establecimiento' "; 
         }
         $campos = $em->getRepository('GridFormBundle:Indicador')->getListaCampos($Frm, $arreglo, $mes);
         
         $sql = "DROP TABLE IF EXISTS datos_tmp";
         $em->getConnection()->executeQuery($sql);
                 
-        $excluirCriterios = ($criteriosTodos) ? '': " AND A.datos->'es_separador' != 'true' ";
+        $excluirCriterios = ($criteriosTodos) ? '': " AND A.datos->>'es_separador' != 'true' ";
 
         $sql = "
-                SELECT $campos, A.datos->'anio' AS anio, $mes_ A.datos->'establecimiento' as establecimiento, 
-                    A.datos->'es_poblacion' AS es_poblacion, A.datos->'codigo_tipo_control' AS tipo_control, 
-                    A.datos->'es_separador' AS es_separador, A.datos->'posicion' AS posicion, id_formulario,
+                SELECT $campos, A.datos->>'anio' AS anio, $mes_ A.datos->>'establecimiento' as establecimiento, 
+                    A.datos->>'es_poblacion' AS es_poblacion, A.datos->>'codigo_tipo_control' AS tipo_control, 
+                    A.datos->>'es_separador' AS es_separador, A.datos->>'posicion' AS posicion, id_formulario,
                     D.logica_salto
                  INTO  TEMP datos_tmp 
                  FROM almacen_datos.repositorio A
-                    INNER JOIN variable_captura D ON (A.datos->'codigo_variable' = D.codigo)
+                    INNER JOIN variable_captura D ON (A.datos->>'codigo_variable' = D.codigo)
                  WHERE (id_formulario = '$idFrm'
                      OR id_formulario IN (SELECT id FROM costos.formulario WHERE id_formulario_sup = '$idFrm') )
                     $whereEstablecimiento
@@ -664,7 +681,6 @@ class FormularioRepository extends EntityRepository {
         
         $Frm = $em->getRepository('GridFormBundle:Formulario')->findOneByCodigo($formulario);
         
-        
         $grupos = $Frm->getGrupoFormularios();
         $datos_frm = (count($grupos) > 0 ) ? $grupos : array($Frm);
         
@@ -673,26 +689,28 @@ class FormularioRepository extends EntityRepository {
             $datos = 'datos';
             $periodo_mensual = ($ff->getPeriodoLecturaDatos() == 'mensual');
             $this->getDatosEvaluacion($ff, $establecimiento, $anio, $mes, true, true, true, false);
-            //$campos = $em->getRepository('GridFormBundle:Indicador')->getListaCampos($ff, false, $mes);
             
             //Verificar si tiene la variable de poblacion para obtener solo las
             $sql = "SELECT codigo_variable FROM datos_tmp WHERE es_poblacion = 'true'";
             $cons = $em->getConnection()->executeQuery($sql);
             if ($cons->rowCount() > 0){
                 //Quitar las columnas para las que no se ingresó número de expediente
-                $sql = "SELECT nombre_pivote FROM datos_tmp WHERE es_poblacion = 'true' AND (dato is null OR dato = '') ";
+                $sql = "SELECT nombre_pivote FROM datos_tmp WHERE es_poblacion = 'true' AND (dato is null OR dato = '' OR dato = '\"\"') ";
                 $pivotes_borrar = $em->getConnection()->executeQuery($sql)->fetchAll();
                 $piv_ = array();
-                foreach ($pivotes_borrar as $c){
-                    $piv_[] = $c['nombre_pivote'];
-                }
+                
+                if ( count($pivotes_borrar) > 0 ) {
+                    foreach ($pivotes_borrar as $c){
+                        $piv_[] = $c['nombre_pivote'];
+                    }
 
-                $pivotes_borrar = "'".implode("','", $piv_)."'";
-                $datos = "delete(datos, ARRAY[$pivotes_borrar]) AS datos";
+                    $pivotes_borrar = "-'".implode("' - '", $piv_)."'";
+                    $datos = "( datos $pivotes_borrar ) AS datos";
+                }
             }
             
             $frmId = $ff->getId();
-            $mes_cadena = ($periodo_mensual) ? " AND (A.datos->'mes')::integer = '$mes' " : '';
+            $mes_cadena = ($periodo_mensual) ? " AND (A.datos->>'mes')::integer = '$mes' " : '';
             
             $this->ActualizarVariables($Frm->getId());
             
@@ -709,12 +727,12 @@ class FormularioRepository extends EntityRepository {
                     , ' ') AS codigo_indicador
                     FROM  almacen_datos.repositorio A
                         INNER JOIN costos.formulario B ON (A.id_formulario = B.id)
-                        INNER JOIN ctl_establecimiento_simmow C ON (A.datos->'establecimiento' = C.id::text)
-                        INNER JOIN variable_captura D ON (A.datos->'codigo_variable' = D.codigo)
+                        INNER JOIN ctl_establecimiento_simmow C ON (A.datos->>'establecimiento' = C.id::text)
+                        INNER JOIN variable_captura D ON (A.datos->>'codigo_variable' = D.codigo)
                     WHERE area_costeo = 'calidad'
-                        AND A.datos->'anio' = '$anio'
+                        AND A.datos->>'anio' = '$anio'
                         $mes_cadena
-                        AND A.datos->'establecimiento' = '$establecimiento'
+                        AND A.datos->>'establecimiento' = '$establecimiento'
                         AND B.id = '$frmId'
                             
                     UNION ALL ";
@@ -732,21 +750,24 @@ class FormularioRepository extends EntityRepository {
             unset($mes_borrar[$key]);
         }
         
-        $pivotes_borrar = "'".implode("','", $mes_borrar)."'";
+        $pivotes_borrar = '';
+        if ( count($mes_borrar) > 0 ){
+            $pivotes_borrar = "-'".implode("' - '", $mes_borrar)."'";
+        }                
         
-        $sql = "SELECT AA.id, AA.codigo, AA.descripcion, AA.forma_evaluacion , AA.logica_salto, AA.codigo_indicador, delete(AA.datos, ARRAY[$pivotes_borrar]) AS datos
+        $sql = "SELECT AA.id, AA.codigo, AA.descripcion, AA.forma_evaluacion , AA.logica_salto, AA.codigo_indicador, (AA.datos - 'undefined' $pivotes_borrar) AS datos
                 FROM (
                     $sql_forms
                 ) AS AA
-                ORDER BY COALESCE(NULLIF(datos->'posicion', ''), '100000000')::numeric, codigo, datos->'es_poblacion' DESC,  datos->'descripcion_categoria_variable', datos->'descripcion_variable'
+                ORDER BY COALESCE(NULLIF(datos->>'posicion', ''), '100000000')::numeric, codigo, datos->>'es_poblacion' DESC,  datos->>'descripcion_categoria_variable', datos->>'descripcion_variable'
                 ";        
         try {
             $datos_ =  $em->getConnection()->executeQuery($sql)->fetchAll();
-            $datos = array();
+            $datos = array();            
             foreach ($datos_ as $d) {
                 $datos[$d['codigo']]['descripcion'] = $d['descripcion'];
                 $datos[$d['codigo']]['forma_evaluacion'] = $d['forma_evaluacion'];
-                $criterios = json_decode('{' . str_replace('=>', ':', $d['datos'].', "codigo_indicador": "'.$d['codigo_indicador'].'"' ) . '}', true);
+                $criterios = json_decode( trim($d['datos'], '}') . ', "codigo_indicador": "'.$d['codigo_indicador'].'"}' , true);
                 if ($criterios['codigo_tipo_control'] == 'checkbox' and $d['logica_salto'] != '' ){
                     $criterios['codigo_tipo_control'] = 'checkbox_3_states';
                 }
@@ -841,7 +862,7 @@ class FormularioRepository extends EntityRepository {
                             ELSE 0 
                         END AS no_cumplimiento
                         FROM datos_tmp
-                        WHERE es_poblacion='false'
+                        WHERE es_poblacion = 'false'
                             AND es_separador != 'true'
                             AND tipo_control != 'dropdownlist'
                             $soloCriteriosInd
@@ -934,9 +955,10 @@ class FormularioRepository extends EntityRepository {
                         AND codigo_establecimiento = '$unidad'
                         AND mes::integer = '$mes'
                         AND anio = $anio ";
-        $datos_ =  $em->getConnection()->executeQuery($sql)->fetch();        
-        $datos = json_decode('{'.str_replace(array('=>'), array( ':'), $datos_['datos']).'}', true);
+        $datos_ =  $em->getConnection()->executeQuery($sql)->fetch();
+        $dat = preg_replace( "/\r|\n/", "", $datos_['datos'] );
         
+        $datos = json_decode('{'.str_replace( '=>',  ':', $dat).'}', true);
         return $datos;
     }
     
@@ -948,19 +970,27 @@ class FormularioRepository extends EntityRepository {
         //Borrar los datos anteriores
         $sql = "DELETE FROM almacen_datos.repositorio 
                     WHERE id_formulario =  $frm
-                        AND datos->'mes' = '$mes'
-                        AND datos->'anio' = '$anio'
-                        AND datos->'establecimiento' = '$establecimiento'
-                        AND datos->'fuente' = 'kobo'
+                        AND datos->>'mes' = '$mes'
+                        AND datos->>'anio' = '$anio'
+                        AND datos->>'establecimiento' = '$establecimiento'
+                        AND datos->>'fuente' = 'kobo'
                 ";
         $em->getConnection()->executeQuery($sql);
                 
         foreach ($datosExpe as $cod_var => $e){
             $codigo_variable = $cod_var;
+            $datosIns = $e;
+            $datosIns['mes'] = $mes;
+            $datosIns['anio'] = $anio;
+            $datosIns['establecimiento'] = $establecimiento;
+            $datosIns['codigo_variable'] = $codigo_variable;
+            $datosIns['fuente'] = 'kobo';
+            
+            $datos = json_encode($datosIns);
+            
             try{
                 $sql = "INSERT INTO almacen_datos.repositorio(id_formulario, datos)
-                        VALUES ($frm, hstore(ARRAY['" . implode("', '", array_keys($e)) . "', 'mes', 'anio', 'establecimiento', 'codigo_variable', 'fuente'], 
-                            ARRAY['" . implode("', '", $e) . "', '$mes', '$anio', '$establecimiento', '$codigo_variable', 'kobo'])) ";
+                        VALUES ($frm, '$datos'::jsonb) ";
 
                 $em->getConnection()->executeQuery($sql);
             }  catch (\Exception $ex) {
@@ -968,6 +998,16 @@ class FormularioRepository extends EntityRepository {
             }
             
         }
+
+        $mes = (integer) $mes;
+        $sql = "UPDATE control_ingreso_datos_frm SET actualizacion = NOW() WHERE formulariocaptura_id = $frm AND anio= $anio AND  mes = $mes ";
+        $act = $em->getConnection()->executeQuery($sql);
+
+        if ($act->rowCount() == 0){
+            $sql = "INSERT INTO control_ingreso_datos_frm(formulariocaptura_id, anio, mes) VALUES ($frm, $anio, $mes)";
+            $em->getConnection()->executeQuery($sql);
+        }
+            
         $this->actualizarVariables($frm);
         
         $em->commit();
