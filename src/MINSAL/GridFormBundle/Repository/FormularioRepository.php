@@ -203,7 +203,7 @@ class FormularioRepository extends EntityRepository {
             $campos_revisar = (($c->getOrigenPivote() == '')) ? array($codigo) : $this->getPivotes($c->getOrigenPivote(), $codigo);
             
             foreach ($campos_revisar as $c){                
-                array_push($campos_, "datos->'".$c."' AS $c");
+                array_push($campos_, "datos->>'".$c."' AS $c");
             }
         }
         

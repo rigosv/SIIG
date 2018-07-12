@@ -226,7 +226,7 @@ class IndicadorRepository extends EntityRepository {
         list($anio, $mes) = explode('_', $periodo);
         
         $this->prepararDatosEvaluacionNumerica($periodo);
-        
+
         $niveles = $this->getNivelesEstablecimiento($nivel);
 
         $datos = array();
@@ -245,7 +245,7 @@ class IndicadorRepository extends EntityRepository {
                 $whereEsta = " AND establecimiento IN ('".implode("', '", $establecimientosAutorizados)."') ";
             }
         }
-                
+          
         $sql = "SELECT B.unidad_medida, C.codigo as dimension, B.id, 
                     B.codigo AS codigo_indicador, B.descripcion AS descripcion_indicador,
                     A.calificacion,(SELECT color 
@@ -272,7 +272,7 @@ class IndicadorRepository extends EntityRepository {
                                             $whereDepto
                                             $whereEsta
                                         GROUP BY anio, mes, id_indicador
-                                        ORDER BY anio, mes
+                                        ORDER BY anio DESC, mes DESC
                                         LIMIT 10
                                     ) AS historial
                     FROM
@@ -363,11 +363,11 @@ class IndicadorRepository extends EntityRepository {
     protected function prepararDatosEvaluacionNumerica($periodo) {
         $em = $this->getEntityManager();
         
-        $this->crearTablaIndNumericos();
+        $this->crearTablaIndNumericos();        
         $formularios = $em->getRepository("GridFormBundle:Formulario")->findBy(array('areaCosteo'=>'calidad', 'formaEvaluacion'=>'rango_colores'));
         
         foreach ($formularios as $Frm) {
-            $this->getDatosEvaluacionNumerica($Frm, $periodo);
+            $this->getDatosEvaluacionNumerica($Frm, $periodo);            
         }
     }
     
@@ -387,7 +387,7 @@ class IndicadorRepository extends EntityRepository {
             $where_ = " AND (substring(nombre_pivote::text from '..$') = '$mes' OR substring(nombre_pivote::text from '..$') = '0$mes') "; 
             
         }
-        
+
         $sql = "DROP TABLE IF EXISTS datos_indicadores_tmp";
         $em->getConnection()->executeQuery($sql);
         
@@ -436,7 +436,7 @@ class IndicadorRepository extends EntityRepository {
                                     codigo_variable, establecimiento, area_id                    
                 "
             ;
-        
+
         $cons = $em->getConnection()->executeQuery($datos);
         if ($cons->rowCount() > 0){
             $sql = "DELETE FROM datos_evaluacion_calidad_num
@@ -720,10 +720,10 @@ class IndicadorRepository extends EntityRepository {
         $em->getConnection()->executeQuery($sql);        
     }
     
-    public function borrarVacios($mes, $indicadorId = null) {
+    public function borrarVacios($mes) {
         $em = $this->getEntityManager();
         
-        $nombreTabla = ( $indicadorId == null ) ? 'datos_tmp': 'datos_tmp_'.$indicadorId;
+        $nombreTabla = 'datos_tmp';
         
         //Verificar si tiene la variable num_exp para obtener qué expedientes se ingresaron
         $sql = "SELECT codigo_variable FROM $nombreTabla WHERE es_poblacion = 'true'";
@@ -749,7 +749,7 @@ class IndicadorRepository extends EntityRepository {
         $sql = "SELECT codigo_variable FROM $nombreTabla WHERE nombre_pivote ~* 'mes_check_'";
         $cons = $em->getConnection()->executeQuery($sql);
 
-        if ($cons->rowCount() > 0){
+        if ($cons->rowCount() > 0 and $mes != null ){
             //Quitar las columnas para las que no se ingresó número de expediente
             $sql = "DELETE FROM $nombreTabla 
                     WHERE (establecimiento::text, nombre_pivote::text)
@@ -1008,7 +1008,7 @@ class IndicadorRepository extends EntityRepository {
             if ($piv != ''){
                 $piv_ = json_decode($piv);
                 //La parte de datos
-                $campos .= ($array) ? "unnest(array[" : '';
+                $campos .= ($array) ? "trim( both '\"' from unnest(array[" : '';
                 foreach($piv_ as $p){
                     $alias = ($array) ? '' : ' AS "'.$p->descripcion.'" ';
                     if ($soloMes){
@@ -1019,7 +1019,7 @@ class IndicadorRepository extends EntityRepository {
                     }
                 }
                 $campos = ($array) ? trim($campos, ', ') : $campos;
-                $campos .= ($array) ? "]::varchar[]) AS dato, " : '';
+                $campos .= ($array) ? "]::varchar[])) AS dato, " : '';
                 
                 //La parte del nombre del campo
                 $campos .= ($array) ? "unnest(array[" : '';                
