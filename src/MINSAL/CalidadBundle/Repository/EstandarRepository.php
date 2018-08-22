@@ -146,7 +146,7 @@ class EstandarRepository extends EntityRepository {
         if ($idFormulario == 104){
             $whereFrm6 = " AND tipo_control = 'checkbox' ";
         }
-        $em->getRepository("GridFormBundle:Formulario")->getDatosEvaluacion($frm);
+        $em->getRepository("GridFormBundle:Formulario")->getDatosEvaluacion($frm, null, null, null, true, true, false, false);
         
         $sql = "SELECT anio, mes, COALESCE(B.nombre_corto, B.nombre) AS establecimiento, C.nombre AS estandar,
                     H.descripcion AS sibasi, I.descripcion AS region,
